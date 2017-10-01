@@ -51,6 +51,7 @@ public class Datos {
         }
     }
     void leer (String archivo){
+        String resultados = "";
         try{
             buffer = new BufferedReader(new FileReader(archivo));
             //lectura de cabecera del archivo
@@ -64,12 +65,15 @@ public class Datos {
                 //System.out.println("coordenada x " +  productos[1] + " " + "coordenada y "+ productos[2] );
             }
             Ruta ruta = new Ruta();
-            Poblacion poblacion = new Poblacion(Integer.parseInt(cantidad_productos), true);            
+            Poblacion poblacion = new Poblacion(Integer.parseInt(cantidad_productos), true);
+            resultados = poblacion.obtener_la_mejor_ruta_de_poblacion().obtener_distancia_total_a_recorrer() + ",";
             poblacion = Genetico.evolucion(poblacion);
             for (int indice_generacion = 0; indice_generacion < cantidad_generaciones; indice_generacion++){
                 poblacion = Genetico.evolucion(poblacion);
             }
-            agregar_resultado("" + poblacion.obtener_la_mejor_ruta_de_poblacion().obtener_distancia_total_a_recorrer());
+            resultados += poblacion.obtener_la_mejor_ruta_de_poblacion().obtener_distancia_total_a_recorrer() + "";
+            //agregar_resultado("" + poblacion.obtener_la_mejor_ruta_de_poblacion().obtener_distancia_total_a_recorrer());
+            agregar_resultado(resultados);
             //System.out.println("Distancia final" + );
             //System.out.println("Solucion");
             System.out.println(poblacion.obtener_la_mejor_ruta_de_poblacion().mostrar_ruta());
@@ -89,7 +93,10 @@ public class Datos {
         }
     }
     void agregar_resultado(String datos) {
-        sb.append(datos);
+        String [] resultados = datos.split(",");
+        sb.append(resultados[0]);
+        sb.append(",");
+        sb.append(resultados[1]);
         sb.append("\n");
     }
     void preparar_reporte(boolean ultimo){
