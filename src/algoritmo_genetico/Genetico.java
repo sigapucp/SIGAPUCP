@@ -120,5 +120,5 @@ public class Genetico {
         
         return nueva_poblacion;
     }
-    
+ 
 }

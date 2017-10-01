@@ -15,6 +15,7 @@ public class Algoritmo_genetico {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        /*
         // TODO code application logic here
         Producto producto1 = new Producto(5, 5);
         Producto producto2 = new Producto(5, 10);
@@ -52,6 +53,11 @@ public class Algoritmo_genetico {
         System.out.println("Distancia final" + poblacion.obtener_la_mejor_ruta_de_poblacion().obtener_distancia_total_a_recorrer());
         System.out.println("Solucion");
         System.out.println(poblacion.obtener_la_mejor_ruta_de_poblacion().mostrar_ruta());
+        */
+        Datos data_set = new Datos();
+        data_set.preparar_reporte(false);
+        data_set.leer_en_lote();
+        data_set.preparar_reporte(true);
         
     }
     
