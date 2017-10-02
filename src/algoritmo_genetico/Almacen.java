@@ -19,6 +19,9 @@ public class Almacen {
         almacen.add(producto);
     }
     
+    public Almacen(){
+        almacen = new ArrayList<Producto>();
+    }
     //entiendase como la cantidad de productos que son parte del pedido 
     //que se tomaran para el calculo del algoritmo
     public static int cantidad_de_productos(){

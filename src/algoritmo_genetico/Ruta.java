@@ -38,9 +38,9 @@ public class Ruta {
     //se coloca en una posicion un producto
     public void colocar_turno_producto_en_ruta(int turno_en_ruta, Producto producto){
         ruta.set(turno_en_ruta, producto);
-        //*
-        //objetivo = 0;
-        //distancia = 0;
+        
+        objetivo = 0;
+        distancia = 0;
     }
     
   

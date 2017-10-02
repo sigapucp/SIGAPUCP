@@ -16,11 +16,11 @@ import java.io.IOException;
  * @author Gustavo
  */
 public class Datos {
-    int cantidad_conjunto_datos = 3;
+    int cantidad_conjunto_datos = 40;
     int cantidad_generaciones = 100;
     String cantidad_productos;
-    String direccion_archivos = "C:\\Users\\Gustavo\\Documents\\2017-2\\DP1\\Projects\\algoritmo v2\\algoritmo_genetico\\dataset";
-    String archivo_resultado = "C:\\Users\\Gustavo\\Documents\\2017-2\\DP1\\Projects\\algoritmo v2\\algoritmo_genetico\\dataset\\resultados.csv";
+    String direccion_archivos = "I:\\genetico\\SIGAPUCP\\dataset\\dataSet_medium";
+    String archivo_resultado = "I:\\genetico\\SIGAPUCP\\dataset\\dataSet_medium\\resultados.csv";
     BufferedReader buffer = null;
     String linea = "";
     String delimitador_division = ",";
@@ -45,9 +45,9 @@ public class Datos {
     }
     void leer_en_lote(){
         for(int i = 1; i <= cantidad_conjunto_datos; i++){
-            String archivo = direccion_archivos + "\\dataset_tsp_" + i + ".csv"; 
+            String archivo = direccion_archivos + "\\dataSet_medium_" + i + ".csv"; 
             leer(archivo);
-            System.out.println("==============================");
+            System.out.println(i + "==============================");
         }
     }
     void leer (String archivo){
@@ -57,6 +57,7 @@ public class Datos {
             //lectura de cabecera del archivo
             leer_cabecera(buffer);
             //inicializacion del almacen
+            
             Almacen almacen = new Almacen();
             while( (linea = buffer.readLine()) != null){
                 String[] producto_cadena = linea.split(delimitador_division);
