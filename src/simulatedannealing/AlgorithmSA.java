@@ -10,6 +10,7 @@ import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -287,7 +288,36 @@ public class AlgorithmSA {
                         
             nuevaRuta = new Ruta(estadoProblema,distancias,"Ruta" + String.valueOf(nRutas), nRutas, nuevaPuerta);            
             rutas.add(nuevaRuta);            
-                                         
+                     
+            if(estadoProblema.GetNodoFinal().EsDeposito())
+            {
+                ProductoNodo deposito = estadoProblema.GetNodoFinal();
+                Collections.sort(productos,new Comparator<ProductoNodo>() {
+                    
+                    @Override
+                    public int compare(ProductoNodo o1, ProductoNodo o2) {
+                        double dist1 = _distancias[deposito.GetLlave()][o1.GetLlave()];
+                        double dist2 = _distancias[deposito.GetLlave()][o2.GetLlave()];
+                        if(dist1 > dist2) return -1;
+                        if(dist1 < dist1) return 1;
+                        return 0;
+                    }
+                });
+            }else
+            {
+                ProductoNodo antNodo = estadoProblema.GetNodoFinal();
+                 Collections.sort(productos,new Comparator<ProductoNodo>() {
+                    
+                    @Override
+                    public int compare(ProductoNodo o1, ProductoNodo o2) {
+                        double dist1 = _distancias[antNodo.GetLlave()][o1.GetLlave()];
+                        double dist2 = _distancias[antNodo.GetLlave()][o2.GetLlave()];
+                        if(dist1 > dist2) return 1;
+                        if(dist1 < dist1) return -1;
+                        return 0;
+                    }
+                });
+            }
             for (ProductoNodo producto : productos) {
                 if(!producto.GetVisitado() && (nuevaRuta.GetPeso() + producto.GetPeso()) <= capacidad)
                 {
@@ -301,6 +331,14 @@ public class AlgorithmSA {
         ProductoNodo nuevaPuerta = new ProductoNodo(0,"Depot" , 0.0, true);      
         nuevaRuta.AgregarPunto(nuevaPuerta);      
         rutaAEstado.put(rutas, estadoProblema);  
-    }        
+    }      
+    
+    
+    
+    
 }
+
+
+
+
 
