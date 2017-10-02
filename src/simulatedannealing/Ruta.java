@@ -5,7 +5,9 @@
  */
 package simulatedannealing;
 import java.text.DecimalFormat;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,93 +15,200 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Ruta {
     
-    public final LinkedStateList _estadoProblema;
+    public final EstadoProblema _estadoProblema;
     private final double [][] _distancias;
     private final String _rutaNombre;
     private final int _rutaCodigo;
     private double _distancia;
-    private int _nrPuntos;
-    private double _peso;
-    public ProductoNodo NodoInicial;
-    public ProductoNodo NodoActual;
-    private int _posInicial;
-    private int _posActual;
-        
-    public Ruta(LinkedStateList estadoProblema,double [][] distancias, 
+    private double _peso;    
+    public ProductoNodo _nodoInicial;
+    public ProductoNodo _nodoActual;
+    public int _nrNodos;
+    private Boolean _estadoSucio;    
+   
+    public Ruta(EstadoProblema estadoProblema,double [][] distancias, 
             String nombre,int codigo,ProductoNodo nodoInicial)
     {
         _rutaNombre = nombre;
         _rutaCodigo = codigo;
         _peso = 0.0;                
         _distancia = 0.0;
-        _nrPuntos = 0;
         _estadoProblema = estadoProblema;
         _distancias = distancias;
+        _nrNodos = 0;
         
-        NodoInicial = nodoInicial;
-        _posInicial = _estadoProblema.indexOf(NodoInicial);
+        _nodoInicial = nodoInicial;       
         
-        NodoActual = nodoInicial;       
-        _posActual = _posInicial;       
+        _nodoActual = nodoInicial;            
     }
     
-    public Ruta(LinkedStateList estadoProblema,double [][] distancias, 
-            String nombre,int codigo,double distancia, int nrPuntos,  double peso,
-            ProductoNodo nodoInicial,ProductoNodo nodoActual, int posInicial,int posActual)
+    public Ruta(EstadoProblema estadoProblema,double [][] distancias, 
+            String nombre,int codigo,double distancia, double peso,
+            ProductoNodo nodoInicial,ProductoNodo nodoActual)
     {
         _rutaNombre = nombre;
         _rutaCodigo = codigo;
         _estadoProblema = estadoProblema;
         _distancias = distancias;
         _distancia = distancia;
-        _nrPuntos = nrPuntos;
         _peso = peso;
+        _estadoSucio = true;
         
-        NodoInicial = nodoInicial;
-        NodoActual = nodoActual;
-        _posInicial = posInicial;
-        _posActual = posActual;                
+        try {
+            SetNodoInicial(nodoInicial);
+            SetNodoActual(nodoActual);
+        } catch (Exception ex) {
+            Logger.getLogger(Ruta.class.getName()).log(Level.SEVERE, null, ex);
+        }              
     }
-    
-    
+        
     public String GetNombre() { return _rutaNombre; }
     public int GetCodigo() { return _rutaCodigo; }
     public double GetPeso() { return _peso; }    
-    public double GetDistancia() { return _distancia; }
-    public int GetNrPuntos()  { return _nrPuntos; }
-    
+    public double GetDistancia() { return _distancia; }          
     public void IncrementarPeso(double peso) { _peso += peso; }  
+    public Boolean EsEstadoSucio() { return _estadoSucio; };
     
     public void AgregarPunto(ProductoNodo nodo) 
     { 
-        _nrPuntos++; 
-        _distancia += _distancias[NodoActual.GetLlave()][nodo.GetLlave()];
-        _posActual = _estadoProblema.size();
-        _estadoProblema.addAtEnd(nodo);        
-        NodoActual = nodo;
+        // HEY
+        _distancia += _distancias[_nodoActual.GetLlave()][nodo.GetLlave()];     
+        _estadoProblema.addAtEnd(nodo);   
+        IncrementarPeso(nodo.GetPeso());        
+        _nodoActual = nodo;
     }
     
-    public Ruta Clonar(LinkedStateList nuevoEstado)
-    {         
-        return new Ruta(nuevoEstado, _distancias, _rutaNombre, _rutaCodigo, _distancia,_nrPuntos,_peso,
-                nuevoEstado.get(_posInicial),nuevoEstado.get(_posActual),_posInicial,_posActual);
+    public void AgregarEn(ProductoNodo nodo,int index)
+    {
+        if(index<0) index = 0;
+        int  i = 0;
+        ProductoNodo temp = _nodoActual;
+        
+        while(temp!=_nodoActual&&i<index)
+        {
+            temp = temp.sig;
+            i++;
+        }        
+        if(temp == _nodoActual) 
+        {
+            _distancia -= _distancias[_nodoActual.GetLlave()][_nodoActual.ant.GetLlave()];     
+            _estadoProblema.addBefore(_nodoActual, nodo);
+            
+        }else
+        {
+            _distancia -= _distancias[temp.GetLlave()][temp.sig.GetLlave()];     
+            _estadoProblema.addAfter(temp, nodo);
+        }                
+        if(temp.sig!=null) _distancia += _distancias[temp.GetLlave()][temp.sig.GetLlave()];
+        if(temp.ant!=null) _distancia += _distancias[temp.GetLlave()][temp.ant.GetLlave()];                        
     }
     
-    public void RecalcularDistancia()
+    public void RemoverNodo(ProductoNodo nodo)
+    {
+        if(nodo.sig!=null) _distancia -= _distancias[nodo.GetLlave()][nodo.sig.GetLlave()];
+        if(nodo.ant!=null) _distancia -= _distancias[nodo.GetLlave()][nodo.ant.GetLlave()];
+        _estadoProblema.deleteNode(nodo);        
+    }
+    
+    public ProductoNodo GetPunto(int index)
+    {        
+        ProductoNodo temp = _nodoInicial;
+        int i = 0;
+        while(temp != _nodoActual && i<index)
+        {
+            temp = temp.sig;
+            i++;            
+        }
+        return temp;               
+    }
+    
+    public int GetNrPuntos()
+    {        
+        if(!_estadoSucio) return _nrNodos;
+        ProductoNodo temp = _nodoInicial;
+        int i = 0;
+        try {
+            while(temp != _nodoActual)
+            {
+                temp = temp.sig;
+                i++;            
+            }            
+        } catch (Exception e) {
+            System.out.println("Error en Set Nodo Get Nr Puntos");
+        }        
+        return  i + 1;                 
+    }
+    
+    public ProductoNodo GetNodoInicial()
+    {
+        return _nodoInicial;
+    }
+    
+    public void SetNodoInicial(ProductoNodo nodo) throws Exception
+    {
+        try {
+            if(nodo.EsDeposito()||_nodoActual == nodo)
+            {
+                _nodoInicial = nodo;
+                _estadoSucio = true;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error en Set Nodo Inicial");
+        }        
+    }        
+     
+    public ProductoNodo GetNodoActual()
+    {
+        return _nodoActual;
+    }       
+     
+    public void SetNodoActual(ProductoNodo nodo) 
+    {
+        try {
+            if(nodo.EsDeposito()||_nodoInicial == nodo)
+            {
+                _nodoActual = nodo;   
+                _estadoSucio = true;
+            }            
+        } catch (Exception e) {
+            System.out.println("Error en Set Nodo Actual");
+        }        
+    }         
+         
+    public Ruta Clonar(EstadoProblema nuevoEstado,HashMap<ProductoNodo,Integer> depotAIndex)
+    {       
+        try {
+             return new Ruta(nuevoEstado, _distancias, _rutaNombre, _rutaCodigo, _distancia,_peso,
+                nuevoEstado.get(depotAIndex.get(_nodoInicial)),nuevoEstado.get(depotAIndex.get(_nodoActual)));           
+        } catch (Exception e) {
+            System.out.println("Error en Clonar Ruta");
+        }
+        return null;
+       
+    }
+    
+    public void RecalcularEstado()
     {                        
-        ProductoNodo nodoAnt = NodoInicial;
-        ProductoNodo nodo = null;
+        ProductoNodo nodoAnt = _nodoInicial;
+        ProductoNodo nodo = null;        
         _distancia = 0;
-        do {            
+        try {
+            do {            
             nodo = nodoAnt.sig;
             _distancia += _distancias[nodoAnt.GetLlave()][nodo.GetLlave()]; 
-            nodoAnt = nodo;            
-        } while (nodo != NodoActual);                                                
+            _peso += nodo.GetPeso();
+            nodoAnt = nodo;                 
+        } while (nodo != _nodoActual);   
+        _estadoSucio = false;
+        } catch (Exception e) {
+            System.out.println("Error en Recalcular Distancia");
+        }        
     }
     
     public void ImprimirRuta()
     {                
-        ProductoNodo temp = NodoInicial;
+        ProductoNodo temp = _nodoInicial;
         do {      
             temp.Imprimir();
             temp = temp.sig;            
@@ -107,18 +216,6 @@ public class Ruta {
         temp.ImprimirLn();                        
     }
     
-    public void IntraRouteTwoOpt()
-    {
-        if(_nrPuntos == 3) return;
-        if(_nrPuntos == 4) 
-        {
-            _estadoProblema.Swap(NodoInicial.sig, NodoActual.ant);
-            return;
-        }
-        
-        int point1 = ThreadLocalRandom.current().nextInt(0, _nrPuntos);
-        int point2 = ThreadLocalRandom.current().nextInt(0, _nrPuntos);
-    }
     
     public void ImprimirCosto()
     { 

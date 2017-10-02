@@ -5,6 +5,9 @@
  */
 package simulatedannealing;
 
+import java.awt.Point;
+import java.text.DecimalFormat;
+
 /**
  *
  * @author Jauma
@@ -18,6 +21,7 @@ public class ProductoNodo {
     private Boolean _visitado;         
     public ProductoNodo ant;
     public ProductoNodo sig;
+    public Point coordenada; 
         
     public ProductoNodo(int llave,String nombre,double peso, Boolean esDeposito)
     {
@@ -48,7 +52,7 @@ public class ProductoNodo {
         }                
         _visitado = nodo._visitado;
         _peso = nodo._peso;
-        _esDeposito = nodo._visitado;        
+        _esDeposito = nodo._esDeposito;        
         ant = null;
         sig = null;
     }
@@ -59,12 +63,31 @@ public class ProductoNodo {
     public Boolean EsDeposito() { return _esDeposito; }
     public double GetPeso() { return _peso ; }
     
+    
+    public double GetDistanciaMedia(double[] distancias) {
+        
+        double distMedia = 0;
+        if(sig!=null)
+        {
+            distMedia += distancias[sig.GetLlave()];
+        }
+        
+        if(ant!=null)
+        {
+            distMedia += distancias[ant.GetLlave()];
+        }        
+        return distMedia/2;
+    }
         
     public void Imprimir()
     {
         System.out.print(_nombre + " ");
     }
     
+    public void ImprimirInfo(double[] distancias)
+    {
+        System.out.print(_nombre + " " + new DecimalFormat("#.##").format(GetDistanciaMedia(distancias)) + "  ");
+    }
     public void ImprimirLn()
     {
         System.out.println(_nombre);
