@@ -38,7 +38,7 @@ public class AlgorithmSA {
     {           
         double reduccionTemperatura = 0.93;
         double multiplicadorDeIteracion = 1.03;
-        double iteracionesPorParametro = 5;
+        double iteracionesPorParametro = 7;
         
         double temperatura = 5000;
         ArrayList<Ruta> estadoActual = new ArrayList<>();
@@ -94,17 +94,24 @@ public class AlgorithmSA {
         
         EstadoProblema estado = rutaAEstado.get(vecino);
       
-        int nrRutas = vecino.size();        
-        if(nrRutas > 1)
-        {
-            // Modificaciones solo en una ruta
-            IntraRouteOpt(vecino,estado);            
-        }else
-        {
-            // Modificaciones en varias rutas
-            InterRouteOpt(vecino, estado);            
-        }                 
+        int nrRutas = vecino.size();   
+        int nintentos = 7;
+        Boolean optMejora = false;
         
+        while(nintentos>0 && !optMejora)
+        {          
+            if(nrRutas > 1)
+            {
+                // Modificaciones solo en una ruta
+                optMejora = IntraRouteOpt(vecino,estado);            
+            }else
+            {
+                // Modificaciones en varias rutas
+                optMejora = InterRouteOpt(vecino, estado);            
+            }                 
+            nintentos--;
+        }
+                
         HighestAverage(vecino,estado);                       
         
         for(Ruta ruta : vecino)
@@ -113,26 +120,41 @@ public class AlgorithmSA {
         }                
     }
     
-    public void InterRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado)
+    public Boolean InterRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado)
     {
         int nrRutas = vecino.size();        
         int nrRuta = ThreadLocalRandom.current().nextInt(0, nrRutas);
         int ruta1Size = vecino.get(nrRuta).GetNrPuntos();
         
-        if(ruta1Size <= 3) return;
+        if(ruta1Size <= 3) return false;
         Ruta ruta = vecino.get(nrRuta);        
         int ruta2Size = ruta.GetNrPuntos();
         
         int nrPunto1 = ThreadLocalRandom.current().nextInt(1, ruta1Size);
         int nrPunto2 = ThreadLocalRandom.current().nextInt(nrPunto1, ruta2Size);
         
-        ProductoNodo nodo1 = ruta.GetPunto(nrPunto1);        
-        ProductoNodo nodo2 = ruta.GetPunto(nrPunto2);
+        ProductoNodo nodo1 = ruta.GetPunto(nrPunto1);              
+        ProductoNodo nodo2 = ruta.GetPunto(nrPunto2);      
         
-         if(estado.GetNodoFinal() != nodo2) estado.TwoOpt(nodo1, nodo2, vecino, nrRuta, nrRuta);            
+        ProductoNodo nodo1Ant = nodo1.ant;       
+        ProductoNodo nodo2Sig = nodo2.sig;
+        
+        double distanciaActual = 0.0;
+        double distanciaNueva = 0.0;                                
+        
+        if(nodo1.ant!=null) distanciaActual += _distancias[nodo1.GetLlave()][nodo1.ant.GetLlave()];        
+        if(nodo2.sig!=null) distanciaActual += _distancias[nodo1.GetLlave()][nodo2.sig.GetLlave()];        
+                        
+        if(nodo2Sig!=null) distanciaNueva += _distancias[nodo1.GetLlave()][nodo2Sig.GetLlave()];        
+        if(nodo1Ant!=null) distanciaNueva += _distancias[nodo2.GetLlave()][nodo1Ant.GetLlave()];  
+        
+        if(distanciaActual < distanciaNueva) return false;
+                        
+        if(estado.GetNodoFinal() != nodo2) estado.TwoOpt(nodo1, nodo2, vecino, nrRuta, nrRuta);      
+        return true;
     }
     
-    public void IntraRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado)
+    public Boolean IntraRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado)
     {
         int nrRutas = vecino.size();  
         
@@ -142,8 +164,7 @@ public class AlgorithmSA {
         int nrRuta2 = ThreadLocalRandom.current().nextInt(nrRuta1, nextRutaLimite);
         if(nrRuta2 == nrRuta1)
         {           
-            InterRouteOpt(vecino, estado);
-            return;
+            return InterRouteOpt(vecino, estado);            
         }                        
         
         int ruta1Size = vecino.get(nrRuta1).GetNrPuntos();
@@ -153,9 +174,24 @@ public class AlgorithmSA {
         int nrPunto2 = ThreadLocalRandom.current().nextInt(1, ruta2Size);
         
         ProductoNodo nodo1 = vecino.get(nrRuta1).GetPunto(nrPunto1);              
-        ProductoNodo  nodo2 = vecino.get(nrRuta2).GetPunto(nrPunto2);          
+        ProductoNodo nodo2 = vecino.get(nrRuta2).GetPunto(nrPunto2);          
+        
+        ProductoNodo nodo1Ant = nodo1.ant;       
+        ProductoNodo nodo2Sig = nodo2.sig;
+        
+        double distanciaActual = 0.0;
+        double distanciaNueva = 0.0;                                
+        
+        if(nodo1.ant!=null) distanciaActual += _distancias[nodo1.GetLlave()][nodo1.ant.GetLlave()];        
+        if(nodo2.sig!=null) distanciaActual += _distancias[nodo1.GetLlave()][nodo2.sig.GetLlave()];        
+                        
+        if(nodo2Sig!=null) distanciaNueva += _distancias[nodo1.GetLlave()][nodo2Sig.GetLlave()];        
+        if(nodo1Ant!=null) distanciaNueva += _distancias[nodo2.GetLlave()][nodo1Ant.GetLlave()];        
+        
+        if(distanciaActual < distanciaNueva) return false;
                 
         if(estado.GetNodoFinal() != nodo2) estado.TwoOpt(nodo1, nodo2, vecino, nrRuta1, nrRuta2);                    
+        return true;
     }
     
     public void HighestAverage(ArrayList<Ruta> vecino,EstadoProblema estado)
@@ -264,7 +300,7 @@ public class AlgorithmSA {
         
         ProductoNodo nuevaPuerta = new ProductoNodo(0,"Depot" , 0.0, true);      
         nuevaRuta.AgregarPunto(nuevaPuerta);      
-        rutaAEstado.put(rutas, estadoProblema);
+        rutaAEstado.put(rutas, estadoProblema);  
     }        
 }
 

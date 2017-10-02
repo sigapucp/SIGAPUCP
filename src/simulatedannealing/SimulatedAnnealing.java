@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,13 +30,14 @@ public class SimulatedAnnealing {
     static List<Double> pesos;
     static double [][] distancias;
     static double capacidad;
-    static int nrArchivos = 3;
+    static int nrArchivos = 40;
     
     static String delimitador_division = ",";
     static BufferedReader buffer = null;
     static String linea = "";    
     static PrintWriter pw;
     static StringBuilder sb = new StringBuilder();
+    static String fileName = "dataset_medium";
     
     public static void main(String[] args) throws IOException {
         // TODO code application logic here                                       
@@ -44,11 +45,19 @@ public class SimulatedAnnealing {
     }    
     
      static void  leer_en_lote(){
+        try {
+            pw = new PrintWriter(fileName + "_results.csv");
+            pw.println("NrDataSet,FuncOb Inicial,FuncOb Final");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SimulatedAnnealing.class.getName()).log(Level.SEVERE, null, ex);
+        }
         for(int i = 1; i <= nrArchivos; i++){
-            String archivo = "dataset_tsp_" + i + ".csv"; 
+            String archivo = fileName+ "_" + i + ".csv"; 
             leer(archivo,i);
             System.out.println("==============================");
         }
+        pw.close();
+         
     }
      
       static void leer_cabecera(BufferedReader buffer){
@@ -56,7 +65,7 @@ public class SimulatedAnnealing {
         //cantidad productos  
         String linea = buffer.readLine();
         String[] cabecera = linea.split(delimitador_division);
-        nProd = Integer.valueOf(cabecera[1]) - 3;
+        nProd = Integer.valueOf(cabecera[1]);
         //cabecera
         linea = buffer.readLine();
        }
@@ -92,17 +101,16 @@ public class SimulatedAnnealing {
             pesos = new ArrayList<>();            
             for(int i = 0;i<nProd;i++) pesos.add(0.0);
             
-            AlgorithmSA simulatedA = new AlgorithmSA(nProd, distancias,pesos, 100);                
+            AlgorithmSA simulatedA = new AlgorithmSA(nProd, distancias,pesos, 100);     
+            pw.printf(nrArchivo + "," + new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)) + ",");
             simulatedA.CorrerAlgoritmo();
-            
+            pw.println(new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)));
+                                   
             for (Ruta ruta : simulatedA.rutas)
             {
-                ruta.RecalcularEstado();
-                ruta.ImprimirRuta();
-                ruta.ImprimirCosto();
-                System.out.println();
-            }
-          
+                ruta.RecalcularEstado();             
+                ruta.ImprimirCosto();              
+            }          
         }
         catch (FileNotFoundException e){
             e.printStackTrace();
@@ -119,10 +127,10 @@ public class SimulatedAnnealing {
         }
     }
       
-      private static double DistanciaEuclidiana(Point point1,Point point2)
-      { 
-          int xResult = Math.abs (point1.x - point2.x);
-          int yResult = Math.abs (point1.y - point2.y);
-          return  Math.sqrt((xResult)*(xResult) +(yResult)*(yResult));
-      }      
+    private static double DistanciaEuclidiana(Point point1,Point point2)
+    { 
+        int xResult = Math.abs (point1.x - point2.x);
+        int yResult = Math.abs (point1.y - point2.y);
+        return  Math.sqrt((xResult)*(xResult) +(yResult)*(yResult));
+    }                         
 }
