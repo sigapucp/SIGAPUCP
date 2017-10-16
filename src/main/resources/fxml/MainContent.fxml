@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
@@ -36,7 +39,10 @@
             </MenuBar>
             <HBox prefHeight="100.0" prefWidth="1200.0">
                <children>
-                  <Pane prefHeight="200.0" prefWidth="300.0" />
+                  <Pane prefHeight="200.0" prefWidth="300.0">
+                     <children>
+                        <Separator layoutX="297.0" layoutY="10.0" orientation="VERTICAL" prefHeight="80.0" />
+                     </children></Pane>
                   <Pane prefHeight="200.0" prefWidth="900.0" />
                </children>
             </HBox>
@@ -44,26 +50,43 @@
                <children>
                   <Accordion prefHeight="572.0" prefWidth="200.0">
                     <panes>
-                      <TitledPane animated="false" text="untitled 1">
+                      <TitledPane animated="false" text="General">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" text="untitled 2">
+                      <TitledPane animated="false" text="Materiales">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" text="untitled 3">
+                      <TitledPane animated="false" text="Simulacion">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                         </content>
                       </TitledPane>
+                        <TitledPane animated="false" layoutX="10.0" layoutY="64.0" text="Ventas">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" layoutX="10.0" layoutY="91.0" text="Recursos Humanos">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                           </content>
+                        </TitledPane>
                     </panes>
                   </Accordion>
                   <HBox prefHeight="572.0" prefWidth="998.0">
                      <children>
-                        <Pane prefHeight="200.0" prefWidth="250.0" />
+                        <Pane prefHeight="200.0" prefWidth="250.0">
+                           <children>
+                              <Button alignment="CENTER" layoutX="78.0" layoutY="168.0" mnemonicParsing="false" style="-fx-graphic: url('http://icons.iconarchive.com/icons/aha-soft/desktop-buffet/128/Pizza-icon.png');" text="Button">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Button>
+                           </children></Pane>
                         <Pane prefHeight="200.0" prefWidth="750.0" />
                      </children>
                   </HBox>
