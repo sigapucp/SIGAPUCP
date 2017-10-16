@@ -7,11 +7,69 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.MainContentController">
+<AnchorPane id="AnchorPane" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.MainContentController">
     <stylesheets>
         <URL value="@/styles/maincontent.css" />
     </stylesheets>
    <children>
-      <Label layoutX="559.0" layoutY="342.0" text="Main Content" />
+      <VBox prefHeight="700.0" prefWidth="1200.0">
+         <children>
+            <MenuBar prefHeight="28.0" prefWidth="1200.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="Archivo">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Cerrar" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Editar">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Editar" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Ver" />
+                  <Menu mnemonicParsing="false" text="Ayuda">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Acerca de nosotros" />
+                     </items>
+                  </Menu>
+              </menus>
+            </MenuBar>
+            <HBox prefHeight="100.0" prefWidth="1200.0">
+               <children>
+                  <Pane prefHeight="200.0" prefWidth="300.0" />
+                  <Pane prefHeight="200.0" prefWidth="900.0" />
+               </children>
+            </HBox>
+            <HBox prefHeight="572.0" prefWidth="1200.0">
+               <children>
+                  <Accordion prefHeight="572.0" prefWidth="200.0">
+                    <panes>
+                      <TitledPane animated="false" text="untitled 1">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled 2">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled 3">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+                  <HBox prefHeight="572.0" prefWidth="998.0">
+                     <children>
+                        <Pane prefHeight="200.0" prefWidth="250.0" />
+                        <Pane prefHeight="200.0" prefWidth="750.0" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

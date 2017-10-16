@@ -26,11 +26,14 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Layout.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         rootNode = fxmlLoader.load();
+        
     }
     
     @Override
     public void start(Stage stage) throws Exception {
         stage.setScene(new Scene(rootNode));
+        stage.setTitle("SIGAPUCP");
+        stage.setResizable(false);
         stage.show();
     }
 
