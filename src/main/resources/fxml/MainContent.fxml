@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.MainContentController">
+    <stylesheets>
+        <URL value="@/styles/maincontent.css" />
+    </stylesheets>
+   <children>
+      <Label layoutX="559.0" layoutY="342.0" text="Main Content" />
+   </children>
+</AnchorPane>
