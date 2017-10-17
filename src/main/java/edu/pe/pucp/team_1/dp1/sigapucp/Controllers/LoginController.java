@@ -35,7 +35,6 @@ public class LoginController implements Initializable{
         Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/MainContent.fxml"));
         Scene main_content_scene = new Scene(main_content_parent);
         Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        app_stage.hide();
         app_stage.setScene(main_content_scene);
         app_stage.show();
     }
