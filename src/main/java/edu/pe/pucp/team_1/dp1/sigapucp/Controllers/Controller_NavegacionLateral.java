@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NavegacionLateralController implements Initializable {
+public class Controller_NavegacionLateral implements Initializable {
 
     private Controller_ContenidoPrincipal ventanaPrincipal;
     
