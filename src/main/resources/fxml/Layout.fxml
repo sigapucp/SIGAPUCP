@@ -7,11 +7,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.LayoutController">
+<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller_Layout">
     <stylesheets>
         <URL value="@/styles/layout.css" />
     </stylesheets>
    <children>
-      <fx:include source="MainContent.fxml" />
+      <fx:include source="ContenidoPrincipal.fxml" />
    </children>
 </AnchorPane>
