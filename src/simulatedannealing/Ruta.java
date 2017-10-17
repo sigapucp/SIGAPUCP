@@ -5,6 +5,7 @@
  */
 package simulatedannealing;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,13 +22,14 @@ public class Ruta {
     private final int _rutaCodigo;
     private double _distancia;
     private double _peso;    
+    private double _capacidad;
     public ProductoNodo _nodoInicial;
     public ProductoNodo _nodoActual;
     public int _nrNodos;
     private Boolean _estadoSucio;    
    
     public Ruta(EstadoProblema estadoProblema,double [][] distancias, 
-            String nombre,int codigo,ProductoNodo nodoInicial)
+            String nombre,int codigo,ProductoNodo nodoInicial,double capacidad)
     {
         _rutaNombre = nombre;
         _rutaCodigo = codigo;
@@ -36,6 +38,7 @@ public class Ruta {
         _estadoProblema = estadoProblema;
         _distancias = distancias;
         _nrNodos = 0;
+        _capacidad = capacidad;
         
         _nodoInicial = nodoInicial;       
         
@@ -44,7 +47,7 @@ public class Ruta {
     
     public Ruta(EstadoProblema estadoProblema,double [][] distancias, 
             String nombre,int codigo,double distancia, double peso,
-            ProductoNodo nodoInicial,ProductoNodo nodoActual)
+            ProductoNodo nodoInicial,ProductoNodo nodoActual,double capacidad)
     {
         _rutaNombre = nombre;
         _rutaCodigo = codigo;
@@ -53,6 +56,7 @@ public class Ruta {
         _distancia = distancia;
         _peso = peso;
         _estadoSucio = true;
+        _capacidad = capacidad;
         
         try {
             SetNodoInicial(nodoInicial);
@@ -99,6 +103,8 @@ public class Ruta {
             _distancia -= _distancias[temp.GetLlave()][temp.sig.GetLlave()];     
             _estadoProblema.addAfter(temp, nodo);
         }                
+        
+        
         if(temp.sig!=null) _distancia += _distancias[temp.GetLlave()][temp.sig.GetLlave()];
         if(temp.ant!=null) _distancia += _distancias[temp.GetLlave()][temp.ant.GetLlave()];                        
     }
@@ -123,8 +129,7 @@ public class Ruta {
     }
     
     public int GetNrPuntos()
-    {        
-        if(!_estadoSucio) return _nrNodos;
+    {              
         ProductoNodo temp = _nodoInicial;
         int i = 0;
         try {
@@ -144,7 +149,7 @@ public class Ruta {
         return _nodoInicial;
     }
     
-    public void SetNodoInicial(ProductoNodo nodo) throws Exception
+    public void SetNodoInicial(ProductoNodo nodo)
     {
         try {
             if(nodo.EsDeposito()||_nodoActual == nodo)
@@ -180,19 +185,30 @@ public class Ruta {
     {       
         try {
              return new Ruta(nuevoEstado, _distancias, _rutaNombre, _rutaCodigo, _distancia,_peso,
-                nuevoEstado.get(depotAIndex.get(_nodoInicial)),nuevoEstado.get(depotAIndex.get(_nodoActual)));           
+                nuevoEstado.get(depotAIndex.get(_nodoInicial)),nuevoEstado.get(depotAIndex.get(_nodoActual)),_capacidad);           
         } catch (Exception e) {
             System.out.println("Error en Clonar Ruta");
         }
-        return null;
-       
+        return null;       
     }
     
-    public void RecalcularEstado()
+    public void ClonarListaTwoOpt(ArrayList<ProductoNodo> lista)
+    {
+        if(lista == null) return;
+        ProductoNodo temp = _nodoInicial.sig;        
+        while(temp!=null&&temp!=_nodoActual.sig)
+        {
+            lista.add(temp);
+            temp = temp.sig;
+        }        
+    }
+    
+    public Boolean RecalcularEstado()
     {                        
         ProductoNodo nodoAnt = _nodoInicial;
         ProductoNodo nodo = null;        
         _distancia = 0;
+        _peso = 0;
         try {
             do {            
             nodo = nodoAnt.sig;
@@ -201,9 +217,12 @@ public class Ruta {
             nodoAnt = nodo;                 
         } while (nodo != _nodoActual);   
         _estadoSucio = false;
+        if(_peso>_capacidad) return false;               
         } catch (Exception e) {
             System.out.println("Error en Recalcular Distancia");
-        }        
+            System.out.println(e.getMessage());
+        }   
+         return true;
     }
     
     public void ImprimirRuta()

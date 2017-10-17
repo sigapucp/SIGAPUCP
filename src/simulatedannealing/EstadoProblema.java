@@ -24,9 +24,7 @@ public class EstadoProblema {
         nodoInicial = null;
         nodoFinal = null;
         nrNodos = 0;
-    }
-    
-   
+    }       
     
     public ProductoNodo GetNodoInicial()
     {
@@ -297,45 +295,39 @@ public class EstadoProblema {
         ProductoNodo temp1 = nodo1;
         ProductoNodo temp2 = nodo2;
         ProductoNodo next1 = null;
-        ProductoNodo next2 = null;
-                
-        ArrayList<ProductoNodo> rutaNodoIz = new ArrayList<>();  
-        ArrayList<ProductoNodo> rutaNodoDer = new ArrayList<>();  
-        
-        try {            
+        ProductoNodo next2 = null;     
+        ArrayList<ProductoNodo> depots = new ArrayList<>();
+          
+        int nRuta = 0;
+        try {                       
             do {            
                 next1 = temp1.sig;
-                next2 = temp2.ant;                                             
-                Swap(temp1, temp2);
-                if(temp2.EsDeposito()) 
-                {
-                    rutaNodoIz.add(temp2);                    
-                }
-                if(temp1.EsDeposito() && temp1 != temp2) 
-                {
-                    rutaNodoDer.add(0,temp1);
-                }
-                
+                next2 = temp2.ant;         
+                if(temp1.EsDeposito()) depots.add(temp1);
+                if(temp2.EsDeposito()) depots.add(temp2);
+                Swap(temp1, temp2);              
                 if(temp2.sig == temp1) break;
                 temp1 = next1;
                 temp2 = next2;                  
             } while (temp1 != temp2);
-            
-            if(temp1 == temp2 && temp1.EsDeposito()) rutaNodoIz.add(temp1);
-
-            int nRuta = ruta1Ind;
-            Ruta rutaActual = rutas.get(ruta1Ind);            
-            Ruta sigRuta = null;            
-            for(ProductoNodo nodoDer : rutaNodoDer) rutaNodoIz.add(nodoDer);            
-            
-            for(ProductoNodo nodo : rutaNodoIz)
-            {
-                rutaActual.SetNodoActual(nodo);
-                sigRuta = rutas.get(nRuta+1);
-                if(sigRuta!=null) sigRuta.SetNodoInicial(nodo);                    
-                nRuta++;
-                rutaActual = rutas.get(nRuta);                                           
-            }                                                     
+              
+          
+            if(ruta1Ind == ruta2Ind) return;          
+            ProductoNodo temp = nodoInicial.sig;                                           
+            Ruta ruta = rutas.get(nRuta);
+            Ruta sigRuta = (++nRuta < rutas.size()) ? rutas.get(nRuta) : null;
+            while(temp!=nodoFinal)
+            {                                
+                if(temp.EsDeposito())
+                {
+                    ruta.SetNodoActual(temp);
+                    if(sigRuta!=null) sigRuta.SetNodoInicial(temp);
+                    
+                    ruta = sigRuta;
+                    sigRuta = (++nRuta < rutas.size()) ? rutas.get(nRuta) : null;
+                }         
+                temp = temp.sig;
+            }                            
         } catch (Exception e) {   
             System.out.println("Error en 2 opt");                       
         }        

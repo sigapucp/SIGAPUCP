@@ -99,7 +99,7 @@ public class SimulatedAnnealing {
                 }
             }                     
             pesos = new ArrayList<>();            
-            for(int i = 0;i<nProd;i++) pesos.add(0.0);
+            for(int i = 0;i<nProd;i++) pesos.add(15.0);
             
             AlgorithmSA simulatedA = new AlgorithmSA(nProd, distancias,pesos, 100);     
             pw.printf(nrArchivo + "," + new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)) + ",");
@@ -107,9 +107,10 @@ public class SimulatedAnnealing {
             pw.println(new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)));
                                    
             for (Ruta ruta : simulatedA.rutas)
-            {
-                ruta.RecalcularEstado();             
-                ruta.ImprimirCosto();              
+            {               
+                ruta.ImprimirCosto();  
+                ruta.ImprimirRuta();
+                System.out.println(ruta.GetPeso());
             }          
         }
         catch (FileNotFoundException e){

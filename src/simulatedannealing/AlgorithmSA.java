@@ -14,6 +14,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -27,6 +29,7 @@ public class AlgorithmSA {
     ArrayList<Ruta> rutas;       
     ArrayList<ProductoNodo> productos;
     HashMap<ArrayList<Ruta>, EstadoProblema> rutaAEstado;
+    double _capacidad = 0.0;
     double[][] _distancias;
         
     public AlgorithmSA(int nPedidos, double [][] distancias,List<Double> pesos, double capacidad)
@@ -38,8 +41,8 @@ public class AlgorithmSA {
     public void CorrerAlgoritmo()
     {           
         double reduccionTemperatura = 0.93;
-        double multiplicadorDeIteracion = 1.03;
-        double iteracionesPorParametro = 7;
+        double multiplicadorDeIteracion = 1.02;
+        double iteracionesPorParametro = 5;
         
         double temperatura = 5000;
         ArrayList<Ruta> estadoActual = new ArrayList<>();
@@ -56,8 +59,7 @@ public class AlgorithmSA {
             do {           
                 
                 ArrayList<Ruta> nuevoEstado = new ArrayList<>();
-                GenerarVecino(nuevoEstado,estadoActual);                
-                
+                GenerarVecino(nuevoEstado,estadoActual);                                            
                 double nuevoCosto = GetCosto(nuevoEstado);
                 double deltaCosto = nuevoCosto - costoActual;
                 if(deltaCosto < 0)
@@ -74,7 +76,7 @@ public class AlgorithmSA {
                     }
                 }else
                 {
-                    if( ThreadLocalRandom.current().nextInt(0, 1) < Math.exp(-deltaCosto/temperatura))
+                    if( ThreadLocalRandom.current().nextDouble(0, 1) < Math.exp(-deltaCosto/temperatura))
                     {
                         rutaAEstado.remove(estadoActual);
                         estadoActual = nuevoEstado;
@@ -89,50 +91,49 @@ public class AlgorithmSA {
     }
     
     private void GenerarVecino(ArrayList<Ruta> vecino,ArrayList<Ruta> rutas)
-    {        
+    {  
         ClonarEstado(rutas,vecino);       
-        rutaAEstado.put(vecino,vecino.get(0)._estadoProblema);  
-        
+        rutaAEstado.put(vecino,vecino.get(0)._estadoProblema);
+                
         EstadoProblema estado = rutaAEstado.get(vecino);
       
         int nrRutas = vecino.size();   
-        int nintentos = 7;
+        int nintentosRutas = 5;
         Boolean optMejora = false;
         
-        while(nintentos>0 && !optMejora)
+        while(nintentosRutas>0 && !optMejora)
         {          
             if(nrRutas > 1)
-            {
-                // Modificaciones solo en una ruta
-                optMejora = IntraRouteOpt(vecino,estado);            
+            {                
+                 // Modificaciones en varias rutas
+                optMejora = IntraRouteOpt(vecino,estado,-1);    
+                 //HighestAverage(vecino,estado);                                              
             }else
             {
-                // Modificaciones en varias rutas
-                optMejora = InterRouteOpt(vecino, estado);            
+               // Modificaciones solo en una ruta
+                optMejora = InterRouteOpt(vecino, estado);                           
             }                 
-            nintentos--;
+            nintentosRutas--;
         }
                 
-        HighestAverage(vecino,estado);                       
-        
+        //HighestAverage(vecino,estado);                               
         for(Ruta ruta : vecino)
-        {
-            if(ruta.EsEstadoSucio()) ruta.RecalcularEstado();
-        }                
+        {            
+            ruta.RecalcularEstado();            
+        }                          
     }
     
     public Boolean InterRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado)
     {
         int nrRutas = vecino.size();        
         int nrRuta = ThreadLocalRandom.current().nextInt(0, nrRutas);
-        int ruta1Size = vecino.get(nrRuta).GetNrPuntos();
-        
-        if(ruta1Size <= 3) return false;
         Ruta ruta = vecino.get(nrRuta);        
-        int ruta2Size = ruta.GetNrPuntos();
+        int rutaSize = ruta.GetNrPuntos();
         
-        int nrPunto1 = ThreadLocalRandom.current().nextInt(1, ruta1Size);
-        int nrPunto2 = ThreadLocalRandom.current().nextInt(nrPunto1, ruta2Size);
+        if(rutaSize <= 3) return false;
+                      
+        int nrPunto1 = ThreadLocalRandom.current().nextInt(1, rutaSize-1);
+        int nrPunto2 = ThreadLocalRandom.current().nextInt(nrPunto1, rutaSize-1);
         
         ProductoNodo nodo1 = ruta.GetPunto(nrPunto1);              
         ProductoNodo nodo2 = ruta.GetPunto(nrPunto2);      
@@ -151,11 +152,11 @@ public class AlgorithmSA {
         
         if(distanciaActual < distanciaNueva) return false;
                         
-        if(estado.GetNodoFinal() != nodo2) estado.TwoOpt(nodo1, nodo2, vecino, nrRuta, nrRuta);      
+        if(estado.GetNodoFinal() != nodo2) estado.TwoOpt(nodo1, nodo2, vecino, nrRuta, nrRuta);                
         return true;
     }
     
-    public Boolean IntraRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado)
+    public Boolean IntraRouteOpt(ArrayList<Ruta> vecino,EstadoProblema estado,int nrIntentos)
     {
         int nrRutas = vecino.size();  
         
@@ -163,35 +164,99 @@ public class AlgorithmSA {
         int nextRange = ThreadLocalRandom.current().nextInt(1,3);
         int nextRutaLimite = ((nrRuta1 + nextRange)> nrRutas) ? (nrRutas)  : (nrRuta1 + nextRange);
         int nrRuta2 = ThreadLocalRandom.current().nextInt(nrRuta1, nextRutaLimite);
+        
         if(nrRuta2 == nrRuta1)
         {           
-            return InterRouteOpt(vecino, estado);            
+            return InterRouteOpt(vecino, estado);                                     
         }                        
+                             
+        ArrayList<ProductoNodo> ruta1NodosPorProbar = new ArrayList<>();
+        ArrayList<ProductoNodo> ruta2NodosPorProbar = new ArrayList<>();
         
-        int ruta1Size = vecino.get(nrRuta1).GetNrPuntos();
-        int ruta2Size = vecino.get(nrRuta2).GetNrPuntos();                
-        
-        int nrPunto1 = ThreadLocalRandom.current().nextInt(1, ruta1Size);        
-        int nrPunto2 = ThreadLocalRandom.current().nextInt(1, ruta2Size);
-        
-        ProductoNodo nodo1 = vecino.get(nrRuta1).GetPunto(nrPunto1);              
-        ProductoNodo nodo2 = vecino.get(nrRuta2).GetPunto(nrPunto2);          
-        
-        ProductoNodo nodo1Ant = nodo1.ant;       
+        vecino.get(nrRuta1).ClonarListaTwoOpt(ruta1NodosPorProbar);
+        vecino.get(nrRuta2).ClonarListaTwoOpt(ruta2NodosPorProbar);
+                        
+        while(!ruta1NodosPorProbar.isEmpty()&&nrIntentos!=0)
+        {
+            int nrPunto1 = ThreadLocalRandom.current().nextInt(0, ruta1NodosPorProbar.size());        
+            int nrPunto2 = ThreadLocalRandom.current().nextInt(0, ruta2NodosPorProbar.size());
+            
+            ProductoNodo nodo1 = ruta1NodosPorProbar.get(nrPunto1);              
+            ProductoNodo nodo2 = ruta2NodosPorProbar.get(nrPunto2);          
+                       
+            if(ProbarConsistenciaPeso(nodo1,nodo2)&&ProbarMejoraDistancia(nodo1,nodo2)&&estado.GetNodoFinal() != nodo2)
+            {
+                estado.TwoOpt(nodo1, nodo2, vecino, nrRuta1, nrRuta2);                       
+                return true;
+            } 
+            ruta1NodosPorProbar.remove(nodo1);
+            ruta2NodosPorProbar.remove(nodo2);
+                       
+            if(ruta2NodosPorProbar.isEmpty()) 
+            { 
+                ruta2NodosPorProbar = new ArrayList<>();
+                vecino.get(nrRuta2).ClonarListaTwoOpt(ruta2NodosPorProbar);
+            }            
+            nrIntentos--;
+        }                                               
+        return false;
+    }
+    
+    private Boolean ProbarMejoraDistancia(ProductoNodo nodo1,ProductoNodo nodo2)
+    {
+         ProductoNodo nodo1Ant = nodo1.ant;                   
         ProductoNodo nodo2Sig = nodo2.sig;
-        
+
         double distanciaActual = 0.0;
         double distanciaNueva = 0.0;                                
-        
+
         if(nodo1.ant!=null) distanciaActual += _distancias[nodo1.GetLlave()][nodo1.ant.GetLlave()];        
         if(nodo2.sig!=null) distanciaActual += _distancias[nodo1.GetLlave()][nodo2.sig.GetLlave()];        
-                        
+
         if(nodo2Sig!=null) distanciaNueva += _distancias[nodo1.GetLlave()][nodo2Sig.GetLlave()];        
         if(nodo1Ant!=null) distanciaNueva += _distancias[nodo2.GetLlave()][nodo1Ant.GetLlave()];        
-        
+
         if(distanciaActual < distanciaNueva) return false;
-                
-        if(estado.GetNodoFinal() != nodo2) estado.TwoOpt(nodo1, nodo2, vecino, nrRuta1, nrRuta2);                    
+        return true;        
+    }
+    
+    private Boolean ProbarConsistenciaPeso(ProductoNodo nodo1,ProductoNodo nodo2)
+    {
+        double pesoRuta1 = 0;
+        double pesoRuta2 = 0;
+        
+        ProductoNodo ruta1TempIzquierda = nodo1.ant;        
+        ProductoNodo ruta1TempDerecha = nodo2;
+        
+        ProductoNodo ruta2TempIzquierda = nodo1;        
+        ProductoNodo ruta2TempDerecha = nodo2.sig;
+        
+        while(ruta1TempIzquierda!=null&&!ruta1TempIzquierda.EsDeposito())
+        {
+            pesoRuta1 += ruta1TempIzquierda.GetPeso();
+            ruta1TempIzquierda = ruta1TempIzquierda.ant;
+        }
+        
+        while(ruta1TempDerecha!=null&&!ruta1TempDerecha.EsDeposito())
+        {
+            pesoRuta1 += ruta1TempDerecha.GetPeso();
+            ruta1TempDerecha = ruta1TempDerecha.ant;
+        }
+        
+        if(pesoRuta1 > _capacidad) return false;
+        
+        while(ruta2TempIzquierda!=null&&!ruta2TempIzquierda.EsDeposito())
+        {
+            pesoRuta2 += ruta2TempIzquierda.GetPeso();
+            ruta2TempIzquierda = ruta2TempIzquierda.sig;
+        }
+        
+        while(ruta2TempDerecha!=null&&!ruta2TempDerecha.EsDeposito())
+        {
+            pesoRuta2 += ruta2TempDerecha.GetPeso();
+            ruta2TempDerecha = ruta2TempDerecha.sig;
+        }
+        if(pesoRuta2 > _capacidad) return false;
         return true;
     }
     
@@ -222,8 +287,7 @@ public class AlgorithmSA {
           int nrProductos = productos.size();
           int nrInsetar = (nrProductos*0.2>5) ? 5 : (int)((int)(nrProductos*0.2));
           
-          //HEY
-          
+          //HEY          
           for(int i = 0;i<nrInsetar;i++)
           {
               int nrRuta = ThreadLocalRandom.current().nextInt(0,nrRutas);
@@ -231,8 +295,7 @@ public class AlgorithmSA {
               int nrInsertar = ThreadLocalRandom.current().nextInt(0,ruta.GetNrPuntos());
               SimpleEntry<ProductoNodo,Ruta> entrada = productoNodos.get(i);
               ProductoNodo nodo = entrada.getKey();              
-              entrada.getValue().RemoverNodo(nodo);              
-              estado.deleteNode(nodo);
+              entrada.getValue().RemoverNodo(nodo);                            
               ruta.AgregarEn(nodo, nrInsertar);
           }          
     }
@@ -249,8 +312,7 @@ public class AlgorithmSA {
     
     private void ClonarEstado(ArrayList<Ruta> rutas,ArrayList<Ruta> nuevaRutas)
     {
-        EstadoProblema nuevoEstado = new EstadoProblema();
-        EstadoProblema a = rutaAEstado.get(rutas);
+        EstadoProblema nuevoEstado = new EstadoProblema();       
         HashMap<ProductoNodo,Integer> depotAIndex = new HashMap<>();
         rutaAEstado.get(rutas).clone(nuevoEstado,depotAIndex);                           
         for(Ruta ruta : rutas)
@@ -275,6 +337,7 @@ public class AlgorithmSA {
     private void ConfiguracionInicial(double [][] distancias,double capacidad)
     {
         int nRutas = 0;
+        _capacidad = capacidad;
         Ruta nuevaRuta = null;
         do {     
             ProductoNodo nuevaPuerta = new ProductoNodo(0,"Depot" , 0.0, true);
@@ -286,7 +349,7 @@ public class AlgorithmSA {
                 estadoProblema.addAtEnd(nuevaPuerta);                
             }
                         
-            nuevaRuta = new Ruta(estadoProblema,distancias,"Ruta" + String.valueOf(nRutas), nRutas, nuevaPuerta);            
+            nuevaRuta = new Ruta(estadoProblema,distancias,"Ruta" + String.valueOf(nRutas), nRutas, nuevaPuerta,capacidad);            
             rutas.add(nuevaRuta);            
                      
             if(estadoProblema.GetNodoFinal().EsDeposito())
@@ -331,12 +394,9 @@ public class AlgorithmSA {
         ProductoNodo nuevaPuerta = new ProductoNodo(0,"Depot" , 0.0, true);      
         nuevaRuta.AgregarPunto(nuevaPuerta);      
         rutaAEstado.put(rutas, estadoProblema);  
-    }      
-    
-    
-    
-    
+    }                
 }
+
 
 
 
