@@ -6,14 +6,15 @@ import javafx.fxml.Initializable;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LayoutController implements Initializable {
+public class Controller_Usuario implements Initializable {
 
-    /**
-     * Initializes the controller class.
-     */
+    public void randomAction() {
+        
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }
     
 }
