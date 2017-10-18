@@ -37,6 +37,9 @@ public class Controller_ContenidoPrincipal implements Initializable {
         if (contenedor != null) {
             try {
                 AnchorPane contenido = FXMLLoader.load(getClass().getResource(path));
+                System.out.println(contenido);
+                System.out.println(contenedor);
+                System.out.println(contenedor.getChildren());
                 contenedor.getChildren().setAll(contenido);
             } catch (IOException ex) {
                 Logger.getLogger(Controller_ContenidoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
