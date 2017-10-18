@@ -286,32 +286,27 @@ public class EstadoProblema {
         }
     }         
      
-    public void TwoOpt(ProductoNodo nodo1, ProductoNodo nodo2, ArrayList<Ruta> rutas,int ruta1Ind,int ruta2Ind) {
-        
+    public void TwoOpt(ProductoNodo nodo1, ProductoNodo nodo2, ArrayList<Ruta> rutas,int ruta1Ind,int ruta2Ind) throws Exception
+    {             
         if (nodo1 == nodo2) {
             return;
-        }
-                                   
+        }                                   
         ProductoNodo temp1 = nodo1;
         ProductoNodo temp2 = nodo2;
-        ProductoNodo next1 = null;
-        ProductoNodo next2 = null;     
-        ArrayList<ProductoNodo> depots = new ArrayList<>();
+        ProductoNodo next1;
+        ProductoNodo next2;             
           
         int nRuta = 0;
         try {                       
             do {            
                 next1 = temp1.sig;
-                next2 = temp2.ant;         
-                if(temp1.EsDeposito()) depots.add(temp1);
-                if(temp2.EsDeposito()) depots.add(temp2);
+                next2 = temp2.ant;                         
                 Swap(temp1, temp2);              
                 if(temp2.sig == temp1) break;
                 temp1 = next1;
                 temp2 = next2;                  
             } while (temp1 != temp2);
-              
-          
+                        
             if(ruta1Ind == ruta2Ind) return;          
             ProductoNodo temp = nodoInicial.sig;                                           
             Ruta ruta = rutas.get(nRuta);
@@ -320,16 +315,22 @@ public class EstadoProblema {
             {                                
                 if(temp.EsDeposito())
                 {
-                    ruta.SetNodoActual(temp);
-                    if(sigRuta!=null) sigRuta.SetNodoInicial(temp);
+                    if(ruta!= null)
+                    {                       
+                         ruta.SetNodoActual(temp);
+                    }else
+                    {
+                        throw new Exception();                        
+                    }
                     
+                    if(sigRuta != null) sigRuta.SetNodoInicial(temp);                    
                     ruta = sigRuta;
                     sigRuta = (++nRuta < rutas.size()) ? rutas.get(nRuta) : null;
                 }         
                 temp = temp.sig;
             }                            
         } catch (Exception e) {   
-            System.out.println("Error en 2 opt");                       
+            throw new Exception("TwoOpt: " + e.getMessage());
         }        
     }
     
@@ -387,24 +388,27 @@ public class EstadoProblema {
     }
     
     
-    public void clone(EstadoProblema newList,HashMap<ProductoNodo,Integer> depotAIndex)
+    public void clone(EstadoProblema newList,HashMap<ProductoNodo,Integer> depotAIndex) throws Exception
     {                
         ProductoNodo ant = null;
         ProductoNodo temp = nodoInicial;
         ProductoNodo tempNew = new ProductoNodo(nodoInicial);                
-        
         int i = 0;
-        while(temp != null)
-        {                           
-            if(ant!= null) ant.sig = tempNew;
-            tempNew.ant = ant;
-            newList.addAtEnd(tempNew);
-            if(temp.EsDeposito()) depotAIndex.put(temp, i);
-            i++;
-            ant = tempNew;
-            temp = temp.sig;
-            if(temp != null) tempNew = new ProductoNodo(temp);            
-        }        
+        try {
+            while(temp != null)
+            {                           
+                if(ant!= null) ant.sig = tempNew;
+                tempNew.ant = ant;
+                newList.addAtEnd(tempNew);
+                if(temp.EsDeposito()) depotAIndex.put(temp, i);
+                i++;
+                ant = tempNew;
+                temp = temp.sig;
+                if(temp != null) tempNew = new ProductoNodo(temp);            
+            }                    
+        } catch (Exception e) {
+            throw new Exception("ClonarEstadoProblema: " + e.getMessage());
+        }           
     }
     
     public void ImprimirEstado(EstadoProblema estado)

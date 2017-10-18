@@ -76,8 +76,7 @@ public class SimulatedAnnealing {
        }
     }
       
-      static void leer (String archivo,int nrArchivo){
-        String resultados = "";
+      static void leer (String archivo,int nrArchivo){        
         try{
             buffer = new BufferedReader(new FileReader(archivo));
             //lectura de cabecera del archivo
@@ -88,6 +87,7 @@ public class SimulatedAnnealing {
                 String[] producto_cadena = linea.split(delimitador_division);
                 productos.add(new Point(Integer.valueOf(producto_cadena[1]),Integer.valueOf(producto_cadena[2])));                                                                
             }            
+            
             distancias = new double[nProd+1][nProd+1];
             for(int i = 0;i<nProd+1;i++)
             {
@@ -98,20 +98,27 @@ public class SimulatedAnnealing {
                     distancias[j][i] = distancia;                    
                 }
             }                     
-            pesos = new ArrayList<>();            
-            for(int i = 0;i<nProd;i++) pesos.add(15.0);
             
+            pesos = new ArrayList<>();            
+            for(int i = 0;i<nProd;i++) pesos.add(15.0);   
+            
+            try {
             AlgorithmSA simulatedA = new AlgorithmSA(nProd, distancias,pesos, 100);     
-            pw.printf(nrArchivo + "," + new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)) + ",");
-            simulatedA.CorrerAlgoritmo();
-            pw.println(new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)));
-                                   
+            pw.printf(nrArchivo + "," + new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)) + ",");                       
+                simulatedA.CorrerAlgoritmo();
+          
+            pw.println(new DecimalFormat("#.##").format(simulatedA.GetCosto(simulatedA.rutas)));                                   
             for (Ruta ruta : simulatedA.rutas)
             {               
                 ruta.ImprimirCosto();  
-                ruta.ImprimirRuta();
-                System.out.println(ruta.GetPeso());
+                ruta.ImprimirRuta();            
             }          
+            
+            } catch (Exception ex) {
+              Logger.getLogger(SimulatedAnnealing.class.getName()).log(Level.SEVERE, null, ex);
+              System.out.println("Error en corrida de algoritmo - Error: " + ex.getMessage());
+              return;
+            }
         }
         catch (FileNotFoundException e){
             e.printStackTrace();
