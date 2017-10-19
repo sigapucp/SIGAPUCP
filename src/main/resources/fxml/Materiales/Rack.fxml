@@ -87,10 +87,10 @@
                               </Label>
                            </children>
                         </Pane>
-                        <Label layoutX="88.0" layoutY="113.0" text="Ingreso" />
+                        <Label layoutX="88.0" layoutY="135.0" text="Ingreso" />
                         <Label layoutX="76.0" layoutY="227.0" text="Movimiento" />
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="88.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="88.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="88.0" layoutY="83.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="87.0" layoutY="167.0" pickOnBounds="true" preserveRatio="true" />
                         <Line endX="100.0" layoutX="108.0" layoutY="61.0" startX="-100.0" />
                      </children>
                   </Pane>
