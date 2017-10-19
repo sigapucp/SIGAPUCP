@@ -12,7 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Controller_ContenidoPrincipal implements Initializable {
+public class Controller_ContenidoPrincipal implements Initializable, EventosPersonalizados {
 
     @FXML private AnchorPane contenedor_busqueda;
     @FXML private AnchorPane contenedor_detalle;
@@ -31,25 +31,23 @@ public class Controller_ContenidoPrincipal implements Initializable {
         }
         return null;
     }
-    
-    public void renderizarPartial(String path, String tipo) {
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        // TODO
+    }    
+
+    @Override
+    public void renderizarParital(String path, String tipo) {
         AnchorPane contenedor = seleccionarContenedor(tipo);
         if (contenedor != null) {
             try {
                 AnchorPane contenido = FXMLLoader.load(getClass().getResource(path));
-                System.out.println(contenido);
-                System.out.println(contenedor);
-                System.out.println(contenedor.getChildren());
                 contenedor.getChildren().setAll(contenido);
             } catch (IOException ex) {
                 Logger.getLogger(Controller_ContenidoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }   
         }
     }
-    
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
     
 }

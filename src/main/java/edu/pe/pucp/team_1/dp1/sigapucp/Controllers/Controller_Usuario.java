@@ -1,6 +1,5 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
-import edu.pe.pucp.team_1.dp1.botonimagen.BotonImagen;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -21,11 +20,7 @@ public class Controller_Usuario implements Initializable {
     
     @FXML
     private void randomAction(ActionEvent event) {
-        BotonImagen boton = (BotonImagen) event.getSource();
-        String controller = boton.getTargetController();
-        String path_contenido_busqueda = String.format("/fxml/%s/%sFormulario.fxml", controller, controller);
-
-        ventanaPrincipal.renderizarPartial(path_contenido_busqueda, "detalle");
+        
     }
     
     @Override

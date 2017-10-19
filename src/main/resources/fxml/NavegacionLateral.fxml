@@ -50,8 +50,8 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="71.0" layoutY="31.0" mnemonicParsing="false" text="Clientes" />
-                        <Button layoutX="63.0" layoutY="140.0" mnemonicParsing="false" text="Proformas" />
+                        <Button layoutX="75.0" layoutY="31.0" mnemonicParsing="false" text="Cliente" />
+                        <Button layoutX="68.0" layoutY="139.0" mnemonicParsing="false" text="Proforma" />
                         <Button layoutX="75.0" layoutY="257.0" mnemonicParsing="false" text="Pedido" />
                         <Button layoutX="25.0" layoutY="348.0" mnemonicParsing="false" text="Documentos de Ventas" />
                      </children>
@@ -63,7 +63,7 @@
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Button layoutX="86.0" layoutY="127.0" mnemonicParsing="false" text="Rol" />
-                        <BotonImagen fx:id="boton_modulo_usuario" layoutX="72.0" layoutY="69.0" onAction="#abrirBusquedaModulo" prefHeight="27.0" text="Usuario" targetController="Usuario" />
+                        <Button fx:id="boton_modulo_usuario" layoutX="72.0" layoutY="64.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Usuario" />
                      </children>
                   </AnchorPane>
                </content>
