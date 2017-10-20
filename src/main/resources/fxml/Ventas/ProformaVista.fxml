@@ -20,7 +20,7 @@
    <children>
       <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="516.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
@@ -72,7 +72,7 @@
       </AnchorPane>
       <AnchorPane layoutX="283.0" layoutY="33.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="523.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="133.0" layoutY="10.0" text="Nueva Proforma">
@@ -168,7 +168,7 @@
                         </TextField>
                      </children>
                   </AnchorPane>
-                  <TitledPane animated="false" layoutX="521.0" layoutY="85.0" prefHeight="311.0" prefWidth="218.0" text="Acciones" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="526.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="85.0">
+                  <TitledPane animated="false" collapsible="false" layoutX="521.0" layoutY="85.0" prefHeight="311.0" prefWidth="218.0" text="Acciones" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="526.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="85.0">
                      <content>
                         <AnchorPane prefHeight="291.0" prefWidth="222.0">
                            <children>
