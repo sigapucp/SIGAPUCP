@@ -103,9 +103,9 @@ public class AlgorithmSA {
         {          
             if(nrRutas > 1)
             {                
-                 // Modificaciones en varias rutas
+                // Modificaciones en varias rutas
                 optMejora = IntraRouteOpt(vecino,estado,-1);    
-                 //HighestAverage(vecino,estado);                                              
+                //HighestAverage(vecino,estado);                                              
             }else
             {
                // Modificaciones solo en una ruta

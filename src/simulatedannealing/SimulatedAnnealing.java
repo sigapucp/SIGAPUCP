@@ -100,7 +100,7 @@ public class SimulatedAnnealing {
             }                     
             
             pesos = new ArrayList<>();            
-            for(int i = 0;i<nProd;i++) pesos.add(15.0);   
+            for(int i = 0;i<nProd;i++) pesos.add(10.0);   
             
             try {
             AlgorithmSA simulatedA = new AlgorithmSA(nProd, distancias,pesos, 100);     
