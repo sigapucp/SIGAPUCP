@@ -192,7 +192,7 @@
                   </AnchorPane>
                   <AnchorPane layoutX="33.0" layoutY="44.0" prefHeight="277.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0">
                      <children>
-                        <TableView layoutX="14.0" layoutY="-7.0" prefHeight="201.0" prefWidth="538.0">
+                        <TableView layoutX="14.0" layoutY="2.0" prefHeight="192.0" prefWidth="538.0">
                           <columns>
                             <TableColumn prefWidth="60.333343505859375" text="Cod." />
                             <TableColumn prefWidth="279.33331298828125" text="Descripción" />
