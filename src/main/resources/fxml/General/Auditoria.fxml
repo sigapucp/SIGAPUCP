@@ -7,8 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AuditoriaController">
    <children>
       <Accordion layoutX="73.0" layoutY="95.0" />
       <Label layoutX="22.0" layoutY="14.0" text="Fecha:">
@@ -16,8 +15,8 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <DatePicker layoutX="73.0" layoutY="12.0" />
-      <DatePicker layoutX="280.0" layoutY="12.0" />
+      <DatePicker fx:id="AuditoriaFechaUno" layoutX="73.0" layoutY="12.0" />
+      <DatePicker fx:id="AuditoriaFechaDos" disable="true" layoutX="280.0" layoutY="12.0" />
       <Label layoutX="261.0" layoutY="14.0" text="y">
          <font>
             <Font size="15.0" />
@@ -28,21 +27,21 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <CheckBox layoutX="28.0" layoutY="50.0" mnemonicParsing="false" text="Entre" />
-      <TextField layoutX="567.0" layoutY="12.0" />
-      <TextField layoutX="766.0" layoutY="55.0" prefHeight="66.0" prefWidth="212.0" />
+      <CheckBox fx:id="EntreFecha" layoutX="28.0" layoutY="50.0" mnemonicParsing="false" text="Entre" />
+      <TextField fx:id="EmpleadoAuditoria" layoutX="567.0" layoutY="12.0" />
+      <TextField fx:id="DescripcionAuditoria" layoutX="766.0" layoutY="55.0" prefHeight="66.0" prefWidth="212.0" />
       <Label layoutX="832.0" layoutY="14.0" text="Descripción:">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <CheckBox layoutX="22.0" layoutY="112.0" mnemonicParsing="false" text="Entre" />
-      <Label layoutX="25.0" layoutY="76.0" text="Hora:">
+      <CheckBox fx:id="EntreHora" layoutX="28.0" layoutY="113.0" mnemonicParsing="false" text="Entre" />
+      <Label layoutX="25.0" layoutY="78.0" text="Hora:">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Button layoutX="17.0" layoutY="136.0" mnemonicParsing="false" text="Buscar" />
+      <Button layoutX="28.0" layoutY="148.0" mnemonicParsing="false" text="Buscar" />
       <TableView layoutX="53.0" layoutY="194.0" prefHeight="344.0" prefWidth="894.0">
         <columns>
           <TableColumn prefWidth="75.0" text="Hora" />
@@ -65,12 +64,12 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <TextField layoutX="73.0" layoutY="74.0" prefHeight="25.0" prefWidth="48.0" />
+      <TextField fx:id="HoraUno" layoutX="73.0" layoutY="74.0" prefHeight="25.0" prefWidth="48.0" />
       <Label layoutX="132.0" layoutY="76.0" text="y">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <TextField layoutX="149.0" layoutY="74.0" prefHeight="25.0" prefWidth="48.0" />
+      <TextField fx:id="HoraDos" disable="true" layoutX="149.0" layoutY="74.0" prefHeight="25.0" prefWidth="48.0" />
    </children>
 </AnchorPane>
