@@ -6,14 +6,14 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="250.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="50.0" prefWidth="243.0">
          <children>
@@ -41,7 +41,7 @@
             </Pane>
             <AnchorPane layoutY="50.0" prefHeight="521.0" prefWidth="750.0">
                <children>
-                  <AnchorPane layoutX="17.0" layoutY="27.0" prefHeight="202.0" prefWidth="716.0">
+                  <AnchorPane layoutX="17.0" layoutY="27.0" prefHeight="178.0" prefWidth="716.0">
                      <children>
                         <Label layoutX="25.0" layoutY="108.0" text="Almacén" />
                         <Label layoutX="25.0" layoutY="73.0" text="Código" />
@@ -62,38 +62,32 @@
                         <TextField layoutX="479.0" layoutY="141.0" />
                      </children>
                   </AnchorPane>
-                  <Label layoutX="14.0" layoutY="237.0" text="Productos">
+                  <Label layoutX="49.0" layoutY="200.0" text="Productos">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TableView layoutX="14.0" layoutY="270.0" prefHeight="228.0" prefWidth="502.0">
+                  <TableView layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="472.0">
                     <columns>
-                      <TableColumn prefWidth="57.0" text="Código" />
-                        <TableColumn prefWidth="98.0" text="Nombre" />
-                        <TableColumn prefWidth="133.0" text="Fecha de adquisición" />
+                      <TableColumn prefWidth="50.0" text="Código" />
+                        <TableColumn prefWidth="89.0" text="Nombre" />
+                        <TableColumn prefWidth="140.0" text="Fecha de adquisición" />
                         <TableColumn prefWidth="128.0" text="Fecha de vencimiento" />
-                        <TableColumn prefWidth="85.0" text="Cantidad" />
+                        <TableColumn prefWidth="65.0" text="Cantidad" />
                     </columns>
                   </TableView>
-                  <Pane layoutX="515.0" layoutY="233.0" prefHeight="287.0" prefWidth="215.0">
-                     <children>
-                        <Pane layoutX="-1.0" layoutY="1.0" prefHeight="50.0" prefWidth="216.0">
+                  <TitledPane animated="false" collapsible="false" layoutX="530.0" layoutY="229.0" prefHeight="273.0" prefWidth="177.0" text="Acciones">
+                     <content>
+                        <AnchorPane prefHeight="235.0" prefWidth="175.0">
                            <children>
-                              <Label layoutX="69.0" layoutY="10.0" text="Acciones">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
+                              <Button layoutX="68.0" layoutY="41.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="E" AnchorPane.topAnchor="41.0" />
+                              <Button layoutX="68.0" layoutY="122.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Label layoutX="72.0" layoutY="93.0" text="Ingresar" />
+                              <Label layoutX="66.0" layoutY="164.0" text="Movimiento" />
                            </children>
-                        </Pane>
-                        <Label layoutX="88.0" layoutY="135.0" text="Ingreso" />
-                        <Label layoutX="76.0" layoutY="227.0" text="Movimiento" />
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="88.0" layoutY="83.0" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="87.0" layoutY="167.0" pickOnBounds="true" preserveRatio="true" />
-                        <Line endX="100.0" layoutX="108.0" layoutY="61.0" startX="-100.0" />
-                     </children>
-                  </Pane>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
                </children>
             </AnchorPane>
          </children>
