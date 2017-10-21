@@ -1,5 +1,6 @@
 package edu.pe.pucp.team_1.dp1.sigapucp;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Humo;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +27,7 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         rootNode = fxmlLoader.load();
-        
+        Humo.prueba_humo();
     }
     
     @Override
