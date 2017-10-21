@@ -49,17 +49,12 @@
             </HBox>
             <HBox prefHeight="572.0" prefWidth="1200.0">
                <children>
-                  <AnchorPane prefHeight="572.0" prefWidth="200.0">
+                  <AnchorPane fx:id="contenedor_modulos_navegacion" prefHeight="572.0" prefWidth="200.0">
                      <children>
                         <fx:include source="NavegacionLateral.fxml" />
                      </children>
                   </AnchorPane>
-                  <HBox prefHeight="572.0">
-                     <children>
-                        <AnchorPane fx:id="contenedor_busqueda" prefHeight="200.0" prefWidth="250.0" />
-                        <AnchorPane fx:id="contenedor_detalle" prefHeight="200.0" prefWidth="750.0" />
-                     </children>
-                  </HBox>
+                  <AnchorPane fx:id="contenedor_modulos_contenido" prefHeight="572.0" prefWidth="1000.0" />
                </children>
             </HBox>
          </children>
