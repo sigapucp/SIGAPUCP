@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Controller_Layout implements Initializable { 
+public class LayoutController implements Initializable { 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

@@ -8,11 +8,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller_NavegacionLateral">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.NavegacionLateralController">
    <children>
-      <Accordion prefHeight="572.0" prefWidth="200.0">
+      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <panes>
-            <TitledPane fx:id="tab_general" animated="false" text="General">
+            <TitledPane fx:id="tab_general" text="General">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -23,7 +23,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" text="Materiales">
+            <TitledPane text="Materiales">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -37,7 +37,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" text="Simulacion">
+            <TitledPane text="Simulacion">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -46,7 +46,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" layoutX="10.0" layoutY="64.0" text="Ventas">
+            <TitledPane layoutX="10.0" layoutY="64.0" text="Ventas">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -58,7 +58,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" layoutX="10.0" layoutY="91.0" text="Recursos Humanos">
+            <TitledPane layoutX="10.0" layoutY="91.0" text="Recursos Humanos">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

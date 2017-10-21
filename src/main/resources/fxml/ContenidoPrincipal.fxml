@@ -10,7 +10,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller_ContenidoPrincipal">
+<AnchorPane id="AnchorPane" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.ContenidoPrincipalController">
     <stylesheets>
         <URL value="@/styles/maincontent.css" />
     </stylesheets>
@@ -51,7 +51,7 @@
                <children>
                   <AnchorPane fx:id="contenedor_modulos_navegacion" prefHeight="572.0" prefWidth="200.0">
                      <children>
-                        <fx:include source="NavegacionLateral.fxml" />
+                        <fx:include fx:id="NavegacionLateral" source="NavegacionLateral.fxml"/>
                      </children>
                   </AnchorPane>
                   <AnchorPane fx:id="contenedor_modulos_contenido" prefHeight="572.0" prefWidth="1000.0" />
