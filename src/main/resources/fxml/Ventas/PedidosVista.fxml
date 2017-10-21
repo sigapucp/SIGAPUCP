@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.00" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" prefHeight="572.00" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosVistaController">
    <children>
       <AnchorPane layoutX="43.0" layoutY="43.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -141,8 +141,8 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <RadioButton layoutX="108.0" layoutY="44.0" mnemonicParsing="false" text="Boleta" />
-                  <RadioButton layoutX="188.0" layoutY="44.0" mnemonicParsing="false" text="Factura" />
+                  <RadioButton fx:id="tipoDocBoleta" layoutX="108.0" layoutY="44.0" mnemonicParsing="false" text="Boleta" />
+                  <RadioButton fx:id="tipoDocFactura" layoutX="188.0" layoutY="44.0" mnemonicParsing="false" text="Factura" />
                   <TextField layoutX="99.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" />
                   <TextField editable="false" layoutX="370.0" layoutY="12.0" prefHeight="25.0" prefWidth="160.0" />
                   <TextField editable="false" layoutX="607.0" layoutY="12.0" prefHeight="25.0" prefWidth="120.0" />
@@ -151,20 +151,20 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="370.0" layoutY="40.0" prefHeight="25.0" prefWidth="160.0" />
+                  <TextField fx:id="ruc" layoutX="370.0" layoutY="40.0" prefHeight="25.0" prefWidth="160.0" />
                   <Label layoutX="549.0" layoutY="42.0" text="D.N.I.:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="607.0" layoutY="40.0" prefHeight="25.0" prefWidth="120.0" />
+                  <TextField fx:id="dni" layoutX="607.0" layoutY="40.0" prefHeight="25.0" prefWidth="120.0" />
                   <DatePicker layoutX="143.0" layoutY="68.0" prefHeight="25.0" prefWidth="135.0" />
                   <DatePicker layoutX="421.0" layoutY="68.0" prefHeight="25.0" prefWidth="135.0" />
                   <TextField editable="false" layoutX="99.0" layoutY="96.0" prefHeight="25.0" prefWidth="120.0" />
                   <TextField editable="false" layoutX="421.0" layoutY="96.0" prefHeight="25.0" prefWidth="120.0" />
-                  <TextField layoutX="123.0" layoutY="124.0" prefHeight="25.0" prefWidth="604.0" />
-                  <TextField layoutX="123.0" layoutY="152.0" prefHeight="25.0" prefWidth="604.0" />
-                  <CheckBox layoutX="14.0" layoutY="185.0" mnemonicParsing="false" text="Marque si ambas direcciones son la misma" />
+                  <TextField fx:id="envioDir" layoutX="123.0" layoutY="124.0" prefHeight="25.0" prefWidth="604.0" />
+                  <TextField fx:id="factDir" layoutX="123.0" layoutY="152.0" prefHeight="25.0" prefWidth="604.0" />
+                  <CheckBox fx:id="mismaDir" layoutX="14.0" layoutY="185.0" mnemonicParsing="false" text="Marque si ambas direcciones son la misma" />
                </children>
             </AnchorPane>
             <AnchorPane layoutY="256.0" maxHeight="317.0" maxWidth="750.0" prefHeight="317.0" prefWidth="750.0">
@@ -176,7 +176,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Spinner layoutX="68.0" layoutY="3.0" prefHeight="25.0" prefWidth="58.0" />
+                        <Spinner fx:id="cantProd" layoutX="68.0" layoutY="3.0" prefHeight="25.0" prefWidth="58.0" />
                         <Label layoutX="208.0" layoutY="6.0" text="Producto:">
                            <font>
                               <Font size="14.0" />

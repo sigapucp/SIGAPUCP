@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProformaVistaController">
    <children>
       <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -33,15 +33,15 @@
             </AnchorPane>
             <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="192.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
-                  <TextField layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
-                  <Button layoutX="176.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+                  <TextField fx:id="clienteBusq" layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
+                  <Button fx:id="buscarPedido" layoutX="176.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
                   <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Pedido:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox layoutX="130.0" layoutY="104.0" prefHeight="25.0" prefWidth="106.0" />
-                  <TextField layoutX="130.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
+                  <ComboBox fx:id="estadoBusq" layoutX="130.0" layoutY="104.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField fx:id="pedidoBusq" layoutX="130.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
                   <Label layoutX="12.0" layoutY="67.0" prefHeight="21.0" prefWidth="114.0" text="Cliente:">
                      <font>
                         <Font size="14.0" />
@@ -56,13 +56,13 @@
             </AnchorPane>
             <AnchorPane layoutX="29.0" layoutY="342.0" prefHeight="330.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <TableView layoutX="12.0" layoutY="19.0" prefHeight="202.0" prefWidth="225.0">
+                  <TableView fx:id="tablaPedidos" layoutX="12.0" layoutY="19.0" prefHeight="202.0" prefWidth="225.0">
                      <columns>
                         <TableColumn prefWidth="65.0" text="Pedido" />
                         <TableColumn prefWidth="182.0" text="Cliente" />
                      </columns>
                   </TableView>
-                  <Button layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                  <Button fx:id="visualizarPedido" layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
                </children>
             </AnchorPane>
          </children>
@@ -85,8 +85,8 @@
             </AnchorPane>
             <AnchorPane layoutX="45.0" layoutY="83.0" prefHeight="120.0" prefWidth="750.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
-                  <DatePicker layoutX="70.0" layoutY="94.0" />
-                  <TextField layoutX="70.0" layoutY="16.0" prefHeight="25.0" prefWidth="248.0" />
+                  <DatePicker fx:id="fechaProfSh" layoutX="70.0" layoutY="94.0" />
+                  <TextField fx:id="clienteSh" layoutX="70.0" layoutY="16.0" prefHeight="25.0" prefWidth="248.0" />
                   <Label layoutX="12.0" layoutY="94.0" text="Fecha:">
                      <font>
                         <Font size="14.0" />
@@ -102,27 +102,27 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <RadioButton layoutX="390.0" layoutY="100.0" mnemonicParsing="false" text="Soles (S/.)" />
-                  <RadioButton layoutX="478.0" layoutY="100.0" mnemonicParsing="false" text="Dólares ($)" />
+                  <RadioButton fx:id="solesProf" layoutX="390.0" layoutY="100.0" mnemonicParsing="false" text="Soles (S/.)" />
+                  <RadioButton fx:id="dolProf" layoutX="478.0" layoutY="100.0" mnemonicParsing="false" text="Dólares ($)" />
                   <Label layoutX="336.0" layoutY="18.0" prefHeight="21.0" prefWidth="114.0" text="Teléfono:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="407.0" layoutY="17.0" prefHeight="25.0" prefWidth="151.0" />
+                  <TextField fx:id="telfSh" layoutX="407.0" layoutY="17.0" prefHeight="25.0" prefWidth="151.0" />
                   <Label layoutX="12.0" layoutY="55.0" prefHeight="21.0" prefWidth="114.0" text="E-mail:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="70.0" layoutY="55.0" prefHeight="25.0" prefWidth="248.0" />
+                  <TextField fx:id="correoSh" layoutX="70.0" layoutY="55.0" prefHeight="25.0" prefWidth="248.0" />
                </children>
             </AnchorPane>
             <AnchorPane layoutX="33.0" layoutY="339.0" prefHeight="402.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
                   <AnchorPane layoutX="38.0" layoutY="195.0" prefHeight="330.0" prefWidth="526.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="72.0">
                      <children>
-                        <TableView layoutX="12.0" layoutY="14.0" prefHeight="200.0" prefWidth="500.0">
+                        <TableView fx:id="productosProf" layoutX="12.0" layoutY="14.0" prefHeight="200.0" prefWidth="500.0">
                           <columns>
                             <TableColumn prefWidth="48.0" text="Cod." />
                             <TableColumn prefWidth="213.0" text="Descripción" />
@@ -136,32 +136,32 @@
                         <Label layoutX="66.0" layoutY="240.0" text="Subtotal (S/.):" />
                         <Label layoutX="49.0" layoutY="270.0" text="I.G.V. - 18% (S/.):" />
                         <Label layoutX="83.0" layoutY="300.0" text="Total (S/.):" />
-                        <TextField editable="false" layoutX="141.0" layoutY="235.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="subTotalSol" editable="false" layoutX="141.0" layoutY="235.0" prefHeight="20.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font></TextField>
-                        <TextField editable="false" layoutX="141.0" layoutY="265.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="igvSol" editable="false" layoutX="141.0" layoutY="265.0" prefHeight="20.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font></TextField>
-                        <TextField editable="false" layoutX="141.0" layoutY="295.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="totalSol" editable="false" layoutX="141.0" layoutY="295.0" prefHeight="20.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font></TextField>
                         <Label layoutX="322.0" layoutY="239.0" text="Subtotal ($):" />
                         <Label layoutX="305.0" layoutY="269.0" text="I.G.V. - 18% ($):" />
                         <Label layoutX="340.0" layoutY="299.0" text="Total ($):" />
-                        <TextField editable="false" layoutX="395.0" layoutY="234.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="subTotalDol" editable="false" layoutX="395.0" layoutY="234.0" prefHeight="20.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField editable="false" layoutX="395.0" layoutY="264.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="igvDol" editable="false" layoutX="395.0" layoutY="264.0" prefHeight="20.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField editable="false" layoutX="395.0" layoutY="294.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="totalDol" editable="false" layoutX="395.0" layoutY="294.0" prefHeight="20.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -172,8 +172,8 @@
                      <content>
                         <AnchorPane prefHeight="291.0" prefWidth="222.0">
                            <children>
-                              <Button layoutX="89.0" layoutY="67.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="N" />
-                              <Button layoutX="89.0" layoutY="150.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Button fx:id="generarPed" layoutX="89.0" layoutY="67.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="N" />
+                              <Button fx:id="EliminarProf" layoutX="89.0" layoutY="150.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
                               <Label layoutX="63.0" layoutY="109.0" text="Generar Pedido">
                                  <font>
                                     <Font size="14.0" />
@@ -195,14 +195,14 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Spinner editable="true" layoutX="70.0" layoutY="45.0" prefHeight="20.0" prefWidth="60.0" />
+                        <Spinner fx:id="cantProd" editable="true" layoutX="70.0" layoutY="45.0" prefHeight="20.0" prefWidth="60.0" />
                         <Label layoutX="150.0" layoutY="50.0" text="Producto:">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="225.0" layoutY="45.0" prefHeight="25.0" prefWidth="250.0" />
-                        <Button layoutX="487.0" layoutY="47.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" text="+">
+                        <TextField fx:id="producto" layoutX="225.0" layoutY="45.0" prefHeight="25.0" prefWidth="250.0" />
+                        <Button fx:id="agregarProdProf" layoutX="487.0" layoutY="47.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" text="+">
                            <font>
                               <Font size="10.0" />
                            </font>
