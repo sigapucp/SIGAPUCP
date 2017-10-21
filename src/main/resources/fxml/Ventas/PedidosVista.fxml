@@ -76,7 +76,7 @@
             <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="534.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label layoutX="133.0" layoutY="10.0" text="Pedido ">
+                  <Label layoutX="133.0" layoutY="10.0" text="Pedido:">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -209,9 +209,9 @@
                         <TextField editable="false" layoutX="432.0" layoutY="250.0" prefHeight="13.0" prefWidth="120.0" />
                      </children>
                   </AnchorPane>
-                  <TitledPane animated="false" collapsible="false" layoutX="565.0" layoutY="37.0" prefHeight="281.0" prefWidth="177.0" text="Acciones">
+                  <TitledPane animated="false" collapsible="false" layoutX="565.0" layoutY="45.0" prefHeight="273.0" prefWidth="177.0" text="Acciones">
                      <content>
-                        <AnchorPane prefHeight="222.0" prefWidth="175.0">
+                        <AnchorPane prefHeight="239.0" prefWidth="175.0">
                            <children>
                               <Button layoutX="71.0" layoutY="5.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="E" AnchorPane.topAnchor="5.0" />
                               <Button layoutX="72.0" layoutY="86.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
