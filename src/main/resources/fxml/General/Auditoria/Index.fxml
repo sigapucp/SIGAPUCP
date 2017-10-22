@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AuditoriaController">
+   <children>
+      <Accordion layoutX="73.0" layoutY="95.0" />
+      <Label layoutX="22.0" layoutY="14.0" text="Fecha:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <DatePicker fx:id="AuditoriaFechaUno" layoutX="73.0" layoutY="12.0" />
+      <DatePicker fx:id="AuditoriaFechaDos" disable="true" layoutX="280.0" layoutY="12.0" />
+      <Label layoutX="261.0" layoutY="14.0" text="y">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="486.0" layoutY="14.0" text="Empleado:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <CheckBox fx:id="EntreFecha" layoutX="28.0" layoutY="50.0" mnemonicParsing="false" text="Entre" />
+      <TextField fx:id="EmpleadoAuditoria" layoutX="567.0" layoutY="12.0" />
+      <TextField fx:id="DescripcionAuditoria" layoutX="767.0" layoutY="41.0" prefHeight="66.0" prefWidth="212.0" />
+      <Label layoutX="832.0" layoutY="14.0" text="Descripción:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <CheckBox fx:id="EntreHora" layoutX="28.0" layoutY="113.0" mnemonicParsing="false" text="Entre" />
+      <Label layoutX="25.0" layoutY="78.0" text="Hora:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Button fx:id="BtnBuscar" layoutX="28.0" layoutY="148.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+      <TableView fx:id="TablaAuditoria" layoutX="53.0" layoutY="194.0" prefHeight="344.0" prefWidth="894.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="Hora" />
+          <TableColumn prefWidth="100.0" text="Fecha" />
+            <TableColumn fx:id="ColumnaEmpleado" prefWidth="169.0" text="Empleado" />
+            <TableColumn prefWidth="110.0" text="Acción" />
+            <TableColumn prefWidth="118.0" text="Módulo" />
+            <TableColumn minWidth="0.0" prefWidth="321.0" text="Descripción" />
+        </columns>
+      </TableView>
+      <Label layoutX="282.0" layoutY="76.0" text="Acción:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <ComboBox layoutX="336.0" layoutY="74.0" prefWidth="150.0" />
+      <ComboBox layoutX="569.0" layoutY="74.0" prefWidth="150.0" />
+      <Label layoutX="507.0" layoutY="76.0" text="Módulo:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <TextField fx:id="HoraUno" layoutX="73.0" layoutY="74.0" prefHeight="25.0" prefWidth="48.0" />
+      <Label layoutX="132.0" layoutY="76.0" text="y">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <TextField fx:id="HoraDos" disable="true" layoutX="149.0" layoutY="74.0" prefHeight="25.0" prefWidth="48.0" />
+   </children>
+</AnchorPane>
