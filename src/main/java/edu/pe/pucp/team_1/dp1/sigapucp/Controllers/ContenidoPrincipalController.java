@@ -9,9 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ContenidoPrincipalController implements Initializable {
 
     @FXML private AnchorPane contenedor_modulos_contenido;
@@ -22,7 +20,8 @@ public class ContenidoPrincipalController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         NavegacionLateralController.abrirDetalle.addHandler((sender, args) -> {
             try {
-                AnchorPane contenido = FXMLLoader.load(getClass().getResource(args.getPathContenido()));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(args.getPathContenido()));
+                AnchorPane contenido = (AnchorPane) loader.load();
                 contenedor_modulos_contenido.getChildren().setAll(contenido);
             } catch (IOException ex) {
                 Logger.getLogger(ContenidoPrincipalController.class.getName()).log(Level.SEVERE, null, ex);

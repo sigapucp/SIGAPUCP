@@ -14,14 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import org.springframework.stereotype.Component;
 
-/**
- * FXML Controller class
- *
- * @author Joel
- */
-@Component
 public class ClientesVistaController implements Initializable {
 
     /**
