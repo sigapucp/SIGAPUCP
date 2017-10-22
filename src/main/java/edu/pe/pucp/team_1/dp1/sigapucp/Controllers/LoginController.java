@@ -17,13 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import org.springframework.stereotype.Component;
 
-/**
- *
- * @author Alberto Chang Lopez
- */
-@Component
 public class LoginController implements Initializable{
     
     @FXML

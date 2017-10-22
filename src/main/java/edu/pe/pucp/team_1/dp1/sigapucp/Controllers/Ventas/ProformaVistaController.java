@@ -8,7 +8,6 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
-import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,12 +18,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-/**
- * FXML Controller class
- *
- * @author Joel
- */
-@Component
 public class ProformaVistaController implements Initializable {
 
     /**

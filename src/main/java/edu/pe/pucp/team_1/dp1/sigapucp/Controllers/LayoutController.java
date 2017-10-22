@@ -3,9 +3,7 @@
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
-import org.springframework.stereotype.Component;
 
-@Component
 public class LayoutController implements Initializable { 
 
     @Override
