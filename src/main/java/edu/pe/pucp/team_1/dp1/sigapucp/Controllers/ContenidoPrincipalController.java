@@ -20,6 +20,7 @@ public class ContenidoPrincipalController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         NavegacionLateralController.abrirDetalle.addHandler((sender, args) -> {
             try {
+                System.out.println(args.getPathContenido());
                 AnchorPane contenido = FXMLLoader.load(getClass().getResource(args.getPathContenido()));
                 contenedor_modulos_contenido.getChildren().setAll(contenido);
             } catch (IOException ex) {
