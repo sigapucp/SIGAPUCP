@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TitledPane animated="false" layoutX="14.0" layoutY="14.0" prefHeight="206.0" prefWidth="973.0" text="Usuario:">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="27.0" prefWidth="971.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="14.0" text="Nombre:" />
+                  <TextField layoutX="70.0" layoutY="10.0" />
+                  <TextField layoutX="305.0" layoutY="10.0" />
+                  <Label layoutX="249.0" layoutY="14.0" text="Apellido:" />
+                  <Label layoutX="486.0" layoutY="14.0" text="Apellido:" />
+                  <TextField layoutX="542.0" layoutY="10.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+   </children>
+</AnchorPane>

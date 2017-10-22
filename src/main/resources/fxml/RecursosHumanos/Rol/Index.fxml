@@ -8,7 +8,5 @@
 
 
 <AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-   <children>
-      <Label layoutX="451.0" layoutY="278.0" text="Humo del Humo" />
-   </children>
+    
 </AnchorPane>
