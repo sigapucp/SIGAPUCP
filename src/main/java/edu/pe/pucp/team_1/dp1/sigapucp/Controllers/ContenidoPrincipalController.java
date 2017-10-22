@@ -9,9 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ContenidoPrincipalController implements Initializable {
 
     @FXML private AnchorPane contenedor_modulos_contenido;
