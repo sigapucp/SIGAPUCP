@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Models;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -18,16 +19,17 @@ public class Humo {
     
     public static void prueba_humo(){
         
-        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146:5432/sigapucp_db_admin", "sigapucp", "sigapucp");
-        //LazyList<Department> employees = Department.findAll();
-        System.out.println("================================= 1");
+        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146:5432/sigapucp_db_admin?currentSchema=PUBLIC", "sigapucp", "sigapucp");
+        //Person.findAll().dump();
+        /*System.out.println("================================= 1");
+        LazyList<Department> depts = Department.findAll();
+        depts.dump();
         //System.out.println(employees.get(1).getString("dept"));
         //employees.dump();
-        //Department.findAll();
-        Department d = new Department();
-        d.set("dept", "Z");
-        d.saveIt();
+        //List<Department> deptos =  Department.findAll("select * from departments");
         //Base.close();
+        */
+        Department.findAll();
         
 
     }
