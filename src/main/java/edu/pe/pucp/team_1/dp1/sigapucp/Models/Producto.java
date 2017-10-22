@@ -5,10 +5,6 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models;
 
-/**
- *
- * @author a20111857
- */
 public class Producto {
     
 }
