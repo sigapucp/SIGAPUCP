@@ -32,7 +32,7 @@ public class LoginController implements Initializable{
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         System.out.println("Isiiiiiiiiiiiiiiiiiiiiiiiiii");
-        Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/MainContent.fxml"));
+        Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
         Scene main_content_scene = new Scene(main_content_parent);
         Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         app_stage.setScene(main_content_scene);
