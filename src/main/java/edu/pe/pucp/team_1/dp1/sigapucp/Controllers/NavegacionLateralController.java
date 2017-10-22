@@ -10,9 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
-import org.springframework.stereotype.Component;
 
-@Component
 public class NavegacionLateralController implements Initializable {
     
     public IEvent<abrirDetallesArgs> abrirDetalle;
