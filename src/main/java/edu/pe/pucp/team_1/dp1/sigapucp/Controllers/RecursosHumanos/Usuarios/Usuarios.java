@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios;
 
 /**
  *
  * @author Hugo
  */
-public class UsuariosController {
+public class Usuarios {
     
 }
