@@ -27,12 +27,10 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="70.0" layoutY="42.0" mnemonicParsing="false" text="Almacen" />
-                        <Button layoutX="81.0" layoutY="106.0" mnemonicParsing="false" text="Rack" />
-                        <Button layoutX="68.0" layoutY="174.0" mnemonicParsing="false" text="Producto" />
-                        <Button layoutX="35.0" layoutY="251.0" mnemonicParsing="false" text="Orden de Reingreso" />
-                        <Button layoutX="63.0" layoutY="311.0" mnemonicParsing="false" text="Promocion" />
-                        <Button layoutX="29.0" layoutY="358.0" mnemonicParsing="false" text="Reporte de problemas" />
+                        <Button layoutX="70.0" layoutY="42.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Almacen" />
+                        <Button layoutX="82.0" layoutY="146.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rack" />
+                        <Button layoutX="69.0" layoutY="245.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Producto" />
+                        <Button layoutX="29.0" layoutY="358.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Reporte de problemas" />
                      </children>
                   </AnchorPane>
                </content>
@@ -50,10 +48,12 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="75.0" layoutY="31.0" mnemonicParsing="false" text="Cliente" />
-                        <Button layoutX="68.0" layoutY="139.0" mnemonicParsing="false" text="Proforma" />
-                        <Button layoutX="75.0" layoutY="257.0" mnemonicParsing="false" text="Pedido" />
-                        <Button layoutX="25.0" layoutY="348.0" mnemonicParsing="false" text="Documentos de Ventas" />
+                        <Button layoutX="75.0" layoutY="31.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Cliente" />
+                        <Button layoutX="69.0" layoutY="96.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proforma" />
+                        <Button layoutX="75.0" layoutY="168.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Pedido" />
+                        <Button layoutX="66.0" layoutY="233.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proveedor" />
+                        <Button layoutX="65.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Promocion" />
+                        <Button layoutX="25.0" layoutY="348.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Documentos de Ventas" />
                      </children>
                   </AnchorPane>
                </content>
@@ -62,7 +62,7 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="86.0" layoutY="127.0" mnemonicParsing="false" text="Rol" />
+                        <Button layoutX="86.0" layoutY="127.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rol" />
                         <Button fx:id="boton_modulo_usuario" layoutX="72.0" layoutY="64.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Usuario" />
                      </children>
                   </AnchorPane>
