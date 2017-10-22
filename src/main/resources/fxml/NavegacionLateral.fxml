@@ -17,7 +17,7 @@
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Button layoutX="63.0" layoutY="71.0" mnemonicParsing="false" text="Dashboard" />
-                        <Button layoutX="67.0" layoutY="174.0" mnemonicParsing="false" text="Auditoria" />
+                        <Button layoutX="67.0" layoutY="174.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Auditoria" />
                         <Button layoutX="37.0" layoutY="252.0" mnemonicParsing="false" text="Reporte de Errores" />
                      </children>
                   </AnchorPane>
@@ -63,7 +63,7 @@
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Button layoutX="86.0" layoutY="127.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rol" />
-                        <Button fx:id="boton_modulo_usuario" layoutX="72.0" layoutY="64.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Usuario" />
+                        <Button layoutX="72.0" layoutY="64.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Usuario" />
                      </children>
                   </AnchorPane>
                </content>

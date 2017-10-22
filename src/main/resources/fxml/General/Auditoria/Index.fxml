@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AuditoriaController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.AuditoriaController">
    <children>
       <Accordion layoutX="73.0" layoutY="95.0" />
       <Label layoutX="22.0" layoutY="14.0" text="Fecha:">
@@ -29,7 +29,7 @@
       </Label>
       <CheckBox fx:id="EntreFecha" layoutX="28.0" layoutY="50.0" mnemonicParsing="false" text="Entre" />
       <TextField fx:id="EmpleadoAuditoria" layoutX="567.0" layoutY="12.0" />
-      <TextField fx:id="DescripcionAuditoria" layoutX="767.0" layoutY="41.0" prefHeight="66.0" prefWidth="212.0" />
+      <TextField fx:id="DescripcionAuditoria" layoutX="767.0" layoutY="41.0" prefHeight="66.0" prefWidth="205.0" />
       <Label layoutX="832.0" layoutY="14.0" text="Descripción:">
          <font>
             <Font size="15.0" />
@@ -42,7 +42,7 @@
          </font>
       </Label>
       <Button fx:id="BtnBuscar" layoutX="28.0" layoutY="148.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
-      <TableView fx:id="TablaAuditoria" layoutX="53.0" layoutY="194.0" prefHeight="344.0" prefWidth="894.0">
+      <TableView fx:id="TablaAuditoria" layoutX="28.0" layoutY="194.0" prefHeight="344.0" prefWidth="945.0">
         <columns>
           <TableColumn prefWidth="75.0" text="Hora" />
           <TableColumn prefWidth="100.0" text="Fecha" />
