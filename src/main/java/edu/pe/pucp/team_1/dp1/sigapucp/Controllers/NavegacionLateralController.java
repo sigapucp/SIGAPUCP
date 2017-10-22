@@ -28,7 +28,6 @@ public class NavegacionLateralController implements Initializable {
         args.setNombreController(controller);
         args.setNombreModulo(modulo);
         
-//        System.out.println(args.getPathContenido());
         abrirDetalle.fire(this, args);
     }
     
