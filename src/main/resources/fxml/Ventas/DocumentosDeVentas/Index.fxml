@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="docventa_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.DocDeVentaController">
+   <children>
+      <AnchorPane layoutX="73.0" layoutY="73.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane layoutX="3.0" layoutY="2.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="24.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label layoutX="82.0" layoutY="10.0" text="Documentos de Ventas">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Line endX="850.0" layoutX="125.0" layoutY="49.0" startX="-100.0" />
+                  <Button layoutX="879.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirEditarFormulario" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="29.0" layoutY="342.0" prefHeight="270.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="302.0">
+               <children>
+                  <TableView layoutX="25.0" layoutY="10.0" prefHeight="242.0" prefWidth="950.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
+                     <columns>
+                        <TableColumn prefWidth="64.0" text="Fecha" />
+                        <TableColumn prefWidth="74.66665649414062" text="R.U.C/D.N.I" />
+                        <TableColumn prefWidth="85.0" text="Importe" />
+                     </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+            <TitledPane animated="false" collapsible="false" prefHeight="200.0" prefWidth="200.0" text="Búsqueda" AnchorPane.bottomAnchor="270.0" AnchorPane.leftAnchor="24.5" AnchorPane.rightAnchor="24.5" AnchorPane.topAnchor="50.0">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="1000.0">
+                     <children>
+                        <TextField layoutX="130.0" layoutY="62.0" prefHeight="25.0" prefWidth="293.0" />
+                        <Button layoutX="857.0" layoutY="173.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+                        <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="R.U.C.:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox layoutX="811.0" layoutY="28.0" prefHeight="25.0" prefWidth="106.0" />
+                        <TextField layoutX="130.0" layoutY="28.0" prefHeight="25.0" prefWidth="294.0" />
+                        <Label layoutX="12.0" layoutY="64.0" prefHeight="21.0" prefWidth="114.0" text="D.N.I.:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="693.0" layoutY="30.0" text="Documento:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="12.0" layoutY="98.0" prefHeight="21.0" prefWidth="114.0" text="Señor(es):">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField layoutX="130.0" layoutY="96.0" prefHeight="25.0" prefWidth="565.0" />
+                        <Label layoutX="12.0" layoutY="131.0" prefHeight="21.0" prefWidth="114.0" text="Fecha:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <DatePicker layoutX="128.0" layoutY="128.0" prefHeight="25.0" prefWidth="107.0" />
+                        <Label layoutX="447.0" layoutY="131.0" prefHeight="21.0" prefWidth="114.0" text="Fecha Fin:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <DatePicker layoutX="563.0" layoutY="128.0" prefHeight="25.0" prefWidth="107.0" />
+                        <CheckBox layoutX="12.0" layoutY="175.0" mnemonicParsing="false" text="Entre" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </AnchorPane>
+   </children>
+</AnchorPane>
