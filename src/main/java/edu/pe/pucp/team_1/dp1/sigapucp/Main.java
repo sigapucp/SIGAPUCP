@@ -23,8 +23,8 @@ public class Main extends Application {
         
         Base.open();
 
-        List<Moneda> monedas = Moneda.findAll();
-        System.out.println(monedas);
+//        List<Moneda> monedas = Moneda.findAll();
+//        System.out.println(monedas);
         
         stage.setScene(scene);
         stage.setTitle("SIGAPUCP");
