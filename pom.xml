@@ -12,6 +12,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>edu.pe.pucp.team_1.dp1.sigapucp.Main</mainClass>
+        <environments>development</environments>
     </properties>
 
     <organization>
@@ -163,6 +164,24 @@
                   <skip>true</skip>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.javalite</groupId>
+                <artifactId>db-migrator-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <configuration>
+                    <configFile>${project.basedir}/src/main/resources/environment/database.properties</configFile>
+                    <environments>${environments}</environments>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.1.4</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
         </plugins>
     </build>
 </project>
