@@ -13,14 +13,13 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 
 /**
  *
  * @author herbert
  */
-public class ProductoController implements Initializable {
+public class ProductoController extends Controller {
     
     @FXML
     private AnchorPane producton_container;
@@ -29,7 +28,6 @@ public class ProductoController implements Initializable {
     public void abrirNuevoFormulario(ActionEvent event) {
         try {
             AnchorPane contenido = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/Form.fxml"));
-            System.out.println(producton_container);
             producton_container.getChildren().setAll(contenido);
         } catch (IOException ex) {
             Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
@@ -40,7 +38,6 @@ public class ProductoController implements Initializable {
     public void regresarIndex(ActionEvent event) {
         try {
             AnchorPane contenido = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/Index.fxml"));
-            System.out.println(producton_container);
             producton_container.getChildren().setAll(contenido);
         } catch (IOException ex) {
             Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,8 +46,14 @@ public class ProductoController implements Initializable {
     }
     
     @Override
+    public void crear() {
+        System.out.println("================================================================");
+        System.out.println("Estoy creando un Producto");
+    }
+    
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //TODO
+//        System.out.println("Humo del humo");
     }
     
 }
