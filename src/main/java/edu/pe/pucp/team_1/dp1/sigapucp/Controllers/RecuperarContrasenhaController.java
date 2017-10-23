@@ -38,4 +38,25 @@ public class RecuperarContrasenhaController implements Initializable {
         app_stage.show();
     }
     
+    @FXML
+    public void enviarContrasenha(ActionEvent event){
+        try{
+            //verificar si el correo existe en la tabla de usuario
+            //Luego
+            
+            //If existe
+            FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/Exito.fxml"));
+            Parent raiz = (Parent) fxmlclase.load();
+            Stage ventana = new Stage();
+            ventana.setScene(new Scene(raiz));
+            ventana.show();
+            
+            //Else
+            
+        }catch(Exception e)
+        {
+            System.out.println("Cant load new window");
+        }
+    }
+    
 }
