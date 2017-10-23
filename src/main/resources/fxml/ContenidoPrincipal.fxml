@@ -51,10 +51,11 @@
                <children>
                   <AnchorPane fx:id="contenedor_modulos_navegacion" prefHeight="572.0" prefWidth="200.0">
                      <children>
-                        <fx:include fx:id="NavegacionLateral" source="NavegacionLateral.fxml"/>
+                        <fx:include fx:id="NavegacionLateral" source="NavegacionLateral.fxml" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="contenedor_modulos_contenido" prefHeight="572.0" prefWidth="1000.0" />
+                  <AnchorPane fx:id="contenedor_modulos_contenido" prefHeight="572.0" prefWidth="377.0" />
+                  <AnchorPane prefHeight="572.0" prefWidth="627.0" />
                </children>
             </HBox>
          </children>

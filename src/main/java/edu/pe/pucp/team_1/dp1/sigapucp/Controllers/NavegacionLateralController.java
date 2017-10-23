@@ -11,7 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 
-public class NavegacionLateralController implements Initializable {
+public class NavegacionLateralController extends Controller {
     
     public IEvent<abrirDetallesArgs> abrirDetalle;
     
