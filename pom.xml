@@ -169,7 +169,7 @@
                 <artifactId>db-migrator-maven-plugin</artifactId>
                 <version>1.4.13</version>
                 <configuration>
-                    <configFile>${project.basedir}/src/main/resources/environment/database.properties</configFile>
+                    <configFile>${project.basedir}/src/main/resources/database.properties</configFile>
                     <environments>${environments}</environments>
                 </configuration>
                 <dependencies>

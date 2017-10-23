@@ -15,5 +15,6 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("Usuarios")
 @IdName("usuario_id")
-public class Usuario extends Model{    
+public class Usuario extends Model{
+    
 }
