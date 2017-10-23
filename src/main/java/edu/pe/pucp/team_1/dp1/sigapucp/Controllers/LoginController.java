@@ -16,16 +16,25 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class LoginController implements Initializable{
-        
+    private Boolean login_exitoso;
+    @FXML private TextField usuario_login;
+    @FXML private TextField usuario_contrasenha;
+    
+
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         //Verificación de usuario
         //
         //
         //Cambio de toda la escena del login hacia el Main
+        // if (login_exitoso = Usuario.autenticacion(nombre, contrasenha)
+        // 
+        usuario_login.getText();
+        usuario_contrasenha.getText();
         Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
         Scene main_content_scene = new Scene(main_content_parent);
         Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -46,5 +55,6 @@ public class LoginController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
+        login_exitoso = false;
     }
 }
