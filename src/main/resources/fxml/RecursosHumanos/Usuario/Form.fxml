@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
    <children>
       <Label layoutX="30.0" layoutY="25.0" text="Detalle de usuario" />
       <AnchorPane layoutX="21.0" layoutY="55.0" prefHeight="183.0" prefWidth="923.0">
@@ -30,6 +30,6 @@
             <ListView layoutX="79.0" layoutY="25.0" prefHeight="120.0" prefWidth="368.0" />
          </children>
       </AnchorPane>
-      <Button id="AnchorPane" layoutX="310.0" layoutY="515.0" mnemonicParsing="false" text="Atrás" />
+      <Button id="AnchorPane" layoutX="310.0" layoutY="515.0" mnemonicParsing="false" onAction="#regresarIndex" text="Atrás" />
    </children>
 </AnchorPane>
