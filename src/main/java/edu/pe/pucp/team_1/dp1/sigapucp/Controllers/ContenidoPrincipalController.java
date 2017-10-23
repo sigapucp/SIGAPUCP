@@ -19,7 +19,7 @@ public class ContenidoPrincipalController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         NavegacionLateralController.abrirDetalle.addHandler((sender, args) -> {
-            try {
+            try {                  
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(args.getPathContenido()));
                 AnchorPane contenido = (AnchorPane) loader.load();
                 contenedor_modulos_contenido.getChildren().setAll(contenido);

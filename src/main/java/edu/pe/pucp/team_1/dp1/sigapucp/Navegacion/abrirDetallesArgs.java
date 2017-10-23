@@ -37,7 +37,7 @@ public class abrirDetallesArgs extends EventArgs {
         String modulo = nombre_modulo.replaceAll("\\s+", "");
         String controller = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, nombre_controller.replaceAll("\\s+", "_"));
 
-        return String.format("/fxml/%s/%s/Index.fxml", modulo, controller);
+        return String.format("/fxml/%s/%s.fxml", modulo, controller);
     }
     
     

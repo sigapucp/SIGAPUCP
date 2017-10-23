@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
+
+import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
- * @author a20111857
+ * @author Jauma
  */
-public class Producto {
+@Table("VolumenFletes")
+public class FleteVolumen {
     
 }
