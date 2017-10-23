@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,21 +28,18 @@ public class LoginController implements Initializable{
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
-        //Verificación de usuario
-        //
-        //
-        //Cambio de toda la escena del login hacia el Main
-        // if (login_exitoso = Usuario.autenticacion(nombre, contrasenha)
-        // 
-        usuario_login.getText();
-        usuario_contrasenha.getText();
-        System.out.println(usuario_login.getText());
-        System.out.println(usuario_contrasenha.getText());
-        Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
-        Scene main_content_scene = new Scene(main_content_parent);
-        Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        app_stage.setScene(main_content_scene);
-        app_stage.show();
+        System.out.println("inicio");
+        if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
+            
+            Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
+            Scene main_content_scene = new Scene(main_content_parent);
+            Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            app_stage.setScene(main_content_scene);
+            app_stage.show();
+        }else {
+            System.out.println("AQUI VA LA PANTALLA DE ERROR");
+        }
+
     }
     
     @FXML
