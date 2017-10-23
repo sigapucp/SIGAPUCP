@@ -5,31 +5,24 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.beans.property.StringProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.Initializable;
 
 
 /**
  *
  * @author Hugo
  */
-public class Auditoria {
-    private final StringProperty Hora;
-    private final StringProperty Fecha;
-    private final StringProperty Empleado;
-    private final StringProperty Accion;
-    private final StringProperty Modulo;
-    private final StringProperty Descripcion;
+public class AuditoriaController implements Initializable {
+    private StringProperty Hora;
+    private StringProperty Fecha;
+    private StringProperty Empleado;
+    private StringProperty Accion;
+    private StringProperty Modulo;
+    private StringProperty Descripcion;
     
-    public Auditoria( String Hora, String Fecha, String Empleado, String Accion, String Modulo, String Descripcion) {
-        this.Hora = new SimpleStringProperty(Hora);
-        this.Fecha = new SimpleStringProperty(Fecha);
-        this.Empleado = new SimpleStringProperty(Empleado);
-        this.Accion = new SimpleStringProperty(Accion);
-        this.Modulo = new SimpleStringProperty(Modulo);
-        this.Descripcion = new SimpleStringProperty(Descripcion);
-    }
-
     /**
      * @return the Hora
      */
@@ -70,6 +63,11 @@ public class Auditoria {
      */
     public String getDescripcion() {
         return Descripcion.get();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //TODO
     }
     
 }

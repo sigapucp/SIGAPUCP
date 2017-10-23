@@ -41,7 +41,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button fx:id="BtnBuscar" layoutX="28.0" layoutY="148.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+      <Button fx:id="BtnBuscar" layoutX="28.0" layoutY="148.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Buscar" />
       <TableView fx:id="TablaAuditoria" layoutX="28.0" layoutY="194.0" prefHeight="344.0" prefWidth="945.0">
         <columns>
           <TableColumn prefWidth="75.0" text="Hora" />
