@@ -20,10 +20,10 @@
       </ImageView>
       <AnchorPane layoutX="300.0" layoutY="150.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: rgba(0,0,0,0.5);" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
          <children>
-            <TextField layoutX="380.0" layoutY="130.0" />
-            <Label layoutX="380.0" layoutY="100.0" text="Usuario :" textFill="WHITE" />
-            <Label layoutX="380.0" layoutY="180.0" text="Contraseña :" textFill="WHITE" />
-            <PasswordField layoutX="380.0" layoutY="210.0" />
+            <TextField fx:id="usuario_login" layoutX="380.0" layoutY="150.0" />
+            <Label layoutX="380.0" layoutY="120.0" text="Usuario :" textFill="WHITE" />
+            <Label layoutX="380.0" layoutY="200.0" text="Contraseña :" textFill="WHITE" />
+            <PasswordField fx:id="usuario_contrasenha" layoutX="380.0" layoutY="230.0" />
             <Button fx:id="button" layoutX="380.0" layoutY="293.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="149.0" text="Ingresar" />
             <Label layoutX="382.0" layoutY="56.0" text="¡Bienvenido!" textFill="WHITE" AnchorPane.topAnchor="36.0">
                <font>
@@ -31,7 +31,7 @@
                </font>
             </Label>
             <Label layoutX="350.0" layoutY="331.0" text="¿Olvidaste tu contraseña?" textFill="WHITE" AnchorPane.bottomAnchor="36.0" />
-            <Hyperlink layoutX="490.0" layoutY="328.0" text="Recuperar" AnchorPane.bottomAnchor="34.0" onAction="#abrirOlvidarContrasenha" />
+            <Hyperlink layoutX="490.0" layoutY="328.0" onAction="#abrirOlvidarContrasenha" text="Recuperar" AnchorPane.bottomAnchor="34.0" />
             <AnchorPane prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="62.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="126.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="126.0">

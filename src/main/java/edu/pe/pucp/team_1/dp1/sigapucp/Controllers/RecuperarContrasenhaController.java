@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
@@ -24,9 +26,13 @@ import javafx.stage.Stage;
  */
 public class RecuperarContrasenhaController implements Initializable {
 
+    private Boolean envio_exitoso;
+    @FXML private TextField usuario_contrasenha;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        envio_exitoso = false;
     }    
     
     @FXML
@@ -41,18 +47,19 @@ public class RecuperarContrasenhaController implements Initializable {
     @FXML
     public void enviarContrasenha(ActionEvent event){
         try{
-            //verificar si el correo existe en la tabla de usuario
-            //Luego
-            
-            //If existe
-            FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/Exito.fxml"));
-            Parent raiz = (Parent) fxmlclase.load();
-            Stage ventana = new Stage();
-            ventana.setScene(new Scene(raiz));
-            ventana.show();
-            
-            //Else
-            
+            if ( envio_exitoso = Usuario.enviaCorreo(usuario_contrasenha.getText())) {
+                FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ExitoCorreo.fxml"));
+                Parent raiz = (Parent) fxmlclase.load();
+                Stage ventana = new Stage();
+                ventana.setScene(new Scene(raiz));
+                ventana.show();
+            }else {
+                FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ErrorCorreo.fxml"));
+                Parent raiz = (Parent) fxmlclase.load();
+                Stage ventana = new Stage();
+                ventana.setScene(new Scene(raiz));
+                ventana.show();
+            }            
         }catch(Exception e)
         {
             System.out.println("Cant load new window");
