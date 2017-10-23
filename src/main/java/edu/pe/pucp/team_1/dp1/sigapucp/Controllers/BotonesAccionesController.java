@@ -12,7 +12,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
 /**
@@ -25,11 +24,10 @@ public class BotonesAccionesController extends Controller {
     
     @FXML
     public void actionHumo(ActionEvent event) {
-        //PRoceso
-        //activeController.save(/**/);
         ejecutarAccionArgs args = new ejecutarAccionArgs();
         Button accionButton = (Button) event.getSource();
         String accion = accionButton.getText();
+        
         args.setAccion(accion);
         ejecutarAccionController.fire(this, args);
     }
