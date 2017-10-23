@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;

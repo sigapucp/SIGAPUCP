@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
-
-@Table("monedas")
-public class Moneda extends Model {
-    
+/**
+ *
+ * @author Jauma
+ */
+@Table("Usuarios")
+@IdName("usuario_id")
+public class Usuario extends Model{    
 }
