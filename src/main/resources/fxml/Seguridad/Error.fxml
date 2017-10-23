@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="300.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1">
+   <children>
+      <Label layoutX="92.0" layoutY="40.0" prefHeight="38.0" prefWidth="73.0" text="¡Error!" AnchorPane.leftAnchor="113.0" AnchorPane.rightAnchor="114.0" AnchorPane.topAnchor="40.0">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <Label layoutX="51.0" layoutY="121.0" text="No se encontró registrada la dirección&#10;de correo electrónico" />
+   </children>
+</AnchorPane>

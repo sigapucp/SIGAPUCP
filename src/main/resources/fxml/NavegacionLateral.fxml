@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import edu.pe.pucp.team_1.dp1.botonimagen.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.NavegacionLateralController">
+   <children>
+      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <panes>
+            <TitledPane fx:id="tab_general" text="General">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button layoutX="63.0" layoutY="71.0" mnemonicParsing="false" text="Dashboard" />
+                        <Button layoutX="67.0" layoutY="174.0" mnemonicParsing="false" text="Auditoria" />
+                        <Button layoutX="37.0" layoutY="252.0" mnemonicParsing="false" text="Reporte de Errores" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+            <TitledPane text="Materiales">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button layoutX="70.0" layoutY="42.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Almacen" />
+                        <Button layoutX="82.0" layoutY="146.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rack" />
+                        <Button layoutX="69.0" layoutY="245.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Producto" />
+                        <Button layoutX="29.0" layoutY="358.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Reporte de problemas" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+            <TitledPane text="Simulacion">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button layoutX="66.0" layoutY="43.0" mnemonicParsing="false" text="Despacho" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+            <TitledPane layoutX="10.0" layoutY="64.0" text="Ventas">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button layoutX="75.0" layoutY="31.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Cliente" />
+                        <Button layoutX="69.0" layoutY="96.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proforma" />
+                        <Button layoutX="75.0" layoutY="168.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Pedido" />
+                        <Button layoutX="66.0" layoutY="233.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proveedor" />
+                        <Button layoutX="65.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Promocion" />
+                        <Button layoutX="25.0" layoutY="348.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Documentos de Ventas" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+            <TitledPane layoutX="10.0" layoutY="91.0" text="Recursos Humanos">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button layoutX="86.0" layoutY="127.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rol" />
+                        <Button fx:id="boton_modulo_usuario" layoutX="72.0" layoutY="64.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Usuario" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+         </panes>
+      </Accordion>
+   </children>
+</AnchorPane>
