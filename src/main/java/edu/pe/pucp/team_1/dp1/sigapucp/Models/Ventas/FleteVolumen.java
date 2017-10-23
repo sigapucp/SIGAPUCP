@@ -7,10 +7,6 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
 
 import org.javalite.activejdbc.annotations.Table;
 
-/**
- *
- * @author Jauma
- */
 @Table("VolumenFletes")
 public class FleteVolumen {
     

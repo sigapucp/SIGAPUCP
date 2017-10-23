@@ -22,7 +22,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Seguridad/Login.fxml"));
         Scene scene = new Scene(root);
         
-        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        Base.open();
         FleteVolumen f = new FleteVolumen();
 //        Lote lot = new Lote();
 //        try{    
@@ -38,9 +38,6 @@ public class Main extends Application {
 //         }finally{
 //            Base.close();
 //         }                 
-
-//        List<Moneda> monedas = Moneda.findAll();
-//        System.out.println(monedas); 
         stage.setScene(scene);
         stage.setTitle("SIGAPUCP");
         stage.setResizable(false);       
