@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
+<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
    <children>
       <Label layoutX="89.0" layoutY="32.0" text="Usuarios" />
     <AnchorPane layoutX="38.0" layoutY="72.0" minHeight="0.0" minWidth="0.0" prefHeight="112.0" prefWidth="969.0">
@@ -17,7 +17,6 @@
             <Label layoutX="249.0" layoutY="35.0" text="Apellido:" />
             <Label layoutX="486.0" layoutY="35.0" text="Correo" />
             <TextField fx:id="CorreoUsuario" layoutX="542.0" layoutY="31.0" />
-            <Button layoutX="305.0" layoutY="73.0" mnemonicParsing="false" text="Buscar" />
          </children>
       </AnchorPane>
       <AnchorPane layoutX="38.0" layoutY="184.0" prefHeight="331.0" prefWidth="683.0">
@@ -29,6 +28,7 @@
                   <TableColumn fx:id="ColumnaCorreo" prefWidth="141.0" text="Correo" />
               </columns>
             </TableView>
+            <Button id="AnchorPane" layoutX="291.0" layoutY="278.0" mnemonicParsing="false" onAction="#abrirDetalleUsuario" text="Visualizar" />
          </children>
       </AnchorPane>
    </children>
