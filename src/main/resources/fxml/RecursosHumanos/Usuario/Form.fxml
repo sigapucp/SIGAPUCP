@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -8,20 +10,19 @@
 
 <AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
    <children>
-      <Label layoutX="30.0" layoutY="25.0" text="Detalle de usuario" />
       <AnchorPane layoutX="21.0" layoutY="55.0" prefHeight="183.0" prefWidth="923.0">
          <children>
-            <Label layoutX="8.0" layoutY="6.0" text="Información General" />
+            <Label layoutX="14.0" layoutY="14.0" text="Información General" />
             <Label layoutX="25.0" layoutY="41.0" text="Nombre:" />
             <TextField layoutX="86.0" layoutY="37.0" />
             <TextField layoutX="327.0" layoutY="37.0" />
-            <Label layoutX="266.0" layoutY="41.0" text="Apellido:" />
+            <Label layoutX="266.0" layoutY="41.0" text="Correo:" />
             <TextField layoutX="86.0" layoutY="86.0" />
-            <Label layoutX="25.0" layoutY="90.0" text="Nombre:" />
+            <Label layoutX="25.0" layoutY="90.0" text="Apellido:" />
             <TextField layoutX="327.0" layoutY="77.0" />
-            <Label layoutX="266.0" layoutY="81.0" text="Nombre:" />
+            <Label layoutX="266.0" layoutY="81.0" text="Rol:" />
             <TextField layoutX="86.0" layoutY="124.0" />
-            <Label layoutX="25.0" layoutY="128.0" text="Nombre:" />
+            <Label layoutX="25.0" layoutY="128.0" text="Telefono:" />
          </children>
       </AnchorPane>
       <Label layoutX="30.0" layoutY="251.0" text="Permisos" />
@@ -31,5 +32,11 @@
          </children>
       </AnchorPane>
       <Button id="AnchorPane" layoutX="310.0" layoutY="515.0" mnemonicParsing="false" onAction="#regresarIndex" text="Atrás" />
+      <Line endX="600.0" layoutX="143.0" layoutY="60.0" startX="-100.0" />
+      <Label layoutX="98.0" layoutY="14.0" text="Detalle de Usario">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

@@ -59,6 +59,7 @@ public class UsuariosController implements Initializable{
     @FXML
     public void abrirDetalleUsuario(ActionEvent event) {
         try {
+            
             AnchorPane contenido = FXMLLoader.load(getClass().getResource("/fxml/RecursosHumanos/Usuario/Form.fxml"));
             usuario_container.getChildren().setAll(contenido);
         } catch (IOException ex) {
@@ -80,58 +81,59 @@ public class UsuariosController implements Initializable{
         masterData.add(new Usuarios("hugo","villanueva","hugo@hugo"));
         masterData.add(new Usuarios("waldo","chavez","w@hugo"));
         masterData.add(new Usuarios("kevin","vega","k@hugo"));
+             
     }
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        ColumnaNombre.setCellValueFactory(cellData -> cellData.getValue().NombreProperty());
-//        ColumnaApellido.setCellValueFactory(cellData -> cellData.getValue().ApellidoProperty());
-//        ColumnaCorreo.setCellValueFactory(cellData -> cellData.getValue().CorreoProperty());
-//        
-//        FilteredList<Usuarios> filteredData = new FilteredList<>(masterData, p-> true);
-//        
-//        NombreUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-//            filteredData.setPredicate(usuarios -> {
-//                if (newValue == null || newValue.isEmpty()){
-//                    return true;
-//                }
-//                String lowerCaseFilter = newValue.toLowerCase();
-//                if (usuarios.getNombre().toLowerCase().indexOf(lowerCaseFilter) != -1){
-//                    return true;
-//                }
-//                return false;
-//            });
-//        });
-//        
-//        ApellidoUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-//            filteredData.setPredicate(usuarios -> {
-//                if (newValue == null || newValue.isEmpty()){
-//                    return true;
-//                }
-//                String lowerCaseFilter = newValue.toLowerCase();
-//                if (usuarios.getApellido().toLowerCase().indexOf(lowerCaseFilter) != -1){
-//                    return true;
-//                }
-//                return false;
-//            });
-//        });
-//        
-//        CorreoUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-//            filteredData.setPredicate(usuarios -> {
-//                if (newValue == null || newValue.isEmpty()){
-//                    return true;
-//                }
-//                String lowerCaseFilter = newValue.toLowerCase();
-//                if (usuarios.getCorreo().toLowerCase().indexOf(lowerCaseFilter) != -1){
-//                    return true;
-//                }
-//                return false;
-//            });
-//        });
-//        
-//        SortedList<Usuarios> sortedData = new SortedList<>(filteredData);
-//        sortedData.comparatorProperty().bind(TablaUsuarios.comparatorProperty());
-//        TablaUsuarios.setItems(sortedData);
+        /*ColumnaNombre.setCellValueFactory(cellData -> cellData.getValue().NombreProperty());
+        ColumnaApellido.setCellValueFactory(cellData -> cellData.getValue().ApellidoProperty());
+        ColumnaCorreo.setCellValueFactory(cellData -> cellData.getValue().CorreoProperty());
+        
+        FilteredList<Usuarios> filteredData = new FilteredList<>(masterData, p-> true);
+        TablaUsuarios.setItems(filteredData);
+        NombreUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(usuarios -> {
+                if (newValue == null || newValue.isEmpty()){
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (usuarios.getNombre().toLowerCase().indexOf(lowerCaseFilter) != -1){
+                    return true;
+                }
+                return false;
+            });
+        });
+        
+        ApellidoUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(usuarios -> {
+                if (newValue == null || newValue.isEmpty()){
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (usuarios.getApellido().toLowerCase().indexOf(lowerCaseFilter) != -1){
+                    return true;
+                }
+                return false;
+            });
+        });
+        
+        CorreoUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(usuarios -> {
+                if (newValue == null || newValue.isEmpty()){
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (usuarios.getCorreo().toLowerCase().indexOf(lowerCaseFilter) != -1){
+                    return true;
+                }
+                return false;
+            });
+        });  
+        
+        SortedList<Usuarios> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(TablaUsuarios.comparatorProperty());
+        TablaUsuarios.setItems(sortedData);*/
         
     }
 
