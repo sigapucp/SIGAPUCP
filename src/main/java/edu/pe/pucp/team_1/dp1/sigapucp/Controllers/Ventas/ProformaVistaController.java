@@ -14,7 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
+//import javafx.scene.control.Spinner;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
@@ -86,8 +86,8 @@ public class ProformaVistaController implements Initializable {
     @FXML
     private Button EliminarProf;
 
-    @FXML
-    private Spinner<?> cantProd;
+    //@FXML
+    //private Spinner<?> cantProd;
 
     @FXML
     private TextField producto;

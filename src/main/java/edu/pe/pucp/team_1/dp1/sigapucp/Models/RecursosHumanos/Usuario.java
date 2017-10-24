@@ -27,10 +27,10 @@ public class Usuario extends Model{
             usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);
             System.out.println(usuario.exists());
             autenticado = usuario.exists();
+            Base.close();
         }
         catch (Exception e){
             System.out.println(e);
-            //Base.rollbackTransaction();
         }
         return autenticado;
     }
@@ -43,10 +43,10 @@ public class Usuario extends Model{
             usuario = Usuario.findFirst("email = ?", correo_usuario);
             System.out.println(usuario.exists());
             exito = usuario.exists();
+            Base.close();
         }
         catch (Exception e){
             System.out.println(e);
-            //Base.rollbackTransaction();
         }
         return exito;
     }
