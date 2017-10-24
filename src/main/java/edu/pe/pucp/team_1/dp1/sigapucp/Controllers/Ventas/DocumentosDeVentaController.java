@@ -15,7 +15,7 @@ import javafx.fxml.Initializable;
  *
  * @author Jauma
  */
-public class DocumentosVentaController extends Controller{
+public class DocumentosDeVentaController extends Controller{
 
     /**
      * Initializes the controller class.

@@ -20,35 +20,31 @@ public class abrirDetallesArgs extends EventArgs {
      * @param nombre_modulo the nombre_modulo to set
      */
     public void setNombreModulo(String nombre_modulo) {
-        this.nombre_modulo = nombre_modulo;
+        this.nombre_modulo =  nombre_modulo.replaceAll("\\s+","");        
     }
 
     /**
      * @param nombre_controller the nombre_controller to set
      */
     public void setNombreController(String nombre_controller) {
-        this.nombre_controller = nombre_controller;
+        String a = nombre_controller.replace(" ", "_");
+        this.nombre_controller = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, a);
     }
 
     /**
      * @return the path_contenido
      */
-    public String getPathContenido() {
-        String modulo = nombre_modulo.replaceAll("\\s+", "");
-        String controller = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, nombre_controller.replaceAll("\\s+", "_"));
-
-        return String.format("/fxml/%s/%s/%s.fxml", modulo, controller, controller);
+    public String getPathContenido() { 
+        return String.format("/fxml/%s/%s/%s.fxml", nombre_modulo, nombre_controller, nombre_controller);
     }
     
     /**
      * @return the path_contenido
      */
-    public String getPathBotonesAcciones() {
-        String modulo = nombre_modulo.replaceAll("\\s+", "");
-        String controller = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, nombre_controller.replaceAll("\\s+", "_"));
-        System.out.println(modulo);
-        System.out.println(controller);
-        return String.format("/fxml/%s/%s/%sBotones.fxml", modulo, controller, controller);
+    public String getPathBotonesAcciones() {      
+        System.out.println(nombre_modulo);
+        System.out.println(nombre_controller);
+        return String.format("/fxml/%s/%s/%sBotones.fxml", nombre_modulo, nombre_controller, nombre_controller);
     }
     
     
