@@ -19,13 +19,11 @@ import org.javalite.activejdbc.annotations.Table;
 public class Usuario extends Model{
     
     public static boolean autenticacion (String correo_usuario, String contrasenha){
-        System.out.println("query");
         Usuario usuario;
         Boolean autenticado = false;
         try{
             Base.open();
             usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);
-            System.out.println(usuario.exists());
             autenticado = usuario.exists();
             Base.close();
         }
