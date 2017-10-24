@@ -30,7 +30,6 @@ public class LoginController implements Initializable{
     private void handleButtonAction(ActionEvent event) throws IOException {
         System.out.println("inicio");
         if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
-            
             Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
             Scene main_content_scene = new Scene(main_content_parent);
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -38,6 +37,11 @@ public class LoginController implements Initializable{
             app_stage.show();
         }else {
             System.out.println("AQUI VA LA PANTALLA DE ERROR");
+            FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ErrorLogin.fxml"));
+            Parent raiz = (Parent) fxmlclase.load();
+            Stage ventana = new Stage();
+            ventana.setScene(new Scene(raiz));
+            ventana.show();
         }
 
     }

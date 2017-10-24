@@ -22,30 +22,6 @@ import javafx.scene.layout.AnchorPane;
  */
 public class ProductoController extends Controller {
     
-    @FXML
-    private AnchorPane producton_container;
-    
-    @FXML
-    public void abrirNuevoFormulario(ActionEvent event) {
-        try {
-            AnchorPane contenido = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/Form.fxml"));
-            producton_container.getChildren().setAll(contenido);
-        } catch (IOException ex) {
-            Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    @FXML
-    public void regresarIndex(ActionEvent event) {
-        try {
-            AnchorPane contenido = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/Index.fxml"));
-            producton_container.getChildren().setAll(contenido);
-        } catch (IOException ex) {
-            Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
-    
     @Override
     public void crear() {
         System.out.println("================================================================");
