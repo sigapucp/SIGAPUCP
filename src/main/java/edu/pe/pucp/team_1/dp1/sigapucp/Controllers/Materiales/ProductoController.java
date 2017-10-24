@@ -14,7 +14,11 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 /**
  *
@@ -33,4 +37,12 @@ public class ProductoController extends Controller {
 //        System.out.println("Humo del humo");
     }
     
+    @FXML
+    private void abrirIngresarProductoARack(ActionEvent event) throws IOException{
+        Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/IngresarARack.fxml"));
+        Scene main_content_scene = new Scene(main_content_parent);
+        Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        app_stage.setScene(main_content_scene);
+        app_stage.show();
+    }
 }
