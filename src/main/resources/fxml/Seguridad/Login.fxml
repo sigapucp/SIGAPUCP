@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPaneLogin" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.LoginController">
+<AnchorPane id="AnchorPaneLogin" maxHeight="700.0" maxWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.LoginController">
    <children>
       <ImageView fitHeight="700.0" fitWidth="1200.0" layoutY="29.5" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="29.5" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="29.5">
          <image>
@@ -24,7 +24,7 @@
             <Label layoutX="380.0" layoutY="120.0" text="Usuario :" textFill="WHITE" />
             <Label layoutX="380.0" layoutY="200.0" text="Contraseña :" textFill="WHITE" />
             <PasswordField fx:id="usuario_contrasenha" layoutX="380.0" layoutY="230.0" />
-            <Button fx:id="button" layoutX="380.0" layoutY="293.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="149.0" text="Ingresar" />
+            <Button id="boton_login" fx:id="button" layoutX="380.0" layoutY="293.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="149.0" text="Ingresar" />
             <Label layoutX="382.0" layoutY="56.0" text="¡Bienvenido!" textFill="WHITE" AnchorPane.topAnchor="36.0">
                <font>
                   <Font size="26.0" />
