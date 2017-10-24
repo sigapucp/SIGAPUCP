@@ -4,13 +4,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="300.0" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.LoginController">
     <children>
       <Label layoutX="92.0" layoutY="40.0" prefHeight="38.0" prefWidth="73.0" text="¡Error!" AnchorPane.leftAnchor="113.0" AnchorPane.rightAnchor="114.0" AnchorPane.topAnchor="40.0">
          <font>
             <Font size="26.0" />
          </font>
       </Label>
-      <Label layoutX="51.0" layoutY="121.0" text="El usuario o la contraseña&#10;son incorrectos" />
+      <Label layoutX="51.0" layoutY="100.0" text="El usuario o la contraseña&#10;son incorrectos" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="82.0" />
    </children>
 </AnchorPane>

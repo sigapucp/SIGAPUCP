@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -52,17 +53,21 @@ public class RecuperarContrasenhaController implements Initializable {
                 Parent raiz = (Parent) fxmlclase.load();
                 Stage ventana = new Stage();
                 ventana.setScene(new Scene(raiz));
-                ventana.show();
+                ventana.setTitle("Exito");
+                ventana.initModality(Modality.APPLICATION_MODAL);
+                ventana.showAndWait();
             }else {
                 FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ErrorCorreo.fxml"));
                 Parent raiz = (Parent) fxmlclase.load();
                 Stage ventana = new Stage();
                 ventana.setScene(new Scene(raiz));
-                ventana.show();
+                ventana.setTitle("Error");
+                ventana.initModality(Modality.APPLICATION_MODAL);
+                ventana.showAndWait();
             }            
         }catch(Exception e)
         {
-            System.out.println("Cant load new window");
+            System.out.println("No se puede cargar página");
         }
     }
     

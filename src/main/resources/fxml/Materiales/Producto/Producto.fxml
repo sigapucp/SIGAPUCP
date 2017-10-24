@@ -18,7 +18,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="producton_container" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.ProductoController">
+<AnchorPane id="AnchorPane" fx:id="producton_container" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.ProductoController">
     <children>
         <AnchorPane prefHeight="575.0" prefWidth="1000.0">
            <children>
@@ -50,7 +50,7 @@
              <TextField layoutX="130.0" layoutY="68.0" prefHeight="25.0" prefWidth="106.0" />
              <TextField layoutX="130.0" layoutY="106.0" prefHeight="25.0" prefWidth="106.0" />
              <DatePicker layoutX="130.0" layoutY="140.0" prefHeight="25.0" prefWidth="106.0" />
-             <TableView layoutX="12.0" layoutY="188.0" prefHeight="202.0" prefWidth="224.0">
+             <TableView layoutX="12.0" layoutY="220.0" prefHeight="180.0" prefWidth="224.0">
                <columns>
                  <TableColumn prefWidth="65.0" text="Código" />
                  <TableColumn prefWidth="158.0" text="Descripción" />
@@ -274,6 +274,7 @@
                 </children>
             </AnchorPane>
              <Line endX="100.0" layoutX="118.0" layoutY="49.0" startX="-100.0" />
+            <Button layoutX="129.0" layoutY="183.0" mnemonicParsing="false" text="Buscar" />
            </children>
         </AnchorPane>
     </children>

@@ -13,7 +13,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="50.0" prefWidth="243.0">
          <children>
@@ -129,7 +129,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField layoutX="130.0" layoutY="204.0" prefHeight="21.0" prefWidth="114.0" />
+            <TextField layoutX="129.0" layoutY="204.0" prefHeight="21.0" prefWidth="114.0" />
             <TableView layoutX="14.0" layoutY="275.0" prefHeight="202.0" prefWidth="224.0">
                <columns>
                   <TableColumn prefWidth="65.0" text="Código" />
@@ -137,6 +137,7 @@
                </columns>
             </TableView>
             <Button layoutX="144.0" layoutY="485.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <Button layoutX="129.0" layoutY="236.0" mnemonicParsing="false" text="Buscar" />
          </children>
       </AnchorPane>
    </children>
