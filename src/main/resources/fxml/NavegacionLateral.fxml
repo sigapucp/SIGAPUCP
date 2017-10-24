@@ -179,11 +179,11 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ScrollPane prefHeight="436.0" prefWidth="210.0">
+                        <ScrollPane prefHeight="436.0" prefWidth="200.0">
                            <content>
-                              <AnchorPane prefWidth="190.0">
+                              <AnchorPane prefWidth="180.0">
                                  <children>
-                                    <Button layoutX="56.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                                    <Button layoutX="50.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                                        <graphic>
                                           <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
                                              <children>
@@ -200,7 +200,7 @@
                                           </VBox>
                                        </graphic>
                                     </Button>
-                                    <Button layoutX="57.0" layoutY="104.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                                    <Button layoutX="51.0" layoutY="104.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                                        <graphic>
                                           <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
                                              <children>
@@ -217,7 +217,7 @@
                                           </VBox>
                                        </graphic>
                                     </Button>
-                                    <Button layoutX="58.0" layoutY="197.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                                    <Button layoutX="52.0" layoutY="197.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                                        <graphic>
                                           <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
                                              <children>
@@ -234,7 +234,7 @@
                                           </VBox>
                                        </graphic>
                                     </Button>
-                                    <Button layoutX="58.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                                    <Button layoutX="52.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                                        <graphic>
                                           <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
                                              <children>
@@ -251,7 +251,7 @@
                                           </VBox>
                                        </graphic>
                                     </Button>
-                                    <Button layoutX="58.0" layoutY="381.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                                    <Button layoutX="52.0" layoutY="381.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                                        <graphic>
                                           <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
                                              <children>
@@ -268,7 +268,7 @@
                                           </VBox>
                                        </graphic>
                                     </Button>
-                                    <Button layoutX="58.0" layoutY="474.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                                    <Button layoutX="52.0" layoutY="474.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                                        <graphic>
                                           <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
                                              <children>
