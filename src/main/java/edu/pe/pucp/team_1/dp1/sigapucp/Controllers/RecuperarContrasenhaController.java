@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 public class RecuperarContrasenhaController implements Initializable {
 
     private Boolean envio_exitoso;
-    @FXML private TextField usuario_contrasenha;
+    @FXML private TextField usuario_email;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -47,7 +47,7 @@ public class RecuperarContrasenhaController implements Initializable {
     @FXML
     public void enviarContrasenha(ActionEvent event){
         try{
-            if ( envio_exitoso = Usuario.enviaCorreo(usuario_contrasenha.getText())) {
+            if ( envio_exitoso = Usuario.enviaCorreo(usuario_email.getText())) {
                 FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ExitoCorreo.fxml"));
                 Parent raiz = (Parent) fxmlclase.load();
                 Stage ventana = new Stage();

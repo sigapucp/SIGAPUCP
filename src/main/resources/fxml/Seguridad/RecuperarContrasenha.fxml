@@ -35,7 +35,7 @@
             <Button layoutX="336.0" layoutY="319.0" mnemonicParsing="false" onAction="#regresarLogin" text="Regresar" AnchorPane.leftAnchor="336.0" />
             <AnchorPane layoutX="497.0" layoutY="319.0" />
             <Button layoutX="456.0" layoutY="319.0" mnemonicParsing="false" onAction="#enviarContrasenha" text="Enviar contraseña" AnchorPane.rightAnchor="34.0" />
-            <TextField fx:id="usuario_contrasenha" layoutX="337.0" layoutY="230.0" prefHeight="25.0" prefWidth="231.0" AnchorPane.leftAnchor="336.0" AnchorPane.rightAnchor="34.0" />
+            <TextField fx:id="usuario_email" layoutX="337.0" layoutY="230.0" prefHeight="25.0" prefWidth="231.0" AnchorPane.leftAnchor="336.0" AnchorPane.rightAnchor="34.0" />
          </children>
       </AnchorPane>
    </children>
