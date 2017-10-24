@@ -91,7 +91,7 @@
                                           <Insets bottom="2.0" />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Label text="Almacen" />
+                                    <Label text="Almacenes" />
                                  </children>
                               </VBox>
                            </graphic></Button>
@@ -107,7 +107,7 @@
                                           <Insets bottom="2.0" />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Label text="Producto" />
+                                    <Label text="Productos" />
                                  </children>
                               </VBox>
                            </graphic>
@@ -124,7 +124,7 @@
                                           <Insets bottom="2.0" />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Label text="Rack" />
+                                    <Label text="Racks" />
                                  </children>
                               </VBox>
                            </graphic>
@@ -166,7 +166,7 @@
                                           <Insets bottom="2.0" />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Label text="Despacho" />
+                                    <Label text="Despachos" />
                                  </children>
                               </VBox>
                            </graphic>
@@ -195,7 +195,7 @@
                                                       <Insets bottom="2.0" />
                                                    </VBox.margin>
                                                 </ImageView>
-                                                <Label text="Cliente" />
+                                                <Label text="Clientes" />
                                              </children>
                                           </VBox>
                                        </graphic>
@@ -212,7 +212,7 @@
                                                       <Insets bottom="2.0" />
                                                    </VBox.margin>
                                                 </ImageView>
-                                                <Label text="Proforma" />
+                                                <Label text="Proformas" />
                                              </children>
                                           </VBox>
                                        </graphic>
@@ -229,7 +229,7 @@
                                                       <Insets bottom="2.0" />
                                                    </VBox.margin>
                                                 </ImageView>
-                                                <Label text="Pedido" />
+                                                <Label text="Pedidos" />
                                              </children>
                                           </VBox>
                                        </graphic>
@@ -246,7 +246,7 @@
                                                       <Insets bottom="2.0" />
                                                    </VBox.margin>
                                                 </ImageView>
-                                                <Label text="Proveedor" />
+                                                <Label text="Proveedores" />
                                              </children>
                                           </VBox>
                                        </graphic>
@@ -263,7 +263,7 @@
                                                       <Insets bottom="2.0" />
                                                    </VBox.margin>
                                                 </ImageView>
-                                                <Label text="Promocion" />
+                                                <Label text="Promociones" />
                                              </children>
                                           </VBox>
                                        </graphic>
@@ -312,7 +312,7 @@
                                           <Insets bottom="2.0" />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Label text="Usuario" />
+                                    <Label text="Usuarios" />
                                  </children>
                               </VBox>
                            </graphic>
@@ -329,7 +329,7 @@
                                           <Insets bottom="2.0" />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Label text="Rol" />
+                                    <Label text="Roles" />
                                  </children>
                               </VBox>
                            </graphic>
