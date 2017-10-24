@@ -19,7 +19,6 @@ import org.javalite.activejdbc.annotations.Table;
 public class Usuario extends Model{
     
     public static boolean autenticacion (String correo_usuario, String contrasenha){
-        System.out.println("query");
         Usuario usuario;
         Boolean autenticado = false;
         try{          
