@@ -21,7 +21,7 @@ import javafx.scene.control.TextField;
 /**
  * FXML Controller class
  *
- * @author Jauma
+ * @author Joel
  */
 public class ProformasController extends Controller {
 

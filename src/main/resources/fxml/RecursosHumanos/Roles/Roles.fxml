@@ -13,7 +13,6 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="50.0" prefWidth="250.0">
@@ -47,7 +46,43 @@
                <children>
                   <TabPane prefHeight="521.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab text="General" />
+                      <Tab text="General">
+                           <content>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <TableView layoutX="14.0" layoutY="14.0" prefHeight="465.0" prefWidth="282.0">
+                                      <columns>
+                                        <TableColumn prefWidth="281.0" text="Usuarios Disponibles" />
+                                      </columns>
+                                    </TableView>
+                                    <TableView layoutX="454.0" layoutY="14.0" prefHeight="465.0" prefWidth="282.0">
+                                       <columns>
+                                          <TableColumn prefWidth="281.0" text="Usuarios Asignados" />
+                                       </columns>
+                                    </TableView>
+                                    <Button layoutX="355.0" layoutY="119.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="&gt;">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button layoutX="355.0" layoutY="170.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="&lt;">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button layoutX="355.0" layoutY="283.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="&gt;&gt;">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button layoutX="355.0" layoutY="337.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="&lt;&lt;">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                           </content></Tab>
                       <Tab text="Permisos">
                            <content>
                               <TableView prefHeight="200.0" prefWidth="200.0">
