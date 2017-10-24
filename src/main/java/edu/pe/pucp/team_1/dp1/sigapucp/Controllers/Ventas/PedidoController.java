@@ -5,9 +5,9 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
 
 /**
  * FXML Controller class
@@ -22,7 +22,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 
-public class PedidosVistaController implements Initializable {
+public class PedidoController extends Controller {
 
     /**
      * Initializes the controller class.

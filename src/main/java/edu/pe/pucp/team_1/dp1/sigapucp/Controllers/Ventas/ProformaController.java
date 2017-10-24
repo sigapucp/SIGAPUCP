@@ -5,9 +5,9 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,7 +18,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-public class ProformaVistaController implements Initializable {
+public class ProformaController extends Controller {
 
     /**
      * Initializes the controller class.

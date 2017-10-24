@@ -22,7 +22,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Seguridad/Login.fxml"));
         Scene scene = new Scene(root);
         
-        Base.open();
+//        Base.open();
         FleteVolumen f = new FleteVolumen();
 //        Lote lot = new Lote();
 //        try{    
