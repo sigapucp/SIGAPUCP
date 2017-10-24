@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuario;
 
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -13,12 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -29,7 +27,7 @@ import javafx.scene.layout.AnchorPane;
  * @author Hugo
  */
 
-public class UsuariosController implements Initializable{
+public class UsuariosController extends Controller{
     @FXML
     private TableColumn<Usuarios,String> ColumnaNombre;
 
