@@ -8,6 +8,10 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Auditoria;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.Usuarios;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -119,57 +123,43 @@ public class AuditoriaController implements Initializable {
         ColumnaDescripcion.setCellValueFactory(cellData -> cellData.getValue().DescripcionProperty());
         FilteredList<Auditoria> filteredData = new FilteredList<>(masterData, p -> true);
         
-        EmpleadoAuditoria.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(auditoria -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (auditoria.getEmpleado().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }             
-                return false;
-            });
-        });
         
-        DescripcionAuditoria.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(auditoria -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (auditoria.getDescripcion().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }             
-                return false;
-            });
-        });
+        Modulo.getItems().addAll("Cato","Casa");
+        Accion.getItems().addAll("Atiende","Dormir");
         
-        /*ColumnaHora.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(auditoria -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (auditoria.getHora().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }             
-                return false;
-            });
-        });
+        ObjectProperty<Predicate<Auditoria>> ModuloFilter = new SimpleObjectProperty<>();
+        ObjectProperty<Predicate<Auditoria>> AccionFilter = new SimpleObjectProperty<>();
+        ObjectProperty<Predicate<Auditoria>> EmpleadoFilter = new SimpleObjectProperty<>();
+        ObjectProperty<Predicate<Auditoria>> DescripcionFilter = new SimpleObjectProperty<>();
+        ObjectProperty<Predicate<Auditoria>> FechaFilter = new SimpleObjectProperty<>();
         
-        ColumnaFecha.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(auditoria -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (auditoria.getFecha().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }             
-                return false;
-            });
-        });*/
+        ModuloFilter.bind(Bindings.createObjectBinding(() ->
+            auditoria -> Modulo.getValue() == null || Modulo.getValue() == auditoria.getModulo(),
+            Modulo.valueProperty()));
+        
+        AccionFilter.bind(Bindings.createObjectBinding(() ->
+            auditoria -> Accion.getValue() == null || Accion.getValue() == auditoria.getAccion(),
+            Accion.valueProperty()));
+        
+        EmpleadoFilter.bind(Bindings.createObjectBinding(() -> 
+            auditoria -> auditoria.getEmpleado().toLowerCase().contains(EmpleadoAuditoria.getText().toLowerCase()), 
+            EmpleadoAuditoria.textProperty()));
+        
+        DescripcionFilter.bind(Bindings.createObjectBinding(() -> 
+            auditoria -> auditoria.getDescripcion().toLowerCase().contains(DescripcionAuditoria.getText().toLowerCase()), 
+            DescripcionAuditoria.textProperty()));
+        
+        FechaFilter.bind(Bindings.createObjectBinding(() -> 
+            auditoria -> AuditoriaFechaUno.getValue() == null || AuditoriaFechaUno.getValue().toString() == auditoria.getFecha(),
+            AuditoriaFechaUno.valueProperty()));
+        
+       
+        
+        filteredData.predicateProperty().bind(Bindings.createObjectBinding(
+            () -> ModuloFilter.get().and(AccionFilter.get()).and(EmpleadoFilter.get()).and(DescripcionFilter.get()).and(FechaFilter.get()),ModuloFilter,AccionFilter,EmpleadoFilter,DescripcionFilter,FechaFilter));
+        
+       
+        
         
         SortedList<Auditoria> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(TablaAuditoria.comparatorProperty());
