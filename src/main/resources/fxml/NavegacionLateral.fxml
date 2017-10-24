@@ -27,9 +27,9 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="70.0" layoutY="42.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Almacen" />
-                        <Button layoutX="82.0" layoutY="146.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rack" />
-                        <Button layoutX="69.0" layoutY="245.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Producto" />
+                        <Button layoutX="70.0" layoutY="42.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Almacenes" />
+                        <Button layoutX="82.0" layoutY="146.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Racks" />
+                        <Button layoutX="69.0" layoutY="245.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Productos" />
                         <Button layoutX="29.0" layoutY="358.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Reporte de problemas" />
                      </children>
                   </AnchorPane>
@@ -48,12 +48,12 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="75.0" layoutY="31.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Cliente" />
-                        <Button layoutX="69.0" layoutY="96.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proforma" />
-                        <Button layoutX="75.0" layoutY="168.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Pedido" />
-                        <Button layoutX="66.0" layoutY="233.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proveedor" />
-                        <Button layoutX="65.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Promocion" />
-                        <Button layoutX="25.0" layoutY="348.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Documentos de Ventas" />
+                        <Button layoutX="75.0" layoutY="31.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Clientes" />
+                        <Button layoutX="69.0" layoutY="96.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proformas" />
+                        <Button layoutX="75.0" layoutY="168.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Pedidos" />
+                        <Button layoutX="66.0" layoutY="233.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Proveedores" />
+                        <Button layoutX="65.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Promociones" />
+                        <Button layoutX="50.0" layoutY="349.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="DocumentosVenta" />
                      </children>
                   </AnchorPane>
                </content>

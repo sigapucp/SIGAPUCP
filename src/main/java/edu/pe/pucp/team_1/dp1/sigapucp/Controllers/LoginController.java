@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
@@ -19,29 +20,34 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.javalite.activejdbc.Base;
 
 public class LoginController implements Initializable{
     private Boolean login_exitoso;
+    private ErrorAlertController errorController;
+    
     @FXML private TextField usuario_login;
     @FXML private TextField usuario_contrasenha;
     
+    public LoginController()
+    {
+        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        errorController = new ErrorAlertController();
+    }
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         System.out.println("inicio");
-        if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
+        //if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
+        if ( true ) {
             Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
             Scene main_content_scene = new Scene(main_content_parent);
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             app_stage.setScene(main_content_scene);
+            Base.close();
             app_stage.show();
         }else {
-            System.out.println("AQUI VA LA PANTALLA DE ERROR");
-            FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ErrorLogin.fxml"));
-            Parent raiz = (Parent) fxmlclase.load();
-            Stage ventana = new Stage();
-            ventana.setScene(new Scene(raiz));
-            ventana.show();
+            errorController.show("Descripction", "Error Code");
         }
 
     }

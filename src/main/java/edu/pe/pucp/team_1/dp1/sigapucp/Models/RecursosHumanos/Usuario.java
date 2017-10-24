@@ -22,12 +22,9 @@ public class Usuario extends Model{
         System.out.println("query");
         Usuario usuario;
         Boolean autenticado = false;
-        try{
-            Base.open();
-            usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);
-            System.out.println(usuario.exists());
-            autenticado = usuario.exists();
-            Base.close();
+        try{          
+            usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);            
+            autenticado = usuario != null;
         }
         catch (Exception e){
             System.out.println(e);
@@ -38,12 +35,9 @@ public class Usuario extends Model{
     public static boolean enviaCorreo(String correo_usuario){
         Usuario usuario;
         Boolean exito = false;
-        try{
-            Base.open();
-            usuario = Usuario.findFirst("email = ?", correo_usuario);
-            System.out.println(usuario.exists());
-            exito = usuario.exists();
-            Base.close();
+        try{            
+            usuario = Usuario.findFirst("email = ?", correo_usuario);            
+            exito = usuario != null;
         }
         catch (Exception e){
             System.out.println(e);
