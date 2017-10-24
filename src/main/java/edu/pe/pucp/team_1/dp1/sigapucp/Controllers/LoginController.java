@@ -31,23 +31,23 @@ public class LoginController implements Initializable{
     
     public LoginController()
     {
-        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        
         errorController = new ErrorAlertController();
     }
 
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         System.out.println("inicio");
-        //if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
-        if ( true ) {
+        if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
+        //if ( true ) {
             Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
             Scene main_content_scene = new Scene(main_content_parent);
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             app_stage.setScene(main_content_scene);
-            Base.close();
+            //Base.close();
             app_stage.show();
         }else {
-            errorController.show("Descripction", "Error Code");
+            errorController.show("El usuario o contraseña es incorrecto", "Error Code");
         }
 
     }
