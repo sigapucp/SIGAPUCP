@@ -19,7 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
+//import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 
 public class PedidosVistaController implements Initializable {
@@ -49,8 +49,8 @@ public class PedidosVistaController implements Initializable {
     @FXML
     private CheckBox mismaDir;
     
-    @FXML
-    private Spinner<?> cantProd;
+    //@FXML
+    //private Spinner<?> cantProd;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
