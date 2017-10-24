@@ -22,8 +22,8 @@ public class Main extends Application {
         //Parent root = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
         Scene scene = new Scene(root);
         
-        Base.open();
-        FleteVolumen f = new FleteVolumen();
+        //Base.open();
+        //FleteVolumen f = new FleteVolumen();
 //        Lote lot = new Lote();
 //        try{    
 //            Base.openTransaction();
