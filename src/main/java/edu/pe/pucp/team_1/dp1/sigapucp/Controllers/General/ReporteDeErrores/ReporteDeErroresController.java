@@ -5,19 +5,19 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.ReporteDeErrores;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
 
 /**
  *
  * @author Hugo
  */
-public class ReporteDeErroresController implements Initializable{
+public class ReporteDeErroresController extends Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO
     }
     
 }

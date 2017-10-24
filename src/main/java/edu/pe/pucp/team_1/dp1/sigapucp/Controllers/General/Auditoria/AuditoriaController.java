@@ -5,7 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Auditoria;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.Usuarios;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -17,7 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -31,7 +30,7 @@ import javafx.scene.control.TableView;
  *
  * @author Hugo
  */
-public class AuditoriaController implements Initializable {
+public class AuditoriaController extends Controller {
 
     @FXML
     private DatePicker AuditoriaFechaDos;

@@ -44,6 +44,8 @@ public class ContenidoPrincipalController implements Initializable {
                 System.out.println(args.getPathContenido());
                 FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource(args.getPathContenido()));
                 AnchorPane contenido = (AnchorPane) loaderContenido.load();
+                System.out.println(contenido);
+                System.out.println(loaderContenido);    
                 activeController = loaderContenido.<Controller>getController();
                 contenedor_modulos_contenido.getChildren().setAll(contenido);
                 

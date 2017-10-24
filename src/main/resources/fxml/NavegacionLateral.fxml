@@ -20,11 +20,6 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-<<<<<<< HEAD
-                        <Button layoutX="63.0" layoutY="71.0" mnemonicParsing="false" text="Dashboard" />
-                        <Button layoutX="67.0" layoutY="174.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Auditoria" />
-                        <Button layoutX="37.0" layoutY="252.0" mnemonicParsing="false" text="Reporte de Errores" />
-=======
                         <Button layoutX="63.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                            <graphic>
                               <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
@@ -76,7 +71,6 @@
                               </VBox>
                            </graphic>
                         </Button>
->>>>>>> f34e7130836218cc05ab042e5a273ea27c0327c4
                      </children>
                   </AnchorPane>
                </content>
@@ -306,10 +300,6 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-<<<<<<< HEAD
-                        <Button layoutX="86.0" layoutY="127.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Rol" />
-                        <Button layoutX="72.0" layoutY="64.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" text="Usuario" />
-=======
                         <Button layoutX="56.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
                            <graphic>
                               <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
@@ -344,7 +334,6 @@
                               </VBox>
                            </graphic>
                         </Button>
->>>>>>> f34e7130836218cc05ab042e5a273ea27c0327c4
                      </children>
                   </AnchorPane>
                </content>
