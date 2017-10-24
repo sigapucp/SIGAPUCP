@@ -41,6 +41,7 @@ public class ContenidoPrincipalController implements Initializable {
         NavegacionLateralController.abrirDetalle.addHandler((sender, args) -> {
             try {
                 // Cargar el contenido de las pantallas
+                System.out.println(args.getPathContenido());
                 FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource(args.getPathContenido()));
                 AnchorPane contenido = (AnchorPane) loaderContenido.load();
                 activeController = loaderContenido.<Controller>getController();

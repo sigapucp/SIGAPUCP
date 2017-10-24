@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class NavegacionLateralController extends Controller {
     
@@ -21,7 +23,9 @@ public class NavegacionLateralController extends Controller {
     @FXML
     private void abrirBusquedaModulo(ActionEvent event) {
         Button boton = (Button) event.getSource();
-        String controller = boton.getText();
+        VBox contenedor = (VBox) boton.getChildrenUnmodifiable().get(0);
+        Label label = (Label) contenedor.getChildrenUnmodifiable().get(1);
+        String controller = label.getText();
         String modulo = acordion_modulos.getExpandedPane().getText();
         
         abrirDetallesArgs args = new abrirDetallesArgs();
