@@ -28,10 +28,7 @@ public class Usuario extends Model{
             Base.close();
         }
         catch (Exception e){
-<<<<<<< HEAD
-=======
             System.out.println(e);
->>>>>>> ada577f1f6bb130371357350026aa0e43c6dfd47
         }
         return autenticado;
     }
