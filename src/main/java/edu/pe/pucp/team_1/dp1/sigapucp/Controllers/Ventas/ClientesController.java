@@ -17,6 +17,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import java.io.IOException;
+import java.util.List;
+import javafx.event.ActionEvent;
 
 /**
  * FXML Controller class
@@ -30,7 +33,7 @@ public class ClientesController extends Controller{
     @FXML
     private Button buscafBttn;
     @FXML
-    private ComboBox<?> estadoBusq;
+    private ComboBox estadoBusq;
     @FXML
     private TextField rucBusq;
     @FXML
@@ -63,8 +66,6 @@ public class ClientesController extends Controller{
     /**
      * Initializes the controller class.
      */
-    
-    
     
     public String obtener_tipo_cliente(){
         String tipo_cliente = "";
@@ -109,8 +110,17 @@ public class ClientesController extends Controller{
         cliente_formulario.setDisable(false);
     }
     
-    public  void inhabilitar_formulario (){
+    public void inhabilitar_formulario (){
         cliente_formulario.setDisable(true);
+    }
+    
+    @FXML
+    public void buscar_cliente(ActionEvent event) throws IOException{
+        List<Cliente> clientes = Cliente.where("ruc = ? or dni = ? or nombre = ? or estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estadoBusq.getSelectionModel().getSelectedItem().toString());
+    }
+    
+    public void llenar_estado_social_busqueda(){
+        estadoBusq.getItems().addAll("persona natural", "persona juridica");
     }
     
     @Override
@@ -118,7 +128,7 @@ public class ClientesController extends Controller{
         // TODO
         Base.open();
         inhabilitar_formulario();
-        
+        llenar_estado_social_busqueda();
         persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal));
         persoJuri.setOnAction(e -> manejarAreaTexto(dni));
     }    

@@ -7,8 +7,11 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
@@ -33,6 +36,10 @@ public class ProveedoresController extends Controller{
     private TextField repLegal;
     @FXML
     private TextArea comentarios;
+    @FXML
+    private TextField ruc_busqueda;
+    @FXML
+    private TextField nombre_busqueda;
     @FXML
     private AnchorPane proveedor_formulario;
     
@@ -76,6 +83,11 @@ public class ProveedoresController extends Controller{
     public  void inhabilitar_formulario (){
         proveedor_formulario.setDisable(true);
     }
+    @FXML
+    public void buscar_cliente(ActionEvent event) throws IOException{
+        List<Proveedor> proveedores = Proveedor.where("provuder_ruc = ?  or name = ? ", ruc_busqueda.getText(),nombre_busqueda.getText());
+    }
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
