@@ -14,7 +14,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController">
    <children>
       <AnchorPane layoutX="53.0" layoutY="53.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -29,44 +29,38 @@
                   <Line endX="100.0" layoutX="125.0" layoutY="49.0" startX="-100.0" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="222.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="208.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
                   <TextField fx:id="dniBusq" layoutX="130.0" layoutY="62.0" prefHeight="25.0" prefWidth="106.0" />
-                  <Button fx:id="buscafBttn" layoutX="176.0" layoutY="196.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+                  <Button fx:id="buscafBttn" layoutX="176.0" layoutY="170.0" mnemonicParsing="false" onAction="#buscar_cliente" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
                   <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="R.U.C.:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="estadoBusq" layoutX="130.0" layoutY="165.0" prefHeight="25.0" prefWidth="106.0" />
+                  <ComboBox fx:id="estadoBusq" layoutX="130.0" layoutY="132.0" prefHeight="25.0" prefWidth="106.0" />
                   <TextField fx:id="rucBusq" layoutX="130.0" layoutY="28.0" prefHeight="25.0" prefWidth="106.0" />
                   <Label layoutX="12.0" layoutY="64.0" prefHeight="21.0" prefWidth="114.0" text="D.N.I.:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="12.0" layoutY="171.0" text="Estado:">
+                  <Label layoutX="12.0" layoutY="138.0" text="Estado:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="12.0" layoutY="98.0" prefHeight="21.0" prefWidth="114.0" text="Razón Social:">
+                  <Label layoutX="12.0" layoutY="100.0" prefHeight="21.0" prefWidth="114.0" text="Nombre:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="razSocial" layoutX="130.0" layoutY="96.0" prefHeight="25.0" prefWidth="106.0" />
-                  <Label layoutX="12.0" layoutY="133.0" prefHeight="21.0" prefWidth="114.0" text="Nombre:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="nombreBusq" layoutX="130.0" layoutY="130.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField fx:id="nombreBusq" layoutX="130.0" layoutY="97.0" prefHeight="25.0" prefWidth="106.0" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="29.0" layoutY="342.0" prefHeight="300.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="272.0">
+            <AnchorPane layoutX="29.0" layoutY="256.0" prefHeight="316.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="256.0">
                <children>
-                  <TableView layoutX="12.0" layoutY="47.0" prefHeight="202.0" prefWidth="225.0">
+                  <TableView layoutX="12.0" layoutY="10.0" prefHeight="239.0" prefWidth="225.0">
                      <columns>
                         <TableColumn prefWidth="99.66666412353516" text="RUC/DNI" />
                         <TableColumn prefWidth="147.33333587646484" text="Cliente" />
