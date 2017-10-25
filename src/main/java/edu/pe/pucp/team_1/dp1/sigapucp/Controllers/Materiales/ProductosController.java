@@ -9,7 +9,6 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 
 /**
@@ -25,6 +24,11 @@ public class ProductosController extends Controller {
     /**
      * Initializes the controller class.
      */
+    
+    public void abrirIngresarProductoARack(){
+    
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
