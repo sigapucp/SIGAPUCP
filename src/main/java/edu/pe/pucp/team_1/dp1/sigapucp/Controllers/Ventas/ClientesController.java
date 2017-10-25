@@ -161,8 +161,8 @@ public class ClientesController extends Controller{
         columna_dni.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("dni")));
         columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
         tabla_clientes.setItems(masterData);
-        
     }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
