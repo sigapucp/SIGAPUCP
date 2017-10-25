@@ -127,6 +127,7 @@ public void cargar_tabla_index(){
         //Base.close();
         if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
+        proveedores = null;
         proveedores = Proveedor.findAll();
         cargar_tabla_index();
     }    
