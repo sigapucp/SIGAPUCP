@@ -14,6 +14,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import org.javalite.activejdbc.Base;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 
 /**
  * FXML Controller class
@@ -53,22 +56,69 @@ public class ClientesController extends Controller{
     @FXML
     private TextField repLegal;
     @FXML
-    private TextField rubro;
-    @FXML
     private TextField telf;
     @FXML
-    private TextArea anotaciones;
-    @FXML
-    private TextField web;
-    @FXML
-    private TextField correo;
-
+    private AnchorPane cliente_formulario;
+    
     /**
      * Initializes the controller class.
      */
+    
+    
+    
+    public String obtener_tipo_cliente(){
+        String tipo_cliente = "";
+        tipo_cliente = (persoNatu.isSelected()) ? "persona natural" : "";
+        tipo_cliente = (persoJuri.isSelected()) ? "persona natural" : "";
+        return tipo_cliente;
+    }
+  
+    @Override
+    public void crear() {
+        try{
+            System.out.println("empezando a crear");
+            Cliente nuevo_cliente = new Cliente();
+            nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
+            if ( nuevo_cliente.saveIt()){
+                System.out.println("todo Ok");
+            }
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+    }    
+    
+    public void nuevo(){
+       habilitar_formulario();
+       limpiar_formulario();
+    }
+    
+    public void limpiar_formulario(){
+        clienteSh.clear();
+        dni.clear();
+        envioDir.clear();
+        factDir.clear();
+        persoNatu.setSelected(false);
+        persoJuri.setSelected(false);
+        ruc.clear();
+        repLegal.clear();
+        telf.clear();
+    }
+    
+    public void habilitar_formulario(){
+        cliente_formulario.setDisable(false);
+    }
+    
+    public  void inhabilitar_formulario (){
+        cliente_formulario.setDisable(true);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        Base.open();
+        inhabilitar_formulario();
+        
     }    
     
 }
