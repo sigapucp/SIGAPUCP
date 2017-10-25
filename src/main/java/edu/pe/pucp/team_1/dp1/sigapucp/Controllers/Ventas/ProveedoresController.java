@@ -99,7 +99,7 @@ public class ProveedoresController extends Controller{
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         //Base.close();
-        Base.open();
+        if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
         
     }    

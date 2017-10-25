@@ -131,7 +131,7 @@ public class ClientesController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        Base.open();
+        if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
         llenar_estado_social_busqueda();
         persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal));

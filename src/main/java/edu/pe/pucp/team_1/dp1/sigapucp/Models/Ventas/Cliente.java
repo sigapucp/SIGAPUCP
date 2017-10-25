@@ -21,7 +21,7 @@ public class Cliente extends Model{
         validatePresenceOf("nombre", "direccion_despacho", "direccion_facturacion");
         validateNumericalityOf("telef_contacto");
         validateNumericalityOf("dni");
-        //validateRegexpOf("dni", "\\b^[0-9]\\b");
+        validateNumericalityOf("ruc");
     }
     
     public void asignar_atributos(String nombre, String nombre_contacto, String telf_contacto, String ruc, String dni, String tipo_cliente, String direccion_despacho, String direccion_facturacion){
