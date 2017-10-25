@@ -31,8 +31,6 @@ public class LoginController implements Initializable{
     
     public LoginController()
     {
-        
-        errorController = new ErrorAlertController();
     }
 
     @FXML
@@ -47,6 +45,7 @@ public class LoginController implements Initializable{
             //Base.close();
             app_stage.show();
         }else {
+            errorController = new ErrorAlertController();
             errorController.show("El usuario o contraseña es incorrecto", "Error Code");
         }
 
