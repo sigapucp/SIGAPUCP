@@ -17,11 +17,11 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.00" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController">
+<AnchorPane id="AnchorPane" fx:id="pedidoContainer" prefHeight="572.00" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController">
    <children>
       <AnchorPane layoutX="43.0" layoutY="43.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="3.0" layoutY="2.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="531.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane layoutX="3.0" layoutY="2.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
@@ -73,7 +73,7 @@
       </AnchorPane>
       <AnchorPane layoutX="293.0" layoutY="43.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="534.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+            <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="133.0" layoutY="10.0" text="Pedido:">
@@ -89,7 +89,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane layoutY="51.0" prefHeight="205.0" prefWidth="750.0">
+            <AnchorPane layoutY="51.0" prefHeight="205.0" prefWidth="750.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
                   <Label layoutX="14.0" layoutY="14.0" text="Cliente:">
                      <font>
@@ -169,7 +169,7 @@
             </AnchorPane>
             <AnchorPane layoutY="256.0" maxHeight="317.0" maxWidth="750.0" prefHeight="317.0" prefWidth="750.0">
                <children>
-                  <AnchorPane prefHeight="40.0" prefWidth="750.0" AnchorPane.bottomAnchor="287.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane prefHeight="40.0" prefWidth="750.0" AnchorPane.bottomAnchor="277.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Label layoutX="14.0" layoutY="5.0" text="Cant.:">
                            <font>
@@ -183,16 +183,16 @@
                            </font>
                         </Label>
                         <TextField layoutX="280.0" layoutY="5.0" prefHeight="25.0" prefWidth="240.0" />
-                        <Button layoutX="529.0" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" text="+">
+                        <Button fx:id="agregarProducto" layoutX="529.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleAgregarProducto" prefHeight="20.0" prefWidth="20.0" text="Agregar Productos">
                            <font>
                               <Font size="10.0" />
                            </font>
                         </Button>
                      </children>
                   </AnchorPane>
-                  <AnchorPane layoutX="33.0" layoutY="44.0" prefHeight="277.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0">
+                  <AnchorPane layoutX="33.0" layoutY="44.0" prefHeight="277.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
                      <children>
-                        <TableView layoutX="14.0" layoutY="2.0" prefHeight="192.0" prefWidth="538.0">
+                        <TableView layoutX="14.0" layoutY="2.0" prefHeight="192.0" prefWidth="538.0" AnchorPane.bottomAnchor="83.0" AnchorPane.topAnchor="2.0">
                           <columns>
                             <TableColumn prefWidth="60.333343505859375" text="Cod." />
                             <TableColumn prefWidth="279.33331298828125" text="Descripción" />
@@ -209,13 +209,13 @@
                         <TextField editable="false" layoutX="432.0" layoutY="250.0" prefHeight="13.0" prefWidth="120.0" />
                      </children>
                   </AnchorPane>
-                  <TitledPane animated="false" collapsible="false" layoutX="565.0" layoutY="45.0" prefHeight="273.0" prefWidth="177.0" text="Acciones">
+                  <TitledPane animated="false" collapsible="false" layoutX="565.0" layoutY="45.0" prefHeight="273.0" prefWidth="177.0" text="Acciones" AnchorPane.bottomAnchor="2.0">
                      <content>
                         <AnchorPane prefHeight="239.0" prefWidth="175.0">
                            <children>
                               <Button layoutX="71.0" layoutY="5.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="E" AnchorPane.topAnchor="5.0" />
                               <Button layoutX="72.0" layoutY="86.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
-                              <Button layoutX="71.0" layoutY="157.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="D" />
+                              <Button layoutX="71.0" layoutY="157.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="D" AnchorPane.bottomAnchor="50.0" />
                               <Label layoutX="76.0" layoutY="57.0" text="Editar" />
                               <Label layoutX="70.0" layoutY="128.0" text="Eliminar" />
                               <Label layoutX="61.0" layoutY="194.0" text="Descuentos" />

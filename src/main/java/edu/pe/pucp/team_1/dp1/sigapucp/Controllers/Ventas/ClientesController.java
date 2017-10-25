@@ -119,6 +119,27 @@ public class ClientesController extends Controller{
         Base.open();
         inhabilitar_formulario();
         
+        persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal));
+        persoJuri.setOnAction(e -> manejarAreaTexto(dni));
     }    
+    
+    private void manejarAreaTexto(TextField texto, TextField texto2){    
+        if (persoNatu.isSelected()){
+            texto.setDisable(true);
+            texto2.setDisable(true);
+            dni.setDisable(false);
+            persoJuri.setSelected(false);
+        }
+    }
+    
+    private void manejarAreaTexto(TextField texto){
+        if (persoJuri.isSelected()){
+            texto.setDisable(true);
+            ruc.setDisable(false);
+            repLegal.setDisable(false);
+            persoNatu.setSelected(false);
+        }
+        
+    } 
     
 }

@@ -36,8 +36,6 @@ public class RecuperarContrasenhaController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        errorController = new ErrorAlertController();
-        confirmationController = new ConfirmationAlertController();
         envio_exitoso = false;
     }    
     
@@ -54,8 +52,10 @@ public class RecuperarContrasenhaController implements Initializable {
     public void enviarContrasenha(ActionEvent event){
         try{
             if ( envio_exitoso = Usuario.enviaCorreo(usuario_email.getText())) {
+                confirmationController = new ConfirmationAlertController();
                 confirmationController.show("En breve le llegará un correo con instrucciones para reestablecer su contraseña", "Error Code");
             }else {
+                errorController = new ErrorAlertController();
                 errorController.show("La contraseña ingresada no se encuentra registrada", "Error Code");
             }            
         }catch(Exception e)

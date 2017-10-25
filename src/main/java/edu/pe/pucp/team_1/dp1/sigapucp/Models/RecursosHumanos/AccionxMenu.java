@@ -12,6 +12,6 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("MenuRolexAction")
-public class MenuRolxAction extends Model{    
+@Table("AccionesxMenus")
+public class AccionxMenu extends Model{    
 }

@@ -14,13 +14,13 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController">
    <children>
-      <AnchorPane layoutX="53.0" layoutY="53.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane layoutX="53.0" layoutY="53.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="3.0" layoutY="2.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="531.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane layoutX="3.0" layoutY="2.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="24.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
                      <font>
                         <Font size="20.0" />
@@ -64,7 +64,7 @@
                   <TextField fx:id="nombreBusq" layoutX="130.0" layoutY="130.0" prefHeight="25.0" prefWidth="106.0" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="29.0" layoutY="342.0" prefHeight="300.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="272.0">
+            <AnchorPane layoutX="29.0" layoutY="342.0" prefHeight="300.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="272.0">
                <children>
                   <TableView layoutX="12.0" layoutY="47.0" prefHeight="202.0" prefWidth="225.0">
                      <columns>
@@ -72,7 +72,7 @@
                         <TableColumn prefWidth="147.33333587646484" text="Cliente" />
                      </columns>
                   </TableView>
-                  <Button fx:id="visualizarBttn" layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                  <Button fx:id="visualizarBttn" layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" AnchorPane.topAnchor="271.0" />
                </children>
             </AnchorPane>
          </children>
@@ -82,7 +82,7 @@
       </AnchorPane>
       <AnchorPane layoutX="303.0" layoutY="53.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="749.0" AnchorPane.bottomAnchor="532.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="749.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="133.0" layoutY="10.0" text="Cliente:">
