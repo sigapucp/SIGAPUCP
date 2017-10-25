@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.ContenidoPrincipalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.io.IOException;
 import java.net.URL;
@@ -15,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -47,9 +49,9 @@ public class ProformasController extends Controller {
     @FXML
     private Button visualizarPedido;
     @FXML
-    private DatePicker fechaProfSh;
+    public DatePicker fechaProfSh;
     @FXML
-    private TextField clienteSh;
+    public TextField clienteSh;
     @FXML
     private RadioButton solesProf;
     @FXML
@@ -78,11 +80,13 @@ public class ProformasController extends Controller {
     private Button EliminarProf;
     @FXML
     private Spinner<?> cantProd;
-    @FXML
+    @FXML 
     private TextField producto;
     @FXML
     private Button agregarProdProf;
     
+    
+    @FXML private ContenidoPrincipalController contenidoPrincipalController;
     
     static Stage modal_stage = new Stage();
 
@@ -98,12 +102,12 @@ public class ProformasController extends Controller {
             modal_content = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Proformas/AgregarProformas.fxml"));
             Scene modal_content_scene = new Scene(modal_content);
             modal_stage.setScene(modal_content_scene);
-            modal_stage.initModality(Modality.APPLICATION_MODAL);
+            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);
             //modal_stage.initOwner((Stage) pedidoContainer.getScene().getWindow());
             modal_stage.setScene(modal_content_scene);
         } catch (IOException ex) {
             Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        }
     }  
     private void manejarRadBttnDol(){
         solesProf.setSelected(false);
@@ -112,6 +116,16 @@ public class ProformasController extends Controller {
     @FXML
     private void handleAgregarProducto(ActionEvent event) {
         modal_stage.showAndWait();
+    }
+    
+    @FXML
+    void handleGenerarPedido(ActionEvent event) throws IOException {
+          //contenidoPrincipalController = new ContenidoPrincipalController();
+//        Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Pedidos/Pedidos.fxml"));
+//        Scene main_content_scene = new Scene(main_content_parent);
+//        Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//        app_stage.setScene(main_content_scene);
+//        app_stage.show();
     }
     
     private void manejarRadBttnSol(){
