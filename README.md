@@ -1,2 +1,0 @@
-# SIGAPUCP
-Warehouse management system
