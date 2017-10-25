@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.00" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController">
+<AnchorPane id="AnchorPane" fx:id="pedidoContainer" prefHeight="572.00" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController">
    <children>
       <AnchorPane layoutX="43.0" layoutY="43.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -183,7 +183,7 @@
                            </font>
                         </Label>
                         <TextField layoutX="280.0" layoutY="5.0" prefHeight="25.0" prefWidth="240.0" />
-                        <Button layoutX="529.0" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" text="+">
+                        <Button fx:id="agregarProducto" layoutX="529.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleAgregarProducto" prefHeight="20.0" prefWidth="20.0" text="Agregar Productos">
                            <font>
                               <Font size="10.0" />
                            </font>
