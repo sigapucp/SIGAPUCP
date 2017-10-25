@@ -16,4 +16,8 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("Acciones")
 @IdName("accion_id")
 public class Accion extends Model{    
+    public enum ACCION
+    {
+        
+    }
 }

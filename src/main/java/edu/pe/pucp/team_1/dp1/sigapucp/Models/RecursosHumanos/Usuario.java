@@ -21,14 +21,12 @@ public class Usuario extends Model{
     public static boolean autenticacion (String correo_usuario, String contrasenha){
         Usuario usuario;
         Boolean autenticado = false;
-        
         try{          
             usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);            
-            autenticado = usuario != null;
-            Base.close();
+            autenticado = usuario != null;            
         }
         catch (Exception e){
-            System.out.println(e);
+            System.out.println(e);            
         }
         return autenticado;
     }
