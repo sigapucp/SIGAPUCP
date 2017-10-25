@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="575.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
+<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
    <children>
       <AnchorPane layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
          <children>

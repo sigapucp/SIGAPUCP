@@ -13,7 +13,7 @@ import javafx.fxml.Initializable;
 /**
  * FXML Controller class
  *
- * @author Jauma
+ * @author Joel
  */
 public class PromocionesController extends Controller{
 

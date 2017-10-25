@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
  * @author Jauma
  */
-@Table("MenuxRol")
-public class MenuxRol extends Model{
-    
+@Table("TiposOrdenEntrada")
+@IdName("tipo_entrada_id")
+public class TipoOrdenEntrada extends Model{    
 }

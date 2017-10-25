@@ -20,43 +20,10 @@
         <name>Team 1 - Dp 1</name>
     </organization>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.testfx</groupId>
-            <artifactId>testfx-core</artifactId>
-            <version>4.0.1-alpha</version>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>23.2-jre</version>
-        </dependency>
-        
-        <dependency> 
-            <groupId>org.testfx</groupId> 
-            <artifactId>testfx-junit</artifactId> 
-            <version>4.0.1-alpha</version> 
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.javalite</groupId>
-            <artifactId>activejdbc</artifactId>         
-            <version>1.4.13</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.1.4</version>
-        </dependency>
-    </dependencies>
+   
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -183,4 +150,38 @@
 
         </plugins>
     </build>
+
+     <dependencies>
+    <!--    <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-core</artifactId>
+            <version>4.0.1-alpha</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.2-jre</version>
+        </dependency>
+        
+<!--        <dependency> 
+            <groupId>org.testfx</groupId> 
+            <artifactId>testfx-junit</artifactId> 
+            <version>4.0.1-alpha</version> 
+            <scope>test</scope>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.javalite</groupId>
+            <artifactId>activejdbc</artifactId>         
+            <version>1.4.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.1.4</version>
+        </dependency>
+    </dependencies>
 </project>
