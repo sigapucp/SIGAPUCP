@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -19,7 +20,12 @@ import org.javalite.activejdbc.Base;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.io.IOException;
 import java.util.List;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 
 /**
  * FXML Controller class
@@ -62,7 +68,17 @@ public class ClientesController extends Controller{
     private TextField telf;
     @FXML
     private AnchorPane cliente_formulario;
+    @FXML
+    private TableColumn<Cliente, String> columna_ruc;
+    @FXML
+    private TableColumn<Cliente, String> columna_dni;
+    @FXML
+    private TableColumn<Cliente, String> columna_nombre;
+    @FXML
+    private TableView<Cliente> tabla_clientes;
     
+    private List<Cliente> clientes;
+    private final ObservableList<Cliente> masterData = FXCollections.observableArrayList();
     /**
      * Initializes the controller class.
      */
@@ -73,7 +89,7 @@ public class ClientesController extends Controller{
         tipo_cliente = (persoJuri.isSelected()) ? "persona natural" : "";
         return tipo_cliente;
     }
-  
+
     @Override
     public void crear() {
         try{
@@ -117,7 +133,10 @@ public class ClientesController extends Controller{
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
         try{
-            List<Cliente> clientes = Cliente.where("ruc = ? or dni = ? or nombre = ? or estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estadoBusq.getSelectionModel().getSelectedItem().toString());
+            String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+            clientes = null;
+            clientes = Cliente.where("ruc = ? AND dni = ? AND nombre = ? AND estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado);
+            cargar_tabla_index();
         }
         catch( Exception e){
             System.out.println(e);
@@ -128,14 +147,31 @@ public class ClientesController extends Controller{
         estadoBusq.getItems().addAll("persona natural", "persona juridica");
     }
     
+    public void control_check_box(){
+        persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal));
+        persoJuri.setOnAction(e -> manejarAreaTexto(dni));        
+    }
+    
+    public void cargar_tabla_index(){
+        for( Cliente cliente : clientes){
+            masterData.add(cliente);
+        }
+        tabla_clientes.setEditable(false);
+        columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("ruc")));
+        columna_dni.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("dni")));
+        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        tabla_clientes.setItems(masterData);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        Base.open();
+        if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
         llenar_estado_social_busqueda();
-        persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal));
-        persoJuri.setOnAction(e -> manejarAreaTexto(dni));
+        control_check_box();
+        clientes = Cliente.findAll();
+        cargar_tabla_index();
     }    
     
     private void manejarAreaTexto(TextField texto, TextField texto2){    
