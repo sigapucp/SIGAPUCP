@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
 /**
  * FXML Controller class
  *
- * @author Jauma
+ * @author Joel
  */
 public class ClientesController extends Controller{
 
@@ -68,7 +68,30 @@ public class ClientesController extends Controller{
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        // TODO  
+        persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal,rubro));
+        persoJuri.setOnAction(e -> manejarAreaTexto(dni));
     }    
+    
+    private void manejarAreaTexto(TextField texto, TextField texto2, TextField texto3){    
+        if (persoNatu.isSelected()){
+            texto.setDisable(true);
+            texto2.setDisable(true);
+            texto3.setDisable(true);
+            dni.setDisable(false);
+            persoJuri.setSelected(false);
+        }
+    }
+    
+    private void manejarAreaTexto(TextField texto){
+        if (persoJuri.isSelected()){
+            texto.setDisable(true);
+            ruc.setDisable(false);
+            repLegal.setDisable(false);
+            rubro.setDisable(false);
+            persoNatu.setSelected(false);
+        }
+        
+    } 
     
 }

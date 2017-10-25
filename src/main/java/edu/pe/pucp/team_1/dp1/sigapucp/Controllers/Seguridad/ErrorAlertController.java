@@ -17,12 +17,11 @@ public class ErrorAlertController {
     private Stage stage;
     private Alert alert;
     public ErrorAlertController()
-    {
-        System.out.println("AQUI VA LA PANTALLA DE ERROR");                       
+    {                     
         alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("SIGAPUCP - Error");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
-        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_fit_icon.png").toString()));     
+        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
     }
     
     public void show(String descripcionError,String codigoError)

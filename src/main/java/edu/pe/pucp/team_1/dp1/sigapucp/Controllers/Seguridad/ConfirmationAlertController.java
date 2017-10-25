@@ -24,7 +24,7 @@ public class ConfirmationAlertController {
         alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("SIGAPUCP - Confirmacion");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
-        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_fit_icon.png").toString()));     
+        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
     }
     
     public boolean show(String descripcion,String pregunta)

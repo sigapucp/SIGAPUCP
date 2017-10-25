@@ -8,7 +8,8 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * FXML Controller class
@@ -16,6 +17,9 @@ import javafx.fxml.Initializable;
  * @author Jauma
  */
 public class AlmacenesController extends Controller{
+
+    @FXML
+    private AnchorPane AnchorPane;
 
     /**
      * Initializes the controller class.
