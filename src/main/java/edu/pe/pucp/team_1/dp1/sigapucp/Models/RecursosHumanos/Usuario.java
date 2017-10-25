@@ -21,7 +21,7 @@ public class Usuario extends Model{
     public static boolean autenticacion (String correo_usuario, String contrasenha){
         Usuario usuario;
         Boolean autenticado = false;
-        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        
         try{          
             usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);            
             autenticado = usuario != null;
