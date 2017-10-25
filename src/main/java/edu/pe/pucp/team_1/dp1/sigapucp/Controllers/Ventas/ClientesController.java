@@ -73,7 +73,7 @@ public class ClientesController extends Controller{
         tipo_cliente = (persoJuri.isSelected()) ? "persona natural" : "";
         return tipo_cliente;
     }
-  
+
     @Override
     public void crear() {
         try{

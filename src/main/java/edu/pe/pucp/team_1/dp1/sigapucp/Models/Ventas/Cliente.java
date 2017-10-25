@@ -16,11 +16,14 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("Clientes")
 @IdName("client_id")
 public class Cliente extends Model{
-    /*
+    
     static{
         validatePresenceOf("nombre", "direccion_despacho", "direccion_facturacion");
+        validateNumericalityOf("telef_contacto");
+        validateNumericalityOf("dni");
+        //validateRegexpOf("dni", "\\b^[0-9]\\b");
     }
-*/
+    
     public void asignar_atributos(String nombre, String nombre_contacto, String telf_contacto, String ruc, String dni, String tipo_cliente, String direccion_despacho, String direccion_facturacion){
         this.set("nombre", nombre );
         this.set("nombre_contacto", nombre_contacto);
