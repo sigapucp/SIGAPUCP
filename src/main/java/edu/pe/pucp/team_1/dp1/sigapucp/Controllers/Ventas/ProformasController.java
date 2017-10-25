@@ -77,9 +77,17 @@ public class ProformasController extends Controller {
     /**
      * Initializes the controller class.
      */
-    @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+        dolProf.setOnAction(e -> manejarRadBttnDol());
+        solesProf.setOnAction(e -> manejarRadBttnSol());
+    }  
+    private void manejarRadBttnDol(){
+        solesProf.setSelected(false);
+    }
+//    
+    private void manejarRadBttnSol(){
+        dolProf.setSelected(false);
+    }
     
 }
