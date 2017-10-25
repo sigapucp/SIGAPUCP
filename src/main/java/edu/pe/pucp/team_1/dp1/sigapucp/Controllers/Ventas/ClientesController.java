@@ -116,7 +116,12 @@ public class ClientesController extends Controller{
     
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
-        List<Cliente> clientes = Cliente.where("ruc = ? or dni = ? or nombre = ? or estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estadoBusq.getSelectionModel().getSelectedItem().toString());
+        try{
+            List<Cliente> clientes = Cliente.where("ruc = ? or dni = ? or nombre = ? or estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estadoBusq.getSelectionModel().getSelectedItem().toString());
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
     }
     
     public void llenar_estado_social_busqueda(){

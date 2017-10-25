@@ -83,9 +83,15 @@ public class ProveedoresController extends Controller{
     public  void inhabilitar_formulario (){
         proveedor_formulario.setDisable(true);
     }
+    
     @FXML
-    public void buscar_cliente(ActionEvent event) throws IOException{
-        List<Proveedor> proveedores = Proveedor.where("provuder_ruc = ?  or name = ? ", ruc_busqueda.getText(),nombre_busqueda.getText());
+    public void buscar_proveedor(ActionEvent event) throws IOException{
+        try{
+            List<Proveedor> proveedores = Proveedor.where("provuder_ruc = ?  or name = ? ", ruc_busqueda.getText(),nombre_busqueda.getText());
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
     }
     
     
