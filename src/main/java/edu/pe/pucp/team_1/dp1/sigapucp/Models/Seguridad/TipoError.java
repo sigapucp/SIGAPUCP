@@ -15,5 +15,9 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("TiposError")
 @IdName("error_type_id")
-public class TipoError extends Model{    
+public class TipoError extends Model{  
+    public enum TIPOERROR
+    {
+        
+    }
 }
