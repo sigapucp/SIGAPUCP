@@ -11,9 +11,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -42,6 +47,16 @@ public class ProveedoresController extends Controller{
     private TextField nombre_busqueda;
     @FXML
     private AnchorPane proveedor_formulario;
+    @FXML
+    private TableColumn<Proveedor, String> columna_ruc;
+    @FXML
+    private TableColumn<Proveedor, String> columna_nombre;
+    @FXML
+    private TableView<Proveedor> tabla_proveedor;
+    
+    private List<Proveedor> proveedores;
+    private final ObservableList<Proveedor> masterData = FXCollections.observableArrayList();
+    
     
     /**
      * Initializes the controller class.
@@ -87,21 +102,33 @@ public class ProveedoresController extends Controller{
     @FXML
     public void buscar_proveedor(ActionEvent event) throws IOException{
         try{
-            List<Proveedor> proveedores = Proveedor.where("provuder_ruc = ?  or name = ? ", ruc_busqueda.getText(),nombre_busqueda.getText());
+            proveedores = null;
+            proveedores = Proveedor.where("provuder_ruc = ?  or name = ? ", ruc_busqueda.getText(),nombre_busqueda.getText());
+            cargar_tabla_index();
         }
         catch(Exception e){
             System.out.println(e);
         }
     }
     
-    
+public void cargar_tabla_index(){
+        for( Proveedor cliente : proveedores){
+            masterData.add(cliente);
+        }
+        tabla_proveedor.setEditable(false);
+        columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("provuder_ruc")));
+        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("name")));
+        tabla_proveedor.setItems(masterData);
+    }
+        
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         //Base.close();
-        Base.open();
+        if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
-        
+        proveedores = Proveedor.findAll();
+        cargar_tabla_index();
     }    
     
 }
