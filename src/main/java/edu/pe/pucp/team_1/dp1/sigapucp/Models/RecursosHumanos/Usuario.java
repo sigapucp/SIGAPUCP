@@ -21,10 +21,10 @@ public class Usuario extends Model{
     public static boolean autenticacion (String correo_usuario, String contrasenha){
         Usuario usuario;
         Boolean autenticado = false;
-        try{
-            Base.open();
-            usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);
-            autenticado = usuario.exists();
+        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        try{          
+            usuario = Usuario.findFirst("email = ? and contrasena_encriptada = ?", correo_usuario, contrasenha);            
+            autenticado = usuario != null;
             Base.close();
         }
         catch (Exception e){
@@ -36,12 +36,9 @@ public class Usuario extends Model{
     public static boolean enviaCorreo(String correo_usuario){
         Usuario usuario;
         Boolean exito = false;
-        try{
-            Base.open();
-            usuario = Usuario.findFirst("email = ?", correo_usuario);
-            System.out.println(usuario.exists());
-            exito = usuario.exists();
-            Base.close();
+        try{            
+            usuario = Usuario.findFirst("email = ?", correo_usuario);            
+            exito = usuario != null;
         }
         catch (Exception e){
             System.out.println(e);

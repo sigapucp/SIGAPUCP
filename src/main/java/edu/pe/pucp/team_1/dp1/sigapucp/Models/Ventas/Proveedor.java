@@ -16,5 +16,14 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("Proveedores")
 @IdName("proveedor_id")
 public class Proveedor extends Model{
-    
+
+    public void asignar_atributos(String nombre, String nombre_contacto, String telf_contacto, String ruc, String comentarios){
+        this.set("name", nombre );
+        this.set("contact_name", nombre_contacto);
+        int telef_contacto = (telf_contacto.equals("")) ? 0 : Integer.parseInt(telf_contacto);
+        this.set("phone_number",  telef_contacto);
+        this.set("provuder_ruc", ruc);
+        this.set("status", "activo");
+        this.set("annotation", comentarios);
+    }    
 }

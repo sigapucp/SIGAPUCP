@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane id="AnchorPane" fx:id="producton_container" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.ProductosController">
+    <children>
+        <AnchorPane prefHeight="575.0" prefWidth="1000.0">
+           <children>
+             <Pane layoutX="-2.0" layoutY="-1.0" prefHeight="50.0" prefWidth="250.0">
+                <children>
+                   <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
+                      <font>
+                         <Font size="20.0" />
+                      </font>
+                   </Label>
+                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                </children>
+            </Pane>
+             <Label layoutX="14.0" layoutY="68.0" prefHeight="21.0" prefWidth="114.0" text="Código producto">
+                <font>
+                   <Font size="14.0" />
+                </font>
+             </Label>
+             <Label layoutX="14.0" layoutY="106.0" prefHeight="21.0" prefWidth="114.0" text="ID de producto">
+                <font>
+                   <Font size="14.0" />
+                </font>
+             </Label>
+             <TextField fx:id="codProd" layoutX="130.0" layoutY="68.0" prefHeight="25.0" prefWidth="106.0" />
+             <TextField fx:id="idProd" layoutX="130.0" layoutY="106.0" prefHeight="25.0" prefWidth="106.0" />
+             <TableView fx:id="tablaProductos" layoutX="12.0" layoutY="222.0" prefHeight="245.0" prefWidth="224.0">
+               <columns>
+                 <TableColumn fx:id="codigoProducto" prefWidth="118.0" text="Código de producto" />
+                 <TableColumn fx:id="categoriaProducto" prefWidth="105.0" text="Categoría" />
+               </columns>
+             </TableView>
+             <Button layoutX="140.0" layoutY="522.0" mnemonicParsing="false" onAction="#CargarProductos" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+             <AnchorPane layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
+                <children>
+                   <TabPane layoutY="56.0" prefHeight="522.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                       <Tab text="General">
+                            <content>
+                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                  <children>
+                                     <Label layoutX="24.0" layoutY="50.0" text="Tipo de producto">
+                                        <font>
+                                           <Font size="14.0" />
+                                        </font>
+                                     </Label>
+                                     <Label layoutX="27.0" layoutY="98.0" text="Tipo del producto">
+                                        <font>
+                                           <Font size="14.0" />
+                                        </font>
+                                     </Label>
+                                     <Label layoutX="27.0" layoutY="139.0" text="Fecha de adquisición">
+                                        <font>
+                                           <Font size="14.0" />
+                                        </font>
+                                     </Label>
+                                     <Label layoutX="27.0" layoutY="184.0" text="Descripción del producto">
+                                        <font>
+                                           <Font size="14.0" />
+                                        </font>
+                                     </Label>
+                                     <Label layoutX="400.0" layoutY="98.0" text="Precio">
+                                        <font>
+                                           <Font size="14.0" />
+                                        </font>
+                                     </Label>
+                                     <Label layoutX="400.0" layoutY="140.0" text="Fecha de vencimiento">
+                                        <font>
+                                           <Font size="14.0" />
+                                        </font>
+                                     </Label>
+                                     <TextField layoutX="204.0" layoutY="48.0" prefHeight="25.0" prefWidth="488.0" />
+                                     <ComboBox layoutX="204.0" layoutY="95.0" prefHeight="25.0" prefWidth="173.0" />
+                                     <TextField layoutX="543.0" layoutY="103.0" />
+                                     <DatePicker layoutX="204.0" layoutY="137.0" />
+                                     <DatePicker layoutX="544.0" layoutY="138.0" prefHeight="25.0" prefWidth="147.0" />
+                                     <TextArea layoutX="204.0" layoutY="184.0" prefHeight="153.0" prefWidth="490.0" />
+                                     <CheckBox layoutX="618.0" layoutY="354.0" mnemonicParsing="false" text="Activo" />
+                                  </children>
+                               </AnchorPane>
+                            </content>
+                         </Tab>
+                       <Tab text="Distribución">
+                            <content>
+                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                  <children>
+                                     <Label layoutX="31.0" layoutY="26.0" text="Productos">
+                                        <font>
+                                           <Font size="20.0" />
+                                        </font>
+                                     </Label>
+                                     <TableView layoutX="31.0" layoutY="94.0" prefHeight="289.0" prefWidth="423.0">
+                                       <columns>
+                                         <TableColumn prefWidth="151.0" text="Código de producto" />
+                                         <TableColumn prefWidth="271.0" text="Ubicación" />
+                                       </columns>
+                                     </TableView>
+                                     <TitledPane animated="false" collapsible="false" layoutX="517.0" layoutY="94.0" prefHeight="289.0" prefWidth="177.0" text="Acciones">
+                                        <content>
+                                           <AnchorPane prefHeight="239.0" prefWidth="175.0">
+                                              <children>
+                                                 <Button layoutX="68.0" layoutY="47.0" mnemonicParsing="false" onAction="#abrirIngresarProductoARack" prefHeight="40.0" prefWidth="40.0" text="E" AnchorPane.topAnchor="47.0" />
+                                                 <Button layoutX="68.0" layoutY="161.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
+                                                 <Label layoutX="67.0" layoutY="115.0" text="Ingresar" />
+                                                 <Label layoutX="61.0" layoutY="220.0" text="Movimiento" />
+                                              </children>
+                                           </AnchorPane>
+                                        </content>
+                                     </TitledPane>
+                                  </children>
+                               </AnchorPane>
+                            </content>
+                         </Tab>
+                         <Tab text="Detalle">
+                            <content>
+                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                  <children>
+                                    <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="27.0" prefHeight="143.0" prefWidth="701.0" text="Características">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="111.0" prefWidth="699.0">
+                                             <children>
+                                                 <Label layoutX="22.0" layoutY="27.0" text="Largo">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="444.0" layoutY="32.0" text="Peso">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="153.0" layoutY="27.0" text="Alto">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="22.0" layoutY="70.0" text="Unidades">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="255.0" layoutY="27.0" text="Ancho">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="444.0" layoutY="71.0" text="Unidades">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <TextField layoutX="91.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
+                                                 <TextField layoutX="189.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
+                                                 <TextField layoutX="304.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
+                                                 <ComboBox layoutX="91.0" layoutY="68.0" prefWidth="150.0" />
+                                                 <TextField layoutX="527.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
+                                                 <ComboBox layoutX="527.0" layoutY="68.0" prefWidth="150.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="191.0" prefHeight="264.0" prefWidth="701.0" text="Inventario">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="238.0" prefWidth="657.0">
+                                             <children>
+                                                 <Label layoutX="23.0" layoutY="23.0" text="Ubicacion en almacen">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="126.0" layoutY="81.0" text="Separados">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="126.0" layoutY="110.0" text="No disponibles">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="125.0" layoutY="138.0" text="Envio directo">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="394.0" layoutY="53.0" text="En orden">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="394.0" layoutY="81.0" text="Comprometidos">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="125.0" layoutY="169.0" text="Disponible para la venta">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="394.0" layoutY="169.0" text="Disponible para escoger">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="125.0" layoutY="53.0" text="Cantidad en almacen">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <Label layoutX="302.0" layoutY="52.0" text="0" />
+                                                 <Label layoutX="302.0" layoutY="83.0" text="0" />
+                                                 <Label layoutX="302.0" layoutY="112.0" text="0" />
+                                                 <Label layoutX="302.0" layoutY="140.0" text="0" />
+                                                 <Label layoutX="302.0" layoutY="171.0" text="0" />
+                                                 <Label layoutX="560.0" layoutY="55.0" text="0" />
+                                                 <Label layoutX="560.0" layoutY="83.0" text="0" />
+                                                 <Label layoutX="560.0" layoutY="171.0" text="0" />
+                                                 <Line endX="100.0" layoutX="218.0" layoutY="165.0" startX="-100.0" />
+                                                 <Line endX="100.0" layoutX="480.0" layoutY="164.0" startX="-100.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                  </children>
+                              </AnchorPane>
+                            </content>
+                         </Tab>
+                     </tabs>
+                   </TabPane>
+                   <Pane prefHeight="50.0" prefWidth="750.0">
+                      <children>
+                         <Label layoutX="133.0" layoutY="10.0" text="Detalle del Producto">
+                            <font>
+                               <Font size="20.0" />
+                            </font>
+                         </Label>
+                         <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
+                         <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
+                      </children>
+                   </Pane>
+                </children>
+            </AnchorPane>
+             <Line endX="100.0" layoutX="118.0" layoutY="49.0" startX="-100.0" />
+            <TextField fx:id="cateProd" layoutX="128.0" layoutY="182.0" prefHeight="25.0" prefWidth="106.0" />
+            <TextField fx:id="tipoProd" layoutX="128.0" layoutY="144.0" prefHeight="25.0" prefWidth="106.0" />
+            <Label layoutX="12.0" layoutY="182.0" prefHeight="21.0" prefWidth="114.0" text="Categoria">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="12.0" layoutY="144.0" prefHeight="21.0" prefWidth="114.0" text="Tipo de producto">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+           </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

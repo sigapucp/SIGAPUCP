@@ -18,26 +18,12 @@ public class Main extends Application {
     }
     
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/Producto.fxml"));
-        //Parent root = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
+
+
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Seguridad/Login.fxml"));       
+
         Scene scene = new Scene(root);
-        
-        //Base.open();
-        //FleteVolumen f = new FleteVolumen();
-//        Lote lot = new Lote();
-//        try{    
-//            Base.openTransaction();
-//            Menu e = new Menu();
-//            e.set("nombre", "Menu");
-//            e.set("descripcion","MenuTest");          
-//            e.saveIt();
-//            Base.commitTransaction();
-//        }
-//        catch(Exception e){
-//            Base.rollbackTransaction();
-//         }finally{
-//            Base.close();
-//         }                 
+       
         stage.setScene(scene);
         stage.setTitle("SIGAPUCP");
         stage.setResizable(false);       

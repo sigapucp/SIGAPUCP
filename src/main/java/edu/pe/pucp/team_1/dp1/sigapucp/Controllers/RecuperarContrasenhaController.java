@@ -5,6 +5,8 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
@@ -28,6 +30,8 @@ public class RecuperarContrasenhaController implements Initializable {
 
     private Boolean envio_exitoso;
     @FXML private TextField usuario_email;
+    private ErrorAlertController errorController;
+    private ConfirmationAlertController confirmationController;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -48,17 +52,11 @@ public class RecuperarContrasenhaController implements Initializable {
     public void enviarContrasenha(ActionEvent event){
         try{
             if ( envio_exitoso = Usuario.enviaCorreo(usuario_email.getText())) {
-                FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ExitoCorreo.fxml"));
-                Parent raiz = (Parent) fxmlclase.load();
-                Stage ventana = new Stage();
-                ventana.setScene(new Scene(raiz));
-                ventana.show();
+                confirmationController = new ConfirmationAlertController();
+                confirmationController.show("En breve le llegará un correo con instrucciones para reestablecer su contraseña", "Error Code");
             }else {
-                FXMLLoader fxmlclase = new FXMLLoader(getClass().getResource("/fxml/Seguridad/ErrorCorreo.fxml"));
-                Parent raiz = (Parent) fxmlclase.load();
-                Stage ventana = new Stage();
-                ventana.setScene(new Scene(raiz));
-                ventana.show();
+                errorController = new ErrorAlertController();
+                errorController.show("La contraseña ingresada no se encuentra registrada", "Error Code");
             }            
         }catch(Exception e)
         {
