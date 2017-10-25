@@ -1,1 +1,14 @@
-/nbproject/
+nbproject/
+build/
+dist/
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+*/bin
+*bin
+*.bin
+*bin
