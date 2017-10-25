@@ -7,11 +7,18 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios;
 
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -20,9 +27,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Callback;
+import org.javalite.activejdbc.Base;
 
 /**
  *
@@ -31,16 +41,16 @@ import javafx.scene.layout.AnchorPane;
 
 public class UsuariosController extends Controller{
     @FXML
-    private TableColumn<Usuarios,String> ColumnaNombre;
+    private TableColumn<Usuario,String> ColumnaNombre;
 
     @FXML
     private TextField CorreoUsuario;
 
     @FXML
-    private TableColumn<Usuarios,String> ColumnaCorreo;
+    private TableColumn<Usuario,String> ColumnaCorreo;
 
     @FXML
-    private TableColumn<Usuarios,String> ColumnaApellido;
+    private TableColumn<Usuario,String> ColumnaApellido;
 
     @FXML
     private TextField ApellidoUsuario;
@@ -49,12 +59,23 @@ public class UsuariosController extends Controller{
     private TextField NombreUsuario;
 
     @FXML
-    private TableView<Usuarios> TablaUsuarios;
+    private TableView<Usuario> TablaUsuarios;
     
     @FXML
     private AnchorPane usuario_container;
     
-    private final ObservableList<Usuarios> masterData = FXCollections.observableArrayList();
+    private final ObservableList<Usuario> masterData = FXCollections.observableArrayList();    
+    private List<Usuario> usuarios;
+    
+    public UsuariosController()
+    {
+        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        usuarios = Usuario.findAll();       
+        
+        for (Usuario usuario : usuarios) {
+            masterData.add(usuario);
+        }                       
+    }
     
     @FXML
     public void abrirDetalleUsuario(ActionEvent event) {
@@ -77,64 +98,14 @@ public class UsuariosController extends Controller{
         }
         
     }    
-    public UsuariosController(){
-        masterData.add(new Usuarios("hugo","villanueva","hugo@hugo"));
-        masterData.add(new Usuarios("waldo","chavez","w@hugo"));
-        masterData.add(new Usuarios("kevin","vega","k@hugo"));
-             
-    }
     
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        /*ColumnaNombre.setCellValueFactory(cellData -> cellData.getValue().NombreProperty());
-        ColumnaApellido.setCellValueFactory(cellData -> cellData.getValue().ApellidoProperty());
-        ColumnaCorreo.setCellValueFactory(cellData -> cellData.getValue().CorreoProperty());
-        
-        FilteredList<Usuarios> filteredData = new FilteredList<>(masterData, p-> true);
-        TablaUsuarios.setItems(filteredData);
-        NombreUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(usuarios -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (usuarios.getNombre().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }
-                return false;
-            });
-        });
-        
-        ApellidoUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(usuarios -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (usuarios.getApellido().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }
-                return false;
-            });
-        });
-        
-        CorreoUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(usuarios -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (usuarios.getCorreo().toLowerCase().indexOf(lowerCaseFilter) != -1){
-                    return true;
-                }
-                return false;
-            });
-        });  
-        
-        SortedList<Usuarios> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(TablaUsuarios.comparatorProperty());
-        TablaUsuarios.setItems(sortedData);*/
-        
+    @FXML
+    public void initialize(URL location, ResourceBundle resources) {        
+        TablaUsuarios.setEditable(false);        
+        ColumnaNombre.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        ColumnaCorreo.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("usuario_cod")));
+        ColumnaApellido.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("apellido")));                        
+        TablaUsuarios.setItems(masterData);
     }
 
 }

@@ -31,6 +31,7 @@ public class LoginController implements Initializable{
     
     public LoginController()
     {
+        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
     }
 
     @FXML
@@ -42,13 +43,12 @@ public class LoginController implements Initializable{
             Scene main_content_scene = new Scene(main_content_parent);
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             app_stage.setScene(main_content_scene);
-            //Base.close();
+            Base.close();
             app_stage.show();
         }else {
             errorController = new ErrorAlertController();
             errorController.show("El usuario o contraseña es incorrecto", "Error Code");
         }
-
     }
     
     @FXML
