@@ -170,6 +170,7 @@ public class ClientesController extends Controller{
         inhabilitar_formulario();
         llenar_estado_social_busqueda();
         control_check_box();
+        clientes = null;
         clientes = Cliente.findAll();
         cargar_tabla_index();
     }    
