@@ -58,14 +58,15 @@ public class PedidosController extends Controller {
     @FXML
     private DatePicker fechaPed;
         
-    static Stage modal_stage = new Stage();
+    @FXML static Stage modal_stage = new Stage();
     
     @FXML private ProformasController proformasController;
 
     /**
      * Initializes the controller class.
      */
-@Override
+    @Override
+    @FXML
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         Base.close();

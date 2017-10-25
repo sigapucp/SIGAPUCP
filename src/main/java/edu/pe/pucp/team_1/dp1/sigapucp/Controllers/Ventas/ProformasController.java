@@ -7,6 +7,9 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.ContenidoPrincipalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirDetallesArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,10 +25,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -85,18 +90,22 @@ public class ProformasController extends Controller {
     @FXML
     private Button agregarProdProf;
     
+    public IEvent<abrirDetallesArgs> abrirDetalle;
     
-    @FXML private ContenidoPrincipalController contenidoPrincipalController;
+    @FXML private ContenidoPrincipalController contenidoPrincipalController = new ContenidoPrincipalController();
     
-    static Stage modal_stage = new Stage();
+    @FXML static Stage modal_stage = new Stage();
 
     /**
      * Initializes the controller class.
      */
+    @Override
+    @FXML
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         dolProf.setOnAction(e -> manejarRadBttnDol());
         solesProf.setOnAction(e -> manejarRadBttnSol());
+        abrirDetalle = new Event<>();
         Parent modal_content;
         try {
             modal_content = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Proformas/AgregarProformas.fxml"));
@@ -119,13 +128,13 @@ public class ProformasController extends Controller {
     }
     
     @FXML
-    void handleGenerarPedido(ActionEvent event) throws IOException {
-          //contenidoPrincipalController = new ContenidoPrincipalController();
-//        Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Pedidos/Pedidos.fxml"));
-//        Scene main_content_scene = new Scene(main_content_parent);
-//        Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//        app_stage.setScene(main_content_scene);
-//        app_stage.show();
+    private void handleGenerarPedido(ActionEvent event) {
+        abrirDetallesArgs args = new abrirDetallesArgs();
+        System.out.println("estoy aqui debuggeando");
+        args.setNombreController("Pedidos");
+        args.setNombreModulo("Ventas");
+        
+        abrirDetalle.fire(this, args);
     }
     
     private void manejarRadBttnSol(){
