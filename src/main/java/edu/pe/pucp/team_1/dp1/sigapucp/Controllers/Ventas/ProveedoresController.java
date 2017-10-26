@@ -64,7 +64,7 @@ public class ProveedoresController extends Controller{
     
 
     @Override
-    public void crear() {
+    public void guardar() {
         try{
             System.out.println("empezando a crear");
             Proveedor nuevo_proveedor = new Proveedor();

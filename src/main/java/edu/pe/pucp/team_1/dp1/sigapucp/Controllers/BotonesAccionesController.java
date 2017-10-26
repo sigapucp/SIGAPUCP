@@ -24,7 +24,7 @@ public class BotonesAccionesController extends Controller {
     private IEvent<ejecutarAccionArgs> ejecutarAccionController;
     
     @FXML
-    public void actionHumo(ActionEvent event) {
+    public void onAccion(ActionEvent event) {
         ejecutarAccionArgs args = new ejecutarAccionArgs();
         Button accionButton = (Button) event.getSource();
         String accion = accionButton.getText();
