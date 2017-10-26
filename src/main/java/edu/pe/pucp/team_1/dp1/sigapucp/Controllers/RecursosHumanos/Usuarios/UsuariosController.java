@@ -261,7 +261,7 @@ public class UsuariosController extends Controller{
         String rol = VerRol.getSelectionModel().getSelectedItem();
         
         try{      
-        Base.openTransaction();    
+        Base.openTransaction();  
         String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);        
         
         Usuario usuario = new Usuario();
