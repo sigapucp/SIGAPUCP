@@ -43,4 +43,9 @@ public class Usuario extends Model{
         }
         return exito;
     }
+    
+    public Rol getRol()
+    {
+        return Rol.findFirst("rol_id = ?", get("rol_id"));        
+    }
 }

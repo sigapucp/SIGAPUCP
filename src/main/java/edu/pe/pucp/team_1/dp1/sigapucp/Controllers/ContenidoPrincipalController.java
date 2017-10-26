@@ -22,7 +22,7 @@ public class ContenidoPrincipalController implements Initializable {
     private void seleccionarAccionRealizar(String nombre, Controller controller) {
         switch(nombre){
             case "Guardar":
-                controller.crear();
+                controller.guardar();
                 break;
             case "Nuevo":
                 controller.nuevo();

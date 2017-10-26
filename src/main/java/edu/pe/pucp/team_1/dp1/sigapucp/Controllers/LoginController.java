@@ -37,9 +37,11 @@ public class LoginController implements Initializable{
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         System.out.println("inicio");
-        //if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {
-        if ( true ) {
+        if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {       
+            Usuario usuarioActual = Usuario.findFirst("email = ? AND contrasena_encriptada = ?", usuario_login.getText(),usuario_contrasenha.getText());
             Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
+            // Controller mainController = main_content_parent.<Controller>getController();
+            // mainController.setUsuarioActual(usuarioActual);
             Scene main_content_scene = new Scene(main_content_parent);
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             app_stage.setScene(main_content_scene);
