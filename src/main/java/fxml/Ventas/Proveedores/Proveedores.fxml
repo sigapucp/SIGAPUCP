@@ -47,10 +47,10 @@
             </AnchorPane>
             <AnchorPane layoutX="29.0" layoutY="226.0" prefHeight="346.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="226.0">
                <children>
-                  <TableView layoutX="12.0" layoutY="10.0" prefHeight="239.0" prefWidth="225.0">
+                  <TableView fx:id="tabla_proveedor" layoutX="12.0" layoutY="10.0" prefHeight="239.0" prefWidth="225.0">
                      <columns>
-                        <TableColumn prefWidth="99.66666412353516" text="RUC" />
-                        <TableColumn prefWidth="124.0" text="Proveedor" />
+                        <TableColumn fx:id="columna_ruc" prefWidth="99.66666412353516" text="RUC" />
+                        <TableColumn fx:id="columna_nombre" prefWidth="124.0" text="Proveedor" />
                      </columns>
                   </TableView>
                   <Button layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />

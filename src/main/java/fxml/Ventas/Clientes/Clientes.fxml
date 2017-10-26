@@ -60,10 +60,11 @@
             </AnchorPane>
             <AnchorPane layoutX="29.0" layoutY="256.0" prefHeight="316.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="256.0">
                <children>
-                  <TableView layoutX="12.0" layoutY="10.0" prefHeight="239.0" prefWidth="225.0">
+                  <TableView fx:id="tabla_clientes" layoutX="12.0" layoutY="10.0" prefHeight="239.0" prefWidth="225.0">
                      <columns>
-                        <TableColumn prefWidth="99.66666412353516" text="RUC/DNI" />
-                        <TableColumn prefWidth="147.33333587646484" text="Cliente" />
+                        <TableColumn fx:id="columna_ruc" minWidth="5.0" prefWidth="65.0" text="Ruc" />
+                        <TableColumn fx:id="columna_dni" prefWidth="65.0" text="Dni" />
+                        <TableColumn fx:id="columna_nombre" prefWidth="95.0" text="Cliente" />
                      </columns>
                   </TableView>
                   <Button fx:id="visualizarBttn" layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" AnchorPane.topAnchor="271.0" />

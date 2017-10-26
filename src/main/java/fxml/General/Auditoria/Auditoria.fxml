@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Auditoria.AuditoriaController">
+   <children>
+      <Pane prefHeight="239.0" prefWidth="1000.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="250.0">
+               <children>
+                  <Label layoutX="82.0" layoutY="10.0" text="Auditoria">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </Pane>
+            <Line endX="100.0" layoutX="118.0" layoutY="49.0" startX="-100.0" />
+            <Label layoutX="257.0" layoutY="134.0" text="Acción:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <DatePicker fx:id="AuditoriaFechaUno" layoutX="80.0" layoutY="70.0" />
+            <Label layoutX="29.0" layoutY="72.0" text="Fecha:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <DatePicker fx:id="AuditoriaFechaDos" disable="true" layoutX="287.0" layoutY="70.0" />
+            <Label layoutX="268.0" layoutY="72.0" text="y">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="487.0" layoutY="72.0" text="Empleado:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <CheckBox fx:id="EntreFecha" layoutX="29.0" layoutY="106.0" mnemonicParsing="false" onAction="#handleCheckBoxUno" text="Entre" />
+            <TextField fx:id="EmpleadoAuditoria" layoutX="568.0" layoutY="70.0" />
+            <TextField fx:id="DescripcionAuditoria" layoutX="768.0" layoutY="99.0" prefHeight="66.0" prefWidth="205.0" />
+            <Label layoutX="833.0" layoutY="72.0" text="Descripción:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <CheckBox fx:id="EntreHora" layoutX="29.0" layoutY="171.0" mnemonicParsing="false" onAction="#handleCheckBoxDos" text="Entre" />
+            <Label layoutX="29.0" layoutY="136.0" text="Hora:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Button layoutX="29.0" layoutY="206.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Buscar" />
+            <ComboBox fx:id="Accion" layoutX="311.0" layoutY="132.0" prefWidth="150.0" />
+            <ComboBox fx:id="Modulo" layoutX="549.0" layoutY="132.0" prefWidth="150.0" />
+            <Label layoutX="487.0" layoutY="134.0" text="Módulo:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="HoraUno" layoutX="77.0" layoutY="132.0" prefHeight="25.0" prefWidth="48.0" />
+            <Label layoutX="136.0" layoutY="134.0" text="y">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="HoraDos" disable="true" layoutX="153.0" layoutY="132.0" prefHeight="25.0" prefWidth="48.0" />
+         </children>
+      </Pane>
+      <Pane layoutY="241.0" prefHeight="331.0" prefWidth="1000.0">
+         <children>
+            <TableView fx:id="TablaAuditoria" layoutX="27.0" prefHeight="314.0" prefWidth="941.0">
+              <columns>
+                <TableColumn fx:id="ColumnaHora" prefWidth="75.0" text="Hora" />
+                <TableColumn fx:id="ColumnaFecha" prefWidth="100.0" text="Fecha" />
+                  <TableColumn fx:id="ColumnaEmpleado" prefWidth="169.0" text="Empleado" />
+                  <TableColumn fx:id="ColumnaAccion" prefWidth="110.0" text="Acción" />
+                  <TableColumn fx:id="ColumnaModulo" prefWidth="118.0" text="Módulo" />
+                  <TableColumn fx:id="ColumnaDescripcion" minWidth="0.0" prefWidth="372.0" text="Descripción" />
+              </columns>
+            </TableView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
