@@ -13,6 +13,9 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Utils.GUIUtils;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -259,7 +262,7 @@ public class UsuariosController extends Controller{
         
         try{      
         Base.openTransaction();    
-        String cod = "USR" + String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")));        
+        String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);        
         
         Usuario usuario = new Usuario();
         usuario.set("usuario_cod",cod);        
@@ -273,9 +276,13 @@ public class UsuariosController extends Controller{
         usuario.set("rol_id",usuarioRol.getId());
         usuario.set("rol_cod",rol);        
         usuario.set("contrasena_encriptada","");
+        usuario.set("last_user_change",usuarioActual.getString("usuario_cod"));
+        
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();        
+        usuario.setDate("last_date_change",dateFormat.format(date));
         usuario.saveIt();
         Base.commitTransaction();
-        
         
         infoController.show("El usuario ha sido editado creado satisfactoriamente con el codigo: USR"+String.valueOf(cod));        
         }

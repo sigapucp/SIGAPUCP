@@ -18,7 +18,7 @@ import javafx.fxml.Initializable;
  */
 public class Controller implements Initializable {
 
-    private Usuario usuarioActual = null;
+    public Usuario usuarioActual = null;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO

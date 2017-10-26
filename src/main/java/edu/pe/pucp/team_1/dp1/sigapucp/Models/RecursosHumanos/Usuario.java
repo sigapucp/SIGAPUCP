@@ -17,6 +17,9 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("Usuarios")
 @IdName("usuario_id")
 public class Usuario extends Model{
+    static {
+        dateFormat("dd/MM/yyyy", "last_date_change");
+    }    
     
     public static boolean autenticacion (String correo_usuario, String contrasenha){
         Usuario usuario;
