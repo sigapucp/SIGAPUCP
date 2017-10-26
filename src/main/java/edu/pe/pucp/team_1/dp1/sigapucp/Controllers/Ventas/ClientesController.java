@@ -91,7 +91,7 @@ public class ClientesController extends Controller{
     }
 
     @Override
-    public void crear() {
+    public void guardar() {
         try{
             System.out.println("empezando a crear");
             Cliente nuevo_cliente = new Cliente();
