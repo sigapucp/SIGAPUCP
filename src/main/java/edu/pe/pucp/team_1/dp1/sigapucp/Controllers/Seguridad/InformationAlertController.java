@@ -22,7 +22,7 @@ public class InformationAlertController {
         alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("SIGAPUCP - Informacion");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
-        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_fit_icon.png").toString()));     
+        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
         alert.setHeaderText(null);
     }
     

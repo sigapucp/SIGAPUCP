@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos;
 
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.Table;
@@ -12,7 +12,6 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("RutasRacks")
-public class RutaRack extends Model{
-    
+@Table("AccionesxRoles")
+public class AccionxRol extends Model{    
 }
