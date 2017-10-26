@@ -3,7 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -60,43 +59,77 @@
                             <content>
                                <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                   <children>
-                                     <Label layoutX="24.0" layoutY="50.0" text="Tipo de producto">
-                                        <font>
-                                           <Font size="14.0" />
-                                        </font>
-                                     </Label>
-                                     <Label layoutX="27.0" layoutY="98.0" text="Tipo del producto">
-                                        <font>
-                                           <Font size="14.0" />
-                                        </font>
-                                     </Label>
-                                     <Label layoutX="27.0" layoutY="139.0" text="Fecha de adquisición">
-                                        <font>
-                                           <Font size="14.0" />
-                                        </font>
-                                     </Label>
-                                     <Label layoutX="27.0" layoutY="184.0" text="Descripción del producto">
-                                        <font>
-                                           <Font size="14.0" />
-                                        </font>
-                                     </Label>
-                                     <Label layoutX="400.0" layoutY="98.0" text="Precio">
-                                        <font>
-                                           <Font size="14.0" />
-                                        </font>
-                                     </Label>
-                                     <Label layoutX="400.0" layoutY="140.0" text="Fecha de vencimiento">
-                                        <font>
-                                           <Font size="14.0" />
-                                        </font>
-                                     </Label>
-                                     <TextField layoutX="204.0" layoutY="48.0" prefHeight="25.0" prefWidth="488.0" />
-                                     <ComboBox layoutX="204.0" layoutY="95.0" prefHeight="25.0" prefWidth="173.0" />
-                                     <TextField layoutX="543.0" layoutY="103.0" />
-                                     <DatePicker layoutX="204.0" layoutY="137.0" />
-                                     <DatePicker layoutX="544.0" layoutY="138.0" prefHeight="25.0" prefWidth="147.0" />
-                                     <TextArea layoutX="204.0" layoutY="184.0" prefHeight="153.0" prefWidth="490.0" />
-                                     <CheckBox layoutX="618.0" layoutY="354.0" mnemonicParsing="false" text="Activo" />
+                                    <TitledPane animated="false" collapsible="false" layoutX="21.0" layoutY="163.0" prefHeight="107.0" prefWidth="711.0" text="Características">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="77.0" prefWidth="699.0">
+                                             <children>
+                                                <Label layoutX="33.0" layoutY="27.0" text="Largo">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="294.0" layoutY="30.0" text="Peso">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="430.0" layoutY="31.0" text="Unidades">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="161.0" layoutY="28.0" text="Ancho">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="largo_producto" layoutX="80.0" layoutY="25.0" prefHeight="25.0" prefWidth="70.0" />
+                                                <ComboBox fx:id="unidades_producto" layoutX="505.0" layoutY="29.0" prefWidth="150.0" />
+                                                <TextField fx:id="ancho_producto" layoutX="213.0" layoutY="27.0" prefHeight="25.0" prefWidth="70.0" />
+                                                <TextField fx:id="peso_producto" layoutX="336.0" layoutY="28.0" prefHeight="25.0" prefWidth="70.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" collapsible="false" layoutX="22.0" layoutY="22.0" prefHeight="125.0" prefWidth="709.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                 <Label layoutX="14.0" layoutY="17.0" text="Nombre del producto">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <TextField fx:id="nombre_producto" layoutX="205.0" layoutY="14.0" prefHeight="25.0" prefWidth="451.0" />
+                                                 <Label layoutX="14.0" layoutY="56.0" text="Codigo de producto">
+                                                    <font>
+                                                       <Font size="14.0" />
+                                                    </font>
+                                                 </Label>
+                                                 <CheckBox fx:id="perecible" layoutX="550.0" layoutY="58.0" mnemonicParsing="false" text="Perecible">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                                <TextField fx:id="codigo_producto" layoutX="207.0" layoutY="54.0" prefHeight="25.0" prefWidth="162.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" collapsible="false" layoutX="20.0" layoutY="287.0" prefHeight="187.0" prefWidth="709.0">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="161.0" prefWidth="699.0">
+                                             <children>
+                                                <TextArea fx:id="descripcion_producto" layoutX="211.0" layoutY="27.0" prefHeight="120.0" prefWidth="445.0" />
+                                                <Label layoutX="31.0" layoutY="32.0" text="Descripción del producto">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </TitledPane>
                                   </children>
                                </AnchorPane>
                             </content>
@@ -132,55 +165,11 @@
                                </AnchorPane>
                             </content>
                          </Tab>
-                         <Tab text="Detalle">
+                         <Tab text="Inventario">
                             <content>
                                <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                   <children>
-                                    <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="27.0" prefHeight="143.0" prefWidth="701.0" text="Características">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="111.0" prefWidth="699.0">
-                                             <children>
-                                                 <Label layoutX="22.0" layoutY="27.0" text="Largo">
-                                                    <font>
-                                                       <Font size="14.0" />
-                                                    </font>
-                                                 </Label>
-                                                 <Label layoutX="444.0" layoutY="32.0" text="Peso">
-                                                    <font>
-                                                       <Font size="14.0" />
-                                                    </font>
-                                                 </Label>
-                                                 <Label layoutX="153.0" layoutY="27.0" text="Alto">
-                                                    <font>
-                                                       <Font size="14.0" />
-                                                    </font>
-                                                 </Label>
-                                                 <Label layoutX="22.0" layoutY="70.0" text="Unidades">
-                                                    <font>
-                                                       <Font size="14.0" />
-                                                    </font>
-                                                 </Label>
-                                                 <Label layoutX="255.0" layoutY="27.0" text="Ancho">
-                                                    <font>
-                                                       <Font size="14.0" />
-                                                    </font>
-                                                 </Label>
-                                                 <Label layoutX="444.0" layoutY="71.0" text="Unidades">
-                                                    <font>
-                                                       <Font size="14.0" />
-                                                    </font>
-                                                 </Label>
-                                                 <TextField layoutX="91.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
-                                                 <TextField layoutX="189.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
-                                                 <TextField layoutX="304.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
-                                                 <ComboBox layoutX="91.0" layoutY="68.0" prefWidth="150.0" />
-                                                 <TextField layoutX="527.0" layoutY="25.0" prefHeight="25.0" prefWidth="53.0" />
-                                                 <ComboBox layoutX="527.0" layoutY="68.0" prefWidth="150.0" />
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="191.0" prefHeight="264.0" prefWidth="701.0" text="Inventario">
+                                    <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="26.0" prefHeight="429.0" prefWidth="701.0">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="238.0" prefWidth="657.0">
                                              <children>
