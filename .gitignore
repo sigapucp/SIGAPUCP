@@ -1,6 +1,7 @@
 nbproject/*
 build/*
 dist/*
+target/*
 *.class
 
 # Package Files #
