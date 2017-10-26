@@ -83,6 +83,7 @@ public class ProductosController extends Controller {
     @FXML
     public void buscar_tipo_producto(ActionEvent event) throws IOException{
         try{
+            tipo_productos = null;
             /*
             String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
             clientes = null;
