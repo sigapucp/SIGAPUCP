@@ -7,12 +7,14 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,11 +23,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.javalite.activejdbc.Base;
 
 /**
  *
@@ -35,54 +40,70 @@ public class ProductosController extends Controller {
     
     @FXML
     private TableView<TipoProducto> tablaProductos;
-
     @FXML
-    private TableColumn<TipoProducto, String> codigoColumna;
-
+    private TableColumn<TipoProducto, String> columna_codigo;
     @FXML
-    private TableColumn<TipoProducto, String> TipoColumna;
+    private TableColumn<TipoProducto, String> columna_nombre;
+    @FXML
+    private TableColumn<TipoProducto, String> columna_descripcion;
+    @FXML
+    private TextField codgo_producto_buscar;
+    @FXML
+    private TextField nombre_producto_buscar;
+    @FXML
+    private TextField peso_producto_buscar;
+    @FXML
+    private CheckBox perecible_busqueda;
+    @FXML
+    private AnchorPane tipo_producto_formulario;
     
-    @FXML
-    private TextField codProd;
-
-    @FXML
-    private TextField idProd;
- 
-    @FXML
-    private TextField tipoProd;
-
-    @FXML
-    private TextField cateProd;        
-    @Override
-    
-    public void initialize(URL location, ResourceBundle resources) {
-//            List<TipoProducto> registros = TipoProducto.recuperarRegistros();
-//            ObservableList<TipoProducto> TablaProductosData = FXCollections.observableArrayList(registros);
-//            codigoColumna.setCellValueFactory(cellData -> cellData.getValue().getTipoCod()); 
-//            TipoColumna.setCellValueFactory(cellData -> cellData.getValue().getTipoProd());
+    private List<TipoProducto> tipo_productos;
+    private final ObservableList<TipoProducto> masterData = FXCollections.observableArrayList();
             
+    
+    public void inhabilitar_formulario(){
+        tipo_producto_formulario.setDisable(true);
     }
     
+    public void habilitar_formulario(){
+        tipo_producto_formulario.setDisable(false);
+    }
+        
+    public void cargar_tabla_index(){
+        for( TipoProducto tipo_producto : tipo_productos){
+            masterData.add(tipo_producto);
+        }
+        tablaProductos.setEditable(false);
+        columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descripcion")));
+        tablaProductos.setItems(masterData);        
+    }
 
-    
     @FXML
-    private void CargarProductos(ActionEvent event){
-        //List<TipoProducto> lista = TipoProducto.inicializarProductos();
-        //ObservableList<TipoProducto> listaproductos = FXCollections.observableArrayList(lista);
-        //ObservableList<TipoProducto> sublist = FXCollections.observableArrayList( 
-        /*             listaproductos.get(1), listaproductos.get(4) );
-        System.out.println(sublist);*/
-        //System.out.println(lista);
-        //tipoProd.setText(lista.get(2).toString());
-//        TipoProducto tipo = TipoProducto.findById(1);
-//        String name = tipo.getTipCod();
-//        String name2 = tipo.getTipoProd();
-        String name = TipoProducto.hallarNombreTipoProducto();
-        System.out.println(name);
-        tipoProd.setText(name);
-        String codigo = TipoProducto.hallarCodigoTipoProducto();
-        codProd.setText(codigo);
+    public void buscar_tipo_producto(ActionEvent event) throws IOException{
+        try{
+            /*
+            String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+            clientes = null;
+            clientes = Cliente.where("ruc = ? AND dni = ? AND nombre = ? AND estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado);
+            cargar_tabla_index();
+            */
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
+    }    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        if (!Base.hasConnection()) Base.open();
+        inhabilitar_formulario();
+        tipo_productos = null;
+        tipo_productos = TipoProducto.findAll();
+        cargar_tabla_index();
     }
+    
+/*
     @FXML
     private void abrirIngresarProductoARack(ActionEvent event) throws IOException{
         Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/Materiales/Producto/IngresarARack.fxml"));
@@ -91,4 +112,5 @@ public class ProductosController extends Controller {
         app_stage.setScene(main_content_scene);
         app_stage.show();
     }
+*/
 }
