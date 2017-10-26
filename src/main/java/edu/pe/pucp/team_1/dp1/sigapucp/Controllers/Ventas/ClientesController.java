@@ -191,7 +191,5 @@ public class ClientesController extends Controller{
             repLegal.setDisable(false);
             persoNatu.setSelected(false);
         }
-        
-    } 
-    
+    }
 }

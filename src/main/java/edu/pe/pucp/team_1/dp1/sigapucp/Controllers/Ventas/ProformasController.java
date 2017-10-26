@@ -28,11 +28,15 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import static javafx.scene.input.KeyCode.T;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.javalite.activejdbc.Base;
 
 /**
  * FXML Controller class
@@ -89,6 +93,12 @@ public class ProformasController extends Controller {
     private TextField producto;
     @FXML
     private Button agregarProdProf;
+    @FXML
+    private AnchorPane proforma_tabla;
+    @FXML
+    private AnchorPane proforma_formulario;
+    @FXML
+    private SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
     
     public IEvent<abrirDetallesArgs> abrirDetalle;
     
@@ -106,6 +116,9 @@ public class ProformasController extends Controller {
         dolProf.setOnAction(e -> manejarRadBttnDol());
         solesProf.setOnAction(e -> manejarRadBttnSol());
         abrirDetalle = new Event<>();
+        cantProd.setValueFactory(valueFactory);
+        if (!Base.hasConnection()) Base.open();
+        inhabilitar_formulario();
         Parent modal_content;
         try {
             modal_content = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Proformas/AgregarProformas.fxml"));
@@ -118,6 +131,43 @@ public class ProformasController extends Controller {
             Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }  
+   
+    @Override
+    public void nuevo(){
+       habilitar_formulario();
+       limpiar_formulario();
+    }
+    
+    public void inhabilitar_formulario (){
+        proforma_formulario.setDisable(true);
+        proforma_tabla.setDisable(true);
+    }
+    
+    public void habilitar_formulario (){
+        proforma_formulario.setDisable(false);
+        proforma_tabla.setDisable(false);
+    }
+    
+    public void limpiar_formulario(){
+        clienteSh.clear();
+        telfSh.clear();
+        correoSh.clear();
+        fechaProfSh.setValue(null);
+        producto.clear();
+        productosProf.getItems().clear();
+        subTotalDol.clear();
+        igvDol.clear();
+        totalDol.clear();
+        subTotalSol.clear();
+        igvSol.clear();
+        totalSol.clear();
+        solesProf.setSelected(false);
+        dolProf.setSelected(false);
+        SpinnerValueFactory newvalueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        cantProd.setValueFactory(newvalueFactory);
+    }
+    
+
     private void manejarRadBttnDol(){
         solesProf.setSelected(false);
     }
@@ -127,7 +177,8 @@ public class ProformasController extends Controller {
         modal_stage.showAndWait();
     }
     
-    @FXML
+    @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
+    //de controllers
     private void handleGenerarPedido(ActionEvent event) {
         abrirDetallesArgs args = new abrirDetallesArgs();
         System.out.println("estoy aqui debuggeando");
