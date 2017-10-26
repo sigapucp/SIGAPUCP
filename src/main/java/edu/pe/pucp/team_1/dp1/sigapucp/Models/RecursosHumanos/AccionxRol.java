@@ -13,6 +13,5 @@ import org.javalite.activejdbc.annotations.Table;
  * @author Jauma
  */
 @Table("AccionesxRoles")
-public class AccionxRole extends Model{
-    
+public class AccionxRol extends Model{    
 }
