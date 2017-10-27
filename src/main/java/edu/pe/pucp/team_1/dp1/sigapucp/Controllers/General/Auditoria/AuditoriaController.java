@@ -83,7 +83,7 @@ public class AuditoriaController extends Controller {
     @FXML
     private TextField HoraUno;   
     
-    private final ObservableList<Auditoria> masterData = FXCollections.observableArrayList();
+    private final ObservableList<Auditoria> TablaAuditoriaData = FXCollections.observableArrayList();
     
     @FXML
     private void handleCheckBoxUno(ActionEvent event){
@@ -107,8 +107,10 @@ public class AuditoriaController extends Controller {
     }    
     
     public AuditoriaController(){
-        masterData.add(new Auditoria("8:00","21/10/2017","Hugo","Atiende","Cato","Hugo esta atendiendo"));
-        masterData.add(new Auditoria("8:00","21/10/2017","Joel","Dormir","Casa","Joel esta durmiendo"));
+        TablaAuditoriaData.add(new Auditoria("8:00","21/10/2017","Hugo","Atiende","Cato","Hugo esta atendiendo"));
+        TablaAuditoriaData.add(new Auditoria("8:00","21/10/2017","Joel","Dormir","Casa","Joel esta durmiendo"));
+        
+        
     }
     
     @Override

@@ -18,7 +18,7 @@ import org.javalite.activejdbc.annotations.Table;
 public class Proveedor extends Model{
     
     static{
-        validatePresenceOf("nombre");
+        validatePresenceOf("name");
         validateNumericalityOf("provuder_ruc");
     }
     

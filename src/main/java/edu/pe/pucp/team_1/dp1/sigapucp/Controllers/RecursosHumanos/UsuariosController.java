@@ -268,7 +268,9 @@ public class UsuariosController extends Controller{
         if(!confirmatonController.show("Se creara el usuario con codigo: " + cod, "¿Desea continuar?")) return;
         
         try{      
+
         Base.openTransaction();    
+
         
         Usuario usuario = new Usuario();
         usuario.set("usuario_cod",cod);        
