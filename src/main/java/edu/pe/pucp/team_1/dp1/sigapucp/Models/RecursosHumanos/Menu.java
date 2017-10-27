@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos;
 
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.IdName;
+import org.javalite.activejdbc.annotations.Many2Many;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
@@ -15,6 +16,7 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("Menus")
 @IdName("menu_id")
+@Many2Many(other = Accion.class, join = "AccionesxMenus", sourceFKName = "menu_id", targetFKName = "accion_id")
 public class Menu extends Model{
     
 }
