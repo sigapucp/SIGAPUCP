@@ -122,7 +122,7 @@ public class AuditoriaController extends Controller {
         ColumnaAccion.setCellValueFactory(cellData -> cellData.getValue().AccionProperty());
         ColumnaModulo.setCellValueFactory(cellData -> cellData.getValue().ModuloProperty());
         ColumnaDescripcion.setCellValueFactory(cellData -> cellData.getValue().DescripcionProperty());
-        FilteredList<Auditoria> filteredData = new FilteredList<>(masterData, p -> true);
+        FilteredList<Auditoria> filteredData = new FilteredList<>(TablaAuditoriaData, p -> true);
         
         
         Modulo.getItems().addAll("Cato","Casa");
