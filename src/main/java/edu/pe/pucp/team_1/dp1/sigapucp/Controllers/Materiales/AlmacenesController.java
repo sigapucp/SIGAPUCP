@@ -6,8 +6,10 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 
@@ -18,15 +20,23 @@ import javafx.scene.layout.AnchorPane;
  */
 public class AlmacenesController extends Controller{
 
+    private SelectableGrid grid;
+    
     @FXML
-    private AnchorPane AnchorPane;
+    private AnchorPane contenedor_grilla;
 
-    /**
-     * Initializes the controller class.
-     */
+    public AlmacenesController() {
+        grid = new SelectableGrid(10, 10, 500, 400);
+    }
+    
+    @FXML
+    public void buscar_tipo_producto(ActionEvent event) {
+        
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        contenedor_grilla.getChildren().add(grid);
     }    
     
 }

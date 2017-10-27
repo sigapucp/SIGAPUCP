@@ -1,8 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane id="AnchorPane" fx:id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.AlmacenesController">
-    
+<AnchorPane id="AnchorPane" fx:id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.AlmacenesController">
+   <children>
+      <AnchorPane prefHeight="572.0" prefWidth="250.0">
+         <children>
+            <TextField fx:id="peso_producto_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
+            <Button layoutX="136.0" layoutY="153.0" mnemonicParsing="false" onAction="#buscar_tipo_producto" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+            <Line endX="100.0" layoutX="136.0" layoutY="50.0" startX="-100.0" />
+            <TableView fx:id="tablaProductos" layoutX="13.0" layoutY="205.0" prefHeight="350.0" prefWidth="224.0">
+               <columns>
+                  <TableColumn fx:id="columna_nombre" prefWidth="87.0" text="Nombre" />
+                  <TableColumn fx:id="columna_descripcion" prefWidth="136.0" text="Fecha Creacion" />
+               </columns>
+            </TableView>
+            <TextField fx:id="codigo_producto_buscar" layoutX="118.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
+            <Label layoutX="17.0" layoutY="70.0" prefHeight="21.0" prefWidth="114.0" text="Nombre">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="17.0" layoutY="104.0" prefHeight="21.0" prefWidth="114.0" text="Codigo">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Pane layoutX="6.0" prefHeight="50.0" prefWidth="250.0">
+               <children>
+                  <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="30.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Imagenes/search_icon.png" />
+                     </image></ImageView>
+               </children>
+            </Pane>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="250.0" prefHeight="572.0" prefWidth="750.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="740.0">
+               <children>
+                  <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="31.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Imagenes/rack_icon.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <TabPane layoutY="63.0" prefHeight="509.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="General">
+                     <content>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </Tab>
+                <Tab text="Distribucion">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <AnchorPane fx:id="contenedor_grilla" layoutX="31.0" layoutY="31.0" prefHeight="400.0" prefWidth="500.0" style="-fx-background-color: lightblue;" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+            <Line endX="560.0" layoutX="179.0" layoutY="50.0" startX="-170.0" />
+         </children></AnchorPane>
+   </children>
 </AnchorPane>
