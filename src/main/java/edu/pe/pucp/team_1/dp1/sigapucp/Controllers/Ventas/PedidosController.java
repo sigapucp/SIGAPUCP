@@ -22,9 +22,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.javalite.activejdbc.Base;
 
 /**
  * FXML Controller class
@@ -51,25 +53,37 @@ public class PedidosController extends Controller {
     private CheckBox mismaDir;
     @FXML
     private Spinner<?> cantProd;
+    @FXML
+    private TextField clienteSh;
+    @FXML
+    private DatePicker fechaPed;
+        
+    @FXML static Stage modal_stage = new Stage();
     
-    static Stage modal_stage = new Stage();
+    @FXML private ProformasController proformasController;
 
     /**
      * Initializes the controller class.
      */
-@Override
+    @Override
+    @FXML
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        Base.close();
+        Base.open();
         mismaDir.setOnAction(e -> manejoTextoChckBox(factDir,mismaDir));
         tipoDocBoleta.setOnAction(e -> manejoTextoRadBttn1());
         tipoDocFactura.setOnAction(e -> manejoTextoRadBttn2());
+        if (proformasController != null){
+            this.clienteSh.setText(this.proformasController.clienteSh.getText());
+        }
         //Seteo la modal de agregar producto
         Parent modal_content;
         try {
             modal_content = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Pedidos/AgregarProductos.fxml"));
             Scene modal_content_scene = new Scene(modal_content);
             modal_stage.setScene(modal_content_scene);
-            modal_stage.initModality(Modality.APPLICATION_MODAL);
+            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);
             //modal_stage.initOwner((Stage) pedidoContainer.getScene().getWindow());
             modal_stage.setScene(modal_content_scene);
         } catch (IOException ex) {
@@ -77,6 +91,10 @@ public class PedidosController extends Controller {
         }
 
     }    
+    
+    public void injectController(ProformasController controller){
+        this.proformasController = controller;
+    }
     
     private void manejoTextoChckBox(TextField texto, CheckBox seleccionado){
         if (seleccionado.isSelected()) {
