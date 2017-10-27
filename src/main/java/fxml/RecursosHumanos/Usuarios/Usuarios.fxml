@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -12,97 +18,229 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
+<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="574.0" prefWidth="973.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
    <children>
-      <AnchorPane layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
-         <children>
-            <AnchorPane layoutY="50.0" prefHeight="521.0" prefWidth="750.0">
+      <SplitPane dividerPositions="0.37166324435318276" layoutX="-4.0" layoutY="-4.0" prefHeight="578.0" prefWidth="976.0">
+         <items>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="266.0" minHeight="10.0" prefHeight="238.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="306.0" minHeight="10.0" prefHeight="72.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="374.0" minHeight="10.0" prefHeight="240.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="306.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Label layoutX="49.0" layoutY="200.0" text="Permisos">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Label>
-                  <TableView layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="656.0">
-                    <columns>
-                      <TableColumn minWidth="328.0" prefWidth="75.0" text="Acción" />
-                      <TableColumn minWidth="328.0" prefWidth="75.0" text="Permiso" />
-                    </columns>
+                  <GridPane prefHeight="245.0" prefWidth="484.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="237.0" minWidth="10.0" prefWidth="34.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="450.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="450.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="81.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="75.0" minHeight="4.0" prefHeight="4.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="138.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="138.0" minHeight="9.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="138.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="138.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="138.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label prefHeight="34.0" prefWidth="139.0" text="Búsqueda" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Line endX="100.0" startX="-100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label prefHeight="35.0" prefWidth="237.0" text="Nombre:" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="36.0" prefWidth="249.0" text="Apellido:" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="35.0" prefWidth="244.0" text="Codigo:" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="35.0" prefWidth="244.0" text="Estado:" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="35.0" prefWidth="244.0" text="Codigo Rol:" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="BusquedaCodigo" prefHeight="23.0" prefWidth="237.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="BusquedaNombre" prefHeight="27.0" prefWidth="237.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <TextField fx:id="BusquedaApellido" prefHeight="27.0" prefWidth="237.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="BusquedaEstado" prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <ComboBox fx:id="BusquedaRol" prefHeight="25.0" prefWidth="172.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                     </children>
+                  </GridPane>
+                  <GridPane maxHeight="1.7976931348623157E308" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="324.0" minWidth="10.0" prefWidth="243.0" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="212.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints />
+                      <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                     <children>
+                        <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#visualizarUsuario" prefHeight="32.0" prefWidth="144.0" text="Visualizar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                     </children>
+                  </GridPane>
+                  <TableView fx:id="TablaUsuarios" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="242.0" prefWidth="359.0" GridPane.rowIndex="2">
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <columns>
+                        <TableColumn fx:id="ColumnaCodigo" minWidth="62.0" prefWidth="73.0" text="Codigo" />
+                        <TableColumn fx:id="ColumnaNombre" minWidth="75" prefWidth="109.0" text="Nombre" />
+                        <TableColumn fx:id="ColumnaApellido" minWidth="75" prefWidth="94.0" text="Apellido" />
+                        <TableColumn fx:id="ColumnaEstado" minWidth="75" prefWidth="87.0" text="Estado" />
+                        <TableColumn fx:id="ColumnaRol" minWidth="75" prefWidth="90.0" text="Codigo Rol" />
+                     </columns>
                   </TableView>
-                  <TitledPane layoutX="51.0" layoutY="33.0" prefHeight="160.0" prefWidth="656.0" text="Información General">
-                     <content>
-                        <AnchorPane prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <Label layoutX="26.0" layoutY="22.0" text="Nombres" />
-                              <Label layoutX="26.0" layoutY="57.0" text="Apellidos" />
-                              <Label layoutX="26.0" layoutY="94.0" text="Teléfono" />
-                              <Label layoutX="383.0" layoutY="22.0" text="Correo" />
-                              <Label layoutX="383.0" layoutY="57.0" text="Rol" />
-                              <TextField layoutX="185.0" layoutY="18.0" />
-                              <TextField layoutX="185.0" layoutY="53.0" />
-                              <TextField layoutX="185.0" layoutY="90.0" />
-                              <TextField layoutX="480.0" layoutY="18.0" />
-                              <TextField layoutX="480.0" layoutY="53.0" />
-                           </children>
-                        </AnchorPane>
-                     </content>
-                  </TitledPane>
+                  <GridPane maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="180.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="191.0" minWidth="10.0" prefWidth="179.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#buscarUsuarios" text="Buscar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" />
+                     </children>
+                  </GridPane>
                </children>
-            </AnchorPane>
-            <Pane prefHeight="50.0" prefWidth="243.0">
+            </GridPane>
+            <GridPane>
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="15.0" />
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="582.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="187.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="433.0" minHeight="0.0" prefHeight="12.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="383.0" minHeight="0.0" prefHeight="7.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="338.0" minHeight="10.0" prefHeight="208.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="338.0" minHeight="10.0" prefHeight="17.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="308.0" minHeight="10.0" prefHeight="306.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Label layoutX="133.0" layoutY="10.0" text="Detalle del Usuario">
+                  <Label text="Detalle del Usuario" GridPane.columnIndex="1">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
-                  <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
+                  <GridPane prefHeight="155.0" prefWidth="131.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Line endX="200.0" startX="-100.0" />
+                     </children>
+                  </GridPane>
+                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <children>
+                        <TitledPane fx:id="TitlePane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="194.0" prefWidth="588.0" text="Informacion General" HBox.hgrow="ALWAYS">
+                           <content>
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="99.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.0" minWidth="10.0" prefWidth="195.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="119.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="240.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="25.0" prefWidth="76.0" text="Nombres:" />
+                                    <TextField fx:id="VerNombre" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="77.0" text="Apellidos:" GridPane.rowIndex="1" />
+                                    <TextField fx:id="VerApellido" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <TextField fx:id="VerTelefono" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextField fx:id="VerCorreo" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="3" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="76.0" text="Telefono:" GridPane.rowIndex="2" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Email:" GridPane.columnIndex="2" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Estado:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="65.0" text="Rol:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="VerEstado" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="VerRol" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                 </children>
+                              </GridPane>
+                           </content></TitledPane>
+                     </children>
+                  </HBox>
+                  <SplitPane dividerPositions="0.3260135135135135" maxWidth="1.7976931348623157E308" prefHeight="160.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
+                     <items>
+                        <GridPane>
+                           <children>
+                              <TreeTableView editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="294.0" prefWidth="201.0">
+                                 <columnResizePolicy>
+                                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                                 <columns>
+                                    <TreeTableColumn fx:id="ArbolPrivilegios" prefWidth="75.0" text="Privilegios" />
+                                 </columns>
+                              </TreeTableView>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="193.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="7.0" prefWidth="7.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="10.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="7.0" prefWidth="7.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="307.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <TableView editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="294.0" prefWidth="434.0" GridPane.columnIndex="1">
+                                <columns>
+                                    <TableColumn prefWidth="75.0" text="Menu" />
+                                  <TableColumn prefWidth="75.0" text="Accion" />
+                                  <TableColumn prefWidth="75.0" text="Hora" />
+                                </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                              </TableView>
+                           </children>
+                        </GridPane>
+                     </items>
+                  </SplitPane>
                </children>
-            </Pane>
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutX="-1.0" layoutY="49.0" prefHeight="521.0" prefWidth="250.0">
-         <children>
-            <Label layoutX="12.0" layoutY="28.0" prefHeight="21.0" prefWidth="114.0" text="Nombre:">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="NombreUsuario" layoutX="129.0" layoutY="25.0" prefHeight="25.0" prefWidth="106.0" />
-            <TextField fx:id="ApellidoUsuario" layoutX="129.0" layoutY="60.0" prefHeight="25.0" prefWidth="106.0" />
-            <Label layoutX="14.0" layoutY="62.0" prefHeight="21.0" prefWidth="114.0" text="Apellido:">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="97.0" text="Correo :">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="CorreoUsuario" layoutX="129.0" layoutY="95.0" prefHeight="25.0" prefWidth="106.0" />
-            <TableView fx:id="TablaUsuarios" layoutX="14.0" layoutY="180.0" prefHeight="202.0" prefWidth="224.0">
-              <columns>
-                <TableColumn fx:id="ColumnaNombre" prefWidth="70.0" text="Nombre" />
-                <TableColumn fx:id="ColumnaApellido" text="Apellido" />
-                  <TableColumn fx:id="ColumnaCorreo" text="Correo" />
-              </columns>
-            </TableView>
-            <Button id="AnchorPane" layoutX="144.0" layoutY="485.0" mnemonicParsing="false" onAction="#abrirDetalleUsuario" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
-            <Button layoutX="129.0" layoutY="134.0" mnemonicParsing="false" text="Buscar" />
-         </children>
-      </AnchorPane>
-      <Pane prefHeight="50.0" prefWidth="250.0">
-         <children>
-            <Label layoutX="82.0" layoutY="10.0" text="Usuarios">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-            <Line endX="100.0" layoutX="125.0" layoutY="47.0" startX="-100.0" />
-         </children>
-      </Pane>
+            </GridPane>
+         </items>
+      </SplitPane>
    </children>
 </AnchorPane>

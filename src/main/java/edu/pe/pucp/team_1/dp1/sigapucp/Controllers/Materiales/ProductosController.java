@@ -99,12 +99,6 @@ public class ProductosController extends Controller {
 
     public boolean cumple_condicion_busqueda(String[] registro, String categoria, String tipo, String codigo){
         boolean match = true;
-        System.out.println("--------------------");
-        System.out.println(categoria);
-        System.out.println(tipo);
-        System.out.println(codigo);
-        System.out.println("--------------------");
-        
         if ( categoria.equals("") && tipo.equals("") && codigo.equals("")){
             match = false;
         }
@@ -147,7 +141,7 @@ public class ProductosController extends Controller {
                     String[] registro = {categoria.get("nombre").toString(), tipo.get("nombre").toString(), tipo.get("tipo_cod").toString()};
                     master_data.add(registro);
                 } 
-            }
+            }   
         }
         catch(Exception e){
             System.out.println(e);

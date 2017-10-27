@@ -6,6 +6,8 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
 import java.io.IOException;
 import java.net.URL;
@@ -54,6 +56,10 @@ public class ProveedoresController extends Controller{
     @FXML
     private TableView<Proveedor> tabla_proveedor;
     
+    
+    private Boolean crear_nuevo;
+    private Proveedor proveedor_seleccionado;
+    private InformationAlertController infoController;
     private List<Proveedor> proveedores;
     private final ObservableList<Proveedor> masterData = FXCollections.observableArrayList();
     
@@ -62,23 +68,55 @@ public class ProveedoresController extends Controller{
      * Initializes the controller class.
      */
     
+    public ProveedoresController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        infoController = new InformationAlertController();
+        proveedor_seleccionado = null;
+        crear_nuevo = false;
+    }
+    
+    public void crear_proveedor(){
 
-    @Override
-    public void crear() {
         try{
-            System.out.println("empezando a crear");
+            Base.openTransaction();  
             Proveedor nuevo_proveedor = new Proveedor();
             nuevo_proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
-            if ( nuevo_proveedor.saveIt()){
-                System.out.println("todo Ok");
-            }
+            nuevo_proveedor.saveIt();
+            Base.commitTransaction();
+            infoController.show("El cliente ha sido creado satisfactoriamente"); 
         }
         catch(Exception e){
             System.out.println(e);
+            Base.rollbackTransaction();
+        }   
+        
+    }
+    
+    public void editar_proveedor(Proveedor proveedor){
+        try{
+            proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
+            proveedor.saveIt();
+            infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
+        catch(Exception e){
+            //Base.rollbackTransaction();
+        }        
+    }
+    
+    @Override
+    public void guardar() {
+        if (crear_nuevo){
+            crear_proveedor();
+        }else{
+            if (proveedor_seleccionado == null) return;
+            editar_proveedor(proveedor_seleccionado);
+        }
+        proveedores = Proveedor.findAll();
+        cargar_tabla_index();        
     }        
     
     public void nuevo(){
+       crear_nuevo = true;
        habilitar_formulario();
        limpiar_formulario();
     }
@@ -125,7 +163,6 @@ public void cargar_tabla_index(){
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         //Base.close();
-        if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
         proveedores = null;
         proveedores = Proveedor.findAll();
