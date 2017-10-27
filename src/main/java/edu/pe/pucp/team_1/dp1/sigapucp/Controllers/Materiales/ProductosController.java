@@ -12,6 +12,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -85,121 +86,64 @@ public class ProductosController extends Controller {
         
     public void cargar_tabla_index(){
         tablaProductos.setEditable(false);
-        //master_data
-        /*
-        for(int i = 0; i < master_data.size(); i++){
-            System.out.println(master_data.get(i)[0]);
-            System.out.println(master_data.get(i)[1]);
-            System.out.println(master_data.get(i)[2]);
-            
-        }
-//        ColumnaCategoria.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[0] ));
-  //      ColumnaTipoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[1]));
-    //    ColumnaCodigoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[2]));
-        //tablaProductos.getItems().addAll(master_data);
-
-        /*
-        ColumnaCategoria.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String[], String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<String[], String> p) {
-                String[] x = p.getValue();
-                if (x != null && x.length>0) {
-                    return new SimpleStringProperty(x[0]);
-                } else {
-                    return new SimpleStringProperty("<no name>");
-                }
-            }
-        });
-        
-        ColumnaTipoProducto.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String[], String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<String[], String> p) {
-                String[] x = p.getValue();
-                if (x != null && x.length>1) {
-                    return new SimpleStringProperty(x[1]);
-                } else {
-                    return new SimpleStringProperty("<no value>");
-                }
-            }
-        });
-        
-        ColumnaCodigoProducto.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String[], String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<String[], String> p) {
-                String[] x = p.getValue();
-                if (x != null && x.length>2) {
-                    return new SimpleStringProperty(x[2]);
-                } else {
-                    return new SimpleStringProperty("<no value>");
-                }
-            }
-        });
-        
-
-        */
-        //tablaProductos.getItems().addAll(Arrays.asList(master_data));
+        ColumnaCategoria.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[0] ));
+        ColumnaTipoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[1]));
+        ColumnaCodigoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[2]));
+        tablaProductos.getItems().addAll(master_data);
     }
 
+    public boolean cumple_condicion_busqueda(String[] registro, String categoria, String tipo, String codigo){
+        boolean match = true;
+        if ( categoria.equals("") && tipo.equals("") && categoria.equals("")){
+            match = false;
+        }
+        else {
+            match = (!categoria.equals("")) ? (match && registro[0].equals(categoria)) : true;
+            match = (!tipo.equals("")) ? (match && registro[1].equals(tipo)) : true;
+            match = (!categoria.equals("")) ? (match && registro[2].equals(codigo)) : true;
+        }
+        return match;
+    }
+    
     @FXML
     public void buscar_tipo_producto(ActionEvent event) throws IOException{
+        List<String[]> master_data_busqueda = new ArrayList<String[]>();
         try{
-            /*
-
-            tipo_productos = null;
-            String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
-            clientes = null;
-            clientes = Cliente.where("ruc = ? AND dni = ? AND nombre = ? AND estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado);
+            for(int i = 0; i < master_data.size(); i++){
+                if ( cumple_condicion_busqueda(master_data.get(i), categoriaBuscar.getText(),tipoProductoBuscar.getText(), codigoProductoBuscar.getText())){
+                    master_data_busqueda.add(master_data.get(i));
+                }
+            }
+            master_data = master_data_busqueda;
             cargar_tabla_index();
-            */
         }
         catch( Exception e){
             System.out.println(e);
         }
-    }    
+    } 
     
-    public void crear_estructura_tabla(String nombre, String accion){
-        master_data = null;
+    
+    public void crear_estructura_tabla(){
+        master_data = new ArrayList<String[]>();
         try{
-            if (accion == "busqueda"){
-                CategoriaProducto categoria = CategoriaProducto.findFirst("nombre = ?", nombre);
+            List<CategoriaProducto> lista_categorias = CategoriaProducto.findAll();
+            for (CategoriaProducto categoria : lista_categorias){
                 List<TipoProducto> tipos_producto_categoria = categoria.getAll(TipoProducto.class);
                 for (TipoProducto tipo : tipos_producto_categoria){
                     String[] registro = {categoria.get("nombre").toString(), tipo.get("nombre").toString(), tipo.get("tipo_cod").toString()};
                     master_data.add(registro);
-                }
+                } 
             }
-            if (accion == "index"){
-                System.out.println("================================ 11");
-                List<CategoriaProducto> categorias = null;
-                System.out.println("================================ 12");
-                for (CategoriaProducto categoria : categorias){
-                    //List<TipoProducto> tipos_producto_categoria = categoria.getAll(TipoProducto.class);
-                    categoria.getAll(TipoProducto.class).dump();
-                    System.out.println("================================ 13");
-                    /*
-                    for (TipoProducto tipo : tipos_producto_categoria){
-                        String[] registro = {categoria.get("nombre").toString(), tipo.get("nombre").toString(), tipo.get("tipo_cod").toString()};
-                        master_data.add(registro);
-                    } 
-                    */
-                }
-            }            
         }
         catch(Exception e){
             System.out.println(e);
         }
-       /* for(int i = 0; i < master_data.size(); i++){
-            System.out.println(master_data.get(i)[0]);
-            System.out.println(master_data.get(i)[1]);
-            System.out.println(master_data.get(i)[2]);
-            
-        }*/
     }
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         inhabilitar_formulario();
-        crear_estructura_tabla("", "index");
+        crear_estructura_tabla();
         cargar_tabla_index();
     }
 
