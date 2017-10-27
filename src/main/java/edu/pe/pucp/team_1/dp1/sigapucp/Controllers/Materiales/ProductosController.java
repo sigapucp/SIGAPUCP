@@ -113,15 +113,22 @@ public class ProductosController extends Controller {
     @FXML
     public void buscar_tipo_producto(ActionEvent event) throws IOException{
         List<String[]> master_data_busqueda = new ArrayList<String[]>();
+        boolean hayDatos=false;
         crear_estructura_tabla();
+        int aux  = 0;
         try{
             for(int i = 0; i < master_data.size(); i++){
-                if ( cumple_condicion_busqueda(master_data.get(i), categoriaBuscar.getText(),tipoProductoBuscar.getText(), codigoProductoBuscar.getText())){
+                hayDatos = cumple_condicion_busqueda(master_data.get(i), categoriaBuscar.getText(),tipoProductoBuscar.getText(), codigoProductoBuscar.getText());
+                if (hayDatos){
                     System.out.println("-------------");
                     master_data_busqueda.add(master_data.get(i));
+                    aux++;
                 }
             }
-            master_data = master_data_busqueda;
+            if (aux > 0){
+                master_data = master_data_busqueda;                
+            }
+            
             System.out.println(master_data.size());
             cargar_tabla_index();
         }
@@ -147,7 +154,17 @@ public class ProductosController extends Controller {
             System.out.println(e);
         }
     }
-    
+   @FXML
+    public void mostrar_detalle_producto(ActionEvent event) throws IOException{
+        //List<String[]> master_data_busqueda = new ArrayList<String[]>();
+        crear_estructura_tabla();
+        try{
+            
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
+    }    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         inhabilitar_formulario();
