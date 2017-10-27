@@ -22,7 +22,7 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("tipoproductos")
+@Table("tiposproducto")
 @IdName("tipo_id")
 public class TipoProducto extends Model{
         

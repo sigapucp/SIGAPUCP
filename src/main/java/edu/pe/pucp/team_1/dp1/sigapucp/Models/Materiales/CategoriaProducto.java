@@ -13,7 +13,7 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("CategoriasProducto")
+@Table("categoriasproducto")
 @IdName("categoria_id")
 public class CategoriaProducto extends Model{
     
