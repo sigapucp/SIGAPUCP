@@ -16,7 +16,7 @@
     <children>
       <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <panes>
-            <TitledPane fx:id="tab_general" text="General">
+            <TitledPane fx:id="tab_general" prefHeight="492.0" prefWidth="202.0" text="General">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
