@@ -92,7 +92,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="12.0" layoutY="16.0" prefHeight="21.0" prefWidth="114.0" text="Cliente:">
+                  <Label layoutX="12.0" layoutY="16.0" prefHeight="21.0" prefWidth="54.0" text="Cliente:">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -104,13 +104,13 @@
                   </Label>
                   <RadioButton fx:id="solesProf" layoutX="390.0" layoutY="100.0" mnemonicParsing="false" text="Soles (S/.)" />
                   <RadioButton fx:id="dolProf" layoutX="478.0" layoutY="100.0" mnemonicParsing="false" text="Dólares ($)" />
-                  <Label layoutX="336.0" layoutY="18.0" prefHeight="21.0" prefWidth="114.0" text="Teléfono:">
+                  <Label layoutX="336.0" layoutY="18.0" prefHeight="21.0" prefWidth="64.0" text="Teléfono:">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <TextField fx:id="telfSh" layoutX="407.0" layoutY="17.0" prefHeight="25.0" prefWidth="151.0" />
-                  <Label layoutX="12.0" layoutY="55.0" prefHeight="21.0" prefWidth="114.0" text="E-mail:">
+                  <Label layoutX="12.0" layoutY="55.0" prefHeight="21.0" prefWidth="54.0" text="E-mail:">
                      <font>
                         <Font size="14.0" />
                      </font>
