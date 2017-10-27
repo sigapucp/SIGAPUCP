@@ -18,6 +18,6 @@ import org.javalite.activejdbc.annotations.Table;
 public class Accion extends Model{    
     public enum ACCION
     {
-        
+
     }
 }

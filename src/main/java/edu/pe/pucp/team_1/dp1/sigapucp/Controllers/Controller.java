@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.ejecutarAccionArgs;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,6 +18,7 @@ import javafx.fxml.Initializable;
  */
 public class Controller implements Initializable {
 
+    public Usuario usuarioActual = null;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
@@ -26,7 +28,7 @@ public class Controller implements Initializable {
         return null;
     }
     
-    public void crear() {
+    public void guardar() {
         System.out.println("Estoy creando");
     }
     
@@ -36,5 +38,10 @@ public class Controller implements Initializable {
     
     public void desactivar() {
         System.out.println("Desactivar");
+    }
+    
+    public void setUsuarioActual(Usuario usuario)
+    {
+        usuarioActual = usuario;
     }
 }

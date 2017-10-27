@@ -1,0 +1,1 @@
+insert into roles values('DEF',default,'Default Rol','Rol basico con funcionalidades minimas','NULL',current_date,'C','ACTIVO');
