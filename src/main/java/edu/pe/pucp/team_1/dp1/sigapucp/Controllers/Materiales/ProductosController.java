@@ -83,8 +83,13 @@ public class ProductosController extends Controller {
     public void habilitar_formulario(){
         tipo_producto_formulario.setDisable(false);
     }
-        
+
+    public void limpiar_tabla_index(){
+        tablaProductos.getItems().clear();
+    }
+    
     public void cargar_tabla_index(){
+        limpiar_tabla_index();
         tablaProductos.setEditable(false);
         ColumnaCategoria.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[0] ));
         ColumnaTipoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[1]));
@@ -94,13 +99,19 @@ public class ProductosController extends Controller {
 
     public boolean cumple_condicion_busqueda(String[] registro, String categoria, String tipo, String codigo){
         boolean match = true;
-        if ( categoria.equals("") && tipo.equals("") && categoria.equals("")){
+        System.out.println("--------------------");
+        System.out.println(categoria);
+        System.out.println(tipo);
+        System.out.println(codigo);
+        System.out.println("--------------------");
+        
+        if ( categoria.equals("") && tipo.equals("") && codigo.equals("")){
             match = false;
         }
         else {
             match = (!categoria.equals("")) ? (match && registro[0].equals(categoria)) : true;
             match = (!tipo.equals("")) ? (match && registro[1].equals(tipo)) : true;
-            match = (!categoria.equals("")) ? (match && registro[2].equals(codigo)) : true;
+            match = (!codigo.equals("")) ? (match && registro[2].equals(codigo)) : true;
         }
         return match;
     }
@@ -108,13 +119,16 @@ public class ProductosController extends Controller {
     @FXML
     public void buscar_tipo_producto(ActionEvent event) throws IOException{
         List<String[]> master_data_busqueda = new ArrayList<String[]>();
+        crear_estructura_tabla();
         try{
             for(int i = 0; i < master_data.size(); i++){
                 if ( cumple_condicion_busqueda(master_data.get(i), categoriaBuscar.getText(),tipoProductoBuscar.getText(), codigoProductoBuscar.getText())){
+                    System.out.println("-------------");
                     master_data_busqueda.add(master_data.get(i));
                 }
             }
             master_data = master_data_busqueda;
+            System.out.println(master_data.size());
             cargar_tabla_index();
         }
         catch( Exception e){
