@@ -32,8 +32,8 @@
             </AnchorPane>
             <AnchorPane layoutX="33.0" layoutY="83.0" prefHeight="200.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
-                  <TextField layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
-                  <TextField layoutX="130.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField fx:id="busqTipoPromo" layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField fx:id="busqCodigoPromo" layoutX="130.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
                   <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Promoción:">
                      <font>
                         <Font size="14.0" />
@@ -49,7 +49,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <DatePicker layoutX="130.0" layoutY="102.0" prefHeight="25.0" prefWidth="106.0" />
+                  <DatePicker fx:id="busqFecha" layoutX="130.0" layoutY="102.0" prefHeight="25.0" prefWidth="106.0" />
                   <Button layoutX="175.0" layoutY="154.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
                </children>
             </AnchorPane>
