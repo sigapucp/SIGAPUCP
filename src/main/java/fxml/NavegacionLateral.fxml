@@ -14,7 +14,7 @@
         <URL value="@/styles/botonesacciones.css" />
     </stylesheets>
     <children>
-      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0">
+      <Accordion prefHeight="572.0" prefWidth="200.0">
          <panes>
             <TitledPane fx:id="tab_general" prefWidth="200.0" text="General">
                <content>
@@ -120,7 +120,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane layoutX="10.0" layoutY="64.0" prefWidth="200.0" text="Ventas">
+            <TitledPane prefWidth="200.0" text="Ventas">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -182,7 +182,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane layoutX="10.0" layoutY="91.0" prefWidth="200.0" text="Recursos Humanos">
+            <TitledPane prefWidth="200.0" text="Recursos Humanos">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

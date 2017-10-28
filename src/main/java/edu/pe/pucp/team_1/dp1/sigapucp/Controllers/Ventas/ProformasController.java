@@ -5,27 +5,48 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.ContenidoPrincipalController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirDetallesArgs;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import static javafx.scene.input.KeyCode.T;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.javalite.activejdbc.Base;
 
 /**
  * FXML Controller class
@@ -47,9 +68,9 @@ public class ProformasController extends Controller {
     @FXML
     private Button visualizarPedido;
     @FXML
-    private DatePicker fechaProfSh;
+    public DatePicker fechaProfSh;
     @FXML
-    private TextField clienteSh;
+    public TextField clienteSh;
     @FXML
     private RadioButton solesProf;
     @FXML
@@ -78,33 +99,210 @@ public class ProformasController extends Controller {
     private Button EliminarProf;
     @FXML
     private Spinner<?> cantProd;
-    @FXML
+    @FXML 
     private TextField producto;
     @FXML
     private Button agregarProdProf;
+    @FXML
+    private AnchorPane proforma_tabla;
+    @FXML
+    private AnchorPane proforma_formulario;
+    @FXML
+    private SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
     
+    public IEvent<abrirDetallesArgs> abrirDetalle;
     
-    static Stage modal_stage = new Stage();
+    @FXML private ContenidoPrincipalController contenidoPrincipalController = new ContenidoPrincipalController();
+    private final ObservableList<Cotizacion> cotizaciones = FXCollections.observableArrayList(); 
+    
+    private Cotizacion proformaSelecionado;
+    
+    private Boolean crearNuevo;
+    
+    private List<Cotizacion> tempCotizaciones;
+    
+    @FXML static Stage modal_stage = new Stage();
 
+    
+    private InformationAlertController infoController;
     /**
      * Initializes the controller class.
      */
+    
+   
+         
+    public ProformasController()
+    {
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        tempCotizaciones = Cotizacion.findAll();       
+        
+        for (Cotizacion coti : tempCotizaciones) {
+            cotizaciones.add(coti);
+        }                               
+        
+        infoController = new InformationAlertController();
+                
+        proformaSelecionado = null;
+        crearNuevo = false;
+    }
+    
+    @Override
+    @FXML
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         dolProf.setOnAction(e -> manejarRadBttnDol());
         solesProf.setOnAction(e -> manejarRadBttnSol());
+        abrirDetalle = new Event<>();
+        cantProd.setValueFactory(valueFactory);
+        //if (!Base.hasConnection()) Base.open();
+        inhabilitar_formulario();
         Parent modal_content;
         try {
             modal_content = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Proformas/AgregarProformas.fxml"));
             Scene modal_content_scene = new Scene(modal_content);
             modal_stage.setScene(modal_content_scene);
-            modal_stage.initModality(Modality.APPLICATION_MODAL);
-            //modal_stage.initOwner((Stage) pedidoContainer.getScene().getWindow());
+            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);
+            //modal_stage.initOwner(((Node)event.getTarget()).getScene().getWindow());
             modal_stage.setScene(modal_content_scene);
         } catch (IOException ex) {
             Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        }
     }  
+   
+    @Override
+    public void nuevo(){
+       crearNuevo = true;
+       habilitar_formulario();
+       limpiar_formulario();
+    }
+    
+    @Override 
+    public void guardar() {        
+        if(crearNuevo)
+        {
+            crearProforma();            
+        }else
+        {
+            if(proformaSelecionado == null) return;
+            editarProforma(proformaSelecionado);
+        }        
+        
+        //RefrescarTabla();
+    }
+    
+    private void editarProforma(Cotizacion proforma) {        
+//        String nombre = VerNombre.getText();
+//        String apellido = VerApellido.getText();
+//        String telefono = VerTelefono.getText();
+//        String email = VerCorreo.getText();
+//        String estado = VerEstado.getSelectionModel().getSelectedItem();
+//        String rol = VerRol.getSelectionModel().getSelectedItem();
+//        
+//        try{      
+//        Base.openTransaction();       
+//        usuario.set("nombre",nombre);
+//        usuario.set("apellido", apellido);
+//        usuario.set("telefono", telefono);
+//        usuario.set("email", email);
+//        usuario.set("estado", estado);
+//        
+//        Rol usuarioRol = Rol.findFirst("rol_cod = ?", rol);
+//        usuario.set("rol_id",usuarioRol.getId());
+//        usuario.set("rol_cod",rol);        
+//        usuario.saveIt();
+//        Base.commitTransaction();
+//        
+//        infoController.show("El usuario ha sido editado satisfactoriamente");        
+//        }
+//        catch(Exception e){
+//           Base.rollbackTransaction();
+//        }                
+    }
+    
+    private void crearProforma() {
+        String cliente = clienteSh.getText();
+        String telefono = telfSh.getText();
+        String email = correoSh.getText();
+        LocalDate fechaLocal = fechaProfSh.getValue();
+        Date fecha = Date.from(fechaLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String fechaEmision = dateFormat.format(fecha);
+        System.out.println(fechaEmision);
+        String cotizacion_cod = "PROF";
+        //String cotizacion_id = obtenerUltimoId() + 1;
+        int monedaId;
+        if (solesProf. isSelected()){
+             monedaId = 1;
+        } else {
+            monedaId = 2;
+        }      
+        asignar_data(cotizacion_cod, 1, fechaEmision, 0.0, "ACTIVO","admin",'1',"admin",1, monedaId,'n');  
+    }
+    
+    private void asignar_data(String cotizacion_cod, int cliente_id, String fechaEmision, Double total, String estado, String usuario, char flag, String usuario_cod, int usuario_id, int monedaId, char promoAut ){
+        try{      
+        Base.openTransaction();  
+        Integer cod = Integer.valueOf(String.valueOf((Base.firstCell("select last_value from cotizaciones_cotizacion_id_seq")))) + 1;        
+        cotizacion_cod = cotizacion_cod + Integer.toString(cod);
+        Cotizacion proforma = new Cotizacion();
+        proforma.set("cotizacion_cod",cotizacion_cod);
+        proforma.set("client_id",cliente_id);
+        //proforma.set("cotizacion_id", cod);
+        proforma.setDate("fecha_emision", fechaEmision);
+        proforma.set("total", 0.0);
+        //proforma.set("telefono", telefono);
+        //proforma.set("email", email);
+        proforma.set("estado", estado);
+        //proforma.set("last_user_change",usuarioActual.getString("cotizacion_cod"));
+        proforma.set("last_user_change", usuario);
+        proforma.set("flag_last_operation", flag);
+        proforma.set("usuario_cod",usuario_cod);
+        proforma.set("usuario_id", usuario_id);
+        proforma.set("moneda_id", monedaId);
+        proforma.set("promocion_automatica", promoAut);     
+        //proforma.setDate("last_date_change",dateFormat.format(date));
+        proforma.saveIt();
+        Base.commitTransaction();
+        System.out.println("Todo Correcto BD");
+        infoController.show("Se ha creado la proforma: PROF"+String.valueOf(cod));        
+        }
+        catch(Exception e){
+           System.out.println(e);
+           Base.rollbackTransaction();
+        }    
+    }
+    
+    
+    public void inhabilitar_formulario (){
+        proforma_formulario.setDisable(true);
+        proforma_tabla.setDisable(true);
+    }
+    
+    public void habilitar_formulario (){
+        proforma_formulario.setDisable(false);
+        proforma_tabla.setDisable(false);
+    }
+    
+    public void limpiar_formulario(){
+        clienteSh.clear();
+        telfSh.clear();
+        correoSh.clear();
+        fechaProfSh.setValue(null);
+        producto.clear();
+        productosProf.getItems().clear();
+        subTotalDol.clear();
+        igvDol.clear();
+        totalDol.clear();
+        subTotalSol.clear();
+        igvSol.clear();
+        totalSol.clear();
+        solesProf.setSelected(false);
+        dolProf.setSelected(false);
+        SpinnerValueFactory newvalueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        cantProd.setValueFactory(newvalueFactory);
+    }
+    
+
     private void manejarRadBttnDol(){
         solesProf.setSelected(false);
     }
@@ -112,6 +310,17 @@ public class ProformasController extends Controller {
     @FXML
     private void handleAgregarProducto(ActionEvent event) {
         modal_stage.showAndWait();
+    }
+    
+    @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
+    //de controllers
+    private void handleGenerarPedido(ActionEvent event) {
+        abrirDetallesArgs args = new abrirDetallesArgs();
+        System.out.println("estoy aqui debuggeando");
+        args.setNombreController("Pedidos");
+        args.setNombreModulo("Ventas");
+        
+        abrirDetalle.fire(this, args);
     }
     
     private void manejarRadBttnSol(){

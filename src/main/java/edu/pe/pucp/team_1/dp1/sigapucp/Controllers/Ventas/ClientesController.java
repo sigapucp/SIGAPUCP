@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -77,11 +79,24 @@ public class ClientesController extends Controller{
     @FXML
     private TableView<Cliente> tabla_clientes;
     
+    private Cliente cliente_seleccioando;
+    private Boolean crear_nuevo;
+    private InformationAlertController infoController;
     private List<Cliente> clientes;
     private final ObservableList<Cliente> masterData = FXCollections.observableArrayList();
     /**
      * Initializes the controller class.
      */
+    
+    public ClientesController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+                          
+        
+        infoController = new InformationAlertController();
+                
+        cliente_seleccioando = null;
+        crear_nuevo = false;        
+    }
     
     public String obtener_tipo_cliente(){
         String tipo_cliente = "";
@@ -89,23 +104,48 @@ public class ClientesController extends Controller{
         tipo_cliente = (persoJuri.isSelected()) ? "persona natural" : "";
         return tipo_cliente;
     }
-
-    @Override
-    public void crear() {
+    
+    public void crear_cliente(){
         try{
-            System.out.println("empezando a crear");
+            Base.openTransaction();  
             Cliente nuevo_cliente = new Cliente();
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
-            if ( nuevo_cliente.saveIt()){
-                System.out.println("todo Ok");
-            }
+            nuevo_cliente.saveIt();
+            Base.commitTransaction();
+            infoController.show("El cliente ha sido creado satisfactoriamente"); 
         }
         catch(Exception e){
             System.out.println(e);
+            Base.rollbackTransaction();
+        }        
+    }
+    
+    public void editar_cliente(Cliente cliente){
+        try{
+            cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
+            cliente.saveIt();
+            infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
+        catch(Exception e){
+            //Base.rollbackTransaction();
+        }
+    }
+    
+    
+    @Override
+    public void guardar() {
+        if (crear_nuevo){
+            crear_cliente();
+        }else{
+            if (cliente_seleccioando == null) return;
+            editar_cliente(cliente_seleccioando);
+        }
+        clientes = Cliente.findAll();
+        cargar_tabla_index();
     }    
     
     public void nuevo(){
+       crear_nuevo = true;
        habilitar_formulario();
        limpiar_formulario();
     }
@@ -130,15 +170,35 @@ public class ClientesController extends Controller{
         cliente_formulario.setDisable(true);
     }
     
+    public void limpiar_tabla_index(){
+        tabla_clientes.getItems().clear();
+    }
+    
+    public boolean cumple_condicion_busqueda(Cliente cliente, String ruc, String dni, String nombres, String estado){
+        boolean match = true;
+        if ( ruc.equals("") && dni.equals("") && nombres.equals("") && estado.equals("")){
+            match = false;
+        }
+        else {
+            match = (!ruc.equals("")) ? (match && (cliente.get("ruc")).equals(ruc)) : true;
+            match = (!dni.equals("")) ? (match && (cliente.get("dni")).equals(dni)) : true;
+            match = (!nombres.equals("")) ? (match && (cliente.get("nombre")).equals(nombres)) : true;
+            match = (!estado.equals("")) ? (match && (cliente.get("tipo_cliente")).equals(estado)) : true;
+        }
+        return match;
+    }
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
+        clientes = Cliente.findAll();
+        masterData.clear();
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();        
         try{
-            String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
-            clientes = null;
-            clientes = Cliente.where("ruc = ? AND dni = ? AND nombre = ? AND estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado);
-            cargar_tabla_index();
-        }
-        catch( Exception e){
+            for(Cliente cliente : clientes){
+                if (cumple_condicion_busqueda(cliente, rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado)){
+                    masterData.add(cliente);
+                }
+            }
+        }catch(Exception e){
             System.out.println(e);
         }
     }
@@ -153,6 +213,7 @@ public class ClientesController extends Controller{
     }
     
     public void cargar_tabla_index(){
+        limpiar_tabla_index();
         for( Cliente cliente : clientes){
             masterData.add(cliente);
         }
@@ -166,7 +227,6 @@ public class ClientesController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
         llenar_estado_social_busqueda();
         control_check_box();
@@ -191,7 +251,5 @@ public class ClientesController extends Controller{
             repLegal.setDisable(false);
             persoNatu.setSelected(false);
         }
-        
-    } 
-    
+    }
 }

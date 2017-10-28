@@ -12,7 +12,7 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("RutasRack")
+@Table("rutasracks")
 public class RutaRack extends Model{
     
 }

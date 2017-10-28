@@ -13,8 +13,10 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("Cotizaciones")
+@Table("cotizaciones")
 @IdName("cotizacion_id")
 public class Cotizacion extends Model{
-    
+    static {
+        dateFormat("dd/MM/yyyy", "fecha_emision");
+    }     
 }

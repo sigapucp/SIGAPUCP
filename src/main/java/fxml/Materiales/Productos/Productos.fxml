@@ -21,38 +21,65 @@
     <children>
         <AnchorPane prefHeight="575.0" prefWidth="1000.0">
            <children>
-             <Pane layoutX="-2.0" layoutY="-1.0" prefHeight="50.0" prefWidth="250.0">
-                <children>
-                   <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
-                      <font>
-                         <Font size="20.0" />
-                      </font>
-                   </Label>
-                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-                </children>
-            </Pane>
-             <Label layoutX="18.0" layoutY="70.0" prefHeight="21.0" prefWidth="114.0" text="Código producto">
-                <font>
-                   <Font size="14.0" />
-                </font>
-             </Label>
-             <Label layoutX="18.0" layoutY="102.0" prefHeight="21.0" prefWidth="114.0" text="Nombre">
-                <font>
-                   <Font size="14.0" />
-                </font>
-             </Label>
-             <TextField fx:id="codigo_producto_buscar" layoutX="141.0" layoutY="68.0" prefHeight="25.0" prefWidth="87.0" />
-             <TextField fx:id="nombre_producto_buscar" layoutX="142.0" layoutY="100.0" prefHeight="25.0" prefWidth="87.0" />
-             <TableView fx:id="tablaProductos" layoutX="12.0" layoutY="241.0" prefHeight="269.0" prefWidth="224.0">
-               <columns>
-                 <TableColumn fx:id="columna_codigo" prefWidth="55.0" text="Código" />
-                 <TableColumn fx:id="columna_nombre" prefWidth="87.0" text="Nombre" />
-                  <TableColumn fx:id="columna_descripcion" prefWidth="87.0" text="Descripción" />
-               </columns>
-             </TableView>
-             <Button layoutX="140.0" layoutY="522.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <AnchorPane prefHeight="575.0" prefWidth="250.0">
+               <children>
+                   <Pane prefHeight="50.0" prefWidth="250.0">
+                      <children>
+                         <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
+                            <font>
+                               <Font size="20.0" />
+                            </font>
+                         </Label>
+                         <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                      </children>
+                  </Pane>
+                  <AnchorPane layoutY="50.0" prefHeight="522.0" prefWidth="250.0">
+                     <children>
+                         <Line endX="100.0" layoutX="125.0" startX="-100.0" />
+                         <Label layoutX="14.0" layoutY="94.0" prefHeight="21.0" prefWidth="114.0" text="Código producto">
+                            <font>
+                               <Font size="14.0" />
+                            </font>
+                         </Label>
+                         <Label layoutX="14.0" layoutY="25.0" prefHeight="21.0" prefWidth="114.0" text="Categoria">
+                            <font>
+                               <Font size="14.0" />
+                            </font>
+                         </Label>
+                         <TextField fx:id="codigoProductoBuscar" layoutX="145.0" layoutY="92.0" prefHeight="25.0" prefWidth="87.0" />
+                         <TextField fx:id="categoriaBuscar" layoutX="145.0" layoutY="23.0" prefHeight="25.0" prefWidth="87.0" />
+                        <TextField fx:id="tipoProductoBuscar" layoutX="145.0" layoutY="56.0" prefHeight="25.0" prefWidth="87.0" />
+                        <Label layoutX="14.0" layoutY="58.0" prefHeight="21.0" prefWidth="114.0" text="Tipo de Producto">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                         <Button layoutX="140.0" layoutY="483.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                         <TableView fx:id="tablaProductos" layoutX="14.0" layoutY="193.0" prefHeight="275.0" prefWidth="224.0">
+                           <columns>
+                             <TableColumn fx:id="ColumnaCategoria" prefWidth="68.0" text="Categoria" />
+                             <TableColumn fx:id="ColumnaTipoProducto" prefWidth="74.0" text="Tipo de producto" />
+                              <TableColumn fx:id="ColumnaCodigoProducto" prefWidth="87.0" text="Codigo de producto" />
+                           </columns>
+                         </TableView>
+                        <Button layoutX="140.0" layoutY="152.0" mnemonicParsing="false" onAction="#buscar_tipo_producto" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
              <AnchorPane fx:id="tipo_producto_formulario" layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
                 <children>
+                   <Pane prefHeight="50.0" prefWidth="750.0">
+                      <children>
+                         <Label layoutX="133.0" layoutY="10.0" text="Detalle del Producto">
+                            <font>
+                               <Font size="20.0" />
+                            </font>
+                         </Label>
+                         <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
+                         <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
+                      </children>
+                   </Pane>
                    <TabPane layoutY="56.0" prefHeight="522.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
                      <tabs>
                        <Tab text="General">
@@ -238,32 +265,8 @@
                          </Tab>
                      </tabs>
                    </TabPane>
-                   <Pane prefHeight="50.0" prefWidth="750.0">
-                      <children>
-                         <Label layoutX="133.0" layoutY="10.0" text="Detalle del Producto">
-                            <font>
-                               <Font size="20.0" />
-                            </font>
-                         </Label>
-                         <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
-                         <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
-                      </children>
-                   </Pane>
                 </children>
             </AnchorPane>
-             <Line endX="100.0" layoutX="118.0" layoutY="49.0" startX="-100.0" />
-            <CheckBox fx:id="perecible_busqueda" layoutX="136.0" layoutY="172.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="96.0" text="Perecible">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <Button layoutX="137.0" layoutY="201.0" mnemonicParsing="false" onAction="#buscar_tipo_producto" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
-            <TextField fx:id="peso_producto_buscar" layoutX="141.0" layoutY="135.0" prefHeight="25.0" prefWidth="87.0" />
-            <Label layoutX="18.0" layoutY="137.0" prefHeight="21.0" prefWidth="114.0" text="Peso">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
            </children>
         </AnchorPane>
     </children>

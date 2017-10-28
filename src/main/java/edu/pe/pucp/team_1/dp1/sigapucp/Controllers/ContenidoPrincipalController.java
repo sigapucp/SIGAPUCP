@@ -12,7 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 
-public class ContenidoPrincipalController implements Initializable {
+public class ContenidoPrincipalController extends Controller {
 
     @FXML private AnchorPane contenedor_modulos_contenido;
     @FXML private AnchorPane contenedor_botones_acciones;
@@ -22,7 +22,7 @@ public class ContenidoPrincipalController implements Initializable {
     private void seleccionarAccionRealizar(String nombre, Controller controller) {
         switch(nombre){
             case "Guardar":
-                controller.crear();
+                controller.guardar();
                 break;
             case "Nuevo":
                 controller.nuevo();
@@ -47,6 +47,7 @@ public class ContenidoPrincipalController implements Initializable {
                 System.out.println(contenido);
                 System.out.println(loaderContenido);    
                 activeController = loaderContenido.<Controller>getController();
+                activeController.setUsuarioActual(usuarioActual);
                 contenedor_modulos_contenido.getChildren().setAll(contenido);
                 
                 // Cargar el contenido de los botones de accion
