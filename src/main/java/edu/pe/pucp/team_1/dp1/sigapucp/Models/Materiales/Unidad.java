@@ -13,7 +13,7 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("Unidades")
+@Table("unidades")
 @IdName("unidad_id")
 public class Unidad extends Model{    
 }

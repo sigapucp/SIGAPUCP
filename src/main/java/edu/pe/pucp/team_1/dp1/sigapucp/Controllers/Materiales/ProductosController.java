@@ -10,6 +10,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -68,8 +70,27 @@ public class ProductosController extends Controller {
     @FXML
     private TextField tipoProductoBuscar;  
     @FXML
-    private TextField codigoProductoBuscar;      
-    
+    private TextField codigoProductoBuscar;         
+    @FXML
+    private TextField nombre_producto;  
+    @FXML
+    private TextField codigo_producto;  
+    @FXML
+    private TextField estado_producto; 
+    @FXML
+    private CheckBox perecible;  
+    @FXML
+    private TextField largo_producto;   
+    @FXML
+    private TextField ancho_producto; 
+    @FXML
+    private TextField peso_producto;  
+    @FXML
+    private TextField unidades_producto;   
+    @FXML
+    private TextArea descripcion_producto; 
+    @FXML
+    private TextField categoria_producto;    
     @FXML
     private AnchorPane tipo_producto_formulario;
     
@@ -98,14 +119,36 @@ public class ProductosController extends Controller {
     }
 
     public boolean cumple_condicion_busqueda(String[] registro, String categoria, String tipo, String codigo){
-        boolean match = true;
+        boolean match = false;
         if ( categoria.equals("") && tipo.equals("") && codigo.equals("")){
             match = false;
         }
         else {
-            match = (!categoria.equals("")) ? (match && registro[0].equals(categoria)) : true;
-            match = (!tipo.equals("")) ? (match && registro[1].equals(tipo)) : true;
-            match = (!codigo.equals("")) ? (match && registro[2].equals(codigo)) : true;
+//            match = (!categoria.equals("")) ? (match && registro[0].equals(categoria)) : true;
+//            match = (!tipo.equals("")) ? (match && registro[1].equals(tipo)) : true;
+//            match = (!codigo.equals("")) ? (match && registro[2].equals(codigo)) : true;
+              if (registro[0].equals(categoria)){
+                  match = true;
+              }
+              if (registro[1].equals(tipo)){
+                  match = true;
+              }
+              if (registro[2].equals(codigo)){
+                  match = true;
+              }
+              if (registro[0].equals(categoria) && registro[1].equals(tipo)){
+                  match = true;
+              }
+              if (registro[1].equals(tipo) && registro[2].equals(codigo)){
+                  match = true;
+              }
+              if (registro[0].equals(categoria) && registro[2].equals(codigo)){
+                  match = true;
+              }
+              if (registro[0].equals(categoria) && registro[1].equals(tipo) && registro[2].equals(codigo)){
+                  match = true;
+              }
+              
         }
         return match;
     }
@@ -156,9 +199,26 @@ public class ProductosController extends Controller {
     }
    @FXML
     public void mostrar_detalle_producto(ActionEvent event) throws IOException{
-        //List<String[]> master_data_busqueda = new ArrayList<String[]>();
         crear_estructura_tabla();
+        perecible.setSelected(false);
         try{
+            String[] registro_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
+            tipo_producto_formulario.setDisable(false);
+            categoria_producto.setText(registro_seleccionado[0].toString());
+            nombre_producto.setText(registro_seleccionado[1].toString());
+            codigo_producto.setText(registro_seleccionado[2].toString());
+            TipoProducto tipo = TipoProducto.findFirst("tipo_cod = ?", registro_seleccionado[2].toString());
+            estado_producto.setText(tipo.getString("estado").toString());
+            largo_producto.setText(tipo.getString("longitud").toString());
+            ancho_producto.setText(tipo.getString("ancho").toString());
+            peso_producto.setText(tipo.getString("peso").toString());
+            descripcion_producto.setText(tipo.getString("descripcion").toString());
+            String es_perecible = tipo.getString("perecible").toString();
+            if (es_perecible != "n"){
+                perecible.setSelected(true);
+            }
+            /*Unidad unidad = Unidad.findFirst("unidad_id = ?", tipo.getString("unidad_id").toString());
+            unidades_producto.setText(unidad.getString("nombre"));*/
             
         }
         catch( Exception e){
