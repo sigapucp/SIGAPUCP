@@ -9,8 +9,12 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -129,19 +133,31 @@ public class PromocionesController extends Controller{
         promo_formulario.setDisable(true);
     }
     
-    public boolean cumple_condicion_busqueda(Promocion promocion, String codigo, String tipo
-            //, String fecha
-            ){
+    public static Calendar stringToCalendar(String dateString, String format) {
+ 
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        try {
+            if (dateString != null && !dateString.equals("")) {
+                calendar.setTime(sdf.parse(dateString));
+            }
+        } catch (ParseException e) {
+            System.out.println(e);
+        }
+        return calendar;
+    }
+    
+    public boolean cumple_condicion_busqueda(Promocion promocion, String codigo, String tipo, Calendar fecha){
         boolean match = true;
-        if ( codigo.equals("") && tipo.equals("") 
-                //&& fecha.equals("")
-                ){
+        if ( codigo.equals("") && tipo.equals("") && fecha.equals("")){
             match = false;
         }
         else {
             match = (!codigo.equals("")) ? (match && (promocion.get("promocion_cod")).equals(codigo)) : true;
             match = (!tipo.equals("")) ? (match && (promocion.get("tipo")).equals(tipo)) : true;
-            //match = (!fecha.equals("")) ? (match && (promocion.get("tipo_cliente")).equals(fecha)) : true;
+            Calendar fechaIni = stringToCalendar(promocion.get("fecha_inicio").toString(),"dd/MM/yyyy");
+            Calendar fechaFin = stringToCalendar(promocion.get("fecha_fin").toString(),"dd/MM/yyyy");
+            match = (!fecha.equals("")) ? (match && fechaIni.after(fecha) && fechaFin.before(fecha)) : true;
         }
         return match;
     }
@@ -149,12 +165,10 @@ public class PromocionesController extends Controller{
     public void buscar_promocion(ActionEvent event) throws IOException{
         promociones = Promocion.findAll();
         masterData.clear();
-        //LocalDate fecha = ( busqFecha.getValue() == null ) ? "" : busqFecha.getValue();
+        Calendar fecha = stringToCalendar(busqFecha.getValue().toString(), "dd/MM/yyyy");
         try{
             for(Promocion promocion : promociones){
-                if (cumple_condicion_busqueda(promocion, busqCodigoPromo.getText(), busqTipoPromo.getText()
-                //        , fecha
-                )){
+                if (cumple_condicion_busqueda(promocion, busqCodigoPromo.getText(), busqTipoPromo.getText(), fecha)){
                     masterData.add(promocion);
                 }
             }
