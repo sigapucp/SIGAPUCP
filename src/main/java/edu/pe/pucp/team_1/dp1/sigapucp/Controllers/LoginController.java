@@ -37,8 +37,11 @@ public class LoginController implements Initializable{
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException {
         System.out.println("inicio");
-        if (true){
-        //if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {       
+
+//        if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {       
+        if(true)
+        {
+
             Usuario usuarioActual = Usuario.findFirst("email = ? AND contrasena_encriptada = ?", usuario_login.getText(),usuario_contrasenha.getText());
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
             ContenidoPrincipalController mainController = new ContenidoPrincipalController();
@@ -58,6 +61,7 @@ public class LoginController implements Initializable{
     @FXML
     private void abrirOlvidarContrasenha(ActionEvent event) throws IOException{
         //Cambio de toda la escena del login hacia el olvidar contraseña
+        Base.close();
         Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/Seguridad/RecuperarContrasenha.fxml"));
         Scene main_content_scene = new Scene(main_content_parent);
         Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

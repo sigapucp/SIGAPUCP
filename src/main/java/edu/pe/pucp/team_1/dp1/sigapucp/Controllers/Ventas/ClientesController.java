@@ -20,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -169,15 +170,35 @@ public class ClientesController extends Controller{
         cliente_formulario.setDisable(true);
     }
     
+    public void limpiar_tabla_index(){
+        tabla_clientes.getItems().clear();
+    }
+    
+    public boolean cumple_condicion_busqueda(Cliente cliente, String ruc, String dni, String nombres, String estado){
+        boolean match = true;
+        if ( ruc.equals("") && dni.equals("") && nombres.equals("") && estado.equals("")){
+            match = false;
+        }
+        else {
+            match = (!ruc.equals("")) ? (match && (cliente.get("ruc")).equals(ruc)) : true;
+            match = (!dni.equals("")) ? (match && (cliente.get("dni")).equals(dni)) : true;
+            match = (!nombres.equals("")) ? (match && (cliente.get("nombre")).equals(nombres)) : true;
+            match = (!estado.equals("")) ? (match && (cliente.get("tipo_cliente")).equals(estado)) : true;
+        }
+        return match;
+    }
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
+        clientes = Cliente.findAll();
+        masterData.clear();
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();        
         try{
-            String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
-            clientes = null;
-            clientes = Cliente.where("ruc = ? AND dni = ? AND nombre = ? AND estado = ? ", rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado);
-            cargar_tabla_index();
-        }
-        catch( Exception e){
+            for(Cliente cliente : clientes){
+                if (cumple_condicion_busqueda(cliente, rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado)){
+                    masterData.add(cliente);
+                }
+            }
+        }catch(Exception e){
             System.out.println(e);
         }
     }
@@ -192,6 +213,7 @@ public class ClientesController extends Controller{
     }
     
     public void cargar_tabla_index(){
+        limpiar_tabla_index();
         for( Cliente cliente : clientes){
             masterData.add(cliente);
         }
