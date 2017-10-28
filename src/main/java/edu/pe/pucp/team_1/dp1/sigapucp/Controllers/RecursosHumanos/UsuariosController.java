@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos;
 
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Utils.GUIUtils;
@@ -33,6 +35,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 
@@ -44,8 +48,7 @@ import org.javalite.activejdbc.Base;
 public class UsuariosController extends Controller{
     
     @FXML
-    private TableView<Usuario> TablaUsuarios;
-    
+    private TableView<Usuario> TablaUsuarios;    
     @FXML
     private TableColumn<Usuario,String> ColumnaCodigo;
     @FXML
@@ -79,43 +82,46 @@ public class UsuariosController extends Controller{
     @FXML
     private TextField VerTelefono;
     @FXML
-    private TextField VerCorreo;
+    private TextField VerCorreo;   
+    @FXML
+    private ComboBox<String> VerRol;   
     
     @FXML
-    private ComboBox<String> VerEstado;
+    private TreeTableView<String> ArbolPrivilegiosTabla;
     @FXML
-    private ComboBox<String> VerRol;
-    
-    @FXML
-    private TreeTableColumn<?, ?> ArbolPrivilegios;
+    private TreeTableColumn<String, String> ArbolPrivilegiosColumna;
+   
 
     
-    private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();    
-    private final ObservableList<Usuario> usuariosFiltrados = FXCollections.observableArrayList();    
+    private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();     
     
     private List<Usuario> tempUsuarios;
     private Usuario usuarioSelecionado;
     private Boolean crearNuevo;
     private InformationAlertController infoController;
+    private ConfirmationAlertController confirmatonController;
    
          
     public UsuariosController()
     {
-        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-        tempUsuarios = Usuario.findAll();       
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");   
         
+        tempUsuarios = Usuario.findAll();               
         for (Usuario usuario : tempUsuarios) {
             usuarios.add(usuario);
         }                               
         
         infoController = new InformationAlertController();
+        confirmatonController = new ConfirmationAlertController();
                 
         usuarioSelecionado = null;
-        crearNuevo = false;
+        crearNuevo = false;       
     }
     
     @FXML
-    private void visualizarUsuario(ActionEvent event) {
+    private void visualizarUsuario(ActionEvent event) {                   
+//        if(!PreCambiarAccion()) return;
+        crearNuevo = false;
         usuarioSelecionado = TablaUsuarios.getSelectionModel().getSelectedItem();
         if(usuarioSelecionado == null) return;        
         setUsuarioVisible(usuarioSelecionado);                        
@@ -155,16 +161,12 @@ public class UsuariosController extends Controller{
         {
             tempUsuarios = tempUsuarios.stream().filter(p -> p.getRol().get("nombre").equals(rol)).collect(Collectors.toList());
         }        
-        usuarios.removeAll(usuarios);        
-        for (Usuario usuario : tempUsuarios) {
-            usuarios.add(usuario);
-        }        
+        RefrescarTabla();
         try {                        
         } catch (Exception e) {
             
         }
-    }
-    
+    }          
     
     private void setUsuarioVisible(Usuario usuario)
     {        
@@ -172,16 +174,17 @@ public class UsuariosController extends Controller{
             String nombre = usuario.getString("nombre");
             String apellido = usuario.getString("apellido");
             String telefono = usuario.getString("telefono");
-            String email = usuario.getString("email");
-            String estado = usuario.getString("estado");
-            String rol = usuario.getRol().getString("rol_cod");          
+            String email = usuario.getString("email");         
+            Rol usuarioRol = usuario.getRol();
+            String rol = usuarioRol.getString("rol_cod");          
             
             VerNombre.setText(nombre);
             VerApellido.setText(apellido);
             VerTelefono.setText(telefono);
-            VerCorreo.setText(email);
-            VerEstado.setValue(estado);
+            VerCorreo.setText(email);          
             VerRol.setValue(rol);
+            
+            List<Menu> a = usuarioRol.getAll(Menu.class);                        
             
         } catch (Exception e) {
             
@@ -193,8 +196,7 @@ public class UsuariosController extends Controller{
         VerNombre.clear();
         VerApellido.clear();
         VerTelefono.clear();
-        VerCorreo.clear();
-        VerEstado.getSelectionModel().clearSelection();
+        VerCorreo.clear();       
         VerRol.getSelectionModel().clearSelection();
     }
     
@@ -202,6 +204,7 @@ public class UsuariosController extends Controller{
     @Override
     public void nuevo()
     {
+//        if(!PreCambiarAccion()) return;
         crearNuevo = true;
         limpiarVerUsuario();
     }
@@ -216,31 +219,32 @@ public class UsuariosController extends Controller{
         {
             if(usuarioSelecionado == null) return;
             editarUsuario(usuarioSelecionado);
-        }        
-        
+        }                
         RefrescarTabla();
     }
         
     private void editarUsuario(Usuario usuario)
     {        
+        String cod = "USR" + String.valueOf(usuario.getId());
         String nombre = VerNombre.getText();
         String apellido = VerApellido.getText();
         String telefono = VerTelefono.getText();
-        String email = VerCorreo.getText();
-        String estado = VerEstado.getSelectionModel().getSelectedItem();
+        String email = VerCorreo.getText();       
         String rol = VerRol.getSelectionModel().getSelectedItem();
+        
+        if(!confirmatonController.show("Se editara el usuario con codigo: " + cod, "¿Desea continuar?")) return;
         
         try{      
         Base.openTransaction();       
         usuario.set("nombre",nombre);
         usuario.set("apellido", apellido);
         usuario.set("telefono", telefono);
-        usuario.set("email", email);
-        usuario.set("estado", estado);
+        usuario.set("email", email);       
         
         Rol usuarioRol = Rol.findFirst("rol_cod = ?", rol);
         usuario.set("rol_id",usuarioRol.getId());
         usuario.set("rol_cod",rol);        
+        usuario.set("last_user_change",usuarioActual.getString("usuario_cod"));
         usuario.saveIt();
         Base.commitTransaction();
         
@@ -253,53 +257,77 @@ public class UsuariosController extends Controller{
     
     private void crearUsuario()
     {
+        usuarioSelecionado = null;
         String nombre = VerNombre.getText();
         String apellido = VerApellido.getText();
         String telefono = VerTelefono.getText();
-        String email = VerCorreo.getText();
-        String estado = VerEstado.getSelectionModel().getSelectedItem();
+        String email = VerCorreo.getText();     
         String rol = VerRol.getSelectionModel().getSelectedItem();
         
+        String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);  
+        if(!confirmatonController.show("Se creara el usuario con codigo: " + cod, "¿Desea continuar?")) return;
+        
         try{      
+
         Base.openTransaction();    
-        String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);        
+
         
         Usuario usuario = new Usuario();
         usuario.set("usuario_cod",cod);        
         usuario.set("nombre",nombre);
         usuario.set("apellido", apellido);
         usuario.set("telefono", telefono);
-        usuario.set("email", email);
-        usuario.set("estado", estado);
+        usuario.set("email", email);       
         
         Rol usuarioRol = Rol.findFirst("rol_cod = ?", rol);
         usuario.set("rol_id",usuarioRol.getId());
         usuario.set("rol_cod",rol);        
-        usuario.set("contrasena_encriptada","");
-        usuario.set("last_user_change",usuarioActual.getString("usuario_cod"));
-        
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();        
-        usuario.setDate("last_date_change",dateFormat.format(date));
-        usuario.saveIt();
-        Base.commitTransaction();
-        
-        infoController.show("El usuario ha sido editado creado satisfactoriamente con el codigo: USR"+String.valueOf(cod));        
+        usuario.set("contrasena_encriptada","");  
+        usuario.set("estado","ACTIVO");
+        usuario.set("last_user_change",usuarioActual.get("usuario_cod"));
+        usuario.saveIt();        
+        Base.commitTransaction();                
+        infoController.show("El usuario ha sido editado creado satisfactoriamente");        
         }
         catch(Exception e){
-           Base.rollbackTransaction();
-        }                         
+           Base.rollbackTransaction();           
+        }finally{
+           crearNuevo = false; 
+        }        
     }
+    
+//    private boolean PreCambiarAccion()
+//    {
+//        Boolean pararAccion = true;
+//        if(formularioCambio)
+//        {                
+//            String accion = (crearNuevo) ? "creacion" : "edicion";
+//            pararAccion = confirmatonController.show("Se perderan los datos ingresados", "¿Desea cancelar la " + accion + "?");
+//            
+//            if(pararAccion) 
+//            {
+//                crearNuevo = false;
+//                formularioCambio = false;
+//            }                        
+//        }        
+//        return pararAccion;
+//    }
     
     private void RefrescarTabla()
     {
-        TablaUsuarios.getColumns().get(0).setVisible(false);
-        TablaUsuarios.getColumns().get(0).setVisible(true);
+        try {
+            usuarios.removeAll(usuarios);
+            tempUsuarios = Usuario.findAll();               
+            for (Usuario usuario : tempUsuarios) {
+                usuarios.add(usuario);
+            }               
+            TablaUsuarios.getColumns().get(0).setVisible(false);
+            TablaUsuarios.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+        }                                  
     }
     
-                                         
-    public void initialize(URL location, ResourceBundle resources) {    
-                
+    public void initialize(URL location, ResourceBundle resources) {                    
         try {
             
             ColumnaCodigo.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("usuario_cod")));
@@ -307,7 +335,9 @@ public class UsuariosController extends Controller{
             ColumnaApellido.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("apellido"))); 
             ColumnaEstado.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado"))); 
             ColumnaRol.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getRol().get("nombre"))); 
-
+            
+            ArbolPrivilegiosColumna.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getValue())); 
+                        
             ObservableList<String> estados = FXCollections.observableArrayList();    
             ObservableList<String> estadosNoPad = FXCollections.observableArrayList(); 
             
@@ -333,13 +363,14 @@ public class UsuariosController extends Controller{
             BusquedaEstado.setItems(estados);
             BusquedaRol.setItems(rolesNames);
                         
-            VerRol.setItems(rolesCods);
-            VerEstado.setItems(estadosNoPad);
+            VerRol.setItems(rolesCods);          
 
             TablaUsuarios.setItems(usuarios);
             
         } catch (Exception e) {
         }       
     } 
+
+   
 }
 

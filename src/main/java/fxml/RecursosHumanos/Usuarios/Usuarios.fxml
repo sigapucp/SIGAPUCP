@@ -18,7 +18,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="574.0" prefWidth="973.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.Usuarios.UsuariosController">
+<AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="574.0" prefWidth="973.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.UsuariosController">
    <children>
       <SplitPane dividerPositions="0.37166324435318276" layoutX="-4.0" layoutY="-4.0" prefHeight="578.0" prefWidth="976.0">
          <items>
@@ -185,10 +185,8 @@
                                     <TextField fx:id="VerCorreo" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="3" />
                                     <Label alignment="CENTER" prefHeight="17.0" prefWidth="76.0" text="Telefono:" GridPane.rowIndex="2" />
                                     <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Email:" GridPane.columnIndex="2" />
-                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Estado:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="65.0" text="Rol:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                    <ComboBox fx:id="VerEstado" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <ComboBox fx:id="VerRol" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="65.0" text="Rol:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="VerRol" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </content></TitledPane>
@@ -198,12 +196,12 @@
                      <items>
                         <GridPane>
                            <children>
-                              <TreeTableView editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="294.0" prefWidth="201.0">
+                              <TreeTableView fx:id="ArbolPrivilegiosTabla" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="294.0" prefWidth="201.0">
                                  <columnResizePolicy>
                                     <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                                  <columns>
-                                    <TreeTableColumn fx:id="ArbolPrivilegios" prefWidth="75.0" text="Privilegios" />
+                                    <TreeTableColumn fx:id="ArbolPrivilegiosColumna" prefWidth="75.0" text="Privilegios" />
                                  </columns>
                               </TreeTableView>
                            </children>
