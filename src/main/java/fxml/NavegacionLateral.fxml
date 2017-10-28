@@ -14,324 +14,194 @@
         <URL value="@/styles/botonesacciones.css" />
     </stylesheets>
     <children>
-      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0">
          <panes>
-            <TitledPane fx:id="tab_general" prefHeight="492.0" prefWidth="202.0" text="General">
+            <TitledPane fx:id="tab_general" prefWidth="200.0" text="General">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="63.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Dashboard">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/dashboard_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Dashboard" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/dashboard_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="63.0" layoutY="110.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Auditoria">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/audit_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Auditoria" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/audit_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="63.0" layoutY="204.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Reporte de Errores">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/errorReport_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Reporte de Errores" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/errorReport_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
                      </children>
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane text="Materiales">
+            <TitledPane prefWidth="200.0" text="Materiales">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="56.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Almacenes">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/warehouse_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Almacenes" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/warehouse_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic></Button>
-                        <Button layoutX="56.0" layoutY="117.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" layoutX="1.0" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Productos">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/product_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Productos" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/product_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="56.0" layoutY="218.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" layoutX="-1.0" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Racks">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/rack_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Racks" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/rack_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="56.0" layoutY="317.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Reporte de problemas">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/problemReport_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Reporte de problemas" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/problemReport_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Categorias">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/category_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
                      </children>
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane text="Simulacion">
+            <TitledPane prefWidth="200.0" text="Simulacion">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="61.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Despachos">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/fork_lift_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Despachos" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/fork_lift_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
                      </children>
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane layoutX="10.0" layoutY="64.0" text="Ventas">
+            <TitledPane prefWidth="200.0" text="Ventas">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ScrollPane prefHeight="436.0" prefWidth="200.0">
-                           <content>
-                              <AnchorPane prefWidth="180.0">
-                                 <children>
-                                    <Button layoutX="50.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                             <children>
-                                                <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                                   <image>
-                                                      <Image url="@Imagenes/client_icon.png" />
-                                                   </image>
-                                                   <VBox.margin>
-                                                      <Insets bottom="2.0" />
-                                                   </VBox.margin>
-                                                </ImageView>
-                                                <Label text="Clientes" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button layoutX="51.0" layoutY="104.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                             <children>
-                                                <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                                   <image>
-                                                      <Image url="@Imagenes/invoice_icon.png" />
-                                                   </image>
-                                                   <VBox.margin>
-                                                      <Insets bottom="2.0" />
-                                                   </VBox.margin>
-                                                </ImageView>
-                                                <Label text="Proformas" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button layoutX="52.0" layoutY="197.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                             <children>
-                                                <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                                   <image>
-                                                      <Image url="@Imagenes/purchaseOrder_icon.png" />
-                                                   </image>
-                                                   <VBox.margin>
-                                                      <Insets bottom="2.0" />
-                                                   </VBox.margin>
-                                                </ImageView>
-                                                <Label text="Pedidos" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button layoutX="52.0" layoutY="289.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                             <children>
-                                                <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                                   <image>
-                                                      <Image url="@Imagenes/user_icon.png" />
-                                                   </image>
-                                                   <VBox.margin>
-                                                      <Insets bottom="2.0" />
-                                                   </VBox.margin>
-                                                </ImageView>
-                                                <Label text="Proveedores" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button layoutX="52.0" layoutY="381.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                             <children>
-                                                <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                                   <image>
-                                                      <Image url="@Imagenes/discount_icon.png" />
-                                                   </image>
-                                                   <VBox.margin>
-                                                      <Insets bottom="2.0" />
-                                                   </VBox.margin>
-                                                </ImageView>
-                                                <Label text="Promociones" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button layoutX="52.0" layoutY="474.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                             <children>
-                                                <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                                   <image>
-                                                      <Image url="@Imagenes/sellDocuments_icon.png" />
-                                                   </image>
-                                                   <VBox.margin>
-                                                      <Insets bottom="2.0" />
-                                                   </VBox.margin>
-                                                </ImageView>
-                                                <Label text="Documentos de Venta" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="15.0" />
-                                 </padding>
-                              </AnchorPane>
-                           </content>
-                        </ScrollPane>
+                        <Button contentDisplay="TOP" layoutY="355.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Documentos de Venta">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/sellDocuments_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Promociones">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/discount_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Proveedores">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/user_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Pedidos">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/purchaseOrder_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Proformas">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/invoice_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Clientes">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/client_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                      </children>
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane layoutX="10.0" layoutY="91.0" text="Recursos Humanos">
+            <TitledPane prefWidth="200.0" text="Recursos Humanos">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="56.0" layoutY="14.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="80.0" prefWidth="200.0" text="Usuarios">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/user_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Usuarios" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/user_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="56.0" layoutY="111.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                        <Button contentDisplay="TOP" layoutY="80.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="80.0" prefWidth="200.0" text="Roles">
                            <graphic>
-                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
-                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                       <image>
-                                          <Image url="@Imagenes/rol_icon.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Label text="Roles" />
-                                 </children>
-                              </VBox>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/rol_icon.png" />
+                                 </image>
+                              </ImageView>
                            </graphic>
                         </Button>
                      </children>
