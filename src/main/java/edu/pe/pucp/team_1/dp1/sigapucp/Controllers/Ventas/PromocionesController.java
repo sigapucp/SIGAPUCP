@@ -109,6 +109,8 @@ public class PromocionesController extends Controller{
         promociones = null;
         promociones = Promocion.findAll();
         cargar_tabla_index();
+        rbPorTipo.setOnAction(e -> manejarrbPorTipo());
+        rbPorCategoria.setOnAction(e -> manejarrbPorCategoria());
     }    
     
     //Tabla de promociones
@@ -120,7 +122,6 @@ public class PromocionesController extends Controller{
         limpiar_tabla_index();
         for( Promocion promocion : promociones){
             masterData.add(promocion);
-            //System.out.println(promocion);
         }
         System.out.println(masterData.size());
         tabla_promociones.setEditable(false);
@@ -182,6 +183,7 @@ public class PromocionesController extends Controller{
        crear_nuevo = true;
        habilitar_formulario();
        limpiar_formulario();
+       
     }
     
     public void habilitar_formulario(){
@@ -201,5 +203,15 @@ public class PromocionesController extends Controller{
         spLlevo.setValueFactory(spLlevoValues);
     }
     
+    private void manejarrbPorTipo(){
+        rbPorTipo.setSelected(true);
+        if (!botonCategoria1.isDisable())
+            botonCategoria1.setDisable(true);
+        if (!botonCategoria2.isDisable())
+            botonCategoria2.setDisable(true);
+    }
     
+    private void manejarrbPorCategoria(){
+        //
+    }
 }
