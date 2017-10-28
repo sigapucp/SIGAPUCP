@@ -14,7 +14,7 @@
         <URL value="@/styles/botonesacciones.css" />
     </stylesheets>
     <children>
-      <Accordion prefHeight="572.0" prefWidth="200.0">
+      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0">
          <panes>
             <TitledPane fx:id="tab_general" prefWidth="200.0" text="General">
                <content>
