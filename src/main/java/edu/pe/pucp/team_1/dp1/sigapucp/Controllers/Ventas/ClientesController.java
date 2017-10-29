@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -70,6 +71,8 @@ public class ClientesController extends Controller{
     private TextField telf;
     @FXML
     private AnchorPane cliente_formulario;
+    
+    
     @FXML
     private TableColumn<Cliente, String> columna_ruc;
     @FXML
@@ -136,6 +139,7 @@ public class ClientesController extends Controller{
     public void guardar() {
         if (crear_nuevo){
             crear_cliente();
+            limpiar_formulario();
         }else{
             if (cliente_seleccioando == null) return;
             editar_cliente(cliente_seleccioando);
@@ -161,6 +165,37 @@ public class ClientesController extends Controller{
         repLegal.clear();
         telf.clear();
     }
+
+    @FXML
+    public void mostrar_detalle_cliente(ActionEvent event) throws IOException{
+        try{
+            Cliente registro_seleccionado = tabla_clientes.getSelectionModel().getSelectedItem();
+            cliente_formulario.setDisable(false);
+            //Cliente cliente = Cliente.findFirst("nombre = ?", registro_seleccionado.getString("nombre"));
+            if (registro_seleccionado.getString("tipo_cliente").equals("persona natural")){
+                dni.setText(registro_seleccionado.getString("dni"));
+                ruc.setDisable(true);
+                persoNatu.setSelected(true);
+                persoJuri.setSelected(false);
+            }else if (registro_seleccionado.getString("tipo_cliente").equals("persona juridica")){
+                ruc.setText(registro_seleccionado.getString("ruc"));
+                dni.setDisable(true);
+                persoNatu.setSelected(false);
+                persoJuri.setSelected(true);
+            }
+            clienteSh.setText(registro_seleccionado.getString("nombre"));
+            telf.setText(registro_seleccionado.getString("telef_contacto"));
+            repLegal.setText(registro_seleccionado.getString("nombre_contacto"));
+            envioDir.setText(registro_seleccionado.getString("direccion_despacho"));
+            factDir.setText(registro_seleccionado.getString("direccion_facturacion"));
+            
+            
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
+    }  
+
     
     public void habilitar_formulario(){
         cliente_formulario.setDisable(false);
@@ -233,6 +268,12 @@ public class ClientesController extends Controller{
         clientes = null;
         clientes = Cliente.findAll();
         cargar_tabla_index();
+        tabla_clientes.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
+            if (newSelection != null){
+                cliente_seleccioando = tabla_clientes.getSelectionModel().getSelectedItem();                
+                tabla_clientes.getSelectionModel().clearSelection();        
+            }
+        });
     }    
     
     private void manejarAreaTexto(TextField texto, TextField texto2){    
