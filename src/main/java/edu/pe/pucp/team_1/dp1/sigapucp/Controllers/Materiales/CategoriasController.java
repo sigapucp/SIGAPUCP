@@ -108,14 +108,13 @@ public class CategoriasController extends Controller{
         try{
             Base.openTransaction();
             CategoriaProducto nueva_categoria = new CategoriaProducto();
-            nueva_categoria.asignar_atributos("usuario",codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
+            nueva_categoria.asignar_atributos(usuarioActual.getString(("usuario_cod")),codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             nueva_categoria.saveIt();
             Base.commitTransaction();
-            infoController.show("la categoria ha sido creado satisfactoriamente"); 
-            
+            infoController.show("La categoria ha sido creado satisfactoriamente");             
         }
         catch(Exception e){
-            System.out.println("la categoria contiene errores");      
+            System.out.println("La categoria contiene errores");      
             Base.rollbackTransaction();
         }
     }
@@ -128,7 +127,7 @@ public class CategoriasController extends Controller{
   
     public void editar_categoria(CategoriaProducto categoria){
         try{
-            categoria.asignar_atributos("usuario",codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
+            categoria.asignar_atributos(usuarioActual.getString(("usuario_cod")),codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             categoria.saveIt();
             infoController.show("la categoria ha sido editada");
         }
@@ -190,8 +189,6 @@ public class CategoriasController extends Controller{
         DetalleCategoria.setDisable(true);
         categorias = null;
         categorias = CategoriaProducto.findAll();
-        cargar_tabla_index();
-
-        
+        cargar_tabla_index();        
     } 
 }
