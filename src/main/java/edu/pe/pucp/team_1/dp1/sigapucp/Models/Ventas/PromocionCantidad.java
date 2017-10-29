@@ -10,9 +10,19 @@ import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
- * @author Jauma
+ * @author Alberto
  */
 @Table("PromocionCantidades")
 public class PromocionCantidad extends Model{
-    
+    public void asignar_atributos(String codigo, Integer compro, Integer llevo, String flag_categoria,String codTipCat ){
+        this.set("nombre", codigo );
+        this.set("nr_comprar",compro);
+        this.set("nr_obtener",llevo);
+        this.set("es_categoria_obtener",flag_categoria);
+        if (flag_categoria.equals("S")){
+            this.set("categoria_code",codTipCat);
+        } else{
+            this.set("tipo_cod",codTipCat);
+        }
+    }
 }

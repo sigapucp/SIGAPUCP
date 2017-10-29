@@ -10,9 +10,13 @@ import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
- * @author Jauma
+ * @author Alberto
  */
 @Table("PromocionPorcentajes")
 public class PromocionPorcentaje extends Model{
-    
+    public void asignar_atributos(String codigo, Integer cantidadPorc, String concepto){
+        this.set("nombre", codigo );
+        this.set("valor_desc",  cantidadPorc);
+        this.set("concepto_desc", concepto);
+    }
 }
