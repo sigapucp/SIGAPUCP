@@ -26,7 +26,6 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("tiposproducto")
 @IdName("tipo_id")
 public class TipoProducto extends Model{
-        
 
     public void asignar_atributos(String usuario, String tipo_cod, float peso, String nombre, char perecible, String descripcion, 
             float longitud, float ancho, String unidad_id) {
