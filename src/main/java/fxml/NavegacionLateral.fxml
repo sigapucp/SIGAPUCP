@@ -47,6 +47,23 @@
                               </ImageView>
                            </graphic>
                         </Button>
+                        <Button layoutX="62.0" layoutY="303.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo">
+                           <graphic>
+                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="70.0">
+                                 <children>
+                                    <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                       <image>
+                                          <Image url="@Imagenes/systemParameters_icon.png" />
+                                       </image>
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" />
+                                       </VBox.margin>
+                                    </ImageView>
+                                    <Label text="Parametros de Sistema" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Button>
                      </children>
                   </AnchorPane>
                </content>

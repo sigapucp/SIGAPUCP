@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos;
 
+import java.util.List;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.IdName;
@@ -47,8 +48,19 @@ public class Usuario extends Model{
         return exito;
     }
     
+    public static boolean tienePermiso(List<AccionxRol> permisos,Menu.MENU menu,Accion.ACCION accion)
+    {
+        return (permisos.stream().anyMatch(x->x.getInteger("menu_id").equals(Menu.MENU.getId(menu)) && x.getInteger("accion_id").equals(Accion.ACCION.getId(accion))));        
+    }
+    
     public Rol getRol()
     {
-        return Rol.findFirst("rol_id = ?", get("rol_id"));        
+        return Rol.findFirst("rol_id = ?", getInteger("rol_id"));        
+    }
+    
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
     }
 }

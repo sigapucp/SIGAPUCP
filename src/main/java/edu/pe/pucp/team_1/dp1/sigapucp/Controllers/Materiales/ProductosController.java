@@ -252,7 +252,7 @@ public class ProductosController extends Controller {
     }
     
     public ProductosController(){
-        Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         producto_seleccionado = null;
         infoController = new InformationAlertController();
     }

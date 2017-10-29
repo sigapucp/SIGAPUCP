@@ -9,7 +9,11 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxMenu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.PrivilegioEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Utils.GUIUtils;
@@ -17,9 +21,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -28,12 +36,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.InputMethodEvent;
@@ -161,7 +171,7 @@ public class UsuariosController extends Controller{
         {
             tempUsuarios = tempUsuarios.stream().filter(p -> p.getRol().get("nombre").equals(rol)).collect(Collectors.toList());
         }        
-        RefrescarTabla();
+        RefrescarTabla(tempUsuarios);
         try {                        
         } catch (Exception e) {
             
@@ -184,6 +194,8 @@ public class UsuariosController extends Controller{
             VerCorreo.setText(email);          
             VerRol.setValue(rol);
             
+            mostrarUsuarioPrivilegios(usuario);
+            
             List<Menu> a = usuarioRol.getAll(Menu.class);                        
             
         } catch (Exception e) {
@@ -198,7 +210,28 @@ public class UsuariosController extends Controller{
         VerTelefono.clear();
         VerCorreo.clear();       
         VerRol.getSelectionModel().clearSelection();
+        ArbolPrivilegiosTabla.setRoot(null);
     }
+    
+     @Override
+     public void desactivar()
+     {
+        if(usuarioSelecionado==null) 
+        {
+            infoController.show("No ha seleccionado un usuario");            
+            return;
+        }
+        try {
+           Base.openTransaction();
+           
+           usuarioSelecionado.set("estado",Usuario.ESTADO.INACTIVO.name());
+           usuarioSelecionado.saveIt();
+
+           Base.commitTransaction();
+        } catch (Exception e) {
+           Base.rollbackTransaction();
+        }
+     }
     
     
     @Override
@@ -214,13 +247,18 @@ public class UsuariosController extends Controller{
     {        
         if(crearNuevo)
         {
-            crearUsuario();            
+            crearUsuario();   
+            limpiarVerUsuario();
         }else
         {
-            if(usuarioSelecionado == null) return;
+             if(usuarioSelecionado==null) 
+            {
+                infoController.show("No ha seleccionado un usuario");            
+                return;
+            }
             editarUsuario(usuarioSelecionado);
         }                
-        RefrescarTabla();
+        RefrescarTabla(Usuario.findAll());
     }
         
     private void editarUsuario(Usuario usuario)
@@ -283,41 +321,25 @@ public class UsuariosController extends Controller{
         usuario.set("rol_id",usuarioRol.getId());
         usuario.set("rol_cod",rol);        
         usuario.set("contrasena_encriptada","");  
-        usuario.set("estado","ACTIVO");
+        usuario.set("estado",Usuario.ESTADO.ACTIVO.name());
         usuario.set("last_user_change",usuarioActual.get("usuario_cod"));
         usuario.saveIt();        
         Base.commitTransaction();                
-        infoController.show("El usuario ha sido editado creado satisfactoriamente");        
+        infoController.show("El usuario ha sido creado satisfactoriamente");        
         }
         catch(Exception e){
            Base.rollbackTransaction();           
         }finally{
            crearNuevo = false; 
         }        
-    }
+    }    
     
-//    private boolean PreCambiarAccion()
-//    {
-//        Boolean pararAccion = true;
-//        if(formularioCambio)
-//        {                
-//            String accion = (crearNuevo) ? "creacion" : "edicion";
-//            pararAccion = confirmatonController.show("Se perderan los datos ingresados", "¿Desea cancelar la " + accion + "?");
-//            
-//            if(pararAccion) 
-//            {
-//                crearNuevo = false;
-//                formularioCambio = false;
-//            }                        
-//        }        
-//        return pararAccion;
-//    }
-    
-    private void RefrescarTabla()
+    private void RefrescarTabla(List<Usuario> tempUsuarios)
     {
+        
         try {
-            usuarios.removeAll(usuarios);
-            tempUsuarios = Usuario.findAll();               
+            usuarios.removeAll(usuarios);                 
+            if(tempUsuarios == null) return;
             for (Usuario usuario : tempUsuarios) {
                 usuarios.add(usuario);
             }               
@@ -325,6 +347,32 @@ public class UsuariosController extends Controller{
             TablaUsuarios.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
         }                                  
+    }
+    
+      public void mostrarUsuarioPrivilegios(Usuario usuario)
+    {
+        List<AccionxRol> accionesxrol = AccionxRol.where("rol_id = ?",usuario.getInteger("rol_id"));        
+        Set<Integer> menuIds =  new HashSet<>(accionesxrol.stream().map(x->x.getInteger("menu_id")).collect(Collectors.toList()));
+        TreeItem<String> rootNode = new TreeItem<>("Menu");          
+        
+        for(Integer menuId:menuIds)
+        {
+            List<AccionxRol> filteredMenu = accionesxrol.stream().filter(x->x.getInteger("menu_id").equals(menuId)).collect(Collectors.toList());
+            CheckBoxTreeItem<String> menuNode = new CheckBoxTreeItem<>(Menu.MENU.getMenu(menuId).name());    
+            rootNode.getChildren().add(menuNode);    
+            for(AccionxRol accion : filteredMenu)
+            {
+                CheckBoxTreeItem<String> accionNode = new CheckBoxTreeItem<>(Accion.findById(accion.getInteger("accion_id")).getString("nombre"));
+                menuNode.getChildren().add(accionNode);                                    
+            }            
+        }
+        ArbolPrivilegiosTabla.setRoot(rootNode);           
+    }
+     
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Usuarios;
     }
     
     public void initialize(URL location, ResourceBundle resources) {                    
@@ -342,10 +390,8 @@ public class UsuariosController extends Controller{
             ObservableList<String> estadosNoPad = FXCollections.observableArrayList(); 
             
             estados.add("");
-            estados.add("ACTIVO");
-            estados.add("INACTIVO");
-            estadosNoPad.add("ACTIVO");
-            estadosNoPad.add("INACTIVO");
+            estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));            
+            estadosNoPad.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
             
             
             ObservableList<String> rolesNames = FXCollections.observableArrayList();   
@@ -361,11 +407,11 @@ public class UsuariosController extends Controller{
             }
 
             BusquedaEstado.setItems(estados);
-            BusquedaRol.setItems(rolesNames);
-                        
+            BusquedaRol.setItems(rolesNames);                        
             VerRol.setItems(rolesCods);          
-
+            
             TablaUsuarios.setItems(usuarios);
+            ArbolPrivilegiosTabla.setShowRoot(false);
             
         } catch (Exception e) {
         }       

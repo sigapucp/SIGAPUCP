@@ -5,15 +5,15 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
 
-import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
-;
+
 /**
  *
  * @author Jauma
  */
-@Table("OrdenesDespachoxRutas")
-
-public class OrdenDespachoxRuta extends Model{
+@Table("GuiasRemision")
+@IdName("guia_id")
+public class GuiaRemision {
     
 }

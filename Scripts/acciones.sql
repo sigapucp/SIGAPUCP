@@ -2,6 +2,7 @@ truncate table acciones RESTART IDENTITY CASCADE;
 
 insert into acciones values ('NUL',default,'NullAccion','Accion Nula');
 insert into acciones values ('LOG',default,'Login','Se intenta logear a la aplicacion');
+insert into acciones values ('VIW',default,'Ver','Se logra ingresar y ver el menu');
 insert into acciones values ('CRE',default,'Crear','Crea una nueva instancia del elemento');
 insert into acciones values ('MOD',default,'Modificar','Modifica atributos del elemento');
 insert into acciones values ('DES',default,'Deshabilitar','Inhabilita el uso del elemento. Eliminacion logica');
@@ -19,3 +20,5 @@ insert into acciones values ('FLT',default,'Modificar Flete','Maneja el estado d
 insert into acciones values ('TRS',default,'Transferencia de productos','Modifica la posicion de un producto');
 
 select * from acciones;
+
+
