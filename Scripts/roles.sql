@@ -1,0 +1,1 @@
+insert into roles values('admin',default,'Administrador','Permisos full','NULL',current_date,'1','ACTIVO');

@@ -11,21 +11,29 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirDetallesArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,13 +47,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import static javafx.scene.input.KeyCode.T;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -64,7 +74,11 @@ public class ProformasController extends Controller {
     @FXML
     private TextField pedidoBusq;
     @FXML
-    private TableView<?> tablaPedidos;
+    private TableView<Cotizacion> tablaPedidos;
+    @FXML
+    private TableColumn<Cotizacion, String> proformaColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> clienteColumn;    
     @FXML
     private Button visualizarPedido;
     @FXML
@@ -109,10 +123,29 @@ public class ProformasController extends Controller {
     private AnchorPane proforma_formulario;
     @FXML
     private SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+    @FXML
+    private TableColumn<Cotizacion, String> codProfColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> descripProdColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> cantProdColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> puSolColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> precioSolColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> puDolColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> precioDolColumn;    
+    @FXML 
+    static Stage modal_stage = new Stage();
+    @FXML 
+    private ContenidoPrincipalController contenidoPrincipalController = new ContenidoPrincipalController();
+    @FXML
+    private Label proformaSub;
     
     public IEvent<abrirDetallesArgs> abrirDetalle;
     
-    @FXML private ContenidoPrincipalController contenidoPrincipalController = new ContenidoPrincipalController();
     private final ObservableList<Cotizacion> cotizaciones = FXCollections.observableArrayList(); 
     
     private Cotizacion proformaSelecionado;
@@ -120,11 +153,14 @@ public class ProformasController extends Controller {
     private Boolean crearNuevo;
     
     private List<Cotizacion> tempCotizaciones;
-    
-    @FXML static Stage modal_stage = new Stage();
 
-    
     private InformationAlertController infoController;
+    
+    private List<Cliente> autoCompletadoList;
+    
+    ArrayList<String> possiblewords = new ArrayList<>();
+    
+    AutoCompletionBinding<String> autoCompletionBinding;
     /**
      * Initializes the controller class.
      */
@@ -150,11 +186,18 @@ public class ProformasController extends Controller {
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        //llenar tabla:
+        llenar_tabla_index();   
+        autoCompletadoList = Cliente.findAll();
+        clienteToString();
+        autoCompletionBinding = TextFields.bindAutoCompletion(clienteSh, possiblewords);
+        autoCompletionBinding.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletar();
+        });
         dolProf.setOnAction(e -> manejarRadBttnDol());
         solesProf.setOnAction(e -> manejarRadBttnSol());
         abrirDetalle = new Event<>();
         cantProd.setValueFactory(valueFactory);
-        //if (!Base.hasConnection()) Base.open();
         inhabilitar_formulario();
         Parent modal_content;
         try {
@@ -162,12 +205,18 @@ public class ProformasController extends Controller {
             Scene modal_content_scene = new Scene(modal_content);
             modal_stage.setScene(modal_content_scene);
             if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);
-            //modal_stage.initOwner(((Node)event.getTarget()).getScene().getWindow());
             modal_stage.setScene(modal_content_scene);
         } catch (IOException ex) {
             Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }  
+    
+    private void llenar_tabla_index(){
+        //tempCotizaciones = Cotizacion.findAll();
+        proformaColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cotizacion_cod")));   
+        clienteColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
+        tablaPedidos.setItems(cotizaciones);
+    }
    
     @Override
     public void nuevo(){
@@ -186,8 +235,7 @@ public class ProformasController extends Controller {
             if(proformaSelecionado == null) return;
             editarProforma(proformaSelecionado);
         }        
-        
-        //RefrescarTabla();
+        RefrescarTabla();
     }
     
     private void editarProforma(Cotizacion proforma) {        
@@ -272,6 +320,59 @@ public class ProformasController extends Controller {
         }    
     }
     
+    @FXML
+    private void buscarPedido(ActionEvent event) {        
+        String proformaId = pedidoBusq.getText();
+        String cliente = clienteBusq.getText();
+        Integer clienteId = null;
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+        tempCotizaciones = Cotizacion.findAll();
+        if(proformaId!=null&&!proformaId.isEmpty()) {            
+            tempCotizaciones = tempCotizaciones.stream().filter(p -> p.getString("cotizacion_cod").equals(proformaId)).collect(Collectors.toList());
+        }
+        if (clienteId!=null) {
+            tempCotizaciones = tempCotizaciones.stream().filter(p -> p.getString("client_id").equals(clienteId)).collect(Collectors.toList());
+        }
+        if(estado!=null&&!estado.isEmpty()) {
+            tempCotizaciones = tempCotizaciones.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
+        }
+        RefrescarTabla();
+        try {                        
+        } catch (Exception e) { 
+        }
+    }      
+    
+    @FXML
+    private void visualizarProforma(ActionEvent event){
+        crearNuevo = false;
+        proformaSelecionado = tablaPedidos.getSelectionModel().getSelectedItem();
+        if (proformaSelecionado == null) return;
+        setProformaVisible(proformaSelecionado);
+    }
+    
+    @FXML
+    private void setProformaVisible(Cotizacion selected){
+        String proforma = selected.getString("cotizacion_cod");
+        String fechaEmision = selected.get("fecha_emision").toString();
+        //falta pasarle bien el dato de la fecha. 
+        //tambien buscar al cliente
+        proformaSub.setText("Cotizacion: " + proforma);
+        //fechaProfSh.setValue(fechaEmision.);
+    }
+    
+    private void RefrescarTabla()
+    {
+        try {
+            cotizaciones.removeAll(cotizaciones);
+            //tempCotizaciones = Cotizacion.findAll();               
+            for (Cotizacion coti : tempCotizaciones) {
+                cotizaciones.add(coti);
+            }               
+            tablaPedidos.getColumns().get(0).setVisible(false);
+            tablaPedidos.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+        }                                  
+    }
     
     public void inhabilitar_formulario (){
         proforma_formulario.setDisable(true);
@@ -325,6 +426,25 @@ public class ProformasController extends Controller {
     
     private void manejarRadBttnSol(){
         dolProf.setSelected(false);
+    }
+
+    private void clienteToString() {
+        ArrayList<String> words = new ArrayList<>();
+        for (Cliente cliente : autoCompletadoList){
+            words.add(cliente.getString("nombre"));
+        }
+        possiblewords = words;
+    }
+
+    private void handleAutoCompletar() {
+        int i = 0;
+        for (Cliente cliente : autoCompletadoList){
+            if (cliente.getString("nombre").equals(clienteSh.getText())){
+                System.out.println(cliente.getString("telef_contacto"));
+                telfSh.setText(cliente.getString("telef_contacto"));
+                
+            }
+        }
     }
     
 }
