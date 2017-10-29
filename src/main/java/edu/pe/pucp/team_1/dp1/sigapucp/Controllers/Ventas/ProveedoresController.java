@@ -137,14 +137,28 @@ public class ProveedoresController extends Controller{
         proveedor_formulario.setDisable(true);
     }
     
+    public boolean cumple_condicion_busqueda(Proveedor proveedor, String ruc, String nombres){
+        boolean match = true;
+        if ( ruc.equals("") && nombres.equals("") ){
+            match = false;
+        }
+        else {
+            match = (!ruc.equals("")) ? (match && (proveedor.get("ruc")).equals(ruc)) : true;
+            match = (!nombres.equals("")) ? (match && (proveedor.get("nombre")).equals(nombres)) : true;
+        }
+        return match;        
+    }
     @FXML
     public void buscar_proveedor(ActionEvent event) throws IOException{
+        proveedores = Proveedor.findAll();
+        masterData.clear();
         try{
-            proveedores = null;
-            proveedores = Proveedor.where("provuder_ruc = ?  or name = ? ", ruc_busqueda.getText(),nombre_busqueda.getText());
-            cargar_tabla_index();
-        }
-        catch(Exception e){
+            for(Proveedor proveedor : proveedores){
+                if (cumple_condicion_busqueda(proveedor, ruc_busqueda.getText(), nombre_busqueda.getText())){
+                    masterData.add(proveedor);
+                }
+            }
+        }catch(Exception e){
             System.out.println(e);
         }
     }

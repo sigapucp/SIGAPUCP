@@ -64,6 +64,7 @@ public class LoginController implements Initializable{
     @FXML
     private void abrirOlvidarContrasenha(ActionEvent event) throws IOException{
         //Cambio de toda la escena del login hacia el olvidar contraseña
+        Base.close();
         Parent main_content_parent = FXMLLoader.load(getClass().getResource("/fxml/Seguridad/RecuperarContrasenha.fxml"));
         Scene main_content_scene = new Scene(main_content_parent);
         Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

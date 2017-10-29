@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.BelongsTo;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
@@ -13,7 +14,8 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("Unidades")
+@Table("unidades")
 @IdName("unidad_id")
+//@BelongsTo(parent = TipoProducto.class, foreignKeyName = "tipo_id")
 public class Unidad extends Model{    
 }
