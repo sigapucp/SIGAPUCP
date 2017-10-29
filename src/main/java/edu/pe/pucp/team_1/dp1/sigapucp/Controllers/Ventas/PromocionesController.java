@@ -37,7 +37,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 
-/**
+/*
  * FXML Controller class
  *
  * @author Alberto
