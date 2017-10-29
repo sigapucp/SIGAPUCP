@@ -10,6 +10,6 @@
    <children>
       <Button layoutX="37.0" layoutY="37.0" mnemonicParsing="false" text="Nuevo" />
       <Button layoutX="179.0" layoutY="37.0" mnemonicParsing="false" text="Desactivar" />
-      <Button layoutX="104.0" layoutY="37.0" mnemonicParsing="false" onAction="#actionHumo" text="Guardar" />
+      <Button layoutX="104.0" layoutY="37.0" mnemonicParsing="false" onAction="#onAccion" text="Guardar" />
    </children>
 </AnchorPane>
