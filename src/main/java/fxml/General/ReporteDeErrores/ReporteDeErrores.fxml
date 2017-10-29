@@ -45,7 +45,7 @@
             </TableView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="DetalleErrorPane" layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0" visible="false">
+      <AnchorPane fx:id="DetalleErrorPane" layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
          <children>
             <Pane prefHeight="50.0" prefWidth="750.0">
                <children>
