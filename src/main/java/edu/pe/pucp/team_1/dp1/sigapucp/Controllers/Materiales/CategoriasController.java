@@ -103,37 +103,12 @@ public class CategoriasController extends Controller{
         }        
         
     }
-    
-    public void cargar_tabla_index(){
-        tablaCategorias.getItems().clear();
-        for (CategoriaProducto categoria : categorias){
-            masterData.add(categoria);
-        }
-        tablaCategorias.setEditable(false);
-        ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
-        ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
-        tablaCategorias.getItems().addAll(masterData);
-    }
-    @FXML
-    public void mostrar_detalle_categoria(ActionEvent event) throws IOException{
-        try{
-            CategoriaProducto registro_seleccionado = tablaCategorias.getSelectionModel().getSelectedItem();
-            DetalleCategoria.setDisable(false);
-            nombre_categoria.setText(registro_seleccionado.getString("nombre"));
-            codigo_categoria.setText(registro_seleccionado.getString("categoria_code"));
-            descripcion_categoria.setText(registro_seleccionado.getString("descripcion"));
-            
-        }
-        catch( Exception e){
-            System.out.println(e);
-        }
-    }  
-    
+       
     public void crear_categoria(){
         try{
             Base.openTransaction();
             CategoriaProducto nueva_categoria = new CategoriaProducto();
-            nueva_categoria.asignar_atributos(codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
+            nueva_categoria.asignar_atributos("usuario",codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             nueva_categoria.saveIt();
             Base.commitTransaction();
             infoController.show("la categoria ha sido creado satisfactoriamente"); 
@@ -150,11 +125,10 @@ public class CategoriasController extends Controller{
         DetalleCategoria.setDisable(false);
         limpiar_formulario();
     }
-
-    
+  
     public void editar_categoria(CategoriaProducto categoria){
         try{
-            categoria.asignar_atributos(codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
+            categoria.asignar_atributos("usuario",codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             categoria.saveIt();
             infoController.show("la categoria ha sido editada");
         }
@@ -173,6 +147,7 @@ public class CategoriasController extends Controller{
     public void guardar(){
         if (crear_nuevo){
             crear_categoria();
+            limpiar_formulario();
         }else{
             if (categoria_seleccionada == null) return;
             editar_categoria(categoria_seleccionada);
@@ -180,6 +155,34 @@ public class CategoriasController extends Controller{
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
     }
+    
+    
+    public void cargar_tabla_index(){
+        tablaCategorias.getItems().clear();
+        masterData.clear();
+        for (CategoriaProducto categoria : categorias){
+            masterData.add(categoria);
+        }
+        tablaCategorias.setEditable(false);
+        ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
+        ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        tablaCategorias.getItems().addAll(masterData);
+    }
+    @FXML
+    public void mostrar_detalle_categoria(ActionEvent event) throws IOException{
+        try{
+            CategoriaProducto registro_seleccionado = tablaCategorias.getSelectionModel().getSelectedItem();
+            DetalleCategoria.setDisable(false);
+            CategoriaProducto cate = CategoriaProducto.findFirst("nombre = ?", registro_seleccionado.getString("nombre"));
+            nombre_categoria.setText(registro_seleccionado.getString("nombre"));
+            codigo_categoria.setText(registro_seleccionado.getString("categoria_code"));
+            descripcion_categoria.setText(registro_seleccionado.getString("descripcion"));
+            
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
+    }     
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
