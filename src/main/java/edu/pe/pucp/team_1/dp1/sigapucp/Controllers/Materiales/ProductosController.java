@@ -6,10 +6,12 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,16 +46,21 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.javalite.activejdbc.LazyList;
 /**
  *
  * @author herbert
  */
 public class ProductosController extends Controller {
     
+    private InformationAlertController infoController;
+    // TABLA
+    //------------------------------------------------------//
     @FXML
     private TableView<String[]> tablaProductos;
     @FXML
@@ -62,19 +69,39 @@ public class ProductosController extends Controller {
     private TableColumn<String[], String> ColumnaTipoProducto;
     @FXML
     private TableColumn<String[], String> ColumnaCodigoProducto;
-
+    @FXML
+    private AnchorPane tipo_producto_formulario;
+    private List<String[]> master_data;
+    // DATOS
+    //--------------------------------------------------------//
+    @FXML
+    private TextField nombre_producto;
+    @FXML
+    private TextField codigo_producto;
+    @FXML
+    private TextField largo_producto;
+    @FXML
+    private TextField ancho_producto;
+    @FXML
+    private TextField peso_producto;
+    @FXML
+    private ComboBox unidades_producto;
+    @FXML
+    private TextArea descripcion_producto;
+    @FXML
+    private CheckBox perecible;
+    //BUSCAR
+    //---------------------------------------------------------//
     @FXML
     private TextField categoriaBuscar;    
     @FXML
     private TextField tipoProductoBuscar;  
     @FXML
     private TextField codigoProductoBuscar;      
-    
-    @FXML
-    private AnchorPane tipo_producto_formulario;
-    
-    private List<String[]> master_data;
-            
+    //CREACION - EDICION
+    //---------------------------------------------------------//
+    private boolean crear_nuevo = true;
+    private TipoProducto producto_seleccionado ;
     
     public void inhabilitar_formulario(){
         tipo_producto_formulario.setDisable(true);
@@ -86,6 +113,17 @@ public class ProductosController extends Controller {
 
     public void limpiar_tabla_index(){
         tablaProductos.getItems().clear();
+    }
+    
+    public void limpiar_formulario(){
+        nombre_producto.clear();
+        codigo_producto.clear();
+        perecible.setDisable(false);
+        largo_producto.clear();
+        ancho_producto.clear();
+        peso_producto.clear();
+        unidades_producto.setDisable(false);
+        descripcion_producto.clear();
     }
     
     public void cargar_tabla_index(){
@@ -153,9 +191,69 @@ public class ProductosController extends Controller {
         inhabilitar_formulario();
         crear_estructura_tabla();
         cargar_tabla_index();
+        llenar_combobox_unidades();        
     }
 
+    public void nuevo(){
+        crear_nuevo = true;
+        habilitar_formulario();
+    }
+    
+    public void crear_tipo_producto(){
+        try{
+            Base.openTransaction();
+            TipoProducto nuevo_tipo_producto = new TipoProducto();
+            float peso = Float.parseFloat(peso_producto.getText());
+            float longitud = Float.parseFloat(largo_producto.getText());
+            float ancho = Float.parseFloat(ancho_producto.getText());
+            char perecible = (this.perecible.isSelected() ? 'T' : 'F');
+            Unidad unidad_tipo_producto = Unidad.first("nombre = ?", unidades_producto.getSelectionModel().getSelectedItem().toString());
+            nuevo_tipo_producto.asignar_atributos("usuario", codigo_producto.getText(), peso, nombre_producto.getText(), perecible, descripcion_producto.getText(), longitud, ancho, unidad_tipo_producto.get("unidad_id").toString());
+            nuevo_tipo_producto.saveIt();
+            Base.commitTransaction();
+            limpiar_formulario();
+            infoController.show("El producto ha sido creado satisfactoriamente"); 
+        }
+        catch(Exception e){
+            infoController.show("El producto contiene errores : " + e);        
+            Base.rollbackTransaction();
+        }
+    }
+    
+    public void editar_producto(TipoProducto producto){
+        limpiar_formulario();
+    }
+    
+    public void llenar_combobox_unidades(){
+        try{
+            List<String> unidades_combo_box = new ArrayList<String>();
+            LazyList<Unidad> lista_unidades = Unidad.findAll();
+            for(Unidad unidad : lista_unidades){
+                unidades_combo_box.add(unidad.get("nombre").toString());
+            }            
+            unidades_producto.getItems().addAll(unidades_combo_box);
+
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    
+    @Override
+    public void guardar(){
+        if (crear_nuevo){
+            crear_tipo_producto();
+        }
+        else {
+            if (producto_seleccionado == null) return;
+            editar_producto(producto_seleccionado);
+        }
+        crear_estructura_tabla();
+        cargar_tabla_index();        
+    }
+    
     public ProductosController(){
         Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        producto_seleccionado = null;
+        infoController = new InformationAlertController();
     }
 }
