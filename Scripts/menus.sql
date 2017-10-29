@@ -24,3 +24,5 @@ insert into menus values (default,'Login');
 insert into menus values (default,'Simulacion');
 
 select * from menus;
+
+

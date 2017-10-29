@@ -239,7 +239,7 @@ CREATE TABLE Roles
  rol_cod             VARCHAR(30) NOT NULL ,
  rol_id              SERIAL NOT NULL ,
  nombre              VARCHAR(50) NOT NULL ,
- descripción         VARCHAR(100) NOT NULL ,
+ descripcion         VARCHAR(100) NOT NULL ,
  last_user_change    VARCHAR(20) NOT NULL ,
  last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
