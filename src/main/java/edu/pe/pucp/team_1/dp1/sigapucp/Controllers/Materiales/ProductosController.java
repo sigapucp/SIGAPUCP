@@ -211,15 +211,17 @@ public class ProductosController extends Controller {
             nuevo_tipo_producto.asignar_atributos("usuario", codigo_producto.getText(), peso, nombre_producto.getText(), perecible, descripcion_producto.getText(), longitud, ancho, unidad_tipo_producto.get("unidad_id").toString());
             nuevo_tipo_producto.saveIt();
             Base.commitTransaction();
+            limpiar_formulario();
             infoController.show("El producto ha sido creado satisfactoriamente"); 
         }
         catch(Exception e){
+            infoController.show("El producto contiene errores : " + e);        
             Base.rollbackTransaction();
         }
     }
     
     public void editar_producto(TipoProducto producto){
-        
+        limpiar_formulario();
     }
     
     public void llenar_combobox_unidades(){
