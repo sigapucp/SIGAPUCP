@@ -23,26 +23,28 @@ public class Menu extends Model{
         NullMenu,
         Dashboard,
         Auditoria,
-        ReportedeErrorres,
+        ReportedeErrores,        
         Almacenes,
         Categorias,
         Productos,
         Racks,
         OrdendeEntrada,
-        OrdendeDespacho,
+        OrdendeSalida,        
         Clientes,
         Proformas,
         Pedidos,
         Proveedores,
         Promociones,
-        Fletes,
+        Fletes,        
         DocumentosdeVenta,
         NotasdeCredito,
         Usuarios,
         Roles,
         Login,
-        Simulacion;
-
+        Simulacion,
+        ParametrosdeSistema,
+        Unidades,
+        Monedas;
         public static int getId(MENU menu)
         {
             return menu.ordinal() + 1;
