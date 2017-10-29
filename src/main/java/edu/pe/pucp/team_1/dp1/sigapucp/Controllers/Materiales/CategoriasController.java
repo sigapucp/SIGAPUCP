@@ -115,7 +115,7 @@ public class CategoriasController extends Controller{
             
         }
         catch(Exception e){
-            System.out.println(e);
+            System.out.println("la categoria contiene errores");      
             Base.rollbackTransaction();
         }
     }
