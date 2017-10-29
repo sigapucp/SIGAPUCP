@@ -17,7 +17,30 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("accion_id")
 public class Accion extends Model{    
     public enum ACCION
-    {
-
+    {        
+        NUL,
+        LOG,
+        VIW,
+        CRE,
+        MOD,
+        DES,
+        CSV,
+        ROL,
+        EST,
+        MOV,
+        MIV,
+        MIC,
+        MID,
+        MIE,
+        SIM,
+        PRO,
+        FLT,
+        TRS;                                  
+        
+        public static int getId(ACCION accion)
+        {
+            return accion.ordinal() + 1;
+        }
     }
+  
 }

@@ -1,1 +1,1 @@
-insert into roles values('DEF',default,'Default Rol','Rol basico con funcionalidades minimas','NULL',current_date,'C','ACTIVO');
+insert into roles values('admin',default,'Administrador','Permisos full','NULL',current_date,'1','ACTIVO');

@@ -6,9 +6,11 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,14 +45,15 @@ public class LoginController implements Initializable{
         {
 
             Usuario usuarioActual = Usuario.findFirst("email = ? AND contrasena_encriptada = ?", usuario_login.getText(),usuario_contrasenha.getText());
+            List<AccionxRol> permisos = AccionxRol.where("rol_id = ?", usuarioActual.getInteger("rol_id"));
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
             ContenidoPrincipalController mainController = new ContenidoPrincipalController();
-            mainController.setUsuarioActual(usuarioActual);
+            mainController.setUsuarioActual(usuarioActual,permisos);
             loader.setController(mainController);           
             Scene main_content_scene = new Scene((Parent)loader.load());
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             app_stage.setScene(main_content_scene);
-            if(Base.hasConnection()) Base.close();
+            Base.close();
             app_stage.show();
         }else {
             errorController = new ErrorAlertController();
