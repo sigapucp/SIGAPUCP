@@ -26,7 +26,7 @@ public class AlmacenesController extends Controller{
     private AnchorPane contenedor_grilla;
 
     public AlmacenesController() {
-        grid = new SelectableGrid(10, 10, 500, 400);
+        grid = new SelectableGrid(10, 10, 400, 400);
     }
     
     @FXML

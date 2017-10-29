@@ -17,6 +17,7 @@ public class SelectableGrid extends AnchorPane  {
     private int grid_heigth;
     private List<GridTile> tiles = new ArrayList<>();
     private List<Integer> active_tiles = new ArrayList<>();
+    private List<Integer> temp_tiles = new ArrayList<>();
     private List<Integer> saved_tiles = new ArrayList<>();
     
     public SelectableGrid(int rows, int columns, int width, int height) {
@@ -38,10 +39,12 @@ public class SelectableGrid extends AnchorPane  {
                 tile.setTranslateX(j * aspect_ratio_width);
                 tile.setTranslateY(i * aspect_ratio_heigth);
                 tile.getActiveTileEvent().addHandler((sender, args) -> {
-                    System.out.println(num_columns*args.getY_cord() + args.getX_cord() + 1);
+                    int index = num_columns*args.getX_cord() + args.getY_cord();
+                    if (!active_tiles.contains(index)) active_tiles.add(index);
                 });
                 tile.getReleaseEvent().addHandler((sender, args) -> {
-                    if (!checkDirectionOfActiveTiles(args.getX_cord(), args.getY_cord())) clearActiveTiles();
+                    if (checkDirectionOfActiveTiles(args.getX_cord(), args.getY_cord())) saveActiveTiles();
+                    else clearActiveTiles();
                 });
                 
                 tiles.add(tile);
@@ -50,23 +53,30 @@ public class SelectableGrid extends AnchorPane  {
     }
     
     private Boolean checkDirectionOfActiveTiles(int x_init, int y_init) {
-//        AtomicBoolean conditionX = new AtomicBoolean(true);
-//        AtomicBoolean conditionY = new AtomicBoolean(true);
-//        
-//        tiles.stream().filter((tile) -> (tile.isActive())).forEach((tile) -> {
-//            conditionX.set(conditionX.get() && x_init == tile.getXCord());
-//            conditionY.set(conditionY.get() && y_init == tile.getYCord());
-//        });
-//        
-//        
-//        
-//        return conditionX.get() || conditionY.get();
-        return false;
+        AtomicBoolean conditionX = new AtomicBoolean(true);
+        AtomicBoolean conditionY = new AtomicBoolean(true);
+        
+        active_tiles.forEach((index) -> {
+            GridTile tile = tiles.get(index);
+            conditionX.set(conditionX.get() && x_init == tile.getXCord());
+            conditionY.set(conditionY.get() && y_init == tile.getYCord());
+        });
+        
+        return conditionX.get() || conditionY.get();
+    }
+    
+    private void saveActiveTiles() {
+        saved_tiles.addAll(active_tiles);
+        active_tiles.clear();
     }
     
     private void clearActiveTiles() {
-        for(int i = 0; i < active_tiles.length; i++)
+        active_tiles.forEach((i) -> {
             tiles.get(i).clearTile();
+        });
+        
+        active_tiles.clear();
+        
     }
     
     public void setNumRow(int rows) {
