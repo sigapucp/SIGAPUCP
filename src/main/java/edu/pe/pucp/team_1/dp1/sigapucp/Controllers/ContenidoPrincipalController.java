@@ -44,6 +44,7 @@ public class ContenidoPrincipalController extends Controller {
                 System.out.println(args.getPathContenido());
                 FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource(args.getPathContenido()));
                 AnchorPane contenido = (AnchorPane) loaderContenido.load();
+                Controller controller = loaderContenido.getController();
                 System.out.println(contenido);
                 System.out.println(loaderContenido);    
                 activeController = loaderContenido.<Controller>getController();

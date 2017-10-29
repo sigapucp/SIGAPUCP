@@ -24,6 +24,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -34,6 +36,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 
@@ -129,6 +132,24 @@ public class PromocionesController extends Controller{
         comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
         comboBoxTipoPromo.setOnAction(e -> manejarcomboBoxTipoPromo());
         comboxPrioridad.getItems().addAll("1", "2","3");
+        /*botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(""));
+            Parent parent = loader.load();
+            Controller controller = loader.getController();
+            controller.abrirModalEvent.addHandler((sender, args) -> {
+                args.getText();
+                texto3.setText(txto);
+            })
+            // datosTexto3
+            // abrirmodal;
+            /*
+                public modalHumo() {
+                    this.sibling = sibling;
+                    Procesa el humo
+                    this.sibling.setDatoSeleccionado(producto);
+                }
+            */
+        //});
     }    
     
     //Tabla de promociones

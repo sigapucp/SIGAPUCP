@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.ejecutarAccionArgs;
@@ -19,6 +20,7 @@ import javafx.fxml.Initializable;
 public class Controller implements Initializable {
 
     public Usuario usuarioActual = null;
+    // public Event<modalArgs> abrirModalEvent = new Event<>();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
