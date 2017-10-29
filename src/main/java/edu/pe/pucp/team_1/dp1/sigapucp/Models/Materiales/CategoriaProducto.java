@@ -20,4 +20,13 @@ import org.javalite.activejdbc.annotations.Table;
 
 public class CategoriaProducto extends Model{
     
+    public void asignar_atributos(String usuario,String codigo, String nombre, String descripcion){
+        this.set("last_user_change",usuario);
+        this.set("categoria_code",codigo);
+        this.set("nombre", nombre );
+        this.set("descripcion", descripcion);
+        this.set("estado","activo");
+        
+    }
+    
 }
