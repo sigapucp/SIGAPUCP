@@ -126,7 +126,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtFieCodigoProducto1" layoutX="274.0" layoutY="158.0" prefHeight="25.0" prefWidth="200.0" />
+                  <TextField fx:id="txtFieCodigoProducto1" editable="false" layoutX="274.0" layoutY="158.0" prefHeight="25.0" prefWidth="200.0" />
                   <Button fx:id="botonTipo1" layoutX="493.0" layoutY="158.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="104.0" text="Agregar Tipo">
                      <font>
                         <Font size="10.0" />
@@ -148,7 +148,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtFieCodigoProducto2" layoutX="274.0" layoutY="201.0" prefHeight="25.0" prefWidth="200.0" />
+                  <TextField fx:id="txtFieCodigoProducto2" editable="false" layoutX="274.0" layoutY="201.0" prefHeight="25.0" prefWidth="200.0" />
                   <Button fx:id="botonTipo2" layoutX="493.0" layoutY="201.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="104.0" text="Agregar Tipo">
                      <font>
                         <Font size="10.0" />
@@ -166,7 +166,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtFieCodigoProducto3" layoutX="274.0" layoutY="260.0" prefHeight="25.0" prefWidth="200.0" />
+                  <TextField fx:id="txtFieCodigoProducto3" editable="false" layoutX="274.0" layoutY="260.0" prefHeight="25.0" prefWidth="200.0" />
                   <Button fx:id="botonTipo3" layoutX="493.0" layoutY="260.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="104.0" text="Agregar Tipo">
                      <font>
                         <Font size="10.0" />
