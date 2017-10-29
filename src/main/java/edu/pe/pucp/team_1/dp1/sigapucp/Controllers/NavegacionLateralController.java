@@ -23,9 +23,7 @@ public class NavegacionLateralController extends Controller {
     @FXML
     private void abrirBusquedaModulo(ActionEvent event) {
         Button boton = (Button) event.getSource();
-        VBox contenedor = (VBox) boton.getChildrenUnmodifiable().get(0);
-        Label label = (Label) contenedor.getChildrenUnmodifiable().get(1);
-        String controller = label.getText();
+        String controller = boton.getText();
         String modulo = acordion_modulos.getExpandedPane().getText();
         
         abrirDetallesArgs args = new abrirDetallesArgs();

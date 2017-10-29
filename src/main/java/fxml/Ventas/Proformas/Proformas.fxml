@@ -34,14 +34,14 @@
             <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="192.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
                   <TextField fx:id="clienteBusq" layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
-                  <Button fx:id="buscarPedido" layoutX="176.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
-                  <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Pedido:">
+                  <Button layoutX="176.0" layoutY="150.0" mnemonicParsing="false" onAction="#buscarPedido" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+                  <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Proforma">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <ComboBox fx:id="estadoBusq" layoutX="130.0" layoutY="104.0" prefHeight="25.0" prefWidth="106.0" />
-                  <TextField fx:id="pedidoBusq" layoutX="130.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField fx:id="pedidoBusq" layoutX="131.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
                   <Label layoutX="12.0" layoutY="67.0" prefHeight="21.0" prefWidth="114.0" text="Cliente:">
                      <font>
                         <Font size="14.0" />
@@ -58,8 +58,8 @@
                <children>
                   <TableView fx:id="tablaPedidos" layoutX="12.0" layoutY="19.0" prefHeight="202.0" prefWidth="225.0">
                      <columns>
-                        <TableColumn prefWidth="65.0" text="Pedido" />
-                        <TableColumn prefWidth="182.0" text="Cliente" />
+                        <TableColumn fx:id="proformaColumn" prefWidth="65.0" text="Proforma" />
+                        <TableColumn fx:id="clienteColumn" prefWidth="182.0" text="Cliente" />
                      </columns>
                   </TableView>
                   <Button fx:id="visualizarPedido" layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
@@ -124,13 +124,13 @@
                      <children>
                         <TableView fx:id="productosProf" layoutX="12.0" layoutY="14.0" prefHeight="200.0" prefWidth="500.0">
                           <columns>
-                            <TableColumn prefWidth="48.0" text="Cod." />
-                            <TableColumn prefWidth="213.0" text="Descripción" />
-                              <TableColumn prefWidth="44.0" text="Cant." />
-                              <TableColumn prefWidth="31.0" text="P.U." />
-                              <TableColumn prefWidth="72.0" text="Precio (S/)" />
-                              <TableColumn prefWidth="29.0" text="P.U." />
-                              <TableColumn prefWidth="62.0" text="Precio ($)" />
+                            <TableColumn fx:id="codProfColumn" prefWidth="48.0" text="Cod." />
+                            <TableColumn fx:id="descripProdColumn" prefWidth="213.0" text="Descripción" />
+                              <TableColumn fx:id="cantProdColumn" prefWidth="44.0" text="Cant." />
+                              <TableColumn fx:id="puSolColumn" prefWidth="31.0" text="P.U." />
+                              <TableColumn fx:id="precioSolColumn" prefWidth="72.0" text="Precio (S/)" />
+                              <TableColumn fx:id="puDolColumn" prefWidth="29.0" text="P.U." />
+                              <TableColumn fx:id="precioDolColumn" prefWidth="62.0" text="Precio ($)" />
                           </columns>
                         </TableView>
                         <Label layoutX="66.0" layoutY="240.0" text="Subtotal (S/.):" />
