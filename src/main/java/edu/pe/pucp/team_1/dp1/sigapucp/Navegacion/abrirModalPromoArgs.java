@@ -28,4 +28,18 @@ public class abrirModalPromoArgs extends EventArgs{
     public void setPromoId(String id_promo) {
         this.id_promo =  id_promo;        
     }
+    
+    /**
+     * @return the codigo_promo
+     */
+    public String getCodigoPromo() { 
+        return codigo_promo;
+    }
+    
+    /**
+     * @return the path_contenido
+     */
+    public String getIdPromo() { 
+        return id_promo;
+    }
 }
