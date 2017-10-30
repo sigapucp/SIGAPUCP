@@ -141,8 +141,8 @@ public class PromocionesController extends Controller{
                     codigo_promo = tipargs.getCodigoPromo();
                     id_promo = tipargs.getIdPromo();
                 });                
-            } catch (Exception ex) {
-                System.out.println(ex);
+            } catch (IOException ex) {
+                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         botonTipo2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -154,8 +154,8 @@ public class PromocionesController extends Controller{
                     codigo_promo = tipargs.getCodigoPromo();
                     id_promo = tipargs.getIdPromo();
                 });                
-            } catch (Exception ex) {
-                System.out.println("Error");
+            } catch (IOException ex) {
+                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });   
         botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -167,8 +167,8 @@ public class PromocionesController extends Controller{
                     codigo_promo = tipargs.getCodigoPromo();
                     id_promo = tipargs.getIdPromo();
                 });                
-            } catch (Exception ex) {
-                System.out.println("Error");
+            } catch (IOException ex) {
+                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });   
         botonCategoria1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -180,8 +180,8 @@ public class PromocionesController extends Controller{
                     codigo_promo = catargs.getCodigoPromo();
                     id_promo = catargs.getIdPromo();
                 });                
-            } catch (Exception ex) {
-                System.out.println("Error");
+            } catch (IOException ex) {
+                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }); 
         botonCategoria2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -193,8 +193,8 @@ public class PromocionesController extends Controller{
                     codigo_promo = catargs.getCodigoPromo();
                     id_promo = catargs.getIdPromo();
                 });                
-            } catch (Exception ex) {
-                System.out.println("Error");
+            } catch (IOException ex) {
+                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }); 
         botonCategoria3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -206,8 +206,8 @@ public class PromocionesController extends Controller{
                     codigo_promo = catargs.getCodigoPromo();
                     id_promo = catargs.getIdPromo();
                 });                
-            } catch (Exception ex) {
-                System.out.println("Error");
+            } catch (IOException ex) {
+                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }); 
     }
