@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PromocionesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
@@ -32,7 +33,7 @@ import org.javalite.activejdbc.Base;
  *
  * @author Alberto Chang Lopez
  */
-public class ModalCatProdController extends Controller {
+public class ModalCatProdController extends ModalController {
 
     @FXML
     private TextField busqCodCat;
@@ -52,9 +53,7 @@ public class ModalCatProdController extends Controller {
     private CategoriaProducto categoria_seleccionada;
     private List<CategoriaProducto> categorias;
     private final ObservableList<CategoriaProducto> masterData = FXCollections.observableArrayList();
-    
-    
-    public IEvent<abrirModalPromoArgs> abrirModal;
+
     
     public void limpiar_tabla_index(){
         tabla_catProd.getItems().clear();
@@ -128,8 +127,6 @@ public class ModalCatProdController extends Controller {
         // TODO
         categorias = null;
         categorias = CategoriaProducto.findAll();
-        cargar_tabla_index();
-        abrirModal = new Event<>();
-        
+        cargar_tabla_index();        
     }        
 }

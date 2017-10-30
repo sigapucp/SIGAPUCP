@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PromocionesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
@@ -31,7 +32,7 @@ import org.javalite.activejdbc.Base;
  *
  * @author Alberto Chang Lopez
  */
-public class ModalTipoProdController extends Controller {
+public class ModalTipoProdController extends ModalController {
     
     @FXML
     private TextField busqCodTip;
@@ -53,9 +54,6 @@ public class ModalTipoProdController extends Controller {
     private TipoProducto tipo_seleccionado;
     private List<TipoProducto> tipos;
     private final ObservableList<TipoProducto> masterData = FXCollections.observableArrayList();
-    
-    
-    public IEvent<abrirModalPromoArgs> abrirModal;
     
     public void limpiar_tabla_index(){
         tabla_tipPro.getItems().clear();
@@ -129,6 +127,5 @@ public class ModalTipoProdController extends Controller {
         tipos = null;
         tipos = TipoProducto.findAll();
         cargar_tabla_index();
-        abrirModal = new Event<>();
     }        
 }

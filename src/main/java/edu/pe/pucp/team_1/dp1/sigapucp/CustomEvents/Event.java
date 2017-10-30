@@ -51,6 +51,7 @@ public class Event<T extends EventArgs> implements IEvent<T> {
 	@Override
 	public void fire(Object sender, T args)
 	{
+                System.out.println("Ejecutandose FIRE");
 		for (IEventHandler<T> handler : _eventHandlers)
 		{
 			handler.handle(sender, args);
