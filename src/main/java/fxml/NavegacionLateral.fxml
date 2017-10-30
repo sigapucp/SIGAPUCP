@@ -47,6 +47,14 @@
                               </ImageView>
                            </graphic>
                         </Button>
+                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Parametros de Sistema">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/systemParameters_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
                      </children>
                   </AnchorPane>
                </content>
@@ -77,15 +85,6 @@
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
                                     <Image url="@Imagenes/rack_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button contentDisplay="TOP" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Reporte de problemas">
-                           <graphic>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                 <image>
-                                    <Image url="@Imagenes/problemReport_icon.png" />
                                  </image>
                               </ImageView>
                            </graphic>

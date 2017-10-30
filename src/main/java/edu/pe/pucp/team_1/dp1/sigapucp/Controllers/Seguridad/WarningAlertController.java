@@ -22,7 +22,7 @@ public class WarningAlertController {
         alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("SIGAPUCP - Alerta");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
-        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_fit_icon.png").toString()));     
+        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
     }
     
     public void show(String tituloAlerta,String explicacionAlerta)
