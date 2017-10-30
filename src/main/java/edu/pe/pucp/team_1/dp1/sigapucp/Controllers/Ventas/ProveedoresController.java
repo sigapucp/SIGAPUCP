@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
 import java.io.IOException;
@@ -81,6 +82,7 @@ public class ProveedoresController extends Controller{
             Base.openTransaction();  
             Proveedor nuevo_proveedor = new Proveedor();
             nuevo_proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
+            nuevo_proveedor.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_proveedor.saveIt();
             Base.commitTransaction();
             infoController.show("El cliente ha sido creado satisfactoriamente"); 
@@ -94,12 +96,14 @@ public class ProveedoresController extends Controller{
     
     public void editar_proveedor(Proveedor proveedor){
         try{
+            Base.openTransaction();  
             proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
             proveedor.saveIt();
+            Base.commitTransaction();
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
-            //Base.rollbackTransaction();
+            Base.rollbackTransaction();
         }        
     }
     
@@ -163,7 +167,7 @@ public class ProveedoresController extends Controller{
         }
     }
     
-public void cargar_tabla_index(){
+    public void cargar_tabla_index(){
         for( Proveedor cliente : proveedores){
             masterData.add(cliente);
         }
@@ -172,11 +176,16 @@ public void cargar_tabla_index(){
         columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("name")));
         tabla_proveedor.setItems(masterData);
     }
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Proveedores;
+    }
         
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        //Base.close();
+        // TODO      
         inhabilitar_formulario();
         proveedores = null;
         proveedores = Proveedor.findAll();

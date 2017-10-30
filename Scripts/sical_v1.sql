@@ -148,7 +148,7 @@ CREATE TABLE Proveedores
  contact_name        VARCHAR(50) NOT NULL ,
  phone_number        VARCHAR(20) NOT NULL ,
  last_user_change    VARCHAR(20) NOT NULL ,
- last_date_chage     DATE NOT NULL ,
+ last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
  status              VARCHAR(50) NOT NULL ,
  annotation          VARCHAR(200) NOT NULL ,
