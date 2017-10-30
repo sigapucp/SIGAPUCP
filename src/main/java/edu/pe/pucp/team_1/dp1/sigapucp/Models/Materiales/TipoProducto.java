@@ -5,19 +5,9 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Auditoria.Auditoria;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import org.javalite.activejdbc.Base;
+
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.IdName;
-import org.javalite.activejdbc.annotations.Many2Many;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
@@ -32,6 +22,7 @@ public class TipoProducto extends Model{
         validateNumericalityOf("longitud");
         validateNumericalityOf("ancho");
         validateNumericalityOf("alto");
+        validateNumericalityOf("peso");
     }    
 
     public void asignar_atributos(String usuario,float peso, String nombre, char perecible, String descripcion, 
