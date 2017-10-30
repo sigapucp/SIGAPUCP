@@ -339,8 +339,7 @@ public class PromocionesController extends Controller{
                 id = categoria.getString("categoria_id");
             }           
             
-            promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, codigo,id);
-                                              
+            promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, codigo,id);                                  
             promocion_seleccionada.saveIt();
             
             System.out.println("---------------------------------");
@@ -349,7 +348,6 @@ public class PromocionesController extends Controller{
             
             System.out.println(pb);
             System.out.println("---------------------------------");
-            //System.out.println(PromocionBonificacion.findFirst("promocion_cod = ?", "PRMPRM"));
             //promocionB.asignar_atributos(codigoPromo, (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
             //promocionB.saveIt();
             //promocion_seleccionada.add(promocionB);
