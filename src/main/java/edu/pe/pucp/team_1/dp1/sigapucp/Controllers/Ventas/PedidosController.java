@@ -114,6 +114,8 @@ public class PedidosController extends Controller {
     @FXML
     private Button agregarProducto;
     @FXML
+    private TextField estadoShow;
+    @FXML
     static Stage modal_stage = new Stage();
     
     ArrayList<String> possiblewords = new ArrayList<>();    
@@ -131,6 +133,8 @@ public class PedidosController extends Controller {
     private InformationAlertController infoController;
     
     private OrdenCompra pedidoSeleccionado;
+    
+    private Cliente clienteAsociado;
     
     
 
@@ -153,6 +157,8 @@ public class PedidosController extends Controller {
     public void nuevo(){
         crearNuevo = true;
         habilitar_formulario();
+        vendedorSh.setText(usuarioActual.getString("usuario_cod"));
+        estadoShow.setText("Nuevo Pedido");
     }
     
     @Override
@@ -160,9 +166,13 @@ public class PedidosController extends Controller {
         if (crearNuevo){
             crearPedido();
         } else {
-            if (pedidoSeleccionado == null) return;
+            if (pedidoSeleccionado == null){ 
+                infoController.show("No ha seleccionado un tipo de producto");            
+                return;
+            }
             editarPedido(pedidoSeleccionado);
         }
+        crearNuevo = false;
         refrescarTabla();
     }
     
@@ -174,7 +184,7 @@ public class PedidosController extends Controller {
         String estado = ( estadoSearch.getSelectionModel().getSelectedItem() == null ) ? "" : estadoSearch.getSelectionModel().getSelectedItem().toString();
         tempPedidos = OrdenCompra.findAll();
         if(pedidoId!=null&&!pedidoId.isEmpty()) {            
-            tempPedidos = tempPedidos.stream().filter(p -> p.getString("cotizacion_cod").equals(pedidoId)).collect(Collectors.toList());
+            tempPedidos = tempPedidos.stream().filter(p -> p.getString("orden_compra_cod").equals(pedidoId)).collect(Collectors.toList());
         }
         if (clienteId!=null) {
             tempPedidos = tempPedidos.stream().filter(p -> p.getString("client_id").equals(clienteId)).collect(Collectors.toList());
@@ -287,31 +297,46 @@ public class PedidosController extends Controller {
 
     private void crearPedido() {
         //extraemos la informacion del formulario:
-        String cliente = clienteSh.getText();
-        //cliente id--- se busca por nombre
-        Integer clienteId = 1;
+        Integer clienteId = clienteAsociado.getInteger("client_id");
         String vendedor = vendedorSh.getText();
         LocalDate fechaLocal = fechaPed.getValue();
+        if (fechaLocal == null){ 
+            infoController.show("Debe seleccionar la fecha de emision");
+            return;
+        }
         Date fecha = Date.from(fechaLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String fechaEmision = dateFormat.format(fecha);
-        //Double subtotal = Double.valueOf(subTotal.getText());
-        Double subtotal = 0.0;
+        Double subtotal = Double.valueOf(subTotal.getText());
+        //Double subtotal = 0.0;
         //Integer cantProductos = (Integer) cantProd.getValue();
         String orden_compra_cod = "ORD";
-        int monedaId;
-        if (moneda.getValue().toString().equals("SOLES")){
-             monedaId = 1;
-        } else {
-            monedaId = 2;
+        Integer monedaId = 1;
+        if (moneda.getValue() == null) {
+            infoController.show("Debe seleccionar la moneda usada para la orden de compra");
+            return;
         }
-        String usuario = "admin"; 
+        LazyList<Moneda> lista_monedas = Moneda.findAll();
+        for (Moneda monedita : lista_monedas){
+            if (monedita.get("nombre").equals(moneda.getValue())){
+                monedaId = monedita.getInteger("moneda_id");    
+            }
+        }
+        String usuario = usuarioActual.getString("usuario_cod"); 
         char flag = '1';
-        Integer usuario_id = 1;
+        Integer usuario_id = usuarioActual.getInteger("usuario_id");
         Integer proforma = 1;
         asignar_data(orden_compra_cod, clienteId, fechaEmision, subtotal, usuario, flag,usuario, usuario_id , monedaId, proforma);
     }
 
+    private void buscarClienteAsociado(String nombre){
+        for (Cliente cliente : autoCompletadoList){
+            if (cliente.getString("nombre").equals(nombre)) {
+                clienteAsociado = cliente;
+                return;
+            }
+        }
+    }
     
     private void asignar_data(String orden_compra_cod, Integer clienteId, String fechaEmision, Double subtotal, String usuario, char flag, String usuario_cod, Integer usuario_id, Integer monedaId, Integer cotizacion_id){
         try{      
@@ -329,8 +354,8 @@ public class PedidosController extends Controller {
             pedido.set("flag_last_operation", flag);
             pedido.set("moneda_id", monedaId);
             pedido.set("cotizacion_id", cotizacion_id);
-            pedido.set("usuario_cod",usuarioActual.getString("usuario_cod"));
-            pedido.set("usuario_id",usuarioActual.getInteger("usuario_id"));
+            pedido.set("usuario_cod",usuario);
+            pedido.set("usuario_id",usuario_id);
             pedido.saveIt();
             Base.commitTransaction();
             System.out.println("Todo Correcto BD");
@@ -365,13 +390,34 @@ public class PedidosController extends Controller {
     }
     
     private void handleAutoCompletar() {
+        
         int i = 0;
         for (Cliente cliente : autoCompletadoList){
             if (cliente.getString("nombre").equals(clienteSh.getText())){
+                buscarClienteAsociado(cliente.getString("nombre"));
                 System.out.println(cliente.getString("direccion_despacho"));
                 System.out.println(cliente.getString("direccion_facturacion"));
                 envioDir.setText(cliente.getString("direccion_despacho"));
                 factDir.setText(cliente.getString("direccion_facturacion"));
+                if (!cliente.getString("ruc").equals("")){
+                //es factura
+                    ruc.setText(cliente.getString("ruc"));
+                    ruc.setDisable(false);
+                    dni.setDisable(true);
+                    tipoDocBoleta.setSelected(false);
+                    tipoDocFactura.setSelected(true);
+                } else {
+                    dni.setText(cliente.getString("dni"));
+                    dni.setDisable(false);
+                    ruc.setDisable(true);
+                    tipoDocBoleta.setSelected(true);
+                    tipoDocFactura.setSelected(false);
+                }
+                if (cliente.getString("direccion_despacho").equals(cliente.getString("direccion_facturacion"))){ 
+                    mismaDir.setSelected(true);
+                    factDir.setDisable(true);
+                }
+                return;
             }
         }
     }
