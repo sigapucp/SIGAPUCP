@@ -17,4 +17,19 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("orden_entrada_id")
 public class OrdenEntrada extends Model{
     
+    public enum ESTADO
+    {
+        Pendiente,
+        Parcial,
+        Completa
+    }
+    
+    public enum TIPO
+    {
+        Compra,
+        Devolucion,
+        Encuentro,
+        Otras
+    }
+    
 }

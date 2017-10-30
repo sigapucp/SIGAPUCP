@@ -10,26 +10,16 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxMenu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.PrivilegioEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
-import edu.pe.pucp.team_1.dp1.sigapucp.Utils.GUIUtils;
-import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -102,8 +92,7 @@ public class UsuariosController extends Controller{
     private TreeTableColumn<String, String> ArbolPrivilegiosColumna;
       
     private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();     
-    
-    private List<Usuario> tempUsuarios;
+     
     private Usuario usuarioSelecionado;
     private Boolean crearNuevo;
     private InformationAlertController infoController;
@@ -114,7 +103,7 @@ public class UsuariosController extends Controller{
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");   
         
-        tempUsuarios = Usuario.findAll();               
+        List<Usuario> tempUsuarios = Usuario.findAll();               
         for (Usuario usuario : tempUsuarios) {
             usuarios.add(usuario);
         }                               
@@ -143,7 +132,7 @@ public class UsuariosController extends Controller{
         String estado = BusquedaEstado.getValue();
         String rol = BusquedaRol.getValue();
         
-        tempUsuarios = Usuario.findAll();
+        List<Usuario> tempUsuarios = Usuario.findAll();
         
         if(codigo!=null&&!codigo.isEmpty())
         {            
@@ -192,10 +181,7 @@ public class UsuariosController extends Controller{
             VerCorreo.setText(email);          
             VerRol.setValue(rol);
             
-            mostrarUsuarioPrivilegios(usuario);
-            
-            List<Menu> a = usuarioRol.getAll(Menu.class);                        
-            
+            mostrarUsuarioPrivilegios(usuario);                                                   
         } catch (Exception e) {
             infoController.show("El Usuario contiene errores : " + e);                    
         }                                

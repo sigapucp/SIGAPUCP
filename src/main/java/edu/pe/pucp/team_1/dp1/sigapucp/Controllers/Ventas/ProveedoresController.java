@@ -7,7 +7,9 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import java.util.stream.Collectors;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
 import java.io.IOException;
 import java.net.URL;
@@ -81,6 +83,7 @@ public class ProveedoresController extends Controller{
             Base.openTransaction();  
             Proveedor nuevo_proveedor = new Proveedor();
             nuevo_proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
+            nuevo_proveedor.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_proveedor.saveIt();
             Base.commitTransaction();
             infoController.show("El cliente ha sido creado satisfactoriamente"); 
@@ -94,12 +97,14 @@ public class ProveedoresController extends Controller{
     
     public void editar_proveedor(Proveedor proveedor){
         try{
+            Base.openTransaction();  
             proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
             proveedor.saveIt();
+            Base.commitTransaction();
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
-            //Base.rollbackTransaction();
+            Base.rollbackTransaction();
         }        
     }
     
@@ -137,33 +142,33 @@ public class ProveedoresController extends Controller{
         proveedor_formulario.setDisable(true);
     }
     
-    public boolean cumple_condicion_busqueda(Proveedor proveedor, String ruc, String nombres){
-        boolean match = true;
-        if ( ruc.equals("") && nombres.equals("") ){
-            match = false;
-        }
-        else {
-            match = (!ruc.equals("")) ? (match && (proveedor.get("ruc")).equals(ruc)) : true;
-            match = (!nombres.equals("")) ? (match && (proveedor.get("nombre")).equals(nombres)) : true;
-        }
-        return match;        
-    }
     @FXML
     public void buscar_proveedor(ActionEvent event) throws IOException{
-        proveedores = Proveedor.findAll();
-        masterData.clear();
-        try{
-            for(Proveedor proveedor : proveedores){
-                if (cumple_condicion_busqueda(proveedor, ruc_busqueda.getText(), nombre_busqueda.getText())){
-                    masterData.add(proveedor);
-                }
-            }
-        }catch(Exception e){
-            System.out.println(e);
+        String ruc = ruc_busqueda.getText();
+        String nombres = nombre_busqueda.getText();
+        List<Proveedor> temp_proveedores = Proveedor.findAll();
+        
+        if(ruc!=null&&!ruc.isEmpty())
+        {            
+            temp_proveedores = temp_proveedores.stream().filter(p -> p.getString("provuder_ruc").equals(ruc)).collect(Collectors.toList());
         }
+
+        if(nombres!=null&&!nombres.isEmpty())
+        {            
+            temp_proveedores = temp_proveedores.stream().filter(p -> p.getString("name").equals(ruc)).collect(Collectors.toList());
+        }
+                
+        proveedores = temp_proveedores;
+        cargar_tabla_index();
+        try {                        
+        } catch (Exception e) {
+            infoController.show("El Usuario contiene errores : " + e);                    
+        }                
+        
     }
     
-public void cargar_tabla_index(){
+    public void cargar_tabla_index(){
+        masterData.clear();
         for( Proveedor cliente : proveedores){
             masterData.add(cliente);
         }
@@ -172,15 +177,41 @@ public void cargar_tabla_index(){
         columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("name")));
         tabla_proveedor.setItems(masterData);
     }
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Proveedores;
+    }
         
+    public void mostrar_detalle_proveedor(ActionEvent event) throws IOException{
+        try{
+            habilitar_formulario();
+            Proveedor registro_seleccionado = tabla_proveedor.getSelectionModel().getSelectedItem();
+            proveedor_nombre.setText(registro_seleccionado.getString("name"));
+            ruc.setText(registro_seleccionado.getString("provuder_ruc"));
+            telf.setText(registro_seleccionado.getString("phone_number"));
+            repLegal.setText(registro_seleccionado.getString("contact_name"));
+            comentarios.setText(registro_seleccionado.getString("annotation"));
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
+    }  
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        //Base.close();
+        // TODO      
         inhabilitar_formulario();
         proveedores = null;
         proveedores = Proveedor.findAll();
         cargar_tabla_index();
+        tabla_proveedor.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
+            if (newSelection != null){
+                proveedor_seleccionado = tabla_proveedor.getSelectionModel().getSelectedItem();
+                tabla_proveedor.getSelectionModel().clearSelection();        
+            }
+        });        
     }    
     
 }

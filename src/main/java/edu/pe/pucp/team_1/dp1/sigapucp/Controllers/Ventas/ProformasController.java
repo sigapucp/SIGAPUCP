@@ -199,13 +199,18 @@ public class ProformasController extends Controller {
         abrirDetalle = new Event<>();
         cantProd.setValueFactory(valueFactory);
         inhabilitar_formulario();
-        Parent modal_content;
+        Parent modal_content;                                
         try {
-            modal_content = FXMLLoader.load(getClass().getResource("/fxml/Ventas/Proformas/AgregarProformas.fxml"));
-            Scene modal_content_scene = new Scene(modal_content);
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Ventas/Proformas/AgregarProformas.fxml"));
+            AgregarProductosController controller = new AgregarProductosController();
+            loader.setController(controller);
+                      
+            Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);
-            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);
-            modal_stage.setScene(modal_content_scene);
+            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);   
+            
+            
         } catch (IOException ex) {
             Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);
         }
