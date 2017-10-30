@@ -6,14 +6,22 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -24,34 +32,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
-import javafx.beans.value.ObservableValue;
-import javafx.beans.property.SimpleStringProperty;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.Scene;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.javalite.activejdbc.LazyList;
+import org.javalite.activejdbc.Model;
 /**
  *
  * @author herbert
@@ -59,19 +55,20 @@ import org.javalite.activejdbc.LazyList;
 public class ProductosController extends Controller {
     
     private InformationAlertController infoController;
+    private ConfirmationAlertController confirmationController;
     // TABLA
     //------------------------------------------------------//
     @FXML
-    private TableView<String[]> tablaProductos;
+    private TableView<TipoProducto> tablaProductos;
     @FXML
-    private TableColumn<String[], String> ColumnaCategoria;
+    private TableColumn<TipoProducto, String> ColumnaTipoProducto;
     @FXML
-    private TableColumn<String[], String> ColumnaTipoProducto;
+    private TableColumn<TipoProducto, String> ColumnaCodigoProducto;
     @FXML
-    private TableColumn<String[], String> ColumnaCodigoProducto;
+    private TableColumn<TipoProducto, String> ColumnaEstado;
     @FXML
     private AnchorPane tipo_producto_formulario;
-    private List<String[]> master_data;
+   
     // DATOS
     //--------------------------------------------------------//
     @FXML
@@ -83,9 +80,7 @@ public class ProductosController extends Controller {
     @FXML
     private TextField ancho_producto;
     @FXML
-    private TextField peso_producto;
-    @FXML
-    private ComboBox unidades_producto;
+    private TextField peso_producto;        
     @FXML
     private TextArea descripcion_producto;
     @FXML
@@ -93,15 +88,82 @@ public class ProductosController extends Controller {
     //BUSCAR
     //---------------------------------------------------------//
     @FXML
-    private TextField categoriaBuscar;    
+    private ComboBox<String> categoriaBuscar;     
     @FXML
-    private TextField tipoProductoBuscar;  
+     private TextField tipoProductoBuscar;        
+    
     @FXML
-    private TextField codigoProductoBuscar;      
+    private AnchorPane producton_container;
+    @FXML
+    private ComboBox<String> estadoBuscar;
+    @FXML
+    private ComboBox<String> unidades_peso_producto;
+    @FXML
+    private ComboBox<String> unidades_medida_producto;
+    @FXML
+    private TextField alto_producto;
+    @FXML
+    private TableView<CategoriaProducto> TablaCategorias;
+    @FXML
+    private TableColumn<CategoriaProducto, String> TablaCatCodigoColumna;
+    @FXML
+    private TableColumn<CategoriaProducto, String> TablaCatNombreColumna;
+    @FXML
+    private TableColumn<CategoriaProducto, String> TablaCatDescripcionColumna;
+    @FXML
+    private ComboBox<String> categoriaDropBuscar;
+    @FXML
+    private Label VerStockFisico;
+    @FXML
+    private Label VerStockLogico;
+    @FXML
+    private TableView<Precio> TablaPrecios;
+    @FXML
+    private TableColumn<Precio, String> ColumnaPrecioValor;
+    @FXML
+    private TableColumn<Precio, String> ColumnaPrecioMoneda;
+    @FXML
+    private TableColumn<Precio, String> ColumnaPrecioFechaInicial;
+    @FXML
+    private TableColumn<Precio, String> ColumnaPrecioFechaFinal;
+    @FXML
+    private TextField VerPrecio;
+    @FXML
+    private ComboBox<String> VerMoneda;
+    @FXML
+    private DatePicker VerFechaInicial;
+    @FXML
+    private DatePicker VerFechaFinal;
+    @FXML
+    private CheckBox VerDefault;
+    
+     
     //CREACION - EDICION
     //---------------------------------------------------------//
-    private boolean crear_nuevo = true;
+    private boolean crear_nuevo = false;
+    private List<TipoProducto> tempProductos;    
+    
+    private final ObservableList<TipoProducto> productos = FXCollections.observableArrayList();     
+    private final ObservableList<CategoriaProducto> categorias = FXCollections.observableArrayList();         
+    private final ObservableList<Precio> precios = FXCollections.observableArrayList();         
+    
     private TipoProducto producto_seleccionado ;
+    
+    public ProductosController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        
+        
+        tempProductos = TipoProducto.findAll();        
+        for (TipoProducto producto : tempProductos) {
+            productos.add(producto);
+        }                    
+        
+        infoController = new InformationAlertController();
+        confirmationController = new ConfirmationAlertController();
+        
+        crear_nuevo = false;
+        producto_seleccionado = null;
+    }
     
     public void inhabilitar_formulario(){
         tipo_producto_formulario.setDisable(true);
@@ -109,11 +171,7 @@ public class ProductosController extends Controller {
     
     public void habilitar_formulario(){
         tipo_producto_formulario.setDisable(false);
-    }
-
-    public void limpiar_tabla_index(){
-        tablaProductos.getItems().clear();
-    }
+    }  
     
     public void limpiar_formulario(){
         nombre_producto.clear();
@@ -121,98 +179,278 @@ public class ProductosController extends Controller {
         perecible.setDisable(false);
         largo_producto.clear();
         ancho_producto.clear();
+        alto_producto.clear();
         peso_producto.clear();
-        unidades_producto.setDisable(false);
+        unidades_medida_producto.setDisable(false);
+        unidades_peso_producto.setDisable(false);
         descripcion_producto.clear();
-    }
-    
-    public void cargar_tabla_index(){
-        limpiar_tabla_index();
-        tablaProductos.setEditable(false);
-        ColumnaCategoria.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[0] ));
-        ColumnaTipoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[1]));
-        ColumnaCodigoProducto.setCellValueFactory( (TableColumn.CellDataFeatures<String[], String> p) -> new ReadOnlyObjectWrapper(p.getValue()[2]));
-        tablaProductos.getItems().addAll(master_data);
-    }
-
-    public boolean cumple_condicion_busqueda(String[] registro, String categoria, String tipo, String codigo){
-        boolean match = true;
-        if ( categoria.equals("") && tipo.equals("") && codigo.equals("")){
-            match = false;
-        }
-        else {
-            match = (!categoria.equals("")) ? (match && registro[0].equals(categoria)) : true;
-            match = (!tipo.equals("")) ? (match && registro[1].equals(tipo)) : true;
-            match = (!codigo.equals("")) ? (match && registro[2].equals(codigo)) : true;
-        }
-        return match;
-    }
+        
+        categorias.clear();  
+        precios.clear();
+    }          
     
     @FXML
     public void buscar_tipo_producto(ActionEvent event) throws IOException{
-        List<String[]> master_data_busqueda = new ArrayList<String[]>();
-        crear_estructura_tabla();
+                
+        String nombre = tipoProductoBuscar.getText();
+        String categoria = categoriaBuscar.getSelectionModel().getSelectedItem();
+        String estado = estadoBuscar.getSelectionModel().getSelectedItem();        
+        
+        tempProductos = TipoProducto.findAll();
         try{
-            for(int i = 0; i < master_data.size(); i++){
-                if ( cumple_condicion_busqueda(master_data.get(i), categoriaBuscar.getText(),tipoProductoBuscar.getText(), codigoProductoBuscar.getText())){
-                    System.out.println("-------------");
-                    master_data_busqueda.add(master_data.get(i));
-                }
+            
+            if(nombre!=null&&!nombre.isEmpty())
+            {            
+                tempProductos = tempProductos.stream().filter(p -> p.getString("nombre").equals(nombre)).collect(Collectors.toList());
             }
-            master_data = master_data_busqueda;
-            System.out.println(master_data.size());
-            cargar_tabla_index();
+           
+            if(estado!=null&&!estado.isEmpty())
+            {                
+                tempProductos = tempProductos.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
+            }
+
+            if(categoria!=null&&!categoria.isEmpty())
+            {
+                // WARNING PELIGRO NOMBRE !!!
+                CategoriaProducto categoriaObj = CategoriaProducto.findFirst("nombre = ?", categoria);
+                List<TipoProducto> tiposCategoria = categoriaObj.getAll(TipoProducto.class);
+                tempProductos = tempProductos.stream().filter(p -> tiposCategoria.stream().anyMatch(x->Objects.equals(x.getInteger("tipo_id"), p.getInteger("tipo_id")))).collect(Collectors.toList());
+            }        
+            RefrescarTabla(tempProductos);
         }
         catch( Exception e){
-            System.out.println(e);
+            infoController.show("El producto contiene errores : " + e);        
         }
     } 
-    
-    
-    public void crear_estructura_tabla(){
-        master_data = new ArrayList<String[]>();
-        try{
-            List<CategoriaProducto> lista_categorias = CategoriaProducto.findAll();
-            for (CategoriaProducto categoria : lista_categorias){
-                List<TipoProducto> tipos_producto_categoria = categoria.getAll(TipoProducto.class);
-                for (TipoProducto tipo : tipos_producto_categoria){
-                    String[] registro = {categoria.get("nombre").toString(), tipo.get("nombre").toString(), tipo.get("tipo_cod").toString()};
-                    master_data.add(registro);
-                } 
-            }   
+              
+    @FXML
+    private void visualizar_producto(ActionEvent event) {                
+        producto_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
+        limpiar_formulario();
+        if(producto_seleccionado == null) 
+        {
+            infoController.show("Producto no seleccionada");  
+            return;
         }
-        catch(Exception e){
-            System.out.println(e);
-        }
-    }
-    
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        inhabilitar_formulario();
-        crear_estructura_tabla();
-        cargar_tabla_index();
-        llenar_combobox_unidades();        
+        try {
+            nombre_producto.setText(producto_seleccionado.getString("nombre"));
+            codigo_producto.setText(producto_seleccionado.getString("tipo_cod"));
+            perecible.setSelected(producto_seleccionado.getBoolean("pericible"));
+            largo_producto.setText(producto_seleccionado.getString("longitud"));
+            ancho_producto.setText(producto_seleccionado.getString("ancho"));
+            alto_producto.setText(producto_seleccionado.getString("alto"));
+            peso_producto.setText(producto_seleccionado.getString("peso"));
+            unidades_peso_producto.getSelectionModel().select(Unidad.findFirst("unidad_id = ?", producto_seleccionado.get("unidad_peso_id")).getString("nombre"));
+            unidades_medida_producto.getSelectionModel().select(Unidad.findFirst("unidad_id = ?", producto_seleccionado.get("unidad_tamano_id")).getString("nombre"));
+            descripcion_producto.setText(producto_seleccionado.getString("descripcion"));   
+            
+            categorias.clear();
+            
+            List<CategoriaProducto> categoriasProducto = producto_seleccionado.getAll(CategoriaProducto.class);
+            for(CategoriaProducto categoria:categoriasProducto)
+            {
+                categorias.add(categoria);
+            }            
+            
+            List<Precio> preciosProducto = Precio.where("tipo_id = ?",producto_seleccionado.getId());
+            for(Precio precio:preciosProducto)
+            {
+                precios.add(precio);
+            }
+            
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);        
+        }        
     }
 
+    @FXML
+    private void agregar_categoria(ActionEvent event) {
+        try {
+            
+            String precio = VerPrecio.getText();
+            String monedaNombre = VerMoneda.getSelectionModel().getSelectedItem();
+            String categoriaNombre = categoriaDropBuscar.getSelectionModel().getSelectedItem();
+            CategoriaProducto categoria = CategoriaProducto.findFirst("nombre = ?", categoriaNombre);
+            if(categoria == null)
+            {
+                infoController.show("Categoria no seleccionada");     
+                return;
+                
+            }
+            if(categorias.stream().anyMatch(x->x.getInteger("categoria_id").equals(categoria.getInteger("categoria_id")))) return;
+            categorias.add(categoria);                        
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);     
+        }
+    }
+    
+    @FXML
+    private void eliminar_categoria(ActionEvent event) {
+        
+        CategoriaProducto categoria = TablaCategorias.getSelectionModel().getSelectedItem();
+        if(categoria == null)
+        {
+           infoController.show("Categoria no seleccionada");     
+           return;
+        }
+        
+        try {                     
+            if(categorias.stream().anyMatch(x->x.getInteger("categoria_id").equals(categoria.getInteger("categoria_id"))))
+            {
+                categorias.removeIf(x->x.getInteger("categoria_id").equals(categoria.getInteger("categoria_id")));
+            }            
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);              
+        }                                
+    }
+    
+    @FXML
+    private void agregar_precio(ActionEvent event) {
+        try {
+            Float valor = Float.valueOf(VerPrecio.getText());            
+            if(valor == null)
+            {
+                infoController.show("Debe ingresar un valor numerico para el precio");    
+                return;
+            }
+            String monedaNombre = VerMoneda.getSelectionModel().getSelectedItem();
+            Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
+            Date fechaInicial = Date.valueOf(VerFechaInicial.getValue());
+            Date fechaFinal = Date.valueOf(VerFechaFinal.getValue());
+            Character esDefault = (this.VerDefault.isSelected() ? 'T' : 'F');
+            
+            if(moneda == null) 
+            {
+                infoController.show("Moneda no seleccionada");     
+                return;
+                
+            }
+            
+            if(fechaFinal.before(fechaInicial))
+            {
+                infoController.show("La fecha final debe ser despues que la inicial");
+                return;                
+            }
+            
+            if(esDefault.equals('T') && precios.stream().anyMatch(x->x.getBoolean("es_default"))) 
+            {
+                infoController.show("No puede agregar mas de un precio default");
+                return;                
+            }
+            
+            Precio precio = new Precio();
+            precio.setFloat("precio",valor);
+            precio.set("moneda_id",moneda.getId());
+            precio.setDate("fecha_inicio",fechaInicial);
+            precio.setDate("fecha_fin",fechaFinal);    
+            precio.set("es_default",esDefault);                        
+            
+            precios.add(precio);
+            
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);     
+        }
+    }
+
+    @FXML
+    private void eliminar_precio(ActionEvent event) {
+        Precio precio = TablaPrecios.getSelectionModel().getSelectedItem();
+        if(precio == null) 
+        {            
+            infoController.show("Precio no seleccionado");     
+            return;                           
+        }
+        
+        try {
+            
+            if(precio.getBoolean("es_default"))
+            {
+                infoController.show("No puede quitar el unico precio por default");
+                return;
+            }
+            
+            precios.remove(precio);
+            
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);     
+        }
+    }
+
+    
+ 
     public void nuevo(){
         crear_nuevo = true;
-        habilitar_formulario();
+        limpiar_formulario();
+        codigo_producto.setEditable(true);
     }
     
     public void crear_tipo_producto(){
         try{
-            Base.openTransaction();
+            
+            if(precios.isEmpty())
+            {
+                infoController.show("Debe agregar un precio por default al Tipod de producto");
+                return;
+            }
+            Base.openTransaction();            
             TipoProducto nuevo_tipo_producto = new TipoProducto();
+            String cod = codigo_producto.getText() + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);  
+            if(!confirmationController.show("Se editara el tipo de producto con codigo: " + codigo_producto.getText(), "¿Desea continuar?")) return;
             float peso = Float.parseFloat(peso_producto.getText());
             float longitud = Float.parseFloat(largo_producto.getText());
             float ancho = Float.parseFloat(ancho_producto.getText());
+            float alto = Float.parseFloat(alto_producto.getText());
             char perecible = (this.perecible.isSelected() ? 'T' : 'F');
-            Unidad unidad_tipo_producto = Unidad.first("nombre = ?", unidades_producto.getSelectionModel().getSelectedItem().toString());
-            nuevo_tipo_producto.asignar_atributos("usuario", codigo_producto.getText(), peso, nombre_producto.getText(), perecible, descripcion_producto.getText(), longitud, ancho, unidad_tipo_producto.get("unidad_id").toString());
+            Unidad unidad_peso_producto = Unidad.first("nombre = ?", unidades_peso_producto.getSelectionModel().getSelectedItem().toString());
+            Unidad unidad_medida_producto = Unidad.first("nombre = ?", unidades_medida_producto.getSelectionModel().getSelectedItem().toString());
+            nuevo_tipo_producto.asignar_atributos(usuarioActual.getString("usuario_cod"), peso, nombre_producto.getText(), perecible, descripcion_producto.getText(), longitud, ancho,alto, unidad_peso_producto.getInteger("unidad_id"),unidad_medida_producto.getInteger("unidad_id"));
+            nuevo_tipo_producto.set("tipo_cod",cod);
             nuevo_tipo_producto.saveIt();
-            Base.commitTransaction();
-            limpiar_formulario();
+            
+            Stock stock = new Stock();
+            stock.set("tipo_id",nuevo_tipo_producto.getId());
+            stock.set("tipo_cod",nuevo_tipo_producto.get("tipo_cod"));
+            stock.set("stock_real",0);
+            stock.set("stock_logico",0);
+            stock.saveIt();
+                                        
+            setCategoriasProducto(nuevo_tipo_producto);
+            setPreciosProducto(nuevo_tipo_producto);
+            Base.commitTransaction();       
+               
             infoController.show("El producto ha sido creado satisfactoriamente"); 
+        }
+        catch(Exception e){
+            infoController.show("El producto contiene errores : " + e);        
+            Base.rollbackTransaction();
+        }finally{
+            crear_nuevo = false;
+            codigo_producto.setEditable(false);                        
+        }
+            
+    }    
+    
+    public void editar_producto(TipoProducto producto){
+        try{
+            Base.openTransaction();   
+            String cod = codigo_producto.getText() + producto.getString("tipo_id");
+            if(!confirmationController.show("Se editara el tipo de producto con codigo: " + codigo_producto.getText(), "¿Desea continuar?")) return;
+            float peso = Float.parseFloat(peso_producto.getText());
+            float longitud = Float.parseFloat(largo_producto.getText());
+            float ancho = Float.parseFloat(ancho_producto.getText());
+            float alto = Float.parseFloat(alto_producto.getText());
+            char perecible = (this.perecible.isSelected() ? 'T' : 'F');
+            Unidad unidad_peso_producto = Unidad.first("nombre = ?", unidades_peso_producto.getSelectionModel().getSelectedItem().toString());
+            Unidad unidad_medida_producto = Unidad.first("nombre = ?", unidades_medida_producto.getSelectionModel().getSelectedItem().toString());
+            producto.asignar_atributos(usuarioActual.getString("usuario_cod"),peso, nombre_producto.getText(), perecible, descripcion_producto.getText(), longitud, ancho,alto, unidad_peso_producto.getInteger("unidad_id"),unidad_medida_producto.getInteger("unidad_id"));
+                                          
+            setCategoriasProducto(producto);
+            setPreciosProducto(producto);
+            
+            producto.saveIt();   
+            Base.commitTransaction();   
+                      
+            infoController.show("El producto ha sido editado satisfactoriamente"); 
         }
         catch(Exception e){
             infoController.show("El producto contiene errores : " + e);        
@@ -220,8 +458,50 @@ public class ProductosController extends Controller {
         }
     }
     
-    public void editar_producto(TipoProducto producto){
-        limpiar_formulario();
+    private void setCategoriasProducto(TipoProducto producto)
+    {
+        try {
+            List<CategoriaProducto> categoriasProductoGuardadas = producto.getAll(CategoriaProducto.class);
+            
+            List<CategoriaProducto> categoriasAdd = categorias.stream().filter(x -> categoriasProductoGuardadas.stream().noneMatch(y -> y.getInteger("categoria_id").equals(x.getInteger("categoria_id")))).collect(Collectors.toList());
+            List<CategoriaProducto> categoriasDelete = categoriasProductoGuardadas.stream().filter(x -> categorias.stream().noneMatch(y -> y.getInteger("categoria_id").equals(x.getInteger("categoria_id")))).collect(Collectors.toList());
+            
+            for(CategoriaProducto categoria: categoriasAdd)
+            {
+                CategoriaxTipo.createIt("tipo_id",producto.getId(),"tipo_cod",producto.get("tipo_cod"),"categoria_id",categoria.getId(),"categoria_code",categoria.get("categoria_code"));
+            }
+            
+            for(CategoriaProducto categoria: categoriasDelete)
+            {
+                CategoriaxTipo.delete("tipo_id = ? AND categoria_id = ?", producto.getId(),categoria.getId());
+            }                                            
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);        
+        }        
+    }
+    
+    public void setPreciosProducto(TipoProducto producto)
+    {
+        try {
+            for(Precio precio:precios)
+            {
+                if(precio.isNew())
+                {
+                    precio.set("tipo_id",producto.getId());
+                    precio.set("tipo_cod",producto.get("tipo_cod"));
+                }
+                precio.saveIt();
+            }           
+            
+            List<Precio> preciosGuardados = Precio.where("tipo_id = ?", producto.getId());
+            List<Precio> preciosDelete = preciosGuardados.stream().filter(x -> categorias.stream().noneMatch(y -> !y.isNew()&&y.getInteger("precio_id").equals(x.getInteger("precio_id")))).collect(Collectors.toList());
+            
+            for(Precio precio:preciosDelete)
+            {
+                precio.delete("precio_id = ?",precio.getId());
+            }
+        } catch (Exception e) {
+        }                
     }
     
     public void llenar_combobox_unidades(){
@@ -231,10 +511,11 @@ public class ProductosController extends Controller {
             for(Unidad unidad : lista_unidades){
                 unidades_combo_box.add(unidad.get("nombre").toString());
             }            
-            unidades_producto.getItems().addAll(unidades_combo_box);
+            unidades_medida_producto.getItems().addAll(unidades_combo_box);
+            unidades_peso_producto.getItems().addAll(unidades_combo_box);
 
         }catch(Exception e){
-            System.out.println(e);
+            infoController.show("El producto contiene errores : " + e);      
         }
     }
     
@@ -242,18 +523,90 @@ public class ProductosController extends Controller {
     public void guardar(){
         if (crear_nuevo){
             crear_tipo_producto();
+            limpiar_formulario();
         }
         else {
-            if (producto_seleccionado == null) return;
+            if(producto_seleccionado==null) 
+            {
+                infoController.show("No ha seleccionado un tipo de producto");            
+                return;
+            }
             editar_producto(producto_seleccionado);
-        }
-        crear_estructura_tabla();
-        cargar_tabla_index();        
+        }    
+        RefrescarTabla(TipoProducto.findAll());
     }
     
-    public ProductosController(){
-        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-        producto_seleccionado = null;
-        infoController = new InformationAlertController();
+    private void RefrescarTabla(List<TipoProducto> productoRefresh)
+    {        
+        try {
+            productos.removeAll(productos);                 
+            if(productoRefresh == null) return;
+            for (TipoProducto producto : productoRefresh) {
+                productos.add(producto);
+            }               
+            tablaProductos.getColumns().get(0).setVisible(false);
+            tablaProductos.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);      
+        }                                  
     }
+    
+   @Override
+   public Menu.MENU getMenu()
+   {
+       return Menu.MENU.Productos;
+   }
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        
+        try {
+            //inhabilitar_formulario();
+            ColumnaCodigoProducto.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+            ColumnaTipoProducto.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+            ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
+            
+            TablaCatCodigoColumna.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
+            TablaCatNombreColumna.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+            TablaCatDescripcionColumna.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descripcion")));
+            
+            ColumnaPrecioValor.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio")));
+            ColumnaPrecioMoneda.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(Moneda.findById((p.getValue().get("moneda_id"))).getString("nombre")));
+            ColumnaPrecioFechaInicial.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_inicio")));
+            ColumnaPrecioFechaFinal.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_fin")));
+            // ToDo hace ver el default            
+
+            ObservableList<String> estados = FXCollections.observableArrayList();                           
+            ObservableList<String> monedas = FXCollections.observableArrayList();            
+            ObservableList<String> categoriasDrop = FXCollections.observableArrayList();                           
+            ObservableList<String> categoriasNoPad = FXCollections.observableArrayList();     
+
+            estados.add("");
+            estados.addAll(Arrays.asList(TipoProducto.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
+
+            List<String> categoriasNombres = CategoriaProducto.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList());
+            monedas.addAll(Moneda.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
+            
+            categoriasNoPad.addAll(categoriasNombres);
+            categoriaDropBuscar.setItems(categoriasNoPad);
+            categoriasNombres.add(0, "");
+            categoriasDrop.addAll(categoriasNombres);
+
+            estadoBuscar.setItems(estados);
+            VerMoneda.setItems(monedas);
+            categoriaBuscar.setItems(categoriasDrop);
+
+            llenar_combobox_unidades();  
+            
+            tablaProductos.setItems(productos);
+            TablaCategorias.setItems(categorias);
+            TablaPrecios.setItems(precios);
+            codigo_producto.setEditable(false);
+            
+        } catch (Exception e) {
+            infoController.show("El producto contiene errores : " + e);      
+        }                   
+    }  
 }
+ 
+

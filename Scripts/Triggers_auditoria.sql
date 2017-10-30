@@ -188,9 +188,9 @@ $T_OrdenesCompra_BIU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_OrdenesCompra_BIU BEFORE INSERT OR UPDATE ON OrdenesCompra
 FOR EACH ROW EXECUTE PROCEDURE OrdenesCompra_audit();
 
---OrdenesDespacho
+--OrdenesSalida
 
-CREATE FUNCTION OrdenesDespacho_audit() RETURNS trigger AS $T_OrdenesDespacho_BIU$
+CREATE FUNCTION OrdenesSalida_audit() RETURNS trigger AS $T_OrdenesSalida_BIU$
 BEGIN
   NEW.last_date_change = now();
   IF (TG_OP = 'INSERT') THEN
@@ -202,10 +202,10 @@ BEGIN
   END IF;
   RETURN NULL;
 END;
-$T_OrdenesDespacho_BIU$ LANGUAGE plpgsql;
+$T_OrdenesSalida_BIU$ LANGUAGE plpgsql;
 
-CREATE TRIGGER T_OrdenesDespacho_BIU BEFORE INSERT OR UPDATE ON OrdenesDespacho
-FOR EACH ROW EXECUTE PROCEDURE OrdenesDespacho_audit();
+CREATE TRIGGER T_OrdenesSalida_BIU BEFORE INSERT OR UPDATE ON OrdenesSalida
+FOR EACH ROW EXECUTE PROCEDURE OrdenesSalida_audit();
 
 --DocVentas
 

@@ -100,9 +100,7 @@ public class UsuariosController extends Controller{
     private TreeTableView<String> ArbolPrivilegiosTabla;
     @FXML
     private TreeTableColumn<String, String> ArbolPrivilegiosColumna;
-   
-
-    
+      
     private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();     
     
     private List<Usuario> tempUsuarios;
@@ -174,7 +172,7 @@ public class UsuariosController extends Controller{
         RefrescarTabla(tempUsuarios);
         try {                        
         } catch (Exception e) {
-            
+            infoController.show("El Usuario contiene errores : " + e);                    
         }
     }          
     
@@ -199,7 +197,7 @@ public class UsuariosController extends Controller{
             List<Menu> a = usuarioRol.getAll(Menu.class);                        
             
         } catch (Exception e) {
-            
+            infoController.show("El Usuario contiene errores : " + e);                    
         }                                
     }
     
@@ -229,6 +227,7 @@ public class UsuariosController extends Controller{
 
            Base.commitTransaction();
         } catch (Exception e) {
+           infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();
         }
      }
@@ -289,6 +288,7 @@ public class UsuariosController extends Controller{
         infoController.show("El usuario ha sido editado satisfactoriamente");        
         }
         catch(Exception e){
+            infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();
         }                
     }
@@ -302,14 +302,13 @@ public class UsuariosController extends Controller{
         String email = VerCorreo.getText();     
         String rol = VerRol.getSelectionModel().getSelectedItem();
         
+        
         String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);  
         if(!confirmatonController.show("Se creara el usuario con codigo: " + cod, "¿Desea continuar?")) return;
         
         try{      
 
-        Base.openTransaction();    
-
-        
+        Base.openTransaction();           
         Usuario usuario = new Usuario();
         usuario.set("usuario_cod",cod);        
         usuario.set("nombre",nombre);
@@ -328,24 +327,25 @@ public class UsuariosController extends Controller{
         infoController.show("El usuario ha sido creado satisfactoriamente");        
         }
         catch(Exception e){
+           infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();           
         }finally{
            crearNuevo = false; 
         }        
     }    
     
-    private void RefrescarTabla(List<Usuario> tempUsuarios)
-    {
-        
+    private void RefrescarTabla(List<Usuario> usuariosRefresh)
+    {        
         try {
             usuarios.removeAll(usuarios);                 
-            if(tempUsuarios == null) return;
-            for (Usuario usuario : tempUsuarios) {
+            if(usuariosRefresh == null) return;
+            for (Usuario usuario : usuariosRefresh) {
                 usuarios.add(usuario);
             }               
             TablaUsuarios.getColumns().get(0).setVisible(false);
             TablaUsuarios.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
+            infoController.show("El Usuario contiene errores : " + e);        
         }                                  
     }
     
@@ -386,12 +386,9 @@ public class UsuariosController extends Controller{
             
             ArbolPrivilegiosColumna.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getValue())); 
                         
-            ObservableList<String> estados = FXCollections.observableArrayList();    
-            ObservableList<String> estadosNoPad = FXCollections.observableArrayList(); 
-            
+            ObservableList<String> estados = FXCollections.observableArrayList();                           
             estados.add("");
-            estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));            
-            estadosNoPad.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
+            estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
             
             
             ObservableList<String> rolesNames = FXCollections.observableArrayList();   
@@ -414,6 +411,7 @@ public class UsuariosController extends Controller{
             ArbolPrivilegiosTabla.setShowRoot(false);
             
         } catch (Exception e) {
+            infoController.show("El Usuario contiene errores : " + e);        
         }       
     } 
 

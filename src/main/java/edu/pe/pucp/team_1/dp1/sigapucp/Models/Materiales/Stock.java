@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.CompositePK;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
@@ -13,6 +14,7 @@ import org.javalite.activejdbc.annotations.Table;
  * @author Jauma
  */
 @Table("Stocks")
+@CompositePK({ "tipo_id", "tipo_cod"})
 public class Stock extends Model{
     
 }
