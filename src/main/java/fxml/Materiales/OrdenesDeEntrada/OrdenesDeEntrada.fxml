@@ -21,7 +21,7 @@
 
 <AnchorPane id="AnchorPane" fx:id="usuario_container" prefHeight="574.0" prefWidth="973.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.OrdenesDeEntradaController">
    <children>
-      <SplitPane dividerPositions="0.2720739219712526" layoutX="-4.0" layoutY="-4.0" prefHeight="578.0" prefWidth="976.0">
+      <SplitPane dividerPositions="0.35010266940451745" layoutX="-4.0" layoutY="-4.0" prefHeight="578.0" prefWidth="976.0">
          <items>
             <GridPane>
               <columnConstraints>
@@ -79,7 +79,7 @@
                         <TextField fx:id="BusquedaCodigo" prefHeight="23.0" prefWidth="237.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <ComboBox fx:id="BusquedaEstado" prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                         <ComboBox fx:id="BusquedaTipo" prefHeight="25.0" prefWidth="172.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                        <DatePicker GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <DatePicker fx:id="BusquedaFecha" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                   <GridPane maxHeight="1.7976931348623157E308" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
@@ -239,14 +239,14 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TitledPane animated="false" prefHeight="240.0" prefWidth="194.0" text="Acciones" GridPane.columnIndex="2">
+                              <TitledPane animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="240.0" prefWidth="194.0" text="Acciones" GridPane.columnIndex="2">
                                 <content>
                                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0">
                                        <children>
-                                          <Button layoutX="42.0" layoutY="125.0" mnemonicParsing="false" onAction="#eliminarProducto" prefHeight="40.0" prefWidth="44.0" text="E" />
-                                          <Label alignment="CENTER" layoutX="15.0" layoutY="165.0" prefHeight="35.0" prefWidth="98.0" text="Eliminar Producto" />
-                                          <Label alignment="CENTER" layoutX="15.0" layoutY="72.0" prefHeight="35.0" prefWidth="98.0" text="Agregar Producto" />
-                                          <Button layoutX="42.0" layoutY="32.0" mnemonicParsing="false" onAction="#agregarProducto" prefHeight="40.0" prefWidth="44.0" text="A" />
+                                          <Button layoutX="29.0" layoutY="125.0" mnemonicParsing="false" onAction="#eliminarProducto" prefHeight="40.0" prefWidth="44.0" text="E" />
+                                          <Label alignment="CENTER" layoutX="2.0" layoutY="165.0" prefHeight="35.0" prefWidth="98.0" text="Eliminar Producto" />
+                                          <Label alignment="CENTER" layoutX="2.0" layoutY="72.0" prefHeight="35.0" prefWidth="98.0" text="Agregar Producto" />
+                                          <Button layoutX="29.0" layoutY="32.0" mnemonicParsing="false" onAction="#agregarProducto" prefHeight="40.0" prefWidth="44.0" text="A" />
                                        </children></AnchorPane>
                                 </content>
                               </TitledPane>
@@ -269,6 +269,6 @@
             </GridPane>
          </items>
       </SplitPane>
-      <AnchorPane fx:id="BusquedaFecha" prefHeight="200.0" prefWidth="200.0" />
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" />
    </children>
 </AnchorPane>

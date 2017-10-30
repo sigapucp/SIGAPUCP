@@ -208,7 +208,8 @@ public class ProformasController extends Controller {
                       
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);
-            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);            
+            if (modal_stage.getModality() == null) modal_stage.initModality(Modality.APPLICATION_MODAL);   
+            
             
         } catch (IOException ex) {
             Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);

@@ -195,7 +195,7 @@ public class ProductosController extends Controller {
         String categoria = categoriaBuscar.getSelectionModel().getSelectedItem();
         String estado = estadoBuscar.getSelectionModel().getSelectedItem();        
         
-         List<TipoProducto> tempProductos = TipoProducto.findAll();
+        List<TipoProducto> tempProductos = TipoProducto.findAll();
         try{
             
             if(nombre!=null&&!nombre.isEmpty())
@@ -276,7 +276,11 @@ public class ProductosController extends Controller {
                 return;
                 
             }
-            if(categorias.stream().anyMatch(x->x.getInteger("categoria_id").equals(categoria.getInteger("categoria_id")))) return;
+            if(categorias.stream().anyMatch(x->x.getInteger("categoria_id").equals(categoria.getInteger("categoria_id")))) 
+            {
+                infoController.show("La Categoria ya se encuentra seleccionada");     
+                return;
+            }
             categorias.add(categoria);                        
         } catch (Exception e) {
             infoController.show("El producto contiene errores : " + e);     
@@ -377,6 +381,7 @@ public class ProductosController extends Controller {
 
     
  
+    @Override
     public void nuevo(){
         crear_nuevo = true;
         limpiar_formulario();
@@ -393,8 +398,8 @@ public class ProductosController extends Controller {
             }
             Base.openTransaction();            
             TipoProducto nuevo_tipo_producto = new TipoProducto();
-            String cod = codigo_producto.getText() + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);  
-            if(!confirmationController.show("Se editara el tipo de producto con codigo: " + codigo_producto.getText(), "¿Desea continuar?")) return;
+            String cod = (codigo_producto.getText() + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from tiposproducto_tipo_id_seq")))) + 1));  
+            if(!confirmationController.show("Se creara el tipo de producto con codigo: " + cod, "¿Desea continuar?")) return;
             float peso = Float.parseFloat(peso_producto.getText());
             float longitud = Float.parseFloat(largo_producto.getText());
             float ancho = Float.parseFloat(ancho_producto.getText());
@@ -418,6 +423,7 @@ public class ProductosController extends Controller {
             Base.commitTransaction();       
                
             infoController.show("El producto ha sido creado satisfactoriamente"); 
+            limpiar_formulario();
         }
         catch(Exception e){
             infoController.show("El producto contiene errores : " + e);        
@@ -425,8 +431,7 @@ public class ProductosController extends Controller {
         }finally{
             crear_nuevo = false;
             codigo_producto.setEditable(false);                        
-        }
-            
+        }            
     }    
     
     public void editar_producto(TipoProducto producto){
@@ -450,6 +455,7 @@ public class ProductosController extends Controller {
             Base.commitTransaction();   
                       
             infoController.show("El producto ha sido editado satisfactoriamente"); 
+            limpiar_formulario();
         }
         catch(Exception e){
             infoController.show("El producto contiene errores : " + e);        
@@ -457,50 +463,47 @@ public class ProductosController extends Controller {
         }
     }
     
-    private void setCategoriasProducto(TipoProducto producto)
-    {
-        try {
-            List<CategoriaProducto> categoriasProductoGuardadas = producto.getAll(CategoriaProducto.class);
-            
-            List<CategoriaProducto> categoriasAdd = categorias.stream().filter(x -> categoriasProductoGuardadas.stream().noneMatch(y -> y.getInteger("categoria_id").equals(x.getInteger("categoria_id")))).collect(Collectors.toList());
-            List<CategoriaProducto> categoriasDelete = categoriasProductoGuardadas.stream().filter(x -> categorias.stream().noneMatch(y -> y.getInteger("categoria_id").equals(x.getInteger("categoria_id")))).collect(Collectors.toList());
-            
-            for(CategoriaProducto categoria: categoriasAdd)
-            {
-                CategoriaxTipo.createIt("tipo_id",producto.getId(),"tipo_cod",producto.get("tipo_cod"),"categoria_id",categoria.getId(),"categoria_code",categoria.get("categoria_code"));
-            }
-            
-            for(CategoriaProducto categoria: categoriasDelete)
-            {
-                CategoriaxTipo.delete("tipo_id = ? AND categoria_id = ?", producto.getId(),categoria.getId());
-            }                                            
-        } catch (Exception e) {
-            infoController.show("El producto contiene errores : " + e);        
-        }        
+    private void setCategoriasProducto(TipoProducto producto) throws Exception
+    {       
+        List<CategoriaProducto> categoriasProductoGuardadas = producto.getAll(CategoriaProducto.class);
+
+        List<CategoriaProducto> categoriasAdd = categorias.stream().filter(x -> categoriasProductoGuardadas.stream().noneMatch(y -> y.getInteger("categoria_id").equals(x.getInteger("categoria_id")))).collect(Collectors.toList());
+        List<CategoriaProducto> categoriasDelete = categoriasProductoGuardadas.stream().filter(x -> categorias.stream().noneMatch(y -> y.getInteger("categoria_id").equals(x.getInteger("categoria_id")))).collect(Collectors.toList());
+
+        for(CategoriaProducto categoria: categoriasAdd)
+        {
+            CategoriaxTipo.createIt("tipo_id",producto.getId(),"tipo_cod",producto.get("tipo_cod"),"categoria_id",categoria.getId(),"categoria_code",categoria.get("categoria_code"));
+        }
+
+        for(CategoriaProducto categoria: categoriasDelete)
+        {
+            CategoriaxTipo.delete("tipo_id = ? AND categoria_id = ?", producto.getId(),categoria.getId());
+        }                                                      
     }
     
-    public void setPreciosProducto(TipoProducto producto)
+    public void setPreciosProducto(TipoProducto producto) throws Exception
     {
-        try {
-            for(Precio precio:precios)
+       
+        for(Precio precio:precios)
+        {
+            if(precio.isNew())
             {
-                if(precio.isNew())
-                {
-                    precio.set("tipo_id",producto.getId());
-                    precio.set("tipo_cod",producto.get("tipo_cod"));
-                }
-                precio.saveIt();
-            }           
-            
-            List<Precio> preciosGuardados = Precio.where("tipo_id = ?", producto.getId());
-            List<Precio> preciosDelete = preciosGuardados.stream().filter(x -> categorias.stream().noneMatch(y -> !y.isNew()&&y.getInteger("precio_id").equals(x.getInteger("precio_id")))).collect(Collectors.toList());
-            
-            for(Precio precio:preciosDelete)
-            {
-                precio.delete("precio_id = ?",precio.getId());
+                precio.set("tipo_id",producto.getId());
+                precio.set("tipo_cod",producto.get("tipo_cod"));
             }
-        } catch (Exception e) {
-        }                
+            precio.saveIt();
+        }           
+
+        List<Precio> preciosGuardados = Precio.where("tipo_id = ?", producto.getId());
+        if(preciosGuardados == null) return;
+        List<Precio> preciosDelete = preciosGuardados.stream().filter(x -> precios.stream().noneMatch(y -> !y.isNew()&&y.getInteger("precio_id").equals(x.getInteger("precio_id")))).collect(Collectors.toList());
+        if(preciosDelete == null)return;
+        
+        for(Precio precio:preciosDelete)
+        {
+            Precio.delete("precio_id = ?",precio.getId());
+        }
+                  
     }
     
     public void llenar_combobox_unidades(){
@@ -521,8 +524,7 @@ public class ProductosController extends Controller {
     @Override
     public void guardar(){
         if (crear_nuevo){
-            crear_tipo_producto();
-            limpiar_formulario();
+            crear_tipo_producto();         
         }
         else {
             if(producto_seleccionado==null) 
@@ -532,6 +534,7 @@ public class ProductosController extends Controller {
             }
             editar_producto(producto_seleccionado);
         }    
+        crear_nuevo = false;
         RefrescarTabla(TipoProducto.findAll());
     }
     
