@@ -6,21 +6,28 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import com.sun.javafx.font.FontConstants;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEventHandler;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -30,6 +37,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -43,6 +53,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
@@ -92,7 +104,6 @@ public class OrdenesDeEntradaController extends Controller {
     private TextField VerProducto;
     @FXML
     private Spinner<Integer> verCantidad;
-    @FXML
     private SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
     
     @FXML
@@ -107,6 +118,9 @@ public class OrdenesDeEntradaController extends Controller {
     private TableColumn<OrdenEntradaxProducto, String> ColumnaProductoDescripcion;
     @FXML
     private AnchorPane BusquedaFecha;
+    @FXML 
+    static Stage modal_stage = new Stage();
+    
     
     private final ObservableList<OrdenEntrada> entradas = FXCollections.observableArrayList();
     private final ObservableList<OrdenEntradaxProducto> productos = FXCollections.observableArrayList();   
@@ -115,9 +129,17 @@ public class OrdenesDeEntradaController extends Controller {
     private Boolean crearNuevo;
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmationController;
-    private List<Cliente> autoCompletadoList;    
-    ArrayList<String> possiblewords = new ArrayList<>();    
-    AutoCompletionBinding<String> autoCompletionBinding;
+    
+    private List<Cliente> autoCompletadoClienteList;    
+    private List<Proveedor> autoCompletadoProveedorList;
+    private List<TipoProducto> autoCompletadoProductoList;
+    ArrayList<String> possiblewordsCliente = new ArrayList<>();    
+    ArrayList<String> possiblewordsProveedor = new ArrayList<>();    
+    ArrayList<String> possiblewordsProducto = new ArrayList<>();    
+    AutoCompletionBinding<String> autoCompletionBindingCliente;
+    AutoCompletionBinding<String> autoCompletionBindingProveedor;
+    AutoCompletionBinding<String> autoCompletionBindingProducto;
+    TipoProducto productoDevuelto = new TipoProducto();
     
 
     public OrdenesDeEntradaController()
@@ -138,7 +160,7 @@ public class OrdenesDeEntradaController extends Controller {
     }
     
     @FXML
-    private void visualizarOrden(ActionEvent event) {
+    private void visualizarOrden(ActionEvent event) {        
     }
 
     @FXML
@@ -151,6 +173,7 @@ public class OrdenesDeEntradaController extends Controller {
 
     @FXML
     private void eliminarProducto(ActionEvent event) {
+        modal_stage.showAndWait();
     }
 
     /**
@@ -205,10 +228,28 @@ public class OrdenesDeEntradaController extends Controller {
         }                                  
     }
       
-    private void handleAutoCompletar() {
+    private void handleAutoCompletarCliente() {
         int i = 0;
-        for (Cliente cliente : autoCompletadoList){
+        for (Cliente cliente : autoCompletadoClienteList){
             if (cliente.getString("nombre").equals(ClienteBuscar.getText())){           
+//                telfSh.setText(cliente.getString("telef_contacto"));                
+            }
+        }
+    }
+    
+    private void handleAutoCompletarProveedor() {
+        int i = 0;
+        for (Proveedor proveedor : autoCompletadoProveedorList){
+            if (proveedor.getString("nombre").equals(ProveedorBuscar.getText())){           
+//                telfSh.setText(cliente.getString("telef_contacto"));                
+            }
+        }
+    }
+    
+    private void handleAutoCompletarProducto() {
+        int i = 0;
+        for (TipoProducto tipoProducto : autoCompletadoProductoList){
+            if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
 //                telfSh.setText(cliente.getString("telef_contacto"));                
             }
         }
@@ -216,12 +257,28 @@ public class OrdenesDeEntradaController extends Controller {
     
     private void clienteToString() {
         ArrayList<String> words = new ArrayList<>();
-        for (Cliente cliente : autoCompletadoList){
+        for (Proveedor cliente : autoCompletadoProveedorList){
             words.add(cliente.getString("nombre"));
-        }
-        words.add("");
-        possiblewords = words;
+        }        
+        possiblewordsProveedor = words;
     }
+    
+    private void proveedorToString() {
+        ArrayList<String> words = new ArrayList<>();
+        for (Proveedor cliente : autoCompletadoProveedorList){
+            words.add(cliente.getString("nombre"));
+        }        
+        possiblewordsProveedor = words;
+    }
+     
+     private void productoToString() {
+        ArrayList<String> words = new ArrayList<>();
+        for (TipoProducto cliente : autoCompletadoProductoList){
+            words.add(cliente.getString("nombre"));
+        }               
+        possiblewordsProducto = words;
+    }
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -287,19 +344,55 @@ public class OrdenesDeEntradaController extends Controller {
             ClienteLabel.setVisible(false);
             ClienteBuscar.setVisible(false);
             
-            autoCompletadoList = Cliente.findAll();
-            clienteToString();
-            autoCompletionBinding = TextFields.bindAutoCompletion(ClienteBuscar, possiblewords);
+            autoCompletadoClienteList = Cliente.findAll();
+            autoCompletadoProductoList = TipoProducto.findAll();
+            autoCompletadoProveedorList = Proveedor.findAll();
             
-            autoCompletionBinding.addEventHandler(EventType.ROOT, (event) -> {
-            handleAutoCompletar();
-        });
+            clienteToString();
+            autoCompletionBindingCliente = TextFields.bindAutoCompletion(ClienteBuscar, possiblewordsCliente);
+            
+            autoCompletionBindingCliente.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletarCliente();
+            });
+            
+            proveedorToString();
+            autoCompletionBindingProveedor = TextFields.bindAutoCompletion(ProveedorBuscar, possiblewordsProveedor);
+            
+            autoCompletionBindingProveedor.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletarProveedor();
+            });
+            
+            productoToString();
+            autoCompletionBindingProducto = TextFields.bindAutoCompletion(VerProducto, possiblewordsProducto);
+            
+            autoCompletionBindingProducto.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletarProducto();
+            });
+            
+        
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductos.fxml"));
+            AgregarProductosController controller = new AgregarProductosController();
+            loader.setController(controller);
+                      
+            Scene modal_content_scene = new Scene((Parent)loader.load());
+            modal_stage.setScene(modal_content_scene);
+            modal_stage.initModality(Modality.APPLICATION_MODAL);    
             
             TablaOrdenes.setItems(entradas);
             TablaProductos.setItems(productos);
+            
+            controller.devolverProductoEvent.addHandler((Object sender, agregarProductoArgs args) -> {
+                productoDevuelto = args.producto;
+            });
+            
+            modal_stage.showAndWait();
             
         } catch (Exception e) {
             infoController.show("La orden de entradada contiene errores : " + e);    
         }
     }         
+
+    @FXML
+    private void buscarProducto(ActionEvent event) {
+    }
 }
