@@ -626,8 +626,7 @@ CREATE TABLE OrdenesEntrada
  descripcion         VARCHAR(200) NOT NULL ,
  usuario_cod         VARCHAR(20) NOT NULL ,
  usuario_id          SERIAL NOT NULL ,
- tipo_entrada_id     SERIAL NOT NULL ,
- tipo_entdada_cod    VARCHAR(30) NOT NULL ,
+ tipo       VARCHAR(30) NOT NULL , 
 
  CONSTRAINT pk_767 PRIMARY KEY  (orden_entrada_cod , orden_entrada_id ),
  CONSTRAINT fk_792 FOREIGN KEY (usuario_cod, usuario_id)
@@ -1181,6 +1180,7 @@ CREATE TABLE OrdenesEntradaxProductos
  provider_ruc      VARCHAR(20) NOT NULL ,
  estado            VARCHAR(20) NOT NULL ,
  proveedor_id      SERIAL NOT NULL ,
+ cantidad          INT NOT NULL,
 
  CONSTRAINT pk_778 PRIMARY KEY  (producto_cod , producto_id , tipo_id , tipo_cod , orden_entrada_id , orden_entrada_cod ),
  CONSTRAINT fk_775 FOREIGN KEY (producto_cod, producto_id, tipo_id, tipo_cod)

@@ -92,8 +92,7 @@ public class UsuariosController extends Controller{
     private TreeTableColumn<String, String> ArbolPrivilegiosColumna;
       
     private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();     
-    
-    private List<Usuario> tempUsuarios;
+     
     private Usuario usuarioSelecionado;
     private Boolean crearNuevo;
     private InformationAlertController infoController;
@@ -104,7 +103,7 @@ public class UsuariosController extends Controller{
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");   
         
-        tempUsuarios = Usuario.findAll();               
+        List<Usuario> tempUsuarios = Usuario.findAll();               
         for (Usuario usuario : tempUsuarios) {
             usuarios.add(usuario);
         }                               
@@ -133,7 +132,7 @@ public class UsuariosController extends Controller{
         String estado = BusquedaEstado.getValue();
         String rol = BusquedaRol.getValue();
         
-        tempUsuarios = Usuario.findAll();
+        List<Usuario> tempUsuarios = Usuario.findAll();
         
         if(codigo!=null&&!codigo.isEmpty())
         {            

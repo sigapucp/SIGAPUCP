@@ -14,7 +14,7 @@
         <URL value="@/styles/botonesacciones.css" />
     </stylesheets>
     <children>
-      <Accordion fx:id="acordion_modulos" prefHeight="572.0" prefWidth="200.0">
+      <Accordion fx:id="acordion_modulos" prefHeight="629.0" prefWidth="202.0">
          <panes>
             <TitledPane fx:id="tab_general" prefWidth="200.0" text="General">
                <content>
@@ -98,6 +98,15 @@
                               </ImageView>
                            </graphic>
                         </Button>
+                        <Button contentDisplay="TOP" layoutX="-1.0" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Ordenes de Entrada">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/entrada_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                      </children>
                   </AnchorPane>
                </content>
@@ -106,7 +115,25 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Despachos">
+                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Despachos">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/rutas_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Ordenes de Salida">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/salida_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Guias de Remision">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -121,9 +148,9 @@
             </TitledPane>
             <TitledPane prefWidth="200.0" text="Ventas">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="467.0" prefWidth="200.0">
                      <children>
-                        <Button contentDisplay="TOP" layoutY="355.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Documentos de Venta">
+                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Documentos de Venta">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -132,7 +159,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Promociones">
+                        <Button contentDisplay="TOP" layoutY="355.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Promociones">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -141,7 +168,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Proveedores">
+                        <Button contentDisplay="TOP" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Proveedores">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -173,6 +200,15 @@
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
                                     <Image url="@Imagenes/client_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="426.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Fletes">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/category_icon.png" />
                                  </image>
                               </ImageView>
                            </graphic>
