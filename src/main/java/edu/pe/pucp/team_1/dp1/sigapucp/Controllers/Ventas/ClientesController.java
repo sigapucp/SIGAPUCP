@@ -226,11 +226,6 @@ public class ClientesController extends Controller{
     }
     
     public boolean cumple_condicion_busqueda(Cliente cliente, String ruc, String dni, String nombres, String estado){
-        System.out.println(cliente);
-        System.out.println(ruc);
-        System.out.println(dni);
-        System.out.println(nombres);
-        System.out.println(estado);
         boolean match = true;
         if ( ruc.equals("") && dni.equals("") && nombres.equals("") && estado.equals("")){
             match = false;
