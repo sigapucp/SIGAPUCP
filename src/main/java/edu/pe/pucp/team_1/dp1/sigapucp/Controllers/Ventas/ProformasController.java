@@ -240,7 +240,7 @@ public class ProformasController extends Controller {
             if(proformaSelecionado == null) return;
             editarProforma(proformaSelecionado);
         }        
-        RefrescarTabla();
+        refrescarTabla();
     }
     
     private void editarProforma(Cotizacion proforma) {        
@@ -284,7 +284,7 @@ public class ProformasController extends Controller {
         String cotizacion_cod = "PROF";
         //String cotizacion_id = obtenerUltimoId() + 1;
         int monedaId;
-        if (solesProf. isSelected()){
+        if (solesProf.isSelected()){
              monedaId = 1;
         } else {
             monedaId = 2;
@@ -309,10 +309,10 @@ public class ProformasController extends Controller {
         //proforma.set("last_user_change",usuarioActual.getString("cotizacion_cod"));
         proforma.set("last_user_change", usuario);
         proforma.set("flag_last_operation", flag);
-        proforma.set("usuario_cod",usuario_cod);
-        proforma.set("usuario_id", usuario_id);
+        //proforma.set("usuario_cod",usuario_cod);
+        //proforma.set("usuario_id", usuario_id);
         proforma.set("moneda_id", monedaId);
-        proforma.set("promocion_automatica", promoAut);     
+        //proforma.set("promocion_automatica", promoAut);     
         //proforma.setDate("last_date_change",dateFormat.format(date));
         proforma.saveIt();
         Base.commitTransaction();
@@ -341,7 +341,7 @@ public class ProformasController extends Controller {
         if(estado!=null&&!estado.isEmpty()) {
             tempCotizaciones = tempCotizaciones.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
         }
-        RefrescarTabla();
+        refrescarTabla();
         try {                        
         } catch (Exception e) { 
         }
@@ -365,7 +365,7 @@ public class ProformasController extends Controller {
         //fechaProfSh.setValue(fechaEmision.);
     }
     
-    private void RefrescarTabla()
+    private void refrescarTabla()
     {
         try {
             cotizaciones.removeAll(cotizaciones);
