@@ -19,4 +19,4 @@ public class Cotizacion extends Model{
     static {
         dateFormat("dd/MM/yyyy", "fecha_emision");
     }     
-}
+}   

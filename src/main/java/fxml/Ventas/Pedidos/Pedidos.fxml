@@ -59,8 +59,8 @@
                <children>
                   <TableView fx:id="tablaPedidos" layoutX="12.0" layoutY="19.0" prefHeight="202.0" prefWidth="225.0">
                      <columns>
-                        <TableColumn prefWidth="65.0" text="Pedido" />
-                        <TableColumn prefWidth="182.0" text="Cliente" />
+                        <TableColumn fx:id="pedidoId" prefWidth="65.0" text="Pedido" />
+                        <TableColumn fx:id="clientePedido" prefWidth="182.0" text="Cliente" />
                      </columns>
                   </TableView>
                   <Button layoutX="140.0" layoutY="271.0" mnemonicParsing="false" onAction="#visualizarPedido" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
@@ -136,11 +136,6 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="296.0" layoutY="70.0" text="Fecha Est. Entrega:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
                   <RadioButton fx:id="tipoDocBoleta" layoutX="108.0" layoutY="44.0" mnemonicParsing="false" text="Boleta" />
                   <RadioButton fx:id="tipoDocFactura" layoutX="188.0" layoutY="44.0" mnemonicParsing="false" text="Factura" />
                   <TextField fx:id="clienteSh" layoutX="99.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" />
@@ -159,7 +154,6 @@
                   </Label>
                   <TextField fx:id="dni" layoutX="607.0" layoutY="40.0" prefHeight="25.0" prefWidth="120.0" />
                   <DatePicker fx:id="fechaPed" layoutX="143.0" layoutY="68.0" prefHeight="25.0" prefWidth="135.0" />
-                  <DatePicker layoutX="421.0" layoutY="68.0" prefHeight="25.0" prefWidth="135.0" />
                   <TextField fx:id="tipoCambio" editable="false" layoutX="421.0" layoutY="96.0" prefHeight="25.0" prefWidth="120.0" />
                   <TextField fx:id="envioDir" layoutX="123.0" layoutY="124.0" prefHeight="25.0" prefWidth="604.0" />
                   <TextField fx:id="factDir" layoutX="123.0" layoutY="152.0" prefHeight="25.0" prefWidth="604.0" />
