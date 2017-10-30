@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
+import static com.sun.org.apache.xerces.internal.impl.dtd.XMLDTDLoader.LOCALE;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
@@ -16,9 +17,13 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionPorcentaje;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -227,7 +232,7 @@ public class PromocionesController extends Controller{
     public static Calendar stringToCalendar(String dateString, String format) {
  
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
         try {
             if (dateString != null && !dateString.equals("")) {
                 calendar.setTime(sdf.parse(dateString));
@@ -236,6 +241,14 @@ public class PromocionesController extends Controller{
             System.out.println(e);
         }
         return calendar;
+    }
+    
+    public String formatoFecha(LocalDate fecha, String formato) {
+        LocalDate fechaLocal = fecha;
+        Date auxfecha = Date.from(fechaLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String fechaEmision = dateFormat.format(auxfecha);        
+        return fechaEmision;
     }
     
     public boolean cumple_condicion_busqueda(Promocion promocion, String codigo, String tipo, Calendar fecha){
@@ -270,8 +283,7 @@ public class PromocionesController extends Controller{
     
     //Botón editar
     @FXML
-    private void visualizar_promocion(ActionEvent event) {                   
-//        if(!PreCambiarAccion()) return;
+    private void visualizar_promocion(ActionEvent event) {      
         crear_nuevo = false;
         promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
         if(promocion_seleccionada == null) return;        
@@ -301,7 +313,7 @@ public class PromocionesController extends Controller{
     public void crear_promocion(){
         try{
             Base.openTransaction();  
-            promocion_seleccionada = null;
+            promocion_seleccionada = new Promocion();
             //Agregando las promociones a las tablas hijas por tipo de promoción
             String codigoPromo = txtFieCodigoPromo.getText();
             String tipoPromo = obtener_tipo_promo();
@@ -311,15 +323,13 @@ public class PromocionesController extends Controller{
             String codigo = "";
             String id = "";            
             
-            //Obteniendo valores para Objeto Promoción            
-            String fechaIni = dpFecha1.getValue().toString();
-            String fechaFin = dpFecha2.getValue().toString();
+            //Obteniendo valores para Objeto Promoción  
+            String fechaIni = formatoFecha(dpFecha1.getValue(),"dd/MM/yyyy"); 
+            String fechaFin = formatoFecha(dpFecha2.getValue(),"dd/MM/yyyy");
             String prioridad = obtener_prioridad();
-            String estado = "ACTIVO"; //obtener_estado();
-                      
-            System.out.println("HOLA");
-            codigo = (tipoPromo.equals("Por porcentaje")) ? codigo = txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();            
-            System.out.println(codigo);
+            String estado = "ACTIVO"; //obtener_estado();                      
+            
+            codigo = (tipoPromo.equals("Por porcentaje")) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
             
             if (es_tipo){
                 TipoProducto tipo = new TipoProducto();
@@ -331,14 +341,15 @@ public class PromocionesController extends Controller{
                 id = categoria.getString("categoria_id");
             }           
             
-            System.out.println(id);
-            
             promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, codigo,id);
+            System.out.println(promocion_seleccionada);
             promocion_seleccionada.saveIt();
-            
+            Base.commitTransaction();
             String id_padre = promocion_seleccionada.getString("promocion_id");
             System.out.println(id_padre);
-            /*if (tipoPromo.equals("Por cantidad")){
+            System.out.println("ahora hijos");
+            
+            if (tipoPromo.equals("Por cantidad")){
                 PromocionCantidad promocionC = new PromocionCantidad();  
                 String id_llevar = "";
                 if (es_categoria_obtener){
@@ -348,19 +359,28 @@ public class PromocionesController extends Controller{
                 }
                 promocionC.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue(), flag_categoria, txtFieCodigoProducto2.getText(),id_llevar);
                 promocionC.saveIt();
+                Base.commitTransaction();
             } else if (tipoPromo.equals("Por bonificación")){
+                System.out.println("CodigoPromoPadre "+ codigoPromo);
+                System.out.println("Padre: "+ id_padre);
+                System.out.println("Compro "+ (Integer)spCompro.getValue());
+                System.out.println("Llevo "+(Integer)spLlevo.getValue());
+                
                 PromocionBonificacion promocionB = new PromocionBonificacion();
                 promocionB.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
                 promocionB.saveIt();
+                Base.commitTransaction();
             } else {
                 PromocionPorcentaje promocionP = new PromocionPorcentaje();
                 String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();
                 promocionP.asignar_atributos(codigoPromo,id_padre , (Integer)spPorc.getValue(), concepto);
                 promocionP.saveIt();
-            }            
+                Base.commitTransaction();
+            }     
             
-            Base.commitTransaction();
-            infoController.show("La promoción ha sido creado satisfactoriamente"); */
+            
+            infoController = new InformationAlertController();
+            infoController.show("La promoción ha sido creado satisfactoriamente");
         }
         catch(Exception e){
             System.out.println(e);

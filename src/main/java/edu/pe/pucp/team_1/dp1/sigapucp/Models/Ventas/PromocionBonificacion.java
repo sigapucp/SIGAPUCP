@@ -19,7 +19,7 @@ public class PromocionBonificacion extends Model{
     public void asignar_atributos(String codigo,String idPadre, Integer compro, Integer llevo ){
         this.set("promocion_cod", codigo );
         int id = (idPadre.equals("")) ? 0 : Integer.parseInt(idPadre);
-        this.set("promocion_cod", id );        
+        this.set("promocion_id", id );        
         this.set("nr_comprar",compro);
         this.set("nr_obtener",llevo);
     }
