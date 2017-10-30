@@ -5,11 +5,10 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalTipoProdController;
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalCatProdController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
@@ -118,38 +117,43 @@ public class PromocionesController extends Controller{
     @FXML
     private TextField desc_concepto;
       
-
     private Boolean crear_nuevo;
     private List<Promocion> promociones;   
     private Promocion promocion_seleccionada;
     private final ObservableList<Promocion> masterData = FXCollections.observableArrayList();
     private InformationAlertController infoController;
     private Boolean es_categoria_obtener;
-    private final String TIPO_MODAL_PATH = "/fxml/Ventas/Promociones/ModalTipoProd.fxml";
-    private final String CATEGORIA_MODAL_PATH = "/fxml/Ventas/Promociones/ModalCatProd.fxml";
     
-    @FXML private ModalTipoProdController ModalTipoProdController;
-    @FXML private ModalCatProdController ModalCatProdController;
+    //Variables para manejar los custom events de los modales
+    private final String TIPO_MODAL_PATH = "/fxml/Ventas/Promociones/ModalTipoProd.fxml";
+    private final String CATEGORIA_MODAL_PATH = "/fxml/Ventas/Promociones/ModalCatProd.fxml";        
     private String codigo_promo;
     private String id_promo;
+    private boolean es_tipo; //es para saber si lo que se compra o en porcentaje es tipo o categoria
     
     private void manejoDeModales(){
         botonTipo1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            es_tipo = true;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto1);
         });
         botonTipo2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            es_tipo = true;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto2);
         });   
         botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            es_tipo = true;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto3);
         });   
         botonCategoria1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            es_tipo = false;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto1);
         }); 
         botonCategoria2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            es_tipo = false;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto2);
         }); 
         botonCategoria3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            es_tipo = false;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto3);
         }); 
     }
@@ -272,9 +276,7 @@ public class PromocionesController extends Controller{
         promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
         if(promocion_seleccionada == null) return;        
         //setPromocionVisible(promocion_seleccionada);                        
-    }
-    
-    
+    }       
     
     //Botón guardar
     @Override
@@ -305,30 +307,60 @@ public class PromocionesController extends Controller{
             String tipoPromo = obtener_tipo_promo();
             String es_categoria = obtener_clasificacion();
             String flag_categoria = (es_categoria_obtener) ? "S":"N";
-            if (tipoPromo.equals("Por cantidad")){
-                PromocionCantidad promocionC = new PromocionCantidad();                
-                promocionC.asignar_atributos(codigoPromo, (Integer)spCompro.getValue(), (Integer)spLlevo.getValue(), flag_categoria, txtFieCodigoProducto2.getText());
-                promocionC.saveIt();
-            } else if (tipoPromo.equals("Por bonificación")){
-                PromocionBonificacion promocionB = new PromocionBonificacion();
-                promocionB.asignar_atributos(codigoPromo, (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
-                promocionB.saveIt();
-            } else {
-                PromocionPorcentaje promocionP = new PromocionPorcentaje();
-                String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();
-                promocionP.asignar_atributos(codigoPromo, (Integer)spPorc.getValue(), concepto);
-                promocionP.saveIt();
-            }
+            
+            String codigo = "";
+            String id = "";            
             
             //Obteniendo valores para Objeto Promoción            
             String fechaIni = dpFecha1.getValue().toString();
             String fechaFin = dpFecha2.getValue().toString();
             String prioridad = obtener_prioridad();
             String estado = "ACTIVO"; //obtener_estado();
-            promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, txtFieCodigoProducto1.getText());
+                      
+            System.out.println("HOLA");
+            codigo = (tipoPromo.equals("Por porcentaje")) ? codigo = txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();            
+            System.out.println(codigo);
+            
+            if (es_tipo){
+                TipoProducto tipo = new TipoProducto();
+                tipo = TipoProducto.findFirst("tipo_cod = ?", codigo);
+                id = tipo.getString("tipo_id");
+            } else{
+                CategoriaProducto categoria = new CategoriaProducto();
+                categoria = CategoriaProducto.findFirst("categoria_code = ?", codigo);
+                id = categoria.getString("categoria_id");
+            }           
+            
+            System.out.println(id);
+            
+            promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, codigo,id);
             promocion_seleccionada.saveIt();
+            
+            String id_padre = promocion_seleccionada.getString("promocion_id");
+            System.out.println(id_padre);
+            /*if (tipoPromo.equals("Por cantidad")){
+                PromocionCantidad promocionC = new PromocionCantidad();  
+                String id_llevar = "";
+                if (es_categoria_obtener){
+                    CategoriaProducto categoria = new CategoriaProducto();
+                    categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
+                    id_llevar = categoria.getString("categoria_id");
+                }
+                promocionC.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue(), flag_categoria, txtFieCodigoProducto2.getText(),id_llevar);
+                promocionC.saveIt();
+            } else if (tipoPromo.equals("Por bonificación")){
+                PromocionBonificacion promocionB = new PromocionBonificacion();
+                promocionB.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
+                promocionB.saveIt();
+            } else {
+                PromocionPorcentaje promocionP = new PromocionPorcentaje();
+                String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();
+                promocionP.asignar_atributos(codigoPromo,id_padre , (Integer)spPorc.getValue(), concepto);
+                promocionP.saveIt();
+            }            
+            
             Base.commitTransaction();
-            infoController.show("La promoción ha sido creado satisfactoriamente"); 
+            infoController.show("La promoción ha sido creado satisfactoriamente"); */
         }
         catch(Exception e){
             System.out.println(e);

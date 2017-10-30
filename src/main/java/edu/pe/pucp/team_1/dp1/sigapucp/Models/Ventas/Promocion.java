@@ -16,7 +16,7 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("Promociones")
 @IdName("promocion_id")
 public class Promocion extends Model{
-    public void asignar_atributos(String codigo,String fechaIni,String fechaFin,String prioridad,String es_categoria,String estado,String tipoPromo,String codTipCat){
+    public void asignar_atributos(String codigo,String fechaIni,String fechaFin,String prioridad,String es_categoria,String estado,String tipoPromo,String codTipCat, String idTipCat){
         this.set("promocion_cod", codigo );
         this.set("fecha_inicio", fechaIni);
         this.set("fecha_fin", fechaFin);
@@ -27,8 +27,10 @@ public class Promocion extends Model{
         this.set("tipo", tipoPromo);
         if (es_categoria.equals("S")){
             this.set("categoria_code",codTipCat);
-        } else{
+            this.set("categoria_id",idTipCat);
+        } else{            
             this.set("tipo_cod",codTipCat);
+            this.set("tipo_id",idTipCat);
         }
     }
 }

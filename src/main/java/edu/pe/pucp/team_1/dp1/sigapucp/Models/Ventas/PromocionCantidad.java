@@ -14,15 +14,19 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("PromocionCantidades")
 public class PromocionCantidad extends Model{
-    public void asignar_atributos(String codigo, Integer compro, Integer llevo, String flag_categoria,String codTipCat ){
-        this.set("nombre", codigo );
+    public void asignar_atributos(String codigo,String idPadre, Integer compro, Integer llevo, String flag_categoria,String codTipCat, String idTipCat ){
+        this.set("promocion_cod", codigo );
+        int id = (idPadre.equals("")) ? 0 : Integer.parseInt(idPadre);
+        this.set("promocion_cod", id );  
         this.set("nr_comprar",compro);
         this.set("nr_obtener",llevo);
         this.set("es_categoria_obtener",flag_categoria);
         if (flag_categoria.equals("S")){
             this.set("categoria_code",codTipCat);
+            this.set("categoria_id",idTipCat);
         } else{
             this.set("tipo_cod",codTipCat);
+            this.set("tipo_id",idTipCat);
         }
     }
 }
