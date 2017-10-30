@@ -1,3 +1,4 @@
+
 CREATE TABLE TiposError
 (
  error_cod     VARCHAR(20) NOT NULL ,
@@ -24,26 +25,6 @@ CREATE TABLE CategoriasProducto
  estado              VARCHAR(20) NOT NULL ,
 
  CONSTRAINT pk_853 PRIMARY KEY  (categoria_code , categoria_id )
-);
-
-
-
-
---************************************** OrdenesEntrada
-
-CREATE TABLE OrdenesEntrada
-(
- orden_entrada_cod   VARCHAR(30) NOT NULL ,
- orden_entrada_id    SERIAL NOT NULL ,
- fecha_emision       DATE NOT NULL ,
- last_user_change    VARCHAR(20) NOT NULL ,
- last_date_change    DATE NOT NULL ,
- flag_last_operation CHAR(1) NOT NULL ,
- estado              VARCHAR(20) NOT NULL ,
- descripcion         VARCHAR(200) NOT NULL ,
- tipo                VARCHAR(30) NOT NULL ,
-
- CONSTRAINT pk_767 PRIMARY KEY  (orden_entrada_cod , orden_entrada_id )
 );
 
 
@@ -100,16 +81,6 @@ CREATE TABLE ParametrosSistema
 
 
 
---************************************** SingleProductRule
-
-CREATE TABLE SingleProductRule
-(
-
-);
-
-
-
-
 --************************************** Monedas
 
 CREATE TABLE Monedas
@@ -144,22 +115,6 @@ CREATE TABLE Proveedores
  annotation          VARCHAR(200) NOT NULL ,
 
  CONSTRAINT pk_346 PRIMARY KEY  (provuder_ruc , proveedor_id )
-);
-
-
-
-
---************************************** EstadosProducto
-
-CREATE TABLE EstadosProducto
-(
- estado_id   SERIAL NOT NULL ,
- nombre      VARCHAR(50) NOT NULL ,
- descripcion VARCHAR(100) NOT NULL ,
- ant_estado  INT NULL ,
- sig_estado  INT NULL ,
-
- CONSTRAINT pk_276 PRIMARY KEY  (estado_id )
 );
 
 
@@ -316,6 +271,37 @@ CREATE TABLE AccionesxMenus
 --SKIP Index: fkIdx_1626
 
 
+--************************************** OrdenesEntrada
+
+CREATE TABLE OrdenesEntrada
+(
+ orden_entrada_cod   VARCHAR(30) NOT NULL ,
+ orden_entrada_id    SERIAL NOT NULL ,
+ fecha_emision       DATE NOT NULL ,
+ last_user_change    VARCHAR(20) NOT NULL ,
+ last_date_change    DATE NOT NULL ,
+ flag_last_operation CHAR(1) NOT NULL ,
+ estado              VARCHAR(20) NOT NULL ,
+ descripcion         VARCHAR(200) NOT NULL ,
+ tipo                VARCHAR(30) NOT NULL ,
+ provuder_ruc        VARCHAR(20) NOT NULL ,
+ proveedor_id        SERIAL NOT NULL ,
+ client_id           SERIAL NOT NULL ,
+
+ CONSTRAINT pk_767 PRIMARY KEY  (orden_entrada_cod , orden_entrada_id ),
+ CONSTRAINT fk_1790 FOREIGN KEY (provuder_ruc, proveedor_id)
+  REFERENCES Proveedores(provuder_ruc, proveedor_id),
+ CONSTRAINT fk_1795 FOREIGN KEY (client_id)
+  REFERENCES Clientes(client_id)
+);
+
+
+
+--SKIP Index: fkIdx_1790
+
+--SKIP Index: fkIdx_1795
+
+
 --************************************** SolucionesxDespachos
 
 CREATE TABLE SolucionesxDespachos
@@ -339,35 +325,6 @@ CREATE TABLE SolucionesxDespachos
 --SKIP Index: fkIdx_757
 
 --SKIP Index: fkIdx_1753
-
-
---************************************** NotasCredito
-
-CREATE TABLE NotasCredito
-(
- credit_note_cod     VARCHAR(20) NOT NULL ,
- client_id           SERIAL NOT NULL ,
- credit_note_id      SERIAL NOT NULL ,
- last_user_change    VARCHAR(20) NOT NULL ,
- last_date_change    DATE NOT NULL ,
- flag_last_operation CHAR(1) NOT NULL ,
- explicacion         VARCHAR(150) NOT NULL ,
- fecha_emision       DATE NOT NULL ,
- orden_entrada_id    SERIAL NOT NULL ,
- orden_entrada_cod   VARCHAR(30) NOT NULL ,
-
- CONSTRAINT pk_629 PRIMARY KEY  (credit_note_cod , client_id , credit_note_id ),
- CONSTRAINT fk_688 FOREIGN KEY (client_id)
-  REFERENCES Clientes(client_id),
- CONSTRAINT fk_1106 FOREIGN KEY (orden_entrada_cod, orden_entrada_id)
-  REFERENCES OrdenesEntrada(orden_entrada_cod, orden_entrada_id)
-);
-
-
-
---SKIP Index: fkIdx_688
-
---SKIP Index: fkIdx_1106
 
 
 --************************************** CambioMonedas
@@ -697,16 +654,12 @@ CREATE TABLE OrdenesEntradaxProductos
  orden_entrada_cod VARCHAR(30) NOT NULL ,
  tipo_cod          VARCHAR(20) NOT NULL ,
  tipo_id           SERIAL NOT NULL ,
- provider_ruc      VARCHAR(20) NOT NULL ,
  estado            VARCHAR(20) NOT NULL ,
- proveedor_id      SERIAL NOT NULL ,
  cantidad          INT NOT NULL ,
 
  CONSTRAINT pk_778 PRIMARY KEY  (orden_entrada_id , orden_entrada_cod , tipo_cod , tipo_id ),
  CONSTRAINT fk_783 FOREIGN KEY (orden_entrada_cod, orden_entrada_id)
   REFERENCES OrdenesEntrada(orden_entrada_cod, orden_entrada_id),
- CONSTRAINT fk_787 FOREIGN KEY (provider_ruc, proveedor_id)
-  REFERENCES Proveedores(provuder_ruc, proveedor_id),
  CONSTRAINT fk_1774 FOREIGN KEY (tipo_cod, tipo_id)
   REFERENCES TiposProducto(tipo_cod, tipo_id)
 );
@@ -715,9 +668,36 @@ CREATE TABLE OrdenesEntradaxProductos
 
 --SKIP Index: fkIdx_783
 
---SKIP Index: fkIdx_787
-
 --SKIP Index: fkIdx_1774
+
+
+--************************************** NotasCredito
+
+CREATE TABLE NotasCredito
+(
+ credit_note_cod     VARCHAR(20) NOT NULL ,
+ client_id           SERIAL NOT NULL ,
+ credit_note_id      SERIAL NOT NULL ,
+ last_user_change    VARCHAR(20) NOT NULL ,
+ last_date_change    DATE NOT NULL ,
+ flag_last_operation CHAR(1) NOT NULL ,
+ explicacion         VARCHAR(150) NOT NULL ,
+ fecha_emision       DATE NOT NULL ,
+ orden_entrada_id    SERIAL NOT NULL ,
+ orden_entrada_cod   VARCHAR(30) NOT NULL ,
+
+ CONSTRAINT pk_629 PRIMARY KEY  (credit_note_cod , client_id , credit_note_id ),
+ CONSTRAINT fk_688 FOREIGN KEY (client_id)
+  REFERENCES Clientes(client_id),
+ CONSTRAINT fk_1106 FOREIGN KEY (orden_entrada_cod, orden_entrada_id)
+  REFERENCES OrdenesEntrada(orden_entrada_cod, orden_entrada_id)
+);
+
+
+
+--SKIP Index: fkIdx_688
+
+--SKIP Index: fkIdx_1106
 
 
 --************************************** OrdenesCompra
@@ -1063,29 +1043,6 @@ CREATE TABLE PesoFletes
 --SKIP Index: fkIdx_988
 
 
---************************************** PromotionXProducto
-
-CREATE TABLE PromotionXProducto
-(
- promocion_cod VARCHAR(30) NOT NULL ,
- promocion_id  SERIAL NOT NULL ,
- tipo_id       SERIAL NOT NULL ,
- tipo_cod      VARCHAR(20) NOT NULL ,
-
- CONSTRAINT pk_943 PRIMARY KEY  (promocion_cod , promocion_id , tipo_id , tipo_cod ),
- CONSTRAINT fk_940 FOREIGN KEY (promocion_cod, promocion_id)
-  REFERENCES Promociones(promocion_cod, promocion_id),
- CONSTRAINT fk_945 FOREIGN KEY (tipo_cod, tipo_id)
-  REFERENCES TiposProducto(tipo_cod, tipo_id)
-);
-
-
-
---SKIP Index: fkIdx_940
-
---SKIP Index: fkIdx_945
-
-
 --************************************** PromocionBonificaciones
 
 CREATE TABLE PromocionBonificaciones
@@ -1199,8 +1156,6 @@ CREATE TABLE Productos
  fecha_entrada     DATE NULL ,
  fecha_caducidad   DATE NULL ,
  fecha_adquirida   DATE NOT NULL ,
- estado_id         SERIAL NOT NULL ,
- almacen_id        SERIAL NOT NULL ,
  almacen_xy_cod    VARCHAR(50) NOT NULL ,
  almacen_xy_id     SERIAL NOT NULL ,
  almacen_z_cod     VARCHAR(50) NOT NULL ,
@@ -1210,12 +1165,14 @@ CREATE TABLE Productos
  lote_cod          VARCHAR(10) NULL ,
  lote_id           SERIAL NOT NULL ,
  almacen_cod       VARCHAR(50) NOT NULL ,
+ estado_id         SERIAL NOT NULL ,
+ almacen_id        SERIAL NOT NULL ,
 
  CONSTRAINT pk_221 PRIMARY KEY  (producto_cod , producto_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id ),
- CONSTRAINT fk_265 FOREIGN KEY (rack_cod, almacen_id, rack_id, almacen_cod)
-  REFERENCES Racks(rack_cod, almacen_id, rack_id, almacen_cod),
- CONSTRAINT fk_269 FOREIGN KEY (almacen_z_cod, almacen_id, almacen_xy_cod, almacen_xy_id, almacen_z_id, almacen_cod)
-  REFERENCES AlmacenAreaZs(almacen_z_cod, almacen_id, almacen_xy_cod, almacen_xy_id, almacen_z_id, almacen_cod),
+ CONSTRAINT fk_265 FOREIGN KEY (rack_cod, rack_id, almacen_cod, almacen_id)
+  REFERENCES Racks(rack_cod, rack_id, almacen_cod, almacen_id),
+ CONSTRAINT fk_269 FOREIGN KEY (almacen_z_cod, almacen_xy_cod, almacen_xy_id, almacen_z_id, almacen_cod, almacen_id)
+  REFERENCES AlmacenAreaZs(almacen_z_cod, almacen_xy_cod, almacen_xy_id, almacen_z_id, almacen_cod, almacen_id),
  CONSTRAINT fk_282 FOREIGN KEY (estado_id)
   REFERENCES EstadosProducto(estado_id),
  CONSTRAINT fk_338 FOREIGN KEY (lote_cod, lote_id)

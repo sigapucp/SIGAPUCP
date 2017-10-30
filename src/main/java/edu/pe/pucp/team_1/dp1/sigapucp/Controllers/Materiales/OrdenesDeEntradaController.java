@@ -181,6 +181,17 @@ public class OrdenesDeEntradaController extends Controller {
             
             List<OrdenEntradaxProducto> ordenesxproductos = OrdenEntradaxProducto.where("orden_entrada_id = ?", entradaSelecionada.getId());
             productos.addAll(ordenesxproductos);
+            String tipo = entradaSelecionada.getString("tipo");
+            if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
+            {
+                ProveedorBuscar.setText(Proveedor.findFirst("proveedor_id = ?", entradaSelecionada.get("proveedor_id")).getString("nombre"));
+            }
+            
+            if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+            {
+                ProveedorBuscar.setText(Cliente.findFirst("client_id = ?", entradaSelecionada.get("client_id")).getString("nombre"));
+            }
+            
         } catch (Exception e) {
             infoController.show("Error en Entrada Seleccionada");
         }                        
@@ -497,24 +508,24 @@ public class OrdenesDeEntradaController extends Controller {
     
     private void clienteToString() {
         ArrayList<String> words = new ArrayList<>();
-        for (Proveedor cliente : autoCompletadoProveedorList){
+        for (Cliente cliente : autoCompletadoClienteList){
             words.add(cliente.getString("nombre"));
         }        
-        possiblewordsProveedor = words;
+        possiblewordsCliente = words;
     }
     
     private void proveedorToString() {
         ArrayList<String> words = new ArrayList<>();
-        for (Proveedor cliente : autoCompletadoProveedorList){
-            words.add(cliente.getString("nombre"));
+        for (Proveedor proveedor : autoCompletadoProveedorList){
+            words.add(proveedor.getString("name"));
         }        
         possiblewordsProveedor = words;
     }
      
      private void productoToString() {
         ArrayList<String> words = new ArrayList<>();
-        for (TipoProducto cliente : autoCompletadoProductoList){
-            words.add(cliente.getString("nombre"));
+        for (TipoProducto producto : autoCompletadoProductoList){
+            words.add(producto.getString("nombre"));
         }               
         possiblewordsProducto = words;
     }             
@@ -619,7 +630,7 @@ public class OrdenesDeEntradaController extends Controller {
             loader.setController(controller);                      
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);
-            modal_stage.initModality(Modality.APPLICATION_MODAL);    
+            if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
             
             controller.devolverProductoEvent.addHandler((Object sender, agregarProductoArgs args) -> {
                 productoDevuelto = args.producto;
