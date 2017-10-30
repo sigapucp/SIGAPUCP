@@ -164,7 +164,7 @@
                                     <Label alignment="CENTER" prefHeight="25.0" prefWidth="76.0" text="Nombre:" />
                                     <TextField fx:id="VerNombre" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" />
                                     <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Descripcion:" GridPane.columnIndex="2" />
-                                    <TextArea fx:id="VerDescripcion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="60.0" prefWidth="255.0" GridPane.columnIndex="3" />
+                                    <TextArea fx:id="VerDescripcion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="60.0" prefWidth="255.0" wrapText="true" GridPane.columnIndex="3" />
                                  </children>
                               </GridPane>
                            </content></TitledPane>
