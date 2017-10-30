@@ -53,7 +53,7 @@
                         <TableColumn fx:id="columna_nombre" prefWidth="124.0" text="Proveedor" />
                      </columns>
                   </TableView>
-                  <Button layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                  <Button layoutX="140.0" layoutY="271.0" mnemonicParsing="false" onAction="#mostrar_detalle_proveedor" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
                </children>
             </AnchorPane>
          </children>

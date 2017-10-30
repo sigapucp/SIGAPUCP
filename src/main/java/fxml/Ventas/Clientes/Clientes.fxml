@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -14,7 +21,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController">
    <children>
       <AnchorPane layoutX="53.0" layoutY="53.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -67,7 +74,7 @@
                         <TableColumn fx:id="columna_nombre" prefWidth="95.0" text="Cliente" />
                      </columns>
                   </TableView>
-                  <Button fx:id="visualizarBttn" layoutX="140.0" layoutY="271.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" AnchorPane.topAnchor="271.0" />
+                  <Button layoutX="140.0" layoutY="271.0" mnemonicParsing="false" onAction="#mostrar_detalle_cliente" prefHeight="25.0" prefWidth="96.0" text="Visualizar" AnchorPane.topAnchor="271.0" />
                </children>
             </AnchorPane>
          </children>
@@ -75,7 +82,7 @@
             <Insets />
          </opaqueInsets>
       </AnchorPane>
-      <AnchorPane layoutX="303.0" layoutY="53.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="mostrar_detalle_cliente" layoutX="303.0" layoutY="53.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="749.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -125,7 +132,7 @@
                   </TitledPane>
                   <TitledPane animated="false" collapsible="false" layoutX="31.0" layoutY="242.0" prefHeight="263.0" prefWidth="701.0" text="Información Específica">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1852.0">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="546.0">
                            <children>
                               <Label layoutX="23.0" layoutY="113.0" text="Dir. Envío:">
                                  <font>

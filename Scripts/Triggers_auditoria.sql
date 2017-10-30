@@ -93,25 +93,6 @@ $T_TiposProducto_BIU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_TiposProducto_BIU BEFORE INSERT OR UPDATE ON TiposProducto
 FOR EACH ROW EXECUTE PROCEDURE TiposProducto_audit();
 
---CategoriasxTipos
-
-CREATE FUNCTION CategoriasxTipos_audit() RETURNS trigger AS $T_CategoriasxTipos_BIU$
-BEGIN
-  NEW.last_date_change = now();
-  IF (TG_OP = 'INSERT') THEN
-      NEW.flag_last_operation = '1';
-      RETURN NEW;
-  ELSIF (TG_OP = 'UPDATE') THEN
-      NEW.flag_last_operation = '2';
-      RETURN NEW;
-  END IF;
-  RETURN NULL;
-END;
-$T_CategoriasxTipos_BIU$ LANGUAGE plpgsql;
-
-CREATE TRIGGER T_CategoriasxTipos_BIU BEFORE INSERT OR UPDATE ON CategoriasxTipos
-FOR EACH ROW EXECUTE PROCEDURE CategoriasxTipos_audit();
-
 --OrdenesEntrada
 
 CREATE FUNCTION OrdenesEntrada_audit() RETURNS trigger AS $T_OrdenesEntrada_BIU$
