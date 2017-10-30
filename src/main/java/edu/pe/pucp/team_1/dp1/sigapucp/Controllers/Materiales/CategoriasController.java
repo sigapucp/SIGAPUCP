@@ -7,7 +7,6 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import java.io.IOException;
 import java.net.URL;
@@ -66,7 +65,7 @@ public class CategoriasController extends Controller{
     private List<CategoriaProducto> categorias;
     
     private final ObservableList<CategoriaProducto> masterData = FXCollections.observableArrayList();
-        
+    private final ObservableList<CategoriaProducto> masterData_filtro = FXCollections.observableArrayList();
     public CategoriasController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         infoController = new InformationAlertController();
@@ -89,7 +88,9 @@ public class CategoriasController extends Controller{
     
     @FXML
     public void buscar_categoria(ActionEvent event) throws IOException{
-        categorias = Cliente.findAll();
+        //System.out.println("============================================");
+        //categorias = null;
+        categorias = CategoriaProducto.findAll();
         masterData.clear();
         
         try{
@@ -189,6 +190,13 @@ public class CategoriasController extends Controller{
         DetalleCategoria.setDisable(true);
         categorias = null;
         categorias = CategoriaProducto.findAll();
-        cargar_tabla_index();        
+        cargar_tabla_index();
+        tablaCategorias.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
+            if (newSelection != null){
+                categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();                
+                tablaCategorias.getSelectionModel().clearSelection();        
+            }
+        });
+       
     } 
 }
