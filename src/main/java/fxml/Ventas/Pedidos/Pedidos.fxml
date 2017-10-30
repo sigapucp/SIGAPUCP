@@ -140,7 +140,7 @@
                   <RadioButton fx:id="tipoDocFactura" layoutX="188.0" layoutY="44.0" mnemonicParsing="false" text="Factura" />
                   <TextField fx:id="clienteSh" layoutX="99.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" />
                   <TextField fx:id="vendedorSh" editable="false" layoutX="370.0" layoutY="12.0" prefHeight="25.0" prefWidth="160.0" />
-                  <TextField editable="false" layoutX="607.0" layoutY="12.0" prefHeight="25.0" prefWidth="120.0" />
+                  <TextField fx:id="estadoShow" editable="false" layoutX="607.0" layoutY="12.0" prefHeight="25.0" prefWidth="120.0" />
                   <Label layoutX="296.0" layoutY="42.0" text="R.U.C.:">
                      <font>
                         <Font size="14.0" />
@@ -195,12 +195,12 @@
                               <TableColumn minWidth="0.0" prefWidth="99.6666259765625" text="Precio" />
                           </columns>
                         </TableView>
-                        <TextField fx:id="subTotal" editable="false" layoutX="432.0" layoutY="199.0" prefHeight="13.0" prefWidth="120.0" />
-                        <TextField fx:id="igvPedido" editable="false" layoutX="432.0" layoutY="224.0" prefHeight="13.0" prefWidth="120.0" />
+                        <TextField fx:id="subTotal" editable="false" layoutX="432.0" layoutY="199.0" prefHeight="13.0" prefWidth="120.0" text="0.00" />
+                        <TextField fx:id="igvPedido" editable="false" layoutX="432.0" layoutY="224.0" prefHeight="13.0" prefWidth="120.0" text="0.00" />
                         <Label layoutX="329.0" layoutY="257.0" text="Total: " />
                         <Label layoutX="329.0" layoutY="230.0" text="I.G.V. (18%):" />
                         <Label layoutX="329.0" layoutY="203.0" text="Subtotal: " />
-                        <TextField fx:id="totalPedido" editable="false" layoutX="432.0" layoutY="250.0" prefHeight="13.0" prefWidth="120.0" />
+                        <TextField fx:id="totalPedido" editable="false" layoutX="432.0" layoutY="250.0" prefHeight="13.0" prefWidth="120.0" promptText="0.00" />
                      </children>
                   </AnchorPane>
                   <TitledPane animated="false" collapsible="false" layoutX="565.0" layoutY="45.0" prefHeight="273.0" prefWidth="177.0" text="Acciones" AnchorPane.bottomAnchor="2.0">
