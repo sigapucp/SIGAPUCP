@@ -370,13 +370,15 @@ public class OrdenesDeEntradaController extends Controller {
             });
             
         
+            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductos.fxml"));
             AgregarProductosController controller = new AgregarProductosController();
-            loader.setController(controller);
-                      
+            loader.setController(controller);                      
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);
             modal_stage.initModality(Modality.APPLICATION_MODAL);    
+            
+            
             
             TablaOrdenes.setItems(entradas);
             TablaProductos.setItems(productos);
