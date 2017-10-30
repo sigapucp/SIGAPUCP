@@ -5,7 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
-import static com.sun.org.apache.xerces.internal.impl.dtd.XMLDTDLoader.LOCALE;
+
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
@@ -13,8 +13,6 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionPorcentaje;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -218,7 +216,7 @@ public class PromocionesController extends Controller{
         for( Promocion promocion : promociones){
             masterData.add(promocion);
         }
-        System.out.println(masterData.size());
+        //System.out.println(masterData.size());
         tabla_promociones.setEditable(false);
         columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("promocion_cod")));
         columna_tipo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
@@ -342,13 +340,27 @@ public class PromocionesController extends Controller{
             }           
             
             promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, codigo,id);
-            System.out.println(promocion_seleccionada);
+                                              
             promocion_seleccionada.saveIt();
-            Base.commitTransaction();
+            
+            System.out.println("---------------------------------");
+            System.out.println(promocion_seleccionada);
+            PromocionBonificacion pb = PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId(), "promocion_cod", promocion_seleccionada.get("promocion_cod"), "nr_comprar", (Integer)spCompro.getValue(), "nr_obtener",(Integer)spLlevo.getValue() );
+            
+            System.out.println(pb);
+            System.out.println("---------------------------------");
+            //System.out.println(PromocionBonificacion.findFirst("promocion_cod = ?", "PRMPRM"));
+            //promocionB.asignar_atributos(codigoPromo, (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
+            //promocionB.saveIt();
+            //promocion_seleccionada.add(promocionB);
+                                    
+            Base.commitTransaction();            
+            /*
+            //Base.commitTransaction();
             String id_padre = promocion_seleccionada.getString("promocion_id");
             System.out.println(id_padre);
             System.out.println("ahora hijos");
-            
+                        
             if (tipoPromo.equals("Por cantidad")){
                 PromocionCantidad promocionC = new PromocionCantidad();  
                 String id_llevar = "";
@@ -359,7 +371,7 @@ public class PromocionesController extends Controller{
                 }
                 promocionC.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue(), flag_categoria, txtFieCodigoProducto2.getText(),id_llevar);
                 promocionC.saveIt();
-                Base.commitTransaction();
+                //Base.commitTransaction();
             } else if (tipoPromo.equals("Por bonificación")){
                 System.out.println("CodigoPromoPadre "+ codigoPromo);
                 System.out.println("Padre: "+ id_padre);
@@ -368,25 +380,34 @@ public class PromocionesController extends Controller{
                 
                 PromocionBonificacion promocionB = new PromocionBonificacion();
                 promocionB.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
-                promocionB.saveIt();
-                Base.commitTransaction();
+                System.out.println("Promocion :  "+ promocionB);
+                if (promocionB.saveIt())
+                    System.out.println("Bien");
+                else
+                    System.out.println(promocionB.errors());
+                //Base.commitTransaction();
             } else {
                 PromocionPorcentaje promocionP = new PromocionPorcentaje();
                 String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();
                 promocionP.asignar_atributos(codigoPromo,id_padre , (Integer)spPorc.getValue(), concepto);
                 promocionP.saveIt();
-                Base.commitTransaction();
+                //Base.commitTransaction();
             }     
             
             
             infoController = new InformationAlertController();
             infoController.show("La promoción ha sido creado satisfactoriamente");
+            */
+            //limpiar_formulario(); 
+
         }
         catch(Exception e){
-            System.out.println(e);
-            Base.rollbackTransaction();
-        }        
+            Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, e);
+            //Base.rollbackTransaction();
+        }       
     }
+    
+    
     
     public void habilitar_formulario(){
         promo_formulario.setDisable(false);
