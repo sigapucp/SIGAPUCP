@@ -9,6 +9,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
+import javafx.stage.Stage;
 
 /**
  *
@@ -16,8 +17,17 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
  */
 public class ModalController extends Controller {
     public IEvent<abrirModalPromoArgs> abrirModal;
+    private Stage current_stage;
     
     public ModalController() {
         abrirModal = new Event<>();
+    }
+    
+    public void setCurrentStage(Stage stage) {
+        current_stage = stage;
+    }
+    
+    public Stage getCurrentStage() {
+        return current_stage;
     }
 }

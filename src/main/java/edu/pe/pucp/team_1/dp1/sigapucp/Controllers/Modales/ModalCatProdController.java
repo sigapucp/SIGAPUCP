@@ -5,11 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PromocionesController;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
 import java.io.IOException;
@@ -24,8 +20,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -48,7 +42,6 @@ public class ModalCatProdController extends ModalController {
     @FXML
     private TableColumn<CategoriaProducto, String> columna_descat;
 
-    
     private InformationAlertController infoController;
     private CategoriaProducto categoria_seleccionada;
     private List<CategoriaProducto> categorias;
@@ -110,7 +103,7 @@ public class ModalCatProdController extends ModalController {
         args.setId(idPromo);
         
         abrirModal.fire(this, args);
-        PromocionesController.modal_stage_cat.close();
+        getCurrentStage().close();
     }  
     
     public ModalCatProdController(){
@@ -118,8 +111,6 @@ public class ModalCatProdController extends ModalController {
         
         infoController = new InformationAlertController();
         categoria_seleccionada = null;
-        
-        
     }
     
     @Override
@@ -127,6 +118,6 @@ public class ModalCatProdController extends ModalController {
         // TODO
         categorias = null;
         categorias = CategoriaProducto.findAll();
-        cargar_tabla_index();        
-    }        
+        cargar_tabla_index();
+    }
 }

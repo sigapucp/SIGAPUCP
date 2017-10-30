@@ -132,166 +132,52 @@ public class PromocionesController extends Controller{
     @FXML private ModalCatProdController ModalCatProdController;
     private String codigo_promo;
     private String id_promo;
-    @FXML public static Stage modal_stage_tipo = new Stage();
-    @FXML public static Stage modal_stage_cat = new Stage();
     
     private void manejoDeModales(){
         botonTipo1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto1, "Tipo");
-//            try {
-//                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("/fxml/Ventas/Promociones/ModalTipoProd.fxml"));                
-//                AnchorPane contenido = (AnchorPane) loaderContenido.load();
-//                ModalTipoProdController controller = (ModalTipoProdController) loaderContenido.<Controller>getController();
-//                System.out.println(controller.abrirModal);
-//                controller.abrirModal.addHandler((sender,tipargs)->{
-//                    codigo_promo = tipargs.getCodigo();
-//                    System.out.println(codigo_promo);
-//                    id_promo = tipargs.getId();
-//                    System.out.println(id_promo);
-//                    txtFieCodigoProducto1.setText(codigo_promo);
-//                });  
-//                openModalTipoProd(contenido);
-//            } catch (Exception ex) {
-//                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto1);
         });
         botonTipo2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto2, "Tipo");
-//            try {                
-//                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("/fxml/Ventas/Promociones/ModalTipoProd.fxml"));                
-//                AnchorPane contenido = (AnchorPane) loaderContenido.load();
-//                ModalTipoProdController controller = (ModalTipoProdController) loaderContenido.<Controller>getController();
-//                System.out.println(controller);
-//                controller.abrirModal.addHandler((sender,tipargs)->{
-//                    codigo_promo = tipargs.getCodigo();
-//                    System.out.println(codigo_promo);
-//                    id_promo = tipargs.getId();
-//                    System.out.println(id_promo);
-//                    txtFieCodigoProducto2.setText(codigo_promo);
-//                });  
-//                openModalTipoProd(contenido);
-//            } catch (Exception ex) {
-//                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto2);
         });   
         botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto3, "Tipo");
-//            try {                
-//                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("/fxml/Ventas/Promociones/ModalTipoProd.fxml"));                
-//                AnchorPane contenido = (AnchorPane) loaderContenido.load();
-//                ModalTipoProdController controller = (ModalTipoProdController) loaderContenido.<Controller>getController();
-//                System.out.println(controller);
-//                controller.abrirModal.addHandler((sender,tipargs)->{
-//                    codigo_promo = tipargs.getCodigo();
-//                    System.out.println(codigo_promo);
-//                    id_promo = tipargs.getId();
-//                    System.out.println(id_promo);
-//                    txtFieCodigoProducto3.setText(codigo_promo);
-//                });  
-//                openModalTipoProd(contenido);
-//            } catch (Exception ex) {
-//                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto3);
         });   
         botonCategoria1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto1, "Categoria");
-//            try {                
-//                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("/fxml/Ventas/Promociones/ModalCatProd.fxml"));                
-//                AnchorPane contenido = (AnchorPane) loaderContenido.load();
-//                ModalCatProdController controller = (ModalCatProdController) loaderContenido.<Controller>getController();
-//                System.out.println(controller);
-//                controller.abrirModal.addHandler((sender,tipargs)->{
-//                    codigo_promo = tipargs.getCodigo();
-//                    System.out.println(codigo_promo);
-//                    id_promo = tipargs.getId();
-//                    System.out.println(id_promo);
-//                    txtFieCodigoProducto1.setText(codigo_promo);
-//                });  
-//                openModalTipoCat(contenido);
-//            } catch (Exception ex) {
-//                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto1);
         }); 
         botonCategoria2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto2, "Categoria");
-//            try {
-//                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("/fxml/Ventas/Promociones/ModalCatProd.fxml"));                
-//                AnchorPane contenido = (AnchorPane) loaderContenido.load();
-//                ModalCatProdController controller = (ModalCatProdController) loaderContenido.<Controller>getController();
-//                System.out.println(controller);
-//                controller.abrirModal.addHandler((sender,tipargs)->{
-//                    codigo_promo = tipargs.getCodigo();
-//                    System.out.println(codigo_promo);
-//                    id_promo = tipargs.getId();
-//                    System.out.println(id_promo);
-//                    txtFieCodigoProducto2.setText(codigo_promo);
-//                });  
-//                openModalTipoCat(contenido);
-//            } catch (Exception ex) {
-//                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto2);
         }); 
         botonCategoria3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto3, "Categoria");
-//            try {
-//                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("/fxml/Ventas/Promociones/ModalCatProd.fxml"));                
-//                AnchorPane contenido = (AnchorPane) loaderContenido.load();
-//                ModalCatProdController controller = (ModalCatProdController) loaderContenido.<Controller>getController();
-//                System.out.println(controller);
-//                controller.abrirModal.addHandler((sender,tipargs)->{
-//                    codigo_promo = tipargs.getCodigo();
-//                    System.out.println(codigo_promo);
-//                    id_promo = tipargs.getId();
-//                    txtFieCodigoProducto3.setText(codigo_promo);
-//                });  
-//                openModalTipoCat(contenido);
-//            } catch (Exception ex) {
-//                Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto3);
         }); 
     }
     
-    private void openModalEventHandler(String modalPath, TextField txtField, String typeModal) {
+    private void openModalEventHandler(String modalPath, TextField txtField) {
         try {
+            Stage currentStage = new Stage();
             FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource(modalPath));
             AnchorPane contenido = (AnchorPane) loaderContenido.load();
             ModalController controller = loaderContenido.<ModalController>getController();
+            controller.setCurrentStage(currentStage);
             controller.abrirModal.addHandler((sender,tipargs)->{
                 codigo_promo = tipargs.getCodigo();
                 id_promo = tipargs.getId();
                 txtField.setText(codigo_promo);
             });
-            switch(typeModal) {
-                case "Tipo":
-                    openModalTipoProd(contenido);
-                    break;
-                case "Categoria":
-                    openModalTipoCat(contenido);
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception ex) {
+            openModal(currentStage, contenido);
+        } catch (IOException ex) {
             Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private void openModalTipoProd(AnchorPane contenido) {
-        modal_stage_tipo = new Stage();
+    private void openModal(Stage currentStage, AnchorPane contenido) {
         Scene modal_content_scene = new Scene(contenido);                
-        modal_stage_tipo.setScene(modal_content_scene);
-        modal_stage_tipo.initModality(Modality.APPLICATION_MODAL);
-        modal_stage_tipo.setScene(modal_content_scene);
-        modal_stage_tipo.showAndWait();
-    }
-    
-    private void openModalTipoCat(AnchorPane contenido) {
-        modal_stage_cat = new Stage();
-        Scene modal_content_scene = new Scene(contenido);
-        modal_stage_cat.setScene(modal_content_scene);
-        modal_stage_cat.initModality(Modality.APPLICATION_MODAL);
-        modal_stage_cat.setScene(modal_content_scene);
-        modal_stage_cat.showAndWait();
+        currentStage.setScene(modal_content_scene);
+        currentStage.initModality(Modality.APPLICATION_MODAL);
+        currentStage.setScene(modal_content_scene);
+        currentStage.showAndWait();
     }
     
     @Override

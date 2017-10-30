@@ -5,11 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PromocionesController;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
 import java.io.IOException;
@@ -111,7 +107,7 @@ public class ModalTipoProdController extends ModalController {
         args.setId(id);
         
         abrirModal.fire(this, args);
-        PromocionesController.modal_stage_tipo.close();
+        getCurrentStage().close();
     }  
     
     public ModalTipoProdController(){
