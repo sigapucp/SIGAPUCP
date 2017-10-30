@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
@@ -19,6 +20,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,6 +29,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -38,6 +42,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /*
@@ -112,16 +118,23 @@ public class PromocionesController extends Controller{
 
     private Boolean crear_nuevo;
     private List<Promocion> promociones;   
-    private Promocion promocion_seleccionado;
+    private Promocion promocion_seleccionada;
     private final ObservableList<Promocion> masterData = FXCollections.observableArrayList();
     private InformationAlertController infoController;
     private Boolean es_categoria_obtener;
+    public TipoProducto tipo;
+    private Controller activeController;
+    
+    @FXML private ModalTipoProdController ModalTipoProdController;
+    @FXML private ModalCatProdController ModalCatProdController;
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        //infoController = new InformationAlertController();
         inhabilitar_formulario();
-        promocion_seleccionado = null;
+        promocion_seleccionada = null;
         promociones = null;
         es_categoria_obtener = false;
         promociones = Promocion.findAll();
@@ -132,24 +145,28 @@ public class PromocionesController extends Controller{
         comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
         comboBoxTipoPromo.setOnAction(e -> manejarcomboBoxTipoPromo());
         comboxPrioridad.getItems().addAll("1", "2","3");
-        /*botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(""));
-            Parent parent = loader.load();
-            Controller controller = loader.getController();
-            controller.abrirModalEvent.addHandler((sender, args) -> {
-                args.getText();
-                texto3.setText(txto);
-            })
-            // datosTexto3
-            // abrirmodal;
-            /*
-                public modalHumo() {
-                    this.sibling = sibling;
-                    Procesa el humo
-                    this.sibling.setDatoSeleccionado(producto);
-                }
-            */
-        //});
+        ModalTipoProdController.abrirModal.addHandler((sender, args) -> {
+            try {
+                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("../fxml/Ventas/Promociones/ModalTipoProd.fxml"));
+                System.out.println("Hola");
+                System.out.println(loaderContenido);
+                Controller controller = loaderContenido.<Controller>getController();
+                loaderContenido.setController(controller);
+                
+            } catch (Exception ex) {
+                System.out.println("Error");
+            }
+        });    
+        ModalCatProdController.abrirModal.addHandler((sender, args) -> {
+            try {
+                FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource("../fxml/Ventas/Promociones/ModalCatProd.fxml"));
+                Controller controller = loaderContenido.<Controller>getController();
+                loaderContenido.setController(controller);
+                
+            } catch (Exception ex) {
+                System.out.println("Error");
+            }
+        }); 
     }    
     
     //Tabla de promociones
@@ -217,14 +234,26 @@ public class PromocionesController extends Controller{
         }
     }
     
+    //Botón editar
+    @FXML
+    private void visualizar_promocion(ActionEvent event) {                   
+//        if(!PreCambiarAccion()) return;
+        crear_nuevo = false;
+        promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
+        if(promocion_seleccionada == null) return;        
+        //setPromocionVisible(promocion_seleccionada);                        
+    }
+    
+    
+    
     //Botón guardar
     @Override
     public void guardar() {
         if (crear_nuevo){
             crear_promocion();
         }else{
-            if (promocion_seleccionado == null) return;
-            //editar_promocion(promocion_seleccionado);
+            if (promocion_seleccionada == null) return;
+            //editar_promocion(promocion_seleccionada);
         }
         promociones = Promocion.findAll();
         cargar_tabla_index();
@@ -240,7 +269,7 @@ public class PromocionesController extends Controller{
     public void crear_promocion(){
         try{
             Base.openTransaction();  
-            
+            promocion_seleccionada = null;
             //Agregando las promociones a las tablas hijas por tipo de promoción
             String codigoPromo = txtFieCodigoPromo.getText();
             String tipoPromo = obtener_tipo_promo();
@@ -266,8 +295,8 @@ public class PromocionesController extends Controller{
             String fechaFin = dpFecha2.getValue().toString();
             String prioridad = obtener_prioridad();
             String estado = "ACTIVO"; //obtener_estado();
-            promocion_seleccionado.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, txtFieCodigoProducto1.getText());
-            promocion_seleccionado.saveIt();
+            promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, txtFieCodigoProducto1.getText());
+            promocion_seleccionada.saveIt();
             Base.commitTransaction();
             infoController.show("La promoción ha sido creado satisfactoriamente"); 
         }

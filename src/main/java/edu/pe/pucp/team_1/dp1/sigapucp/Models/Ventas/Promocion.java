@@ -17,7 +17,7 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("promocion_id")
 public class Promocion extends Model{
     public void asignar_atributos(String codigo,String fechaIni,String fechaFin,String prioridad,String es_categoria,String estado,String tipoPromo,String codTipCat){
-        this.set("nombre", codigo );
+        this.set("promocion_cod", codigo );
         this.set("fecha_inicio", fechaIni);
         this.set("fecha_fin", fechaFin);
         int prioridad1 = (prioridad.equals("")) ? 1 : Integer.parseInt(prioridad);

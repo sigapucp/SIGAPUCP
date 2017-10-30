@@ -7,7 +7,10 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -17,10 +20,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -50,7 +56,10 @@ public class ModalTipoProdController extends Controller {
     private TipoProducto tipo_seleccionado;
     private List<TipoProducto> tipos;
     private final ObservableList<TipoProducto> masterData = FXCollections.observableArrayList();
+    private Stage stage;
     
+    
+    public IEvent<abrirModalPromoArgs> abrirModal;
     
     public void limpiar_tabla_index(){
         tabla_tipPro.getItems().clear();
@@ -94,19 +103,43 @@ public class ModalTipoProdController extends Controller {
         }
     }
     
+    @FXML
+    private void agregarDatosTipo(ActionEvent event) {  
+        tipo_seleccionado = tabla_tipPro.getSelectionModel().getSelectedItem();
+        if(tipo_seleccionado == null) return; 
+        
+        String codPromo = tipo_seleccionado.getString("promocion_cod");
+        String idPromo = tipo_seleccionado.getString("promocion_id");
+        
+        abrirModalPromoArgs args = new abrirModalPromoArgs();
+        args.setCodigoPromo(codPromo);
+        args.setPromoId(idPromo);
+        
+        abrirModal.fire(this, args);
+        stage.close();
+    }  
+    
     public ModalTipoProdController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         
-        infoController = new InformationAlertController();
+        //infoController = new InformationAlertController();
         tipo_seleccionado = null;
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("SIGAPUCP");
+        stage.show();
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        // TODO        
         tipos = null;
         tipos = TipoProducto.findAll();
         cargar_tabla_index();
+        abrirModal = new Event<>();
     }    
+    
+    public void show(){
+        stage.showAndWait();
+    }
     
 }

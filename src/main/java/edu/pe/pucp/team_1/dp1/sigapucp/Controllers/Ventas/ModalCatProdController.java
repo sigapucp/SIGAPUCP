@@ -7,7 +7,10 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -17,9 +20,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -48,6 +54,8 @@ public class ModalCatProdController extends Controller {
     private List<CategoriaProducto> categorias;
     private final ObservableList<CategoriaProducto> masterData = FXCollections.observableArrayList();
     
+    private Stage stage;
+    public IEvent<abrirModalPromoArgs> abrirModal;
     
     public void limpiar_tabla_index(){
         tabla_catProd.getItems().clear();
@@ -91,11 +99,31 @@ public class ModalCatProdController extends Controller {
         }
     }
     
+    @FXML
+    private void agregarDatosTipo(ActionEvent event) {   
+        categoria_seleccionada = tabla_catProd.getSelectionModel().getSelectedItem();
+        if(categoria_seleccionada == null) return; 
+        
+        String codPromo = categoria_seleccionada.getString("promocion_cod");
+        String idPromo = categoria_seleccionada.getString("promocion_id");
+        
+        abrirModalPromoArgs args = new abrirModalPromoArgs();
+        args.setCodigoPromo(codPromo);
+        args.setPromoId(idPromo);
+        
+        abrirModal.fire(this, args);
+        stage.close();
+    }  
+    
     public ModalCatProdController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         
         infoController = new InformationAlertController();
         categoria_seleccionada = null;
+        
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("SIGAPUCP");
+        stage.show();
     }
     
     @Override
@@ -104,6 +132,12 @@ public class ModalCatProdController extends Controller {
         categorias = null;
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
+        abrirModal = new Event<>();
+        
     }    
+    
+    public void show(){
+        stage.showAndWait();
+    }
     
 }
