@@ -5,6 +5,9 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,16 +18,26 @@ public class SelectableGrid extends AnchorPane  {
     private int num_columns;
     private int grid_width;
     private int grid_heigth;
-    private List<GridTile> tiles = new ArrayList<>();
-    private List<Integer> active_tiles = new ArrayList<>();
-    private List<Integer> temp_tiles = new ArrayList<>();
-    private List<Integer> saved_tiles = new ArrayList<>();
+    private List<GridTile> tiles;
+    private List<Integer> active_tiles;
+    private List<Integer> temp_tiles;
+    private List<Integer> saved_tiles;
+    private Boolean directionX;
+    private Boolean directionY;
+    private IEvent<createRackArgs> createRackEvent;
     
     public SelectableGrid(int rows, int columns, int width, int height) {
         num_rows = rows;
         num_columns = columns;
         grid_width = width;
         grid_heigth = height;
+        tiles = new ArrayList<>();
+        active_tiles = new ArrayList<>();
+        temp_tiles = new ArrayList<>();
+        saved_tiles = new ArrayList<>();
+        directionX = false;
+        directionY = false;
+        createRackEvent = new Event<>();
         
         initializeTiles();
     }
@@ -40,7 +53,7 @@ public class SelectableGrid extends AnchorPane  {
                 tile.setTranslateY(i * aspect_ratio_heigth);
                 tile.getActiveTileEvent().addHandler((sender, args) -> {
                     int index = num_columns*args.getX_cord() + args.getY_cord();
-                    if (!active_tiles.contains(index)) active_tiles.add(index);
+                    if (!active_tiles.contains(index) && !saved_tiles.contains(index)) active_tiles.add(index);
                 });
                 tile.getReleaseEvent().addHandler((sender, args) -> {
                     if (checkDirectionOfActiveTiles(args.getX_cord(), args.getY_cord())) saveActiveTiles();
@@ -62,12 +75,25 @@ public class SelectableGrid extends AnchorPane  {
             conditionY.set(conditionY.get() && y_init == tile.getYCord());
         });
         
+        directionX = conditionX.get();
+        directionY = conditionY.get();
+        
         return conditionX.get() || conditionY.get();
     }
     
-    private void saveActiveTiles() {
-        saved_tiles.addAll(active_tiles);
+    public void saveActiveTiles() {
+        createRackArgs args = new createRackArgs();
+
+        temp_tiles.addAll(active_tiles);
+
+        args.setX_ancla1(tiles.get(active_tiles.get(0)).getXCord());
+        args.setY_ancla1(tiles.get(active_tiles.get(0)).getYCord());
+        args.setX_ancla2(tiles.get(active_tiles.get(active_tiles.size())).getXCord());
+        args.setY_ancla2(tiles.get(active_tiles.get(active_tiles.size())).getYCord());
+        
+        
         active_tiles.clear();
+        createRackEvent.fire(this, args);
     }
     
     private void clearActiveTiles() {

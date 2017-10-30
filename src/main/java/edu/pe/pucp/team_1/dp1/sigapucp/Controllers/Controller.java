@@ -48,7 +48,7 @@ public class Controller implements Initializable {
     public void setUsuarioActual(Usuario usuario,List<AccionxRol> permisos)
     {
         usuarioActual = usuario;
-        permisosActual = permisos;        
+        permisosActual = permisos;
     }
     
     public Menu.MENU getMenu()

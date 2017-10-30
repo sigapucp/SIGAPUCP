@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import org.javalite.activejdbc.Base;
 
 /**
  * FXML Controller class
@@ -26,6 +27,8 @@ public class AlmacenesController extends Controller{
     private AnchorPane contenedor_grilla;
 
     public AlmacenesController() {
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        
         grid = new SelectableGrid(10, 10, 400, 400);
     }
     
