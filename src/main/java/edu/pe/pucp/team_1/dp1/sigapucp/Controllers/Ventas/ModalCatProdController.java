@@ -53,7 +53,7 @@ public class ModalCatProdController extends Controller {
     private List<CategoriaProducto> categorias;
     private final ObservableList<CategoriaProducto> masterData = FXCollections.observableArrayList();
     
-    private Stage stage;
+    
     public IEvent<abrirModalPromoArgs> abrirModal;
     
     public void limpiar_tabla_index(){
@@ -103,15 +103,15 @@ public class ModalCatProdController extends Controller {
         categoria_seleccionada = tabla_catProd.getSelectionModel().getSelectedItem();
         if(categoria_seleccionada == null) return; 
         
-        String codPromo = categoria_seleccionada.getString("promocion_cod");
-        String idPromo = categoria_seleccionada.getString("promocion_id");
+        String codPromo = categoria_seleccionada.getString("categoria_code");
+        String idPromo = categoria_seleccionada.getString("categoria_id");
         
         abrirModalPromoArgs args = new abrirModalPromoArgs();
-        args.setCodigoPromo(codPromo);
-        args.setPromoId(idPromo);
+        args.setCodigo(codPromo);
+        args.setId(idPromo);
         
         abrirModal.fire(this, args);
-        stage.close();
+        PromocionesController.modal_stage_cat.close();
     }  
     
     public ModalCatProdController(){
@@ -120,9 +120,7 @@ public class ModalCatProdController extends Controller {
         infoController = new InformationAlertController();
         categoria_seleccionada = null;
         
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("SIGAPUCP");
-        stage.show();
+        
     }
     
     @Override
@@ -133,10 +131,5 @@ public class ModalCatProdController extends Controller {
         cargar_tabla_index();
         abrirModal = new Event<>();
         
-    }    
-    
-    public void show(){
-        stage.showAndWait();
-    }
-    
+    }        
 }

@@ -20,13 +20,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -56,7 +53,6 @@ public class ModalTipoProdController extends Controller {
     private TipoProducto tipo_seleccionado;
     private List<TipoProducto> tipos;
     private final ObservableList<TipoProducto> masterData = FXCollections.observableArrayList();
-    private Stage stage;
     
     
     public IEvent<abrirModalPromoArgs> abrirModal;
@@ -106,17 +102,18 @@ public class ModalTipoProdController extends Controller {
     @FXML
     private void agregarDatosTipo(ActionEvent event) {  
         tipo_seleccionado = tabla_tipPro.getSelectionModel().getSelectedItem();
+        System.out.println(tipo_seleccionado);
         if(tipo_seleccionado == null) return; 
         
-        String codPromo = tipo_seleccionado.getString("promocion_cod");
-        String idPromo = tipo_seleccionado.getString("promocion_id");
+        String codigo = tipo_seleccionado.getString("tipo_cod");
+        String id = tipo_seleccionado.getString("tipo_id");
         
         abrirModalPromoArgs args = new abrirModalPromoArgs();
-        args.setCodigoPromo(codPromo);
-        args.setPromoId(idPromo);
+        args.setCodigo(codigo);
+        args.setId(id);
         
         abrirModal.fire(this, args);
-        stage.close();
+        PromocionesController.modal_stage_tipo.close();
     }  
     
     public ModalTipoProdController(){
@@ -124,9 +121,6 @@ public class ModalTipoProdController extends Controller {
         
         //infoController = new InformationAlertController();
         tipo_seleccionado = null;
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("SIGAPUCP");
-        stage.show();
     }
     
     @Override
@@ -136,10 +130,5 @@ public class ModalTipoProdController extends Controller {
         tipos = TipoProducto.findAll();
         cargar_tabla_index();
         abrirModal = new Event<>();
-    }    
-    
-    public void show(){
-        stage.showAndWait();
-    }
-    
+    }        
 }
