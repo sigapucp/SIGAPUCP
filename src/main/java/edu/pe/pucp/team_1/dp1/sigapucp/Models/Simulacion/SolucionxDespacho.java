@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
 
-import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
  * @author Jauma
  */
-@Table("ProductosxNotasCredito")
-public class ProductoxNotaCredito extends Model{
+@Table("SolucionesxDespachos")
+public class SolucionxDespacho {
     
 }

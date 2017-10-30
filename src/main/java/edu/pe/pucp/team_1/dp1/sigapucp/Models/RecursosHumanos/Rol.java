@@ -18,4 +18,10 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("rol_id")
 public class Rol extends Model{
     
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
+    }
+    
 }
