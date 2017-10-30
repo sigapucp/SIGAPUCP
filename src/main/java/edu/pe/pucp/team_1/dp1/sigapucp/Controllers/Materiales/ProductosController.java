@@ -140,8 +140,7 @@ public class ProductosController extends Controller {
      
     //CREACION - EDICION
     //---------------------------------------------------------//
-    private boolean crear_nuevo = false;
-    private List<TipoProducto> tempProductos;    
+    private boolean crear_nuevo = false;   
     
     private final ObservableList<TipoProducto> productos = FXCollections.observableArrayList();     
     private final ObservableList<CategoriaProducto> categorias = FXCollections.observableArrayList();         
@@ -153,7 +152,7 @@ public class ProductosController extends Controller {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         
         
-        tempProductos = TipoProducto.findAll();        
+        List<TipoProducto> tempProductos = TipoProducto.findAll();        
         for (TipoProducto producto : tempProductos) {
             productos.add(producto);
         }                    
@@ -196,7 +195,7 @@ public class ProductosController extends Controller {
         String categoria = categoriaBuscar.getSelectionModel().getSelectedItem();
         String estado = estadoBuscar.getSelectionModel().getSelectedItem();        
         
-        tempProductos = TipoProducto.findAll();
+         List<TipoProducto> tempProductos = TipoProducto.findAll();
         try{
             
             if(nombre!=null&&!nombre.isEmpty())

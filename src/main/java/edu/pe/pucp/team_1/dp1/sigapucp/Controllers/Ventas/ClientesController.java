@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,6 +27,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -90,9 +92,9 @@ public class ClientesController extends Controller{
     
     public ClientesController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-                          
         
         infoController = new InformationAlertController();
+        
                 
         cliente_seleccioando = null;
         crear_nuevo = false;        
@@ -110,6 +112,7 @@ public class ClientesController extends Controller{
             Base.openTransaction();  
             Cliente nuevo_cliente = new Cliente();
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
+            nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_cliente.saveIt();
             Base.commitTransaction();
             infoController.show("El cliente ha sido creado satisfactoriamente"); 
@@ -122,12 +125,15 @@ public class ClientesController extends Controller{
     
     public void editar_cliente(Cliente cliente){
         try{
+            Base.openTransaction();  
             cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
+            cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             cliente.saveIt();
+            Base.commitTransaction();
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
-            //Base.rollbackTransaction();
+            Base.rollbackTransaction();
         }
     }
     
@@ -222,6 +228,12 @@ public class ClientesController extends Controller{
         columna_dni.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("dni")));
         columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
         tabla_clientes.setItems(masterData);
+    }
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Clientes;
     }
     
     @Override
