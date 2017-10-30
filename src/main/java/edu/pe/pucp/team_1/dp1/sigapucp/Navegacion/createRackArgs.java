@@ -19,7 +19,6 @@ public class createRackArgs extends EventArgs {
     private int y_ancla1;
     private int y_ancla2;
     private double longitud;
-    private double altura;
     private Boolean is_uniforme;
 
     /**
@@ -90,20 +89,6 @@ public class createRackArgs extends EventArgs {
      */
     public void setLongitud(double longitud) {
         this.longitud = longitud;
-    }
-
-    /**
-     * @return the altura
-     */
-    public double getAltura() {
-        return altura;
-    }
-
-    /**
-     * @param altura the altura to set
-     */
-    public void setAltura(double altura) {
-        this.altura = altura;
     }
 
     /**

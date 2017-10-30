@@ -81,16 +81,26 @@ public class SelectableGrid extends AnchorPane  {
         return conditionX.get() || conditionY.get();
     }
     
-    public void saveActiveTiles() {
+    private void saveActiveTiles() {
         createRackArgs args = new createRackArgs();
 
         temp_tiles.addAll(active_tiles);
-
-        args.setX_ancla1(tiles.get(active_tiles.get(0)).getXCord());
-        args.setY_ancla1(tiles.get(active_tiles.get(0)).getYCord());
-        args.setX_ancla2(tiles.get(active_tiles.get(active_tiles.size())).getXCord());
-        args.setY_ancla2(tiles.get(active_tiles.get(active_tiles.size())).getYCord());
         
+        int x_ancla1 = tiles.get(active_tiles.get(0)).getXCord();
+        int x_ancla2 = tiles.get(active_tiles.get(active_tiles.size() - 1)).getXCord();
+        int y_ancla1 = tiles.get(active_tiles.get(0)).getYCord();
+        int y_ancla2 = tiles.get(active_tiles.get(active_tiles.size() - 1)).getYCord();
+        
+        args.setX_ancla1(x_ancla1);
+        args.setY_ancla1(y_ancla1);
+        args.setX_ancla2(x_ancla2);
+        args.setY_ancla2(y_ancla2);
+        double largo = directionX ? (y_ancla2 - y_ancla1) : (directionY ? (x_ancla2 - x_ancla1) : 0);
+        System.out.println(directionX);
+        System.out.println(directionY);
+        System.out.println(largo);
+        args.setLongitud(largo);
+        args.setIs_uniforme(true);
         
         active_tiles.clear();
         createRackEvent.fire(this, args);
@@ -102,7 +112,23 @@ public class SelectableGrid extends AnchorPane  {
         });
         
         active_tiles.clear();
+    }
+    
+    public void clearCurrentActiveTiles() {
+        temp_tiles.forEach((i) -> {
+            tiles.get(i).clearTile();
+        });
         
+        temp_tiles.clear();
+    }
+    
+    public IEvent<createRackArgs> getCreateRackEvent() {
+        return createRackEvent;
+    }
+    
+    public void clearAndSaveTempTiles() {
+        saved_tiles.addAll(temp_tiles);
+        temp_tiles.clear();
     }
     
     public void setNumRow(int rows) {
