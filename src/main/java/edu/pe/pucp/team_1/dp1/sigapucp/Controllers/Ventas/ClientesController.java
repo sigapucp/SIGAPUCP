@@ -272,7 +272,7 @@ public class ClientesController extends Controller{
         try {                        
         } catch (Exception e) {
             infoController.show("El Usuario contiene errores : " + e);                    
-        }        
+        }
     }
     
     public void llenar_estado_social_busqueda(){
