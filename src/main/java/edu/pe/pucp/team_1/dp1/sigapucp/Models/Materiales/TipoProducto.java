@@ -31,7 +31,7 @@ public class TipoProducto extends Model{
         set("nombre",nombre);
         set("pericible",perecible);
         set("descripcion",descripcion);
-        set("estado","activo");
+        set("estado",ESTADO.ACTIVO.name());
         set("longitud",longitud);
         set("ancho",ancho);
         set("alto",alto);

@@ -129,7 +129,7 @@ public class AgregarProductosController implements Initializable {
             infoController.show("No ha seleccionado ningun producto");
             return;
         }
-        devolverProductoEvent.fire(this, new agregarProductoArgs(null));
+        devolverProductoEvent.fire(this, new agregarProductoArgs(ProductoBusqueda));
          Stage stage = (Stage) agregarProductoButtom.getScene().getWindow();    
         stage.close();
     }

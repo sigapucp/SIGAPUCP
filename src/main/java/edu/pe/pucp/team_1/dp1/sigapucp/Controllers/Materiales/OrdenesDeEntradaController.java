@@ -15,13 +15,16 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEventHandler;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,7 +120,7 @@ public class OrdenesDeEntradaController extends Controller {
     @FXML
     private TableColumn<OrdenEntradaxProducto, String> ColumnaProductoDescripcion;
     @FXML
-    private AnchorPane BusquedaFecha;
+    private DatePicker BusquedaFecha;
     @FXML 
     static Stage modal_stage = new Stage();
     
@@ -139,9 +142,10 @@ public class OrdenesDeEntradaController extends Controller {
     AutoCompletionBinding<String> autoCompletionBindingCliente;
     AutoCompletionBinding<String> autoCompletionBindingProveedor;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
-    TipoProducto productoDevuelto = new TipoProducto();
+    TipoProducto productoDevuelto = null;
+    Proveedor proveedorDevuelto = null;
+    Cliente clienteDevuelto = null;
     
-
     public OrdenesDeEntradaController()
     {
          if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -160,52 +164,288 @@ public class OrdenesDeEntradaController extends Controller {
     }
     
     @FXML
-    private void visualizarOrden(ActionEvent event) {        
+    private void visualizarOrden(ActionEvent event) {  
+        try {            
+            entradaSelecionada = TablaOrdenes.getSelectionModel().getSelectedItem();
+            if(entradaSelecionada == null)
+            {
+                infoController.show("No ha seleccionado ninguna Orden");
+                return;
+            }
+
+            VerFecha.setValue(entradaSelecionada.getDate("fecha_emision").toLocalDate());
+            VerDescripcion.setText(entradaSelecionada.getString("descripcion"));
+            VerTipo.getSelectionModel().select(entradaSelecionada.getString("tipo"));
+
+            productos.clear();            
+            
+            List<OrdenEntradaxProducto> ordenesxproductos = OrdenEntradaxProducto.where("orden_entrada_id = ?", entradaSelecionada.getId());
+            productos.addAll(ordenesxproductos);
+        } catch (Exception e) {
+            infoController.show("Error en Entrada Seleccionada");
+        }                        
     }
 
     @FXML
     private void buscarOrden(ActionEvent event) {
+        String cod = BusquedaCodigo.getText();
+        String estado = BusquedaEstado.getSelectionModel().getSelectedItem();
+        LocalDate fecha = BusquedaFecha.getValue();
+        String tipo = BusquedaTipo.getSelectionModel().getSelectedItem();
+                
+        List<OrdenEntrada> tempOrdenes = OrdenEntrada.findAll();
+        
+        
+        if(cod!=null&&!cod.isEmpty())
+        {            
+            tempOrdenes = tempOrdenes.stream().filter(p -> p.getString("orden_entrada_cod").equals(cod)).collect(Collectors.toList());
+        }
+
+        if(estado!=null&&!estado.isEmpty())
+        {                
+            tempOrdenes = tempOrdenes.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
+        }
+        
+        if(tipo!=null&&!tipo.isEmpty())
+        {                
+            tempOrdenes = tempOrdenes.stream().filter(p -> p.get("tipo").equals(estado)).collect(Collectors.toList());
+        }
+        
+        if(fecha!=null)
+        {                
+            tempOrdenes = tempOrdenes.stream().filter(p -> p.get("fecha_emision").equals(Date.valueOf(fecha))).collect(Collectors.toList());
+        }        
+        RefrescarTabla(tempOrdenes);
     }
 
     @FXML
     private void agregarProducto(ActionEvent event) {
+        if(productoDevuelto==null)
+        {
+            infoController.show("No ha seleccionado ningun producto");
+        }
+        
+        for(OrdenEntradaxProducto producto:productos)
+        {
+            if(producto.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
+            {
+                Integer cantidad = producto.getInteger("cantidad") + verCantidad.getValue();
+                producto.set("cantidad",cantidad);
+                TablaProductos.getColumns().get(0).setVisible(false);
+                TablaProductos.getColumns().get(0).setVisible(true);
+                return;
+            }
+        }
+        
+        OrdenEntradaxProducto ordenxproducto = new OrdenEntradaxProducto();
+        ordenxproducto.set("tipo_id",productoDevuelto.getId());
+        ordenxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));
+        ordenxproducto.set("estado",productoDevuelto.get("estado"));
+        ordenxproducto.set("cantidad",verCantidad.getValue());                        
+        productos.add(ordenxproducto);
     }
 
     @FXML
     private void eliminarProducto(ActionEvent event) {
+        OrdenEntradaxProducto ordenSeleccionada = TablaProductos.getSelectionModel().getSelectedItem();
+        if(ordenSeleccionada==null)
+        {
+            infoController.show("No ha seleccionado ninguna Orden");
+            return;
+        } 
+        
+        String estado = entradaSelecionada.getString("estado");
+        if(!ordenSeleccionada.isNew()&&(estado.equals(OrdenEntrada.ESTADO.Parcial.name())||estado.equals(OrdenEntrada.ESTADO.Completa.name())))
+        {
+            infoController.show("No puede eliminar producto ya que este ya se encuentra en almacen. Debera utilizar una Orden de Salida");
+            return;
+        }
+        productos.remove(ordenSeleccionada);      
+    }    
+    
+    @FXML
+    private void buscarProducto(ActionEvent event) {
         modal_stage.showAndWait();
+        if(productoDevuelto==null) return;        
+        VerProducto.setText(productoDevuelto.getString("nombre"));
     }
 
     /**
      * Initializes the controller class.
      */
     
-    private void limpiar_formulario()
+    private void crear_orden()
     {
-        entradas.clear();
+        try {            
+            Base.openTransaction();               
+            String tipo = VerTipo.getSelectionModel().getSelectedItem();
+            Date fecha = Date.valueOf(VerFecha.getValue());
+            String descripcion = VerDescripcion.getText();                       
+            if(tipo.equals(OrdenEntrada.TIPO.Compra.name())&&productoDevuelto==null)
+            {
+                infoController.show("Debe de especificar el proveedor");
+                return;
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name())&&clienteDevuelto==null)
+            {
+                infoController.show("Debe de especificar el cliente");
+                return;
+            }                                                          
+            OrdenEntrada orden = new OrdenEntrada();            
+            orden.set("tipo",tipo);
+            orden.setDate("fecha_emision",fecha);
+            orden.set("descripcion",descripcion);
+            String codInicial = "DEF";
+            
+            if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
+            {
+                codInicial = "CPR";
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+            {
+                codInicial = "DEV";
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Encuentro.name()))
+            {
+                codInicial = "ENC";
+                
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Otras.name()))
+            {
+                codInicial = "OTR";                
+            }
+                        
+            String cod = (codInicial + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenesentrada_orden_entrada_id_seq")))) + 1));
+                       
+            orden.set("orden_entrada_cod",cod);
+            orden.set("estado",OrdenEntrada.ESTADO.Pendiente.name());
+            orden.set("last_user_change",usuarioActual.getString("usuario_cod"));            
+            orden.saveIt();
+            
+            set_productos(orden);
+            
+            infoController.show("La orden ha sido creada exitosamente");
+            Base.commitTransaction();              
+        } catch (Exception e) {
+            infoController.show("La orden contiene errores : " + e);        
+            Base.rollbackTransaction();
+        }
+    }
+    
+     public void editar_orden(OrdenEntrada orden){
+        try{
+            Base.openTransaction();   
+            
+            String tipo = VerTipo.getSelectionModel().getSelectedItem();
+            Date fecha = Date.valueOf(VerFecha.getValue());
+            String descripcion = VerDescripcion.getText();                       
+            if(tipo.equals(OrdenEntrada.TIPO.Compra.name())&&productoDevuelto==null)
+            {
+                infoController.show("Debe de especificar el proveedor");
+                return;
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name())&&clienteDevuelto==null)
+            {
+                infoController.show("Debe de especificar el cliente");
+                return;
+            }                                                                          
+            orden.set("tipo",tipo);
+            orden.setDate("fecha_emision",fecha);
+            orden.set("descripcion",descripcion);
+            String codInicial = "DEF";
+            
+            if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
+            {
+                codInicial = "CPR";
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+            {
+                codInicial = "DEV";
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Encuentro.name()))
+            {
+                codInicial = "ENC";
+                
+            }            
+            if(tipo.equals(OrdenEntrada.TIPO.Otras.name()))
+            {
+                codInicial = "OTR";                
+            }
+                        
+            String cod =  orden.getString("orden_entrada_id");
+                                   
+            orden.set("estado",OrdenEntrada.ESTADO.Pendiente.name());
+            orden.set("last_user_change",usuarioActual.getString("usuario_cod"));            
+            orden.saveIt();
+            
+            set_productos(orden);            
+            
+            Base.commitTransaction();                         
+            infoController.show("La Orden ha sido editada satisfactoriamente"); 
+            limpiar_formulario();
+        }
+        catch(Exception e){
+            infoController.show("La orden contiene errores : " + e);        
+            Base.rollbackTransaction();
+        }
+    }
+     
+    private void set_productos(OrdenEntrada orden) throws Exception
+    {      
+        List<OrdenEntradaxProducto> ordenesxproductosGuardados = OrdenEntradaxProducto.where("orden_entrada_id = ?", orden.getId());
+        for(OrdenEntradaxProducto ordenxproducto:productos)
+        {
+            if(ordenxproducto.isNew())
+            {
+                ordenxproducto.set("orden_entrada_id",orden.getId());
+                ordenxproducto.set("orden_entrada_cod",orden.get("orden_entrada_cod"));
+            }
+            ordenxproducto.saveIt();
+        }                  
+        if(ordenesxproductosGuardados == null) return;
+        List<OrdenEntradaxProducto> ordenesProductosDelete = ordenesxproductosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+                y.getInteger("orden_entrada_id").equals(x.getInteger("orden_entrada_id")) && 
+                y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
+        
+        if(ordenesProductosDelete == null)return;
+        
+        for(OrdenEntradaxProducto ordenxproducto:ordenesProductosDelete)
+        {
+            OrdenEntradaxProducto.delete("orden_entrada_id = ? AND tipo_id = ?",ordenxproducto.get("orden_entrada_id"),ordenxproducto.get("tipo_id"));
+        }
+    }
+    
+    
+    public void nuevo(){
+        crearNuevo = true;
+        limpiar_formulario(); 
+    }
+    
+    @Override
+    public void guardar(){
+        if (crearNuevo){
+            crear_orden();         
+        }
+        else {
+            if(entradaSelecionada==null) 
+            {
+                infoController.show("No ha seleccionado una Orden de Entrada");            
+                return;
+            }
+            editar_orden(entradaSelecionada);
+        }    
+        crearNuevo = false;
+        RefrescarTabla(OrdenEntrada.findAll());
+    }
+    
+    private void limpiar_formulario()
+    {      
         productos.clear();
         VerDescripcion.clear();
         VerProducto.clear();
         valueFactory.setValue(1);
         VerTipo.getSelectionModel().clearSelection();        
-    }
-         
-    @Override
-    public void guardar(){
-        if (crearNuevo){
-//            crearOrden();
-            limpiar_formulario();
-        }
-        else {
-            if(entradaSelecionada==null) 
-            {
-                infoController.show("No ha seleccionado una Entrada Seleccionada");            
-                return;
-            }
-//            editarOrden(entradaSelecionada);
-        }    
-        RefrescarTabla(OrdenEntrada.findAll());
-    }
+    }         
     
     @Override
     public Menu.MENU getMenu()
@@ -232,7 +472,7 @@ public class OrdenesDeEntradaController extends Controller {
         int i = 0;
         for (Cliente cliente : autoCompletadoClienteList){
             if (cliente.getString("nombre").equals(ClienteBuscar.getText())){           
-//                telfSh.setText(cliente.getString("telef_contacto"));                
+                  clienteDevuelto = cliente;
             }
         }
     }
@@ -241,7 +481,7 @@ public class OrdenesDeEntradaController extends Controller {
         int i = 0;
         for (Proveedor proveedor : autoCompletadoProveedorList){
             if (proveedor.getString("nombre").equals(ProveedorBuscar.getText())){           
-//                telfSh.setText(cliente.getString("telef_contacto"));                
+               proveedorDevuelto = proveedor;
             }
         }
     }
@@ -250,7 +490,7 @@ public class OrdenesDeEntradaController extends Controller {
         int i = 0;
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
             if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
-//                telfSh.setText(cliente.getString("telef_contacto"));                
+                productoDevuelto = tipoProducto;             
             }
         }
     }
@@ -277,17 +517,21 @@ public class OrdenesDeEntradaController extends Controller {
             words.add(cliente.getString("nombre"));
         }               
         possiblewordsProducto = words;
-    }
-    
+    }             
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         try {
-            ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntrada, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("entrada_cod")));
+            ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntrada, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("orden_entrada_cod")));
             ColumnaFecha.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntrada, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getDate("fecha_emision").toString()));
             ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntrada, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("estado")));
             ColumnaTipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntrada, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("tipo")));
+            
+            ColumnaProductoNombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+            ColumnaProductoDescripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+            ColumnaProductoCodigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("tipo_cod")));
+            ColumnaProductoCantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("cantidad")));
             
             ObservableList<String> estados = FXCollections.observableArrayList();                           
             ObservableList<String> tipos = FXCollections.observableArrayList();                        
@@ -312,6 +556,7 @@ public class OrdenesDeEntradaController extends Controller {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     
                     boolean enter = false;
+                    if(newValue==null) return;
                     if(newValue.equals(OrdenEntrada.TIPO.Compra.name()))
                     {
                         ProveedorLabel.setVisible(true);
@@ -368,9 +613,7 @@ public class OrdenesDeEntradaController extends Controller {
             autoCompletionBindingProducto.addEventHandler(EventType.ROOT, (event) -> {
             handleAutoCompletarProducto();
             });
-            
-        
-            
+                                
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductos.fxml"));
             AgregarProductosController controller = new AgregarProductosController();
             loader.setController(controller);                      
@@ -378,23 +621,14 @@ public class OrdenesDeEntradaController extends Controller {
             modal_stage.setScene(modal_content_scene);
             modal_stage.initModality(Modality.APPLICATION_MODAL);    
             
-            
-            
-            TablaOrdenes.setItems(entradas);
-            TablaProductos.setItems(productos);
-            
             controller.devolverProductoEvent.addHandler((Object sender, agregarProductoArgs args) -> {
                 productoDevuelto = args.producto;
             });
-            
-            modal_stage.showAndWait();
-            
+                              
+            TablaOrdenes.setItems(entradas);
+            TablaProductos.setItems(productos);                                               
         } catch (Exception e) {
             infoController.show("La orden de entradada contiene errores : " + e);    
         }
     }         
-
-    @FXML
-    private void buscarProducto(ActionEvent event) {
-    }
 }

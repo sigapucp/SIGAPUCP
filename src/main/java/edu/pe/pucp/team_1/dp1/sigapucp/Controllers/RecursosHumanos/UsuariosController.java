@@ -181,10 +181,7 @@ public class UsuariosController extends Controller{
             VerCorreo.setText(email);          
             VerRol.setValue(rol);
             
-            mostrarUsuarioPrivilegios(usuario);
-            
-            List<Menu> a = usuarioRol.getAll(Menu.class);                        
-            
+            mostrarUsuarioPrivilegios(usuario);                                                   
         } catch (Exception e) {
             infoController.show("El Usuario contiene errores : " + e);                    
         }                                
