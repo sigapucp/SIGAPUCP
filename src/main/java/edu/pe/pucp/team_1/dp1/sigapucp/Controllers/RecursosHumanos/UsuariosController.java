@@ -302,6 +302,7 @@ public class UsuariosController extends Controller{
         String email = VerCorreo.getText();     
         String rol = VerRol.getSelectionModel().getSelectedItem();
         
+        
         String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);  
         if(!confirmatonController.show("Se creara el usuario con codigo: " + cod, "¿Desea continuar?")) return;
         
