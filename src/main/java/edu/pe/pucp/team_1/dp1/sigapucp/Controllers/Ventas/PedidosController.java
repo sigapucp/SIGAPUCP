@@ -68,9 +68,8 @@ public class PedidosController extends Controller {
     @Override
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        Base.close();
-        Base.open();
+              
+        if(!Base.hasConnection()) Base.open();
         mismaDir.setOnAction(e -> manejoTextoChckBox(factDir,mismaDir));
         tipoDocBoleta.setOnAction(e -> manejoTextoRadBttn1());
         tipoDocFactura.setOnAction(e -> manejoTextoRadBttn2());

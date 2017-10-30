@@ -1,4 +1,3 @@
-
 CREATE TABLE TiposError
 (
  error_cod     VARCHAR(20) NOT NULL ,
@@ -363,6 +362,7 @@ CREATE TABLE Cotizaciones
  last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
  moneda_id           SERIAL NOT NULL ,
+igv                  DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_414 PRIMARY KEY  (cotizacion_cod , client_id , cotizacion_id ),
  CONSTRAINT fk_417 FOREIGN KEY (client_id)
@@ -1165,7 +1165,6 @@ CREATE TABLE Productos
  lote_cod          VARCHAR(10) NULL ,
  lote_id           SERIAL NOT NULL ,
  almacen_cod       VARCHAR(50) NOT NULL ,
- estado_id         SERIAL NOT NULL ,
  almacen_id        SERIAL NOT NULL ,
 
  CONSTRAINT pk_221 PRIMARY KEY  (producto_cod , producto_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id ),
@@ -1173,8 +1172,6 @@ CREATE TABLE Productos
   REFERENCES Racks(rack_cod, rack_id, almacen_cod, almacen_id),
  CONSTRAINT fk_269 FOREIGN KEY (almacen_z_cod, almacen_xy_cod, almacen_xy_id, almacen_z_id, almacen_cod, almacen_id)
   REFERENCES AlmacenAreaZs(almacen_z_cod, almacen_xy_cod, almacen_xy_id, almacen_z_id, almacen_cod, almacen_id),
- CONSTRAINT fk_282 FOREIGN KEY (estado_id)
-  REFERENCES EstadosProducto(estado_id),
  CONSTRAINT fk_338 FOREIGN KEY (lote_cod, lote_id)
   REFERENCES Lotes(lote_cod, lote_id),
  CONSTRAINT fk_1779 FOREIGN KEY (orden_entrada_id, orden_entrada_cod, tipo_cod, tipo_id)
@@ -1186,8 +1183,6 @@ CREATE TABLE Productos
 --SKIP Index: fkIdx_265
 
 --SKIP Index: fkIdx_269
-
---SKIP Index: fkIdx_282
 
 --SKIP Index: fkIdx_338
 

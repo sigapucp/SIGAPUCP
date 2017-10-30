@@ -102,8 +102,7 @@ public class ClientesController extends Controller{
     
     public String obtener_tipo_cliente(){
         String tipo_cliente = "";
-        tipo_cliente = (persoNatu.isSelected()) ? "persona natural" : "";
-        tipo_cliente = (persoJuri.isSelected()) ? "persona natural" : "";
+        tipo_cliente = (persoNatu.isSelected()) ? Cliente.TIPO.PersonaNatural.name() : Cliente.TIPO.PersonaJuridica.name();        
         return tipo_cliente;
     }
     

@@ -138,7 +138,7 @@ public class OrdenesDeEntradaController extends Controller {
     private List<TipoProducto> autoCompletadoProductoList;
     ArrayList<String> possiblewordsCliente = new ArrayList<>();    
     ArrayList<String> possiblewordsProveedor = new ArrayList<>();    
-    ArrayList<String> possiblewordsProducto = new ArrayList<>();    
+    ArrayList<String> possiblewordsProducto = new ArrayList<>();       
     AutoCompletionBinding<String> autoCompletionBindingCliente;
     AutoCompletionBinding<String> autoCompletionBindingProveedor;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
@@ -234,6 +234,7 @@ public class OrdenesDeEntradaController extends Controller {
         if(productoDevuelto==null)
         {
             infoController.show("No ha seleccionado ningun producto");
+            return;
         }
         
         for(OrdenEntradaxProducto producto:productos)

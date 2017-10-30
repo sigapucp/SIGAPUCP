@@ -19,4 +19,10 @@ public class Cotizacion extends Model{
     static {
         dateFormat("dd/MM/yyyy", "fecha_emision");
     }     
+    
+    public enum ESTADO
+    {
+        SINPEDIDO,
+        CONPEDIDO
+    }
 }

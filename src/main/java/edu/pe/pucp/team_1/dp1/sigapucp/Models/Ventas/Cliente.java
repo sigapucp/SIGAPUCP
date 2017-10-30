@@ -36,4 +36,11 @@ public class Cliente extends Model{
         this.set("direccion_facturacion", direccion_facturacion);
         this.set("estado", "activo");
     }
+    
+      public enum TIPO
+    {
+        PersonaNatural,
+        PersonaJuridica
+    }
+    
 }

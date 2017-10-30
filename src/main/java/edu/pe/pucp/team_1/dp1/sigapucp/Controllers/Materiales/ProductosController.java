@@ -583,10 +583,10 @@ public class ProductosController extends Controller {
             ObservableList<String> categoriasDrop = FXCollections.observableArrayList();                           
             ObservableList<String> categoriasNoPad = FXCollections.observableArrayList();     
 
-            estados.add("");
+            estados.add("");            
             estados.addAll(Arrays.asList(TipoProducto.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
 
-            List<String> categoriasNombres = CategoriaProducto.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList());
+            List<String> categoriasNombres = CategoriaProducto.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList());            
             monedas.addAll(Moneda.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
             
             categoriasNoPad.addAll(categoriasNombres);
