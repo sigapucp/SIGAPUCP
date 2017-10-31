@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Kardex.KardexController">
+   <children>
+      <AnchorPane prefHeight="575.0" prefWidth="250.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="250.0">
+               <children>
+                  <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </Pane>
+            <AnchorPane layoutY="50.0" prefHeight="522.0" prefWidth="250.0">
+               <children>
+                  <Line endX="100.0" layoutX="125.0" startX="-100.0" />
+                  <Label layoutX="14.0" layoutY="25.0" prefHeight="21.0" prefWidth="114.0" text="Código producto">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="codigoProductoBuscar" layoutX="145.0" layoutY="23.0" prefHeight="25.0" prefWidth="87.0" />
+                  <TextField fx:id="tipoProductoBuscar" layoutX="145.0" layoutY="56.0" prefHeight="25.0" prefWidth="87.0" />
+                  <Label layoutX="14.0" layoutY="58.0" prefHeight="21.0" prefWidth="114.0" text="Producto">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="mostrar_kardex" layoutX="140.0" layoutY="483.0" mnemonicParsing="false" onAction="#mostrar_detalle_tipo_producto" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                  <TableView fx:id="tablaProductos" layoutX="14.0" layoutY="140.0" prefHeight="328.0" prefWidth="224.0">
+                     <columns>
+                        <TableColumn fx:id="ColumnaTipoProducto" prefWidth="113.0" text="Código" />
+                        <TableColumn fx:id="ColumnaCodigoProducto" prefWidth="110.0" text="Producto" />
+                     </columns>
+                  </TableView>
+                  <Button layoutX="141.0" layoutY="98.0" mnemonicParsing="false" onAction="#buscar_producto" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="kardexProducto" layoutX="250.0" prefHeight="572.0" prefWidth="750.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="750.0">
+               <children>
+                  <Label layoutX="133.0" layoutY="10.0" text="Kardex">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
+                  <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
+               </children>
+            </Pane>
+            <TableView fx:id="tablaKardex" layoutX="27.0" layoutY="193.0" prefHeight="366.0" prefWidth="701.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Fecha" />
+                <TableColumn prefWidth="180.0" text="Detalle" />
+                  <TableColumn prefWidth="143.0" text="Entrada">
+                     <columns>
+                        <TableColumn editable="false" prefWidth="75.0" text="Cant." />
+                        <TableColumn prefWidth="75.0" text="Costo" />
+                     </columns>
+                  </TableColumn>
+                  <TableColumn prefWidth="75.0" text="Salidas">
+                     <columns>
+                        <TableColumn prefWidth="75.0" text="Cant." />
+                        <TableColumn prefWidth="75.0" text="Costo" />
+                     </columns>
+                  </TableColumn>
+                  <TableColumn prefWidth="75.0" text="Existencias">
+                     <columns>
+                        <TableColumn prefWidth="75.0" text="Cant." />
+                        <TableColumn prefWidth="75.0" text="Costo" />
+                     </columns>
+                  </TableColumn>
+              </columns>
+            </TableView>
+            <Label layoutX="27.0" layoutY="75.0" text="Producto">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="producto_nombre" layoutX="159.0" layoutY="71.0" prefHeight="30.0" prefWidth="567.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Label layoutX="27.0" layoutY="113.0" text="Código producto">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="producto_codigo" layoutX="160.0" layoutY="109.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Label layoutX="410.0" layoutY="114.0" text="Categoría producto">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="producto_categoria" layoutX="551.0" layoutY="108.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
