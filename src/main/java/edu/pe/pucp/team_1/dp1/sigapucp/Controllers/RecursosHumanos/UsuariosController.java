@@ -236,11 +236,11 @@ public class UsuariosController extends Controller{
             limpiarVerUsuario();
         }else
         {
-             if(usuarioSelecionado==null) 
+            if(usuarioSelecionado==null) 
             {
                 infoController.show("No ha seleccionado un usuario");            
                 return;
-            }
+            }           
             editarUsuario(usuarioSelecionado);
         }                
         RefrescarTabla(Usuario.findAll());

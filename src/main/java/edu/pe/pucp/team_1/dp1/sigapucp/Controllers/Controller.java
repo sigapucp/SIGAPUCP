@@ -6,9 +6,11 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.ejecutarAccionArgs;
 import java.net.URL;
 import java.util.List;
@@ -43,6 +45,10 @@ public class Controller implements Initializable {
     
     public void desactivar() {
         System.out.println("Desactivar");
+    }
+    
+    public void postInitialize()
+    {        
     }
     
     public void setUsuarioActual(Usuario usuario,List<AccionxRol> permisos)

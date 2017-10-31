@@ -65,6 +65,7 @@ public class ContenidoPrincipalController extends Controller {
                 System.out.println(contenido);
                 System.out.println(loaderContenido);                   
                 activeController.setUsuarioActual(usuarioActual,permisosActual);
+                activeController.postInitialize();
                 contenedor_modulos_contenido.getChildren().setAll(contenido);
                 
                 // Cargar el contenido de los botones de accion
