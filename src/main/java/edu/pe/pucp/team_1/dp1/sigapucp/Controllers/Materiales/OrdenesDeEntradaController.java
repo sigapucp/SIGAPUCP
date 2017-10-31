@@ -266,11 +266,16 @@ public class OrdenesDeEntradaController extends Controller {
             return;
         } 
         
-        String estado = entradaSelecionada.getString("estado");
-        if(!ordenSeleccionada.isNew()&&(estado.equals(OrdenEntrada.ESTADO.Parcial.name())||estado.equals(OrdenEntrada.ESTADO.Completa.name())))
+       
+        if(!ordenSeleccionada.isNew())
         {
-            infoController.show("No puede eliminar producto ya que este ya se encuentra en almacen. Debera utilizar una Orden de Salida");
-            return;
+            OrdenEntrada orden = OrdenEntrada.findById(ordenSeleccionada.get("orden_entrada_id"));         
+             String estado = orden.getString("estado");
+            if((estado.equals(OrdenEntrada.ESTADO.Parcial.name())||estado.equals(OrdenEntrada.ESTADO.Completa.name())))
+            {
+                infoController.show("No puede eliminar producto ya que este ya se encuentra en almacen. Debera utilizar una Orden de Salida");
+                return;                
+            }                        
         }
         productos.remove(ordenSeleccionada);      
     }    
@@ -337,7 +342,8 @@ public class OrdenesDeEntradaController extends Controller {
             set_productos(orden);
             
             infoController.show("La orden ha sido creada exitosamente");
-            Base.commitTransaction();              
+            Base.commitTransaction();    
+            limpiar_formulario();
         } catch (Exception e) {
             infoController.show("La orden contiene errores : " + e);        
             Base.rollbackTransaction();

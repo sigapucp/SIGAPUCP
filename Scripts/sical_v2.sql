@@ -752,6 +752,9 @@ CREATE TABLE CotizacionxProductos
  cantidad        DECIMAL(10,2) NOT NULL ,
  subtotal_previo DECIMAL(10,2) NOT NULL ,
  subtotal_final  DECIMAL(10,2) NOT NULL ,
+ precio_unitario DECIMAL(10,2) NOT NULL ,
+ descuento DECIMAL(10,2) NOT NULL ,
+ flete DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_456 PRIMARY KEY  (tipo_id , client_id , cotizacion_cod , cotizacion_id , tipo_cod ),
  CONSTRAINT fk_453 FOREIGN KEY (tipo_cod, tipo_id)

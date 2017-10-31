@@ -231,7 +231,7 @@ public class UsuariosController extends Controller{
     public void guardar()
     {        
         if(crearNuevo)
-        {
+        {           
             crearUsuario();   
             limpiarVerUsuario();
         }else

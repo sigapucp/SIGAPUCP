@@ -13,7 +13,9 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
@@ -97,7 +99,7 @@ public class ProformasController extends Controller {
     
     private SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
     @FXML
-    private TableColumn<Cotizacion, String> cantProdColumn;    
+    private TableColumn<CotizacionxProducto, String> cantProdColumn;    
     @FXML
     private Label proformaSub;      
     @FXML
@@ -116,6 +118,8 @@ public class ProformasController extends Controller {
     private TableColumn<CotizacionxProducto, String> codProdColumn;
     @FXML
     private TableColumn<CotizacionxProducto, String> precioUnitarioColumn;
+    @FXML
+    private TableColumn<Cotizacion, String> ColumnaEstado;
     
     @FXML
     private TextField subTotalFinal;
@@ -148,6 +152,7 @@ public class ProformasController extends Controller {
     ArrayList<String> possiblewordsProducto = new ArrayList<>();   
     private List<TipoProducto> autoCompletadoProductoList;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
+    private Double IGV;    
   
     /**
      * Initializes the controller class.
@@ -157,6 +162,7 @@ public class ProformasController extends Controller {
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         List<Cotizacion> tempCotizaciones = Cotizacion.findAll();       
+        IGV = ParametroSistema.findFirst("nombre = ?", "IGV").getDouble("valor");
         
         for (Cotizacion coti : tempCotizaciones) {
             cotizaciones.add(coti);
@@ -171,10 +177,23 @@ public class ProformasController extends Controller {
     private void llenar_tabla_index() throws Exception{
         List<Cotizacion> tempCotizaciones = Cotizacion.findAll();
         cotizaciones.clear();
+        producto.clear();;
+        
         proformaColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cotizacion_cod")));   
-        clienteColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
+        clienteColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
+        ColumnaEstado.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
+        
+        codProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+        nombreProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+        cantProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
+        descProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
+        
         cotizaciones.addAll(tempCotizaciones);
         tablaPedidos.setItems(cotizaciones);
+        TablaProductos.setItems(productos);
     }
     
     @Override
@@ -226,9 +245,7 @@ public class ProformasController extends Controller {
         } catch (Exception e) {
             infoController.show("Error al cargar las proformas " + e.getMessage());
         }                                      
-    }  
-    
-
+    }      
    
     @Override
     public void nuevo(){
@@ -273,12 +290,16 @@ public class ProformasController extends Controller {
             LocalDate fechaLocal = fechaProfSh.getValue();
             Date fecha = Date.valueOf(fechaLocal);                
             Double igvValue = Double.valueOf(igvTotal.getText());
-            Double totalValue = Double.valueOf(total.getText());
+            Double totalValue = Double.valueOf(subTotalFinal.getText());
             String monedaNombre = VerMoneda.getSelectionModel().getSelectedItem();
             Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
             
-            asignar_data(proforma,clienteSeleccionado.getInteger("cliente_id"), fecha, igvValue,totalValue,Cotizacion.ESTADO.SINPEDIDO.name(),
-                moneda.getInteger("moneda_id"));                          
+            asignar_data(proforma,clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,Cotizacion.ESTADO.SINPEDIDO.name(),
+                moneda.getInteger("moneda_id")); 
+            
+            proforma.saveIt();
+            setProductos(proforma);
+            infoController.show("Se ha editado satisfactoriamente la proforma");        
             Base.commitTransaction();            
         } catch (Exception e) {
             Base.rollbackTransaction();
@@ -305,16 +326,18 @@ public class ProformasController extends Controller {
         LocalDate fechaLocal = fechaProfSh.getValue();
         Date fecha = Date.valueOf(fechaLocal);                    
         Double igvValue = Double.valueOf(igvTotal.getText());
-        Double totalValue = Double.valueOf(total.getText());
+        Double totalValue = Double.valueOf(subTotalFinal.getText());
         String monedaNombre = VerMoneda.getSelectionModel().getSelectedItem();
         Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
         
         Cotizacion proforma = new Cotizacion();
-        asignar_data(proforma,clienteSeleccionado.getInteger("cliente_id"), fecha, igvValue,totalValue,Cotizacion.ESTADO.SINPEDIDO.name(),
+        asignar_data(proforma,clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,Cotizacion.ESTADO.SINPEDIDO.name(),
                 moneda.getInteger("moneda_id"));  
         String cod = "PROF" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from cotizaciones_cotizacion_id_seq")))) + 1);
         proforma.set("cotizacion_cod",cod);
+        proforma.saveIt();
         
+        setProductos(proforma);
         Base.commitTransaction();       
         infoController.show("Se ha creado la proforma: PROF" + String.valueOf(cod));        
         }
@@ -327,11 +350,38 @@ public class ProformasController extends Controller {
     private void asignar_data(Cotizacion proforma,int cliente_id, Date fechaEmision,Double igv ,Double total, String estado, int monedaId) throws Exception{      
         proforma.set("client_id",cliente_id);        
         proforma.setDate("fecha_emision", fechaEmision);
+        proforma.set("igv",igv);
         proforma.set("total",total);        
         proforma.set("estado", estado);
         proforma.set("last_user_change",usuarioActual.getString("usuario_cod"));                        
-        proforma.set("moneda_id", monedaId);                
-        proforma.saveIt();       
+        proforma.set("moneda_id", monedaId);                      
+    }
+    
+    private void setProductos(Cotizacion cotizacion)
+    {
+        List<CotizacionxProducto> cotizacionesGuardadas = CotizacionxProducto.where("cotizacion_id = ?", cotizacion.getId());
+        for(CotizacionxProducto cotizacionxproducto:productos)
+        {
+            if(cotizacionxproducto.isNew())
+            {
+                cotizacionxproducto.set("cotizacion_id",cotizacion.getId());
+                cotizacionxproducto.set("client_id",cotizacion.get("client_id"));
+                cotizacionxproducto.set("cotizacion_cod",cotizacion.get("cotizacion_cod"));
+            }
+            cotizacionxproducto.saveIt();
+        }             
+        
+        if(cotizacionesGuardadas == null) return;
+        List<CotizacionxProducto> cotizacionesProductosDelete = cotizacionesGuardadas.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+                y.getInteger("cotizacion_id").equals(x.getInteger("cotizacion_id")) && 
+                y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
+        
+        if(cotizacionesProductosDelete == null) return;
+        
+        for(CotizacionxProducto cotizacionxProducto:cotizacionesProductosDelete)
+        {
+            CotizacionxProducto.delete("cotizacion_id = ? AND tipo_id = ?",cotizacionxProducto.get("cotizacion_id"),cotizacionxProducto.get("tipo_id"));
+        }
     }
     
     @FXML
@@ -359,22 +409,32 @@ public class ProformasController extends Controller {
     @FXML
     private void visualizarProforma(ActionEvent event){
         crearNuevo = false;
-        proformaSelecionado = tablaPedidos.getSelectionModel().getSelectedItem();
-        if (proformaSelecionado == null) 
-        {
-            infoController.show("No ha seleccionado ninguna proforma");
-        }
-        setProformaVisible(proformaSelecionado);
+        try {
+            proformaSelecionado = tablaPedidos.getSelectionModel().getSelectedItem();
+            if (proformaSelecionado == null) 
+            {
+                infoController.show("No ha seleccionado ninguna proforma");
+            }
+
+          setProformaVisible(proformaSelecionado);                            
+        } catch (Exception e) {
+            infoController.show("Error al mostrar Cotizacion: " + e.getMessage());
+        }        
     }    
     
-    private void setProformaVisible(Cotizacion cotizacion)
+    private void setProformaVisible(Cotizacion cotizacion) throws Exception
     {
         Cliente cliente = Cliente.findFirst("client_id = ?", proformaSelecionado.get("client_id"));
         setInformacionCliente(cliente);  
         clienteSh.setText(cliente.getString("nombre"));
         LocalDate date = proformaSelecionado.getDate("fecha_emision").toLocalDate();
         fechaProfSh.setValue(date);
-        VerMoneda.getSelectionModel().select(Moneda.findById(cotizacion.get("moneda_id")).getString("nombre"));        
+        VerMoneda.getSelectionModel().select(Moneda.findById(cotizacion.get("moneda_id")).getString("nombre"));       
+        setValorTotal(cotizacion.getDouble("total"));
+        
+        List<CotizacionxProducto> cotizacionesxProductos = CotizacionxProducto.where("cotizacion_id = ?", proformaSelecionado.getId());        
+        productos.clear();
+        productos.addAll(cotizacionesxProductos);                   
     }
     
     private void RefrescarTabla(List<Cotizacion> tempCotizaciones)
@@ -414,18 +474,113 @@ public class ProformasController extends Controller {
         total.clear();                
         SpinnerValueFactory newvalueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 1);
         cantProd.setValueFactory(newvalueFactory);
-    }
-    
-    private void handleAgregarProducto(ActionEvent event) {
-        modal_stage.showAndWait();
-    }
+    }      
         
     @FXML
     private void eliminarProducto(ActionEvent event) {
+        
+        CotizacionxProducto cotizacionxProducto = TablaProductos.getSelectionModel().getSelectedItem();
+        if(cotizacionxProducto==null)
+        {
+            infoController.show("No ha seleccionado ninguna Cotizacion");
+            return;
+        }         
+      
+        if(!cotizacionxProducto.isNew())
+        {
+            Cotizacion cotizacion = Cotizacion.findById(cotizacionxProducto.get("cotizacion_id"));
+            String estado = cotizacion.getString("estado");
+            if(estado.equals(Cotizacion.ESTADO.CONPEDIDO.name()))
+            {
+                infoController.show("No puede eliminar producto ya que este ya se encuentra en un Pedido");
+                return;                
+            }            
+        }             
+        Double totalEntrada = cotizacionxProducto.getDouble("subtotal_final");      
+        recalcularTotal(-totalEntrada);               
+        productos.remove(cotizacionxProducto);              
     }
 
     @FXML
-    private void agregarProducto(ActionEvent event) {
+    private void agregarProducto(ActionEvent event) {                
+        if(productoDevuelto==null)
+        {
+            infoController.show("No ha seleccionado ningun producto"); 
+           return;
+        }
+        
+        try {
+            for(CotizacionxProducto productoCot:productos)
+            {
+                if(productoCot.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
+                {
+                    Integer cantidad = productoCot.getInteger("cantidad") + cantProd.getValue();
+                    Double precioUnitario = productoCot.getDouble("precio_unitario");                    
+                    recalcularTotal(cantProd.getValue()*precioUnitario);
+                    
+                    // Pueden varias las condiciones de descuento y fletes ...
+                    productoCot.set("cantidad",cantidad);
+                    productoCot.set("subtotal_final",precioUnitario*cantidad);
+                    TablaProductos.getColumns().get(0).setVisible(false);
+                    TablaProductos.getColumns().get(0).setVisible(true);
+                    return;
+                }
+            }
+
+            CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();
+            Integer cantidad = cantProd.getValue();
+            Double precio = productoDevuelto.getPrecioActual();
+            
+          
+            
+            cotizacionxproducto.set("tipo_id",productoDevuelto.getId());
+            cotizacionxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));            
+            cotizacionxproducto.set("cantidad",cantidad);                        
+            cotizacionxproducto.set("precio_unitario",precio);    
+            cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
+            
+            Double descuento = calcularDescuento(productoDevuelto);
+            Double flete = calcularFlete(productoDevuelto);
+            
+            cotizacionxproducto.set("descuento",descuento); 
+            cotizacionxproducto.set("flete",flete);             
+            Double totalEntrada = cantidad*precio - descuento + flete;
+            cotizacionxproducto.set("subtotal_final",totalEntrada);
+            recalcularTotal(totalEntrada);
+                        
+            productos.add(cotizacionxproducto);            
+        } catch (Exception e) {
+            infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
+        }                
+    }
+    
+    private void recalcularTotal(Double cambio)
+    {
+        String totalValue = (!subTotalFinal.getText().isEmpty()) ? subTotalFinal.getText() : "0.0";
+        Double subTotalSinIgv = Double.valueOf(totalValue);                    
+        subTotalSinIgv += cambio;
+        subTotalFinal.setText(String.valueOf(subTotalSinIgv));
+        Double valorIgv = IGV*subTotalSinIgv;            
+        igvTotal.setText(String.valueOf(valorIgv));
+        total.setText(String.valueOf(subTotalSinIgv+valorIgv));        
+    }
+    
+    private void setValorTotal(Double valor)
+    {        
+        subTotalFinal.setText(String.valueOf(valor));
+        Double valorIgv = IGV*valor;            
+        igvTotal.setText(String.valueOf(valorIgv));
+        total.setText(String.valueOf(valor+valorIgv));                
+    }
+    
+    private Double calcularDescuento(TipoProducto producto)
+    {
+        return 0.0;        
+    }
+    
+    private Double calcularFlete(TipoProducto producto)
+    {
+        return 0.0;
     }
 
     @FXML
@@ -503,5 +658,10 @@ public class ProformasController extends Controller {
         clienteSeleccionado = cliente;  
     }
 
-    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Proformas;
+    }
 }
+
