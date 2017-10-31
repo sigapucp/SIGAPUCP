@@ -18,8 +18,7 @@ public class WarningAlertController {
     private Alert alert;
     
     public WarningAlertController() {
-        System.out.println("AQUI VA LA PANTALLA DE WARNING");                       
-        createNewAlert();
+        System.out.println("AQUI VA LA PANTALLA DE WARNING");                              
     }
     
     public void createNewAlert() {
