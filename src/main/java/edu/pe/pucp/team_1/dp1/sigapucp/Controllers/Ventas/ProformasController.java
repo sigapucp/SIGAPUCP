@@ -418,6 +418,7 @@ public class ProformasController extends Controller {
     @FXML
     private void visualizarProforma(ActionEvent event){
         crearNuevo = false;
+        habilitar_formulario();
         try {
             proformaSelecionado = tablaPedidos.getSelectionModel().getSelectedItem();
             if (proformaSelecionado == null) 
