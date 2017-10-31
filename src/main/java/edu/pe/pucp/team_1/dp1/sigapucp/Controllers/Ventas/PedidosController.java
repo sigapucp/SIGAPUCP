@@ -59,62 +59,7 @@ import org.javalite.activejdbc.LazyList;
  */
 public class PedidosController extends Controller {
     
-    @FXML
-    private AnchorPane pedidoContainer;
-    @FXML
-    private TextField subTotal;
-    @FXML
-    private TextField igvPedido;
-    @FXML
-    private TextField totalPedido;
-    @FXML
-    private TextField clienteSearch;
-    @FXML
-    private ComboBox<String> estadoSearch;
-    @FXML
-    private TextField pedidoSearch;
-    @FXML
-    private TableView<OrdenCompra> tablaPedidos;
-    @FXML
-    private AnchorPane pedidoForm;
-    @FXML
-    private RadioButton tipoDocBoleta;
-    @FXML
-    private RadioButton tipoDocFactura;
-    @FXML
-    private TextField clienteSh;
-    @FXML
-    private TextField vendedorSh;
-    @FXML
-    private TextField ruc;
-    @FXML
-    private TextField dni;
-    @FXML
-    private DatePicker fechaPed;
-    @FXML
-    private TextField tipoCambio;
-    @FXML
-    private TextField envioDir;
-    @FXML
-    private TextField factDir;
-    @FXML
-    private CheckBox mismaDir;
-    @FXML
-    private ComboBox<String> moneda;
-    @FXML
-    private AnchorPane pedidoTable;
-    @FXML
-    private Spinner<?> cantProd;
-    @FXML
-    private TextField producto;
-    @FXML
-    private TableColumn<OrdenCompra, String> pedidoId;
-    @FXML
-    private TableColumn<OrdenCompra, String> clientePedido;
-    @FXML
-    private Button agregarProducto;
-    @FXML
-    private TextField estadoShow;
+  
     @FXML
     static Stage modal_stage = new Stage();
     
