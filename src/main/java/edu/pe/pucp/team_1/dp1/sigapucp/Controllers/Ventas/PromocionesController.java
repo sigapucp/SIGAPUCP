@@ -448,6 +448,13 @@ public class PromocionesController extends Controller{
         
         dpFecha1.getEditor().clear();
         dpFecha2.getEditor().clear();
+        
+        botonTipo1.setDisable(false);
+        botonTipo2.setDisable(false);
+        botonTipo3.setDisable(false);
+        botonCategoria1.setDisable(false);
+        botonCategoria2.setDisable(false);
+        botonCategoria3.setDisable(false);
     }
     
     private void manejarrbPorTipo(){
