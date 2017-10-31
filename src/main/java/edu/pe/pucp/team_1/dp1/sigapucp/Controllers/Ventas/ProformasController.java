@@ -594,8 +594,8 @@ public class ProformasController extends Controller {
     
     @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
     //de controllers
-    private void handleGenerarPedido(ActionEvent event) {
-        cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Usuarios, "RecursosHumanos", 1));
+    private void handleGenerarPedido(ActionEvent event) {        
+        cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Pedidos, "Ventas", proformaSelecionado.getInteger("cotizacion_id")));
     }      
 
     private void clienteToString() {
