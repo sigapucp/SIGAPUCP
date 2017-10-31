@@ -43,7 +43,7 @@ public class GridTile extends StackPane {
         border.setFill(null);
         border.setStroke(Color.BLACK);
         setAlignment(Pos.CENTER);
-//        getChildren().addAll(border, text);
+        getChildren().addAll(border);
         setMouseEvents();
     }
     
