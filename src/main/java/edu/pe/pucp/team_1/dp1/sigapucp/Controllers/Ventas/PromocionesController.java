@@ -6,6 +6,9 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import java.net.URL;
 import java.util.List;
@@ -131,5 +134,8 @@ public class PromocionesController extends Controller{
         txtFiePrecioUnitario.clear();
     }
     
-    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Promociones;
+    }
 }

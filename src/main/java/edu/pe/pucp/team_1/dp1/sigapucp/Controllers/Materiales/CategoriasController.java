@@ -8,6 +8,9 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -146,6 +149,11 @@ public class CategoriasController extends Controller{
     @Override
     public void guardar(){
         if (crear_nuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crear_nuevo = false;
+                return;
+            }
             crear_categoria();
             limpiar_formulario();
         }else{
@@ -198,5 +206,12 @@ public class CategoriasController extends Controller{
             }
         });
        
-    } 
+    }
+    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Categorias;
+    }
+    
+        
 }

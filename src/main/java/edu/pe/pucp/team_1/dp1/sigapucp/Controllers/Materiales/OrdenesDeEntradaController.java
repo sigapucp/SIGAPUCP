@@ -16,7 +16,9 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
@@ -435,6 +437,11 @@ public class OrdenesDeEntradaController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crear_orden();         
         }
         else {
@@ -641,5 +648,7 @@ public class OrdenesDeEntradaController extends Controller {
         } catch (Exception e) {
             infoController.show("La orden de entradada contiene errores : " + e);    
         }
-    }         
+    }
+    
+
 }

@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
@@ -524,6 +525,11 @@ public class ProductosController extends Controller {
     @Override
     public void guardar(){
         if (crear_nuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crear_nuevo = false;
+                return;
+            }
             crear_tipo_producto();         
         }
         else {

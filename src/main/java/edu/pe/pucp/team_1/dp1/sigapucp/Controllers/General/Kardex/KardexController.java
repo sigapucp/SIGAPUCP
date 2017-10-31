@@ -9,6 +9,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
@@ -139,5 +140,6 @@ public class KardexController extends Controller {
                 tablaProductos.getSelectionModel().clearSelection();        
             }
         });        
-    }    
+    }
+
 }

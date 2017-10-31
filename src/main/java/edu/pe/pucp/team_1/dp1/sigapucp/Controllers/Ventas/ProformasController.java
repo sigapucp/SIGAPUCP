@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirDetallesArgs;
 import java.io.IOException;
@@ -451,5 +452,12 @@ public class ProformasController extends Controller {
             }
         }
     }
+    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Proformas;
+    }
+    
+    
     
 }

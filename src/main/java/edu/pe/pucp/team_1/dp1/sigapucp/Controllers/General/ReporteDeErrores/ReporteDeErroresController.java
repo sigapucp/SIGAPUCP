@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.ReporteDeErrores;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -56,6 +57,11 @@ public class ReporteDeErroresController extends Controller {
     public void initialize(URL location, ResourceBundle resources) {
         // TODO
         
+    }
+    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.ReportedeErrores;
     }
     
 }

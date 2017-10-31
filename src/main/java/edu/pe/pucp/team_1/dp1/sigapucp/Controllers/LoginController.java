@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.io.IOException;
 import java.net.URL;
@@ -71,9 +72,15 @@ public class LoginController implements Initializable{
         app_stage.show();
     }
     
+    
+    
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
         login_exitoso = false;
     }
+    
+    
+    
 }

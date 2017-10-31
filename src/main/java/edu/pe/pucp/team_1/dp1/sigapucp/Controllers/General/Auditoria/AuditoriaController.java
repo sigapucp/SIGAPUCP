@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Auditoria;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -167,6 +168,11 @@ public class AuditoriaController extends Controller {
         
         TablaAuditoria.setItems(sortedData);
                
+    }
+    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Auditoria;
     }
    
 }
