@@ -5,12 +5,14 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.ejecutarAccionArgs;
 import java.net.URL;
 import java.util.List;
@@ -25,6 +27,7 @@ public class Controller implements Initializable {
 
     public Usuario usuarioActual = null;
     public List<AccionxRol> permisosActual = null;
+    public String fxmlPath;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,8 +50,9 @@ public class Controller implements Initializable {
         System.out.println("Desactivar");
     }
     
-    public void postInitialize()
+    public void postInitialize(String gFxmlPath)
     {        
+        fxmlPath = gFxmlPath;
     }
     
     public void setUsuarioActual(Usuario usuario,List<AccionxRol> permisos)
@@ -61,4 +65,6 @@ public class Controller implements Initializable {
     {
         return Menu.MENU.NullMenu;
     }
+    
+   public Event<cambiarMenuArgs> cambiarMenuEvent = new Event<>();
 }

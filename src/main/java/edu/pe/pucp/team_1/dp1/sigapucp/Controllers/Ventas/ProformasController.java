@@ -21,6 +21,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirDetallesArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.net.URL;
 import java.sql.Date;
 import java.text.DateFormat;
@@ -594,12 +595,7 @@ public class ProformasController extends Controller {
     @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
     //de controllers
     private void handleGenerarPedido(ActionEvent event) {
-        abrirDetallesArgs args = new abrirDetallesArgs();
-        System.out.println("estoy aqui debuggeando");
-        args.setNombreController("Pedidos");
-        args.setNombreModulo("Ventas");
-        
-        abrirDetalle.fire(this, args);
+        cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Usuarios, "RecursosHumanos", 1));
     }      
 
     private void clienteToString() {

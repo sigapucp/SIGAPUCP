@@ -148,8 +148,9 @@ public class CuentaController extends Controller{
     }
     
     @Override
-    public void postInitialize()
+    public void postInitialize(String gfxmlPath)
     {
+        fxmlPath = gfxmlPath;
          try {            
             LabelUsuario.setText("Usuario: " + usuarioActual.getString("usuario_cod"));
             VerNombre.setText(usuarioActual.getString("nombre"));
@@ -168,9 +169,7 @@ public class CuentaController extends Controller{
             VerTextContrasenaActual.setEditable(false);
             
             VerContrasenaNueva.setVisible(true);            
-            VerTextContrasenaNueva.setVisible(false);         
-            
-            
+            VerTextContrasenaNueva.setVisible(false);                                 
         } catch (Exception e) {
             infoController.show("Error al cargar informacion de usuario: " + e.getMessage());            
         }        
