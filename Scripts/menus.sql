@@ -26,6 +26,7 @@ insert into menus values (default,'Parametros de Sistema');
 insert into menus values (default,'Unidades');
 insert into menus values (default,'Monedas');
 insert into menus values (default,'Guia de Remision');
+insert into menus values (default,'Cuenta');
 
 select * from menus;
 

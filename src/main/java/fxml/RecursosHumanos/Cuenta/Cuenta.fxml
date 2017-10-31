@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="473.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.RecursosHumanos.CuentaController">
+   <children>
+      <GridPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="740.0">
+         <children>
+            <TitledPane fx:id="TitlePane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="175.0" prefWidth="563.0" text="Informacion General" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+               <content>
+                  <GridPane prefHeight="149.0" prefWidth="621.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="76.0" text="Nombres:" />
+                        <TextField fx:id="VerNombre" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" />
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="77.0" text="Apellidos:" GridPane.rowIndex="1" />
+                        <TextField fx:id="VerApellido" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="VerTelefono" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="VerCorreo" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="3" />
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="76.0" text="Telefono:" GridPane.rowIndex="2" />
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Email:" GridPane.columnIndex="2" />
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="65.0" text="Rol:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="VerRol" editable="false" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                     </children>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="99.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.0" minWidth="10.0" prefWidth="195.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="119.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="240.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+               </content>
+            </TitledPane>
+            <Label fx:id="LabelUsuario" text="Usuario:" GridPane.columnIndex="1">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Line endX="100.0" startX="-100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+            <TitledPane fx:id="TitlePane1" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="167.0" prefWidth="549.0" text="Cambiar Contraseña" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <content>
+                  <GridPane>
+                     <children>
+                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="120.0" text="Contraseña Actual" />
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="126.0" text="Nueva Contraseña:" GridPane.rowIndex="1" />
+                        <PasswordField fx:id="VerContrasenaActual" GridPane.columnIndex="1" />
+                        <PasswordField fx:id="VerContrasenaNuevaRepetir" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button mnemonicParsing="false" onAction="#revelarActual" prefHeight="25.0" prefWidth="84.0" text="Revelar" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                        <Button mnemonicParsing="false" onAction="#revelarNueva" prefHeight="25.0" prefWidth="84.0" text="Revelar" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                        <PasswordField fx:id="VerContrasenaNueva" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="131.0" text="Repetir Contraseña:" GridPane.rowIndex="2" />
+                        <TextField fx:id="VerTextContrasenaActual" GridPane.columnIndex="1" />
+                        <TextField fx:id="VerTextContrasenaNueva" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     </children>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="10.0" prefWidth="133.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.0" minWidth="10.0" prefWidth="144.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="240.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="58.0" minHeight="10.0" prefHeight="58.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+               </content>
+            </TitledPane>
+            <Button mnemonicParsing="false" onAction="#guardarCuenta" prefHeight="25.0" prefWidth="84.0" text="Guardar" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+         </children>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="26.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="581.0" minWidth="10.0" prefWidth="554.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="581.0" minWidth="10.0" prefWidth="36.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="211.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="211.0" minHeight="10.0" prefHeight="13.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="211.0" minHeight="10.0" prefHeight="176.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="314.0" minHeight="2.0" prefHeight="22.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="223.0" minHeight="10.0" prefHeight="160.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="157.0" minHeight="10.0" prefHeight="71.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+      </GridPane>
+   </children>
+</AnchorPane>

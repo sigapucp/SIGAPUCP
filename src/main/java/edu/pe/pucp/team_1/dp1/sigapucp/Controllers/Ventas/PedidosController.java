@@ -206,7 +206,6 @@ public class PedidosController extends Controller {
     @Override
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         mismaDir.setOnAction(e -> manejoTextoChckBox(factDir,mismaDir));
         tipoDocBoleta.setOnAction(e -> manejoTextoRadBttn1());
         tipoDocFactura.setOnAction(e -> manejoTextoRadBttn2());

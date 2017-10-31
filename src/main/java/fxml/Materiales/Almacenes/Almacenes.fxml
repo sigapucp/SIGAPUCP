@@ -1,8 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" fx:id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.AlmacenesController">
-    
+<AnchorPane id="AnchorPane" fx:id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.AlmacenesController">
+   <children>
+      <AnchorPane prefHeight="572.0" prefWidth="250.0">
+         <children>
+            <TextField fx:id="peso_producto_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
+            <Button layoutX="136.0" layoutY="153.0" mnemonicParsing="false" onAction="#buscarAlmacen" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+            <Line endX="100.0" layoutX="136.0" layoutY="50.0" startX="-100.0" />
+            <TableView fx:id="tabla_almacenes" layoutX="13.0" layoutY="205.0" prefHeight="350.0" prefWidth="224.0">
+               <columns>
+                  <TableColumn fx:id="columna_nombre" prefWidth="87.0" text="Nombre" />
+                  <TableColumn fx:id="columna_descripcion" prefWidth="136.0" text="Fecha Creacion" />
+               </columns>
+            </TableView>
+            <TextField fx:id="codigo_producto_buscar" layoutX="118.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
+            <Label layoutX="17.0" layoutY="70.0" prefHeight="21.0" prefWidth="114.0" text="Nombre">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="17.0" layoutY="104.0" prefHeight="21.0" prefWidth="114.0" text="Codigo">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Pane layoutX="6.0" prefHeight="50.0" prefWidth="250.0">
+               <children>
+                  <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="30.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Imagenes/search_icon.png" />
+                     </image></ImageView>
+               </children>
+            </Pane>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="250.0" prefHeight="572.0" prefWidth="750.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="740.0">
+               <children>
+                  <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="31.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Imagenes/rack_icon.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <TabPane fx:id="almacen_form_pane" layoutY="63.0" prefHeight="509.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="General">
+                     <content>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="14.0" prefHeight="153.0" prefWidth="703.0" text="Informacion General">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label layoutX="23.0" layoutY="14.0" text="Nombre :" />
+                                          <Label layoutX="24.0" layoutY="54.0" text="Largo :" />
+                                          <Label layoutX="368.0" layoutY="54.0" text="Ancho:" />
+                                          <Label layoutX="23.0" layoutY="92.0" text="Tipo :" />
+                                          <TextField fx:id="almacen_nombre_field" layoutX="97.0" layoutY="9.0" prefHeight="27.0" prefWidth="579.0" />
+                                          <TextField fx:id="almacen_largo_field" layoutX="98.0" layoutY="49.0" prefHeight="27.0" prefWidth="250.0" />
+                                          <TextField fx:id="almacen_ancho_field" layoutX="427.0" layoutY="49.0" prefHeight="27.0" prefWidth="250.0" />
+                                          <RadioButton fx:id="radio_btn_almacen_logico" layoutX="97.0" layoutY="92.0" mnemonicParsing="false" text="Almacen Logico">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="tipoAlmacen" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="radio_btn_almacen_fisico" layoutX="249.0" layoutY="92.0" mnemonicParsing="false" text="Almacen Fisico" toggleGroup="$tipoAlmacen" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content></TitledPane>
+                              <TableView fx:id="rack_table_view" layoutX="14.0" layoutY="225.0" prefHeight="221.0" prefWidth="468.0">
+                                <columns>
+                                  <TableColumn fx:id="rack_column_codigo" prefWidth="126.0" text="Codigo" />
+                                  <TableColumn fx:id="rack_column_largo" prefWidth="101.0" text="Largo" />
+                                    <TableColumn fx:id="rack_column_ancho" prefWidth="122.0" text="Ancho" />
+                                    <TableColumn fx:id="rack_column_altura" prefWidth="118.0" text="Altura" />
+                                </columns>
+                              </TableView>
+                              <TitledPane animated="false" collapsible="false" layoutX="499.0" layoutY="189.0" prefHeight="255.0" prefWidth="218.0" text="Acciones">
+                                 <content>
+                                    <AnchorPane prefHeight="291.0" prefWidth="222.0">
+                                       <children>
+                                          <Button fx:id="desactivar_rack" contentDisplay="TOP" layoutX="64.0" layoutY="21.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="88.0" text="Desactivar">
+                                             <graphic>
+                                                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../Imagenes/delete_icon.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="buscar_rack_btn" contentDisplay="TOP" layoutX="64.0" layoutY="114.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="88.0" text="Filtrar">
+                                             <graphic>
+                                                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../Imagenes/search_icon.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                              <TextField fx:id="rack_cod_input_search" layoutX="79.0" layoutY="189.0" prefHeight="27.0" prefWidth="404.0" />
+                              <Label layoutX="14.0" layoutY="194.0" text="Codigo:" />
+                           </children></AnchorPane>
+                     </content>
+                  </Tab>
+                <Tab text="Distribucion">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <TitledPane fx:id="create_racks_container" animated="false" collapsible="false" disable="true" layoutX="439.0" layoutY="24.0" prefHeight="139.0" prefWidth="291.0" text="Creacion de Racks:">
+                                 <content>
+                                    <AnchorPane>
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="19.0" text="Altura:" />
+                                          <TextField fx:id="rack_altura_field" layoutX="88.0" layoutY="14.0" prefHeight="27.0" prefWidth="179.0" />
+                                          <Button layoutX="168.0" layoutY="61.0" mnemonicParsing="false" onAction="#crearRack" text="Guardar" />
+                                          <Button layoutX="65.0" layoutY="61.0" mnemonicParsing="false" onAction="#cancelarCreacionRack" text="Cancelar" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="24.0" text="Distribucion de Racks:">
+                                 <content>
+                                    <AnchorPane fx:id="contenedor_grilla" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: lightblue;" />
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+            <Line endX="560.0" layoutX="179.0" layoutY="50.0" startX="-170.0" />
+         </children></AnchorPane>
+   </children>
 </AnchorPane>

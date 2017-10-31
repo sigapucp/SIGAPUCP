@@ -37,4 +37,11 @@ public class Cliente extends Model{
         this.set("estado", "activo");
         this.set("last_user_change","user");
     }
+    
+      public enum TIPO
+    {
+        PersonaNatural,
+        PersonaJuridica
+    }
+    
 }

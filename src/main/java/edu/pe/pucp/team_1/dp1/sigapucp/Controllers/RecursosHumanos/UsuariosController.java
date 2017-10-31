@@ -101,7 +101,7 @@ public class UsuariosController extends Controller{
          
     public UsuariosController()
     {
-        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");   
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         
         List<Usuario> tempUsuarios = Usuario.findAll();               
         for (Usuario usuario : tempUsuarios) {
@@ -231,16 +231,16 @@ public class UsuariosController extends Controller{
     public void guardar()
     {        
         if(crearNuevo)
-        {
+        {           
             crearUsuario();   
             limpiarVerUsuario();
         }else
         {
-             if(usuarioSelecionado==null) 
+            if(usuarioSelecionado==null) 
             {
                 infoController.show("No ha seleccionado un usuario");            
                 return;
-            }
+            }           
             editarUsuario(usuarioSelecionado);
         }                
         RefrescarTabla(Usuario.findAll());
