@@ -427,7 +427,6 @@ public class ProductosController extends Controller {
             infoController.show("El producto ha sido creado satisfactoriamente"); 
             limpiar_formulario();
             crear_nuevo = false;
-            limpiar_formulario();
             inhabilitar_formulario();            
         }
         catch(Exception e){

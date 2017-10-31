@@ -87,10 +87,15 @@ public class ProveedoresController extends Controller{
             nuevo_proveedor.saveIt();
             Base.commitTransaction();
             infoController.show("El cliente ha sido creado satisfactoriamente"); 
+            limpiar_formulario();
+            inhabilitar_formulario();
+            crear_nuevo = false;
         }
         catch(Exception e){
             System.out.println(e);
             Base.rollbackTransaction();
+            infoController.show("El proveedor contiene errores"); 
+            crear_nuevo = true;
         }   
         
     }

@@ -112,11 +112,15 @@ public class CategoriasController extends Controller{
             nueva_categoria.asignar_atributos(usuarioActual.getString(("usuario_cod")),codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             nueva_categoria.saveIt();
             Base.commitTransaction();
-            infoController.show("La categoria ha sido creado satisfactoriamente");             
+            infoController.show("La categoria ha sido creado satisfactoriamente");       
+            limpiar_formulario();
+            deshabilitar_formulario();
+            crear_nuevo = false;
         }
         catch(Exception e){
-            System.out.println("La categoria contiene errores");      
+            System.out.println("La categoria contiene errores");    
             Base.rollbackTransaction();
+            crear_nuevo = true;
         }
     }
     
@@ -124,6 +128,7 @@ public class CategoriasController extends Controller{
         crear_nuevo = true;
         DetalleCategoria.setDisable(false);
         limpiar_formulario();
+        habilitar_formulario();
     }
   
     public void editar_categoria(CategoriaProducto categoria){
@@ -147,7 +152,6 @@ public class CategoriasController extends Controller{
     public void guardar(){
         if (crear_nuevo){
             crear_categoria();
-            limpiar_formulario();
         }else{
             if (categoria_seleccionada == null) return;
             editar_categoria(categoria_seleccionada);
@@ -182,12 +186,20 @@ public class CategoriasController extends Controller{
         catch( Exception e){
             System.out.println(e);
         }
-    }     
+    }
+    
+    public void habilitar_formulario(){
+        DetalleCategoria.setDisable(false);
+    }
+    
+    public void deshabilitar_formulario(){
+        DetalleCategoria.setDisable(true);
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        DetalleCategoria.setDisable(true);
+        deshabilitar_formulario();
         categorias = null;
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
