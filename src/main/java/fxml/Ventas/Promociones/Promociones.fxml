@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PromocionesController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PromocionesController">
    <children>
       <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -32,7 +32,6 @@
             </AnchorPane>
             <AnchorPane layoutX="33.0" layoutY="83.0" prefHeight="200.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
-                  <TextField fx:id="busqTipoPromo" layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
                   <TextField fx:id="busqCodigoPromo" layoutX="130.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
                   <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Promoción:">
                      <font>
@@ -44,6 +43,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
+                  <ComboBox fx:id="busqTipoPromo" layoutX="130.0" layoutY="66.0" prefHeight="25.0" prefWidth="106.0" />
                   <Label layoutX="12.0" layoutY="104.0" prefHeight="21.0" prefWidth="114.0" text="Fecha:">
                      <font>
                         <Font size="14.0" />
