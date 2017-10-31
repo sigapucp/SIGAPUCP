@@ -297,10 +297,13 @@ public class PromocionesController extends Controller{
         setPromocionVisible(promocion_seleccionada);                        
     }       
     
-    private void mostrar_promo(String codigo, Date fechaIni, Date fechaFin, String prioridad, String tipo){
+    private void mostrar_promo(String codigo, LocalDate fechaIni, LocalDate fechaFin, String prioridad, String tipo){
         txtFieCodigoPromo.setText(codigo);
         txtFieCodigoPromo.setDisable(true);
         //fechas
+        dpFecha1.setValue(fechaIni);
+        dpFecha2.setValue(fechaFin);
+                
         comboxPrioridad.setValue(prioridad);
         comboBoxTipoPromo.setValue(tipo);
     }
@@ -341,8 +344,8 @@ public class PromocionesController extends Controller{
     private void setPromocionVisible(Promocion promocion){
         try{
             String codigo = promocion.getString("promocion_cod");
-            Date fechaIni = promocion.getDate("fecha_inicio");
-            Date fechaFin = promocion.getDate("fecha_fin");
+            LocalDate fechaIni = promocion.getDate("fecha_inicio").toLocalDate();
+            LocalDate fechaFin = promocion.getDate("fecha_fin").toLocalDate();
             Integer prioridadAux = promocion.getInteger("prioridad");
             String prioridad = prioridadAux.toString();
             String tipo = promocion.getString("tipo");
