@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.PdfGenerator;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
@@ -314,6 +315,11 @@ public class ClientesController extends Controller{
                 tabla_clientes.getSelectionModel().clearSelection();        
             }
         });
+        try{
+            PdfGenerator.crear_pdf();
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }    
     
     private void manejarAreaTexto(TextField texto, TextField texto2){    
