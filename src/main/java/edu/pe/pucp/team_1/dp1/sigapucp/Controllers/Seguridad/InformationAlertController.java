@@ -19,15 +19,16 @@ public class InformationAlertController {
     public InformationAlertController()
     {
         System.out.println("AQUI VA LA PANTALLA DE INFORMACION");                       
+       
+    }
+    
+    public void show(String mensaje)
+    {
         alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("SIGAPUCP - Informacion");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
         stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
         alert.setHeaderText(null);
-    }
-    
-    public void show(String mensaje)
-    {                   
         alert.setContentText(mensaje);
         stage.showAndWait();
     }    

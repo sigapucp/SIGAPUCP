@@ -342,6 +342,12 @@ public class ProductosController extends Controller {
                 return;                
             }
             
+            if(esDefault.equals('F')&&precios.isEmpty())
+            {
+                infoController.show("Debe agregar un precio por default primero");
+                return;                                
+            }
+            
             Precio precio = new Precio();
             precio.setFloat("precio",valor);
             precio.set("moneda_id",moneda.getId());
