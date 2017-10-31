@@ -229,7 +229,6 @@ public class PromocionesController extends Controller{
         for( Promocion promocion : promociones){
             masterData.add(promocion);
         }
-        //System.out.println(masterData.size());
         tabla_promociones.setEditable(false);
         columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("promocion_cod")));
         columna_tipo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
@@ -239,20 +238,6 @@ public class PromocionesController extends Controller{
     public void inhabilitar_formulario (){
         promo_formulario.setDisable(true);
     }
-    
-    /*public static Calendar stringToCalendar(String dateString, String format) {
- 
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
-        try {
-            if (dateString != null && !dateString.equals("")) {
-                calendar.setTime(sdf.parse(dateString));
-            }
-        } catch (ParseException e) {
-            System.out.println(e);
-        }
-        return calendar;
-    }*/
     
     public String formatoFecha(LocalDate fecha, String formato) {
         LocalDate fechaLocal = fecha;
@@ -299,9 +284,120 @@ public class PromocionesController extends Controller{
     private void visualizar_promocion(ActionEvent event) {      
         crear_nuevo = false;
         promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
-        if(promocion_seleccionada == null) return;        
-        //setPromocionVisible(promocion_seleccionada);                        
+        if(promocion_seleccionada == null) return; 
+        habilitar_formulario();
+        limpiar_formulario();
+        setPromocionVisible(promocion_seleccionada);                        
     }       
+    
+    private void mostrar_promo(String codigo, Date fechaIni, Date fechaFin, String prioridad, String tipo){
+        txtFieCodigoPromo.setText(codigo);
+        //fechas
+        comboxPrioridad.setValue(prioridad);
+        comboBoxTipoPromo.setValue(tipo);
+    }
+    
+    private void mostrar_promoCantidad(String codigoTipCat,Integer compro,Integer llevo){
+        txtFieCodigoProducto1.setText(codigoTipCat);
+        txtFieCodigoProducto2.setText(codigoTipCat);
+        
+        SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, compro);
+        spCompro.setValueFactory(spComproValues);
+        
+        SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, llevo);
+        spLlevo.setValueFactory(spLlevoValues);
+    }
+    
+    private void mostrar_promoBonificacion(Integer compro,String codigoCompro,Integer llevo, String codigoLlevo){
+        SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, compro);
+        spCompro.setValueFactory(spComproValues);
+        
+        txtFieCodigoProducto1.setText(codigoCompro);
+        
+        SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, llevo);
+        spLlevo.setValueFactory(spLlevoValues);
+        
+        txtFieCodigoProducto2.setText(codigoLlevo);
+    }
+    
+    private void mostrar_promoPorcentaje(String codigoTipCat,Integer valor,String concepto){
+        txtFieCodigoProducto3.setText(codigoTipCat);
+        
+        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, valor);
+        spPorc.setValueFactory(spPorcValues);
+        
+        desc_concepto.setText(concepto);
+    }
+    
+    private void setPromocionVisible(Promocion promocion){
+        try{
+            String codigo = promocion.getString("promocion_cod");
+            Date fechaIni = promocion.getDate("fecha_inicio");
+            Date fechaFin = promocion.getDate("fecha_fin");
+            Integer prioridadAux = promocion.getInteger("prioridad");
+            String prioridad = prioridadAux.toString();
+            String tipo = promocion.getString("tipo");
+            String es_categoria_aux = promocion.getString("es_categoria");
+            String codigoTipCat = "";
+            
+            if (es_categoria_aux.equals("S")){
+                codigoTipCat = promocion.getString("categoria_code");
+            } else if (es_categoria_aux.equals("N")){
+                codigoTipCat = promocion.getString("tipo_cod");
+            }
+                        
+            mostrar_promo(codigo,fechaIni,fechaFin,prioridad,tipo);
+            
+            if (tipo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase())){
+                if (es_categoria_aux.equals("S")){
+                    rbPorCategoria.setSelected(true);
+                    botonTipo1.setDisable(true);
+                } else if (es_categoria_aux.equals("N")){
+                    rbPorTipo.setSelected(true);
+                    botonCategoria1.setDisable(true);
+                }
+                PromocionCantidad promocionC = PromocionCantidad.findFirst("promocion_cod = ? AND promocion_id = ?", codigo,promocion.getId());
+                
+                Integer compro = promocionC.getInteger("nr_comprar");
+                Integer llevo = promocionC.getInteger("nr_obtener");                
+                mostrar_promoCantidad(codigoTipCat, compro, llevo);
+                
+            } else if (tipo.equals(Promocion.TIPO.BONIFICACIÓN.name().toLowerCase())){
+                PromocionBonificacion promocionB = PromocionBonificacion.findFirst("promocion_cod = ? AND promocion_id = ?", codigo,promocion.getId());
+                
+                Integer compro = promocionB.getInteger("nr_comprar");
+                Integer llevo = promocionB.getInteger("nr_obtener");
+                String es_categoria_obtener_aux = promocionB.getString("es_categoria_obtener");
+                String codigo_aux = "";
+                
+                if (es_categoria_obtener_aux.equals("S")){
+                    codigo_aux = promocionB.getString("categoria_code");
+                } else if (es_categoria_obtener_aux.equals("N")){
+                    codigo_aux = promocionB.getString("tipo_code");
+                }
+                
+                mostrar_promoBonificacion(compro,codigoTipCat,llevo,codigo_aux);
+                
+            } else if (tipo.equals(Promocion.TIPO.PORCENTAJE.name().toLowerCase())) {
+                if (es_categoria_aux.equals("S")){
+                    rbPorCategoria.setSelected(true);
+                    botonTipo3.setDisable(true);
+                } else if (es_categoria_aux.equals("N")){
+                    rbPorTipo.setSelected(true);
+                    botonCategoria3.setDisable(true);
+                }
+                PromocionPorcentaje promocionP = PromocionPorcentaje.findFirst("promocion_cod = ? AND promocion_id = ?", codigo,promocion.getId());
+                
+                Integer valor = promocionP.getInteger("valor_desc");
+                String concepto = promocionP.getString("concepto_desc");
+                
+                mostrar_promoPorcentaje(codigoTipCat,valor,concepto);
+            }
+            
+        } catch (Exception e){
+            infoController.show("El Usuario contiene errores : " + e);
+        }
+    }
     
     //Botón guardar
     @Override
@@ -317,6 +413,7 @@ public class PromocionesController extends Controller{
     }   
         
     // Botón nuevo
+    @Override
     public void nuevo(){
        crear_nuevo = true;
        habilitar_formulario();       

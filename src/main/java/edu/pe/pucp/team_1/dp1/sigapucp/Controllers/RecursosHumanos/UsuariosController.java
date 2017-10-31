@@ -183,7 +183,7 @@ public class UsuariosController extends Controller{
             
             mostrarUsuarioPrivilegios(usuario);                                                   
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);                    
+            infoController.show("El Usuario contiene errores : " + e);
         }                                
     }
     

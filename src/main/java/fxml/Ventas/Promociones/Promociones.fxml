@@ -60,7 +60,7 @@
                       <TableColumn fx:id="columna_tipo" prefWidth="151.0" text="Tipo" />
                     </columns>
                   </TableView>
-                  <Button layoutX="141.0" layoutY="277.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                  <Button layoutX="141.0" layoutY="277.0" mnemonicParsing="false" onAction="#visualizar_promocion" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
                </children>
             </AnchorPane>
          </children>
