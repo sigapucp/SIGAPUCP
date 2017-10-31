@@ -116,8 +116,6 @@ public class PromocionesController extends Controller{
     @FXML
     private Button botonCategoria3;
     @FXML
-    private TextField txtFiePrecioUnitario;    
-    @FXML
     private TextField desc_concepto;
       
     private Boolean crear_nuevo;
@@ -173,7 +171,11 @@ public class PromocionesController extends Controller{
             controller.abrirModal.addHandler((sender,tipargs)->{
                 codigo_promo = tipargs.getCodigo();
                 id_promo = tipargs.getId();
-                txtField.setText(codigo_promo);
+                if(txtField.getId().equals("txtFieCodigoProducto1")&&comboBoxTipoPromo.getSelectionModel().getSelectedItem().equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
+                {
+                    txtFieCodigoProducto2.setText(codigo_promo);
+                }
+                txtField.setText(codigo_promo);                  
             });
             openModal(currentStage, contenido);
         } catch (IOException ex) {
@@ -192,7 +194,7 @@ public class PromocionesController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
-        //infoController = new InformationAlertController();
+        infoController = new InformationAlertController();
         inhabilitar_formulario();
         promocion_seleccionada = null;
         promociones = null;
@@ -203,11 +205,17 @@ public class PromocionesController extends Controller{
         rbPorTipo.setOnAction(e -> manejarrbPorTipo());
         rbPorCategoria.setOnAction(e -> manejarrbPorCategoria());
         
-        comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
+        comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name().toLowerCase()
+                                        , Promocion.TIPO.BONIFICACIÓN.name().toLowerCase()
+                                        ,Promocion.TIPO.PORCENTAJE.name().toLowerCase()
+                                        );
         comboBoxTipoPromo.setOnAction(e -> manejarcomboBoxTipoPromo());
         comboxPrioridad.getItems().addAll("1", "2","3");
         
-        busqTipoPromo.getItems().addAll("","Por cantidad", "Por bonificación","Por porcentaje");
+        busqTipoPromo.getItems().addAll("",Promocion.TIPO.CANTIDAD.name().toLowerCase()
+                                        , Promocion.TIPO.BONIFICACIÓN.name().toLowerCase()
+                                        ,Promocion.TIPO.PORCENTAJE.name().toLowerCase()
+                                        );
         manejoDeModales();        
     }    
     
@@ -331,7 +339,7 @@ public class PromocionesController extends Controller{
             String flag_categoria = (es_categoria_obtener) ? "S":"N";
             
             String codigo = "";
-            codigo = (tipoPromo.equals("Por porcentaje")) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
+            codigo = ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
             System.err.println(codigo);
             
             String id = "";               
@@ -364,7 +372,7 @@ public class PromocionesController extends Controller{
     }
     
     private void llenarTablasHijas(String tipoPromo, String flag_categoria){
-        if (tipoPromo.equals("Por cantidad")){
+        if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
             String id_llevar = "";
             if (es_categoria_obtener){
                 CategoriaProducto categoria = new CategoriaProducto();
@@ -376,7 +384,7 @@ public class PromocionesController extends Controller{
                 id_llevar = tipo.getString("tipo_id");
             }                               
             if (flag_categoria.equals("S"))
-                PromocionCantidad.createIt("promocion_id", promocion_seleccionada.getId()
+                PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId()
                                         , "promocion_cod", promocion_seleccionada.get("promocion_cod")
                                         , "nr_comprar", (Integer)spCompro.getValue()
                                         , "nr_obtener",(Integer)spLlevo.getValue()
@@ -385,7 +393,7 @@ public class PromocionesController extends Controller{
                                         , "categoria_id" ,Integer.parseInt(id_llevar) 
                                         );
             else
-                PromocionCantidad.createIt("promocion_id", promocion_seleccionada.getId()
+                PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId()
                                         , "promocion_cod", promocion_seleccionada.get("promocion_cod")
                                         , "nr_comprar", (Integer)spCompro.getValue()
                                         , "nr_obtener",(Integer)spLlevo.getValue()
@@ -393,8 +401,8 @@ public class PromocionesController extends Controller{
                                         , "tipo_cod", txtFieCodigoProducto2.getText()
                                         , "tipo_id" ,Integer.parseInt(id_llevar) 
                                         );                
-        } else if (tipoPromo.equals("Por bonificación")){
-            PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId()
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())){
+            PromocionCantidad.createIt("promocion_id", promocion_seleccionada.getId()
                                         , "promocion_cod", promocion_seleccionada.get("promocion_cod")
                                         , "nr_comprar", (Integer)spCompro.getValue()
                                         , "nr_obtener",(Integer)spLlevo.getValue()
@@ -431,9 +439,7 @@ public class PromocionesController extends Controller{
         
         txtFieCodigoProducto3.clear();
         txtFieCodigoProducto3.setDisable(false);
-        
-        txtFiePrecioUnitario.clear();
-        
+                
         SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spCompro.setValueFactory(spComproValues);
         
@@ -444,7 +450,10 @@ public class PromocionesController extends Controller{
         spPorc.setValueFactory(spPorcValues);
         
         comboBoxTipoPromo.getItems().clear();
-        comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
+        comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name().toLowerCase()
+                                        , Promocion.TIPO.BONIFICACIÓN.name().toLowerCase()
+                                        ,Promocion.TIPO.PORCENTAJE.name().toLowerCase()
+                                        );
         
         comboxPrioridad.getItems().clear();
         comboxPrioridad.getItems().addAll("1", "2","3");
@@ -463,7 +472,7 @@ public class PromocionesController extends Controller{
     private void manejarrbPorTipo(){
         String tipoPromo = obtener_tipo_promo();
         rbPorCategoria.setSelected(false);
-        if (tipoPromo.equals("Por porcentaje")){
+        if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
             botonCategoria3.setDisable(true);
             botonTipo3.setDisable(false);
         } else {
@@ -471,13 +480,17 @@ public class PromocionesController extends Controller{
             botonCategoria2.setDisable(true);
             botonTipo1.setDisable(false);
             botonTipo2.setDisable(false);
+            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
+            {
+                botonTipo2.setDisable(false);                
+            }
         }
     }
     
     private void manejarrbPorCategoria(){
         String tipoPromo = obtener_tipo_promo();
         rbPorTipo.setSelected(false);
-        if (tipoPromo.equals("Por porcentaje")){
+        if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
             botonTipo3.setDisable(true);        
             botonCategoria3.setDisable(false);
         } else {
@@ -485,6 +498,10 @@ public class PromocionesController extends Controller{
             botonTipo2.setDisable(true);
             botonCategoria1.setDisable(false);
             botonCategoria2.setDisable(false);
+            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
+            {
+                botonCategoria2.setDisable(false);                
+            }
         } 
     }
     
@@ -513,6 +530,7 @@ public class PromocionesController extends Controller{
         
         botonTipo3.setDisable(true);
         botonCategoria3.setDisable(true);
+        desc_concepto.setDisable(true);
     }
     
     private void habilitar_Porcentaje(){
@@ -520,6 +538,7 @@ public class PromocionesController extends Controller{
         txtFieCodigoProducto3.setDisable(false);        
         botonTipo3.setDisable(false);
         botonCategoria3.setDisable(false);
+        desc_concepto.setDisable(false);
     }
     
     //función para limpiar lo necesario para el tipo de promoción: Por Cantidad
@@ -571,16 +590,18 @@ public class PromocionesController extends Controller{
     
     private void manejarcomboBoxTipoPromo(){
         String tipoPromo = obtener_tipo_promo();
-        if (tipoPromo.equals("Por cantidad")){
+        if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())){
             habilitar_CantBoni();
-            deshabilitar_Porcentaje();   
-            limpiarPorCantidad();
-        } else if (tipoPromo.equals("Por bonificación")){
+            deshabilitar_Porcentaje(); 
+            rbPorTipo.setDisable(false);
+            rbPorCategoria.setDisable(false);  
+            botonTipo2.setDisable(true);
+            botonCategoria2.setDisable(true);
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
             habilitar_CantBoni();
             deshabilitar_Porcentaje();
-            rbPorTipo.setDisable(false);
-            rbPorCategoria.setDisable(false);
-        } else if (tipoPromo.equals("Por porcentaje")){
+            limpiarPorCantidad();
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
             habilitar_Porcentaje();
             deshabilitar_CantBoni();
         }
