@@ -157,12 +157,29 @@ public class CategoriasController extends Controller{
             crear_categoria();
             limpiar_formulario();
         }else{
-            if (categoria_seleccionada == null) return;
+            if (categoria_seleccionada == null){
+                infoController.show("No he seleccionado un categoria");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_categoria(categoria_seleccionada);
         }
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
     }
+    
+    /*public void desactivar(){
+        if (categoria_seleccionada==null){
+            infoController.show("No se selecciono una categoria");
+        }
+        try{
+            Base.openTransaction();
+            categoria_seleccionada.set("estado",CategoriaProducto.ESTADO.);
+        }
+    }*/
     
     
     public void cargar_tabla_index(){

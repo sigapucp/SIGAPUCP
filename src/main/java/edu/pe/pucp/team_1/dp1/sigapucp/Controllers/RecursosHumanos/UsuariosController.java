@@ -232,6 +232,11 @@ public class UsuariosController extends Controller{
     {        
         if(crearNuevo)
         {
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crearUsuario();   
             limpiarVerUsuario();
         }else
@@ -239,6 +244,10 @@ public class UsuariosController extends Controller{
              if(usuarioSelecionado==null) 
             {
                 infoController.show("No ha seleccionado un usuario");            
+                return;
+            }
+             if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editarUsuario(usuarioSelecionado);

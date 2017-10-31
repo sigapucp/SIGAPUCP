@@ -200,18 +200,29 @@ public class RolesController extends Controller{
         
         limpiarVerRol();
     }
+
+
     
     @Override 
     public void guardar()
     {        
         if(crearNuevo)
         {
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crearRol();            
         }else
         {
             if(rolSelecionado==null) 
             {
                 infoController.show("No ha seleccionado un rol");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editarRol(rolSelecionado);

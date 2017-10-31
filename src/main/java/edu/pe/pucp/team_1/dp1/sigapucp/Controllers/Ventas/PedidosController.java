@@ -7,7 +7,9 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -159,9 +161,21 @@ public class PedidosController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crearPedido();
         } else {
-            if (pedidoSeleccionado == null) return;
+            if (pedidoSeleccionado == null){
+                infoController.show("No ha seleccionado un cliente");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editarPedido(pedidoSeleccionado);
         }
         refrescarTabla();

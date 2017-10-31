@@ -538,10 +538,31 @@ public class ProductosController extends Controller {
                 infoController.show("No ha seleccionado un tipo de producto");            
                 return;
             }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_producto(producto_seleccionado);
         }    
         crear_nuevo = false;
         RefrescarTabla(TipoProducto.findAll());
+    }
+    
+    @Override
+    public void desactivar(){
+        if (producto_seleccionado==null){
+            infoController.show("No se ha seleccionado producto");
+            return;
+        }
+        try{
+            Base.openTransaction();
+            producto_seleccionado.set("estado",TipoProducto.ESTADO.INACTIVO.name());
+            producto_seleccionado.saveIt();
+            Base.commitTransaction();
+        }catch(Exception e){
+            infoController.show("El producto contiene errores: " + e);
+            Base.rollbackTransaction();
+        }
     }
     
     private void RefrescarTabla(List<TipoProducto> productoRefresh)
