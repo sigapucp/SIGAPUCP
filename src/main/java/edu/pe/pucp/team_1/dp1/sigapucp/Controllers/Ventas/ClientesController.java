@@ -117,9 +117,13 @@ public class ClientesController extends Controller{
             Cliente nuevo_cliente = new Cliente();
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
-            nuevo_cliente.saveIt();
-            Base.commitTransaction();
-            infoController.show("El cliente ha sido creado satisfactoriamente"); 
+            if (nuevo_cliente.is_valid()){
+                nuevo_cliente.saveIt();
+                Base.commitTransaction();
+                infoController.show("El cliente ha sido creado satisfactoriamente"); 
+            }else{
+                infoController.show("El cliente contiene errores"); 
+            }
         }
         catch(Exception e){
             System.out.println(e);
@@ -185,20 +189,21 @@ public class ClientesController extends Controller{
         try{
             Cliente registro_seleccionado = tabla_clientes.getSelectionModel().getSelectedItem();
             cliente_formulario.setDisable(false);
-            if (registro_seleccionado.getString("tipo_cliente").equals("persona natural")){
+            if (registro_seleccionado.getString("tipo_cliente").equals("PersonaNatural")){
                 dni.setText(registro_seleccionado.getString("dni"));
                 ruc.setDisable(true);
                 persoNatu.setSelected(true);
                 persoJuri.setSelected(false);
-            }else if (registro_seleccionado.getString("tipo_cliente").equals("persona juridica")){
+                repLegal.setDisable(true);
+            }else if (registro_seleccionado.getString("tipo_cliente").equals("PersonaJuridica")){
                 ruc.setText(registro_seleccionado.getString("ruc"));
                 dni.setDisable(true);
                 persoNatu.setSelected(false);
                 persoJuri.setSelected(true);
+                repLegal.setText(registro_seleccionado.getString("nombre_contacto"));
             }
             clienteSh.setText(registro_seleccionado.getString("nombre"));
             telf.setText(registro_seleccionado.getString("telef_contacto"));
-            repLegal.setText(registro_seleccionado.getString("nombre_contacto"));
             envioDir.setText(registro_seleccionado.getString("direccion_despacho"));
             factDir.setText(registro_seleccionado.getString("direccion_facturacion"));
             
