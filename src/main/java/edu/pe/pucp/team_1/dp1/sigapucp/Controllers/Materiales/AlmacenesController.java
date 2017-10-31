@@ -12,6 +12,8 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.WarningAlertControl
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.LinearDrawing;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -83,7 +85,7 @@ public class AlmacenesController extends Controller{
         racks = FXCollections.observableArrayList();
         skipValidationOnTabChange = new AtomicBoolean(false);
         
-        createNewSelectableGrid(10, 10, 400, 400);
+        createNewLinearSelectableGrid(10, 10, 400, 400);
     }
     
     private void setTempRack(Rack rack, createRackArgs args) {
@@ -106,32 +108,45 @@ public class AlmacenesController extends Controller{
         return !(almacen_ancho_field.getText().equals("") || almacen_largo_field.getText().equals("") || tipoAlmacen.getSelectedToggle() == null);
     }
     
-    private void createNewSelectableGrid(int columns, int rows, int width, int height) {
-        grid = new SelectableGrid(rows, columns, width, height);
+    private void createNewLinearSelectableGrid(int columns, int rows, int width, int height) {
+        LinearDrawing linearBehavior = new LinearDrawing();
+        grid = new SelectableGrid(rows, columns, width, height, linearBehavior);
 
-        grid.getCreateRackEvent().addHandler((sender, args) -> {
+        linearBehavior.getCreateRackEvent().addHandler((sender, args) -> {
             create_racks_container.setDisable(false);
             contenedor_grilla.setDisable(true);
             temp_rack = new Rack();
-            setTempRack(temp_rack, args);
+            setTempRack(temp_rack, (createRackArgs) args);
         });
 
         if(contenedor_grilla != null) contenedor_grilla.getChildren().setAll(grid);
     }
     
+    private void createNewRectangularSelectableGrid(int columns, int rows, int width, int height) {
+        RectangularDrawing rectangularBehavior = new RectangularDrawing();
+        grid = new SelectableGrid(rows, columns, width, height, rectangularBehavior);
+        
+        if(contenedor_grilla != null) contenedor_grilla.getChildren().setAll(grid);
+    }
+    
     private void setTypeOfShow() {
         if (tipoAlmacen.getSelectedToggle() != null) {
+            int almacenAncho = Integer.parseInt(almacen_ancho_field.getText());
+            int almacenAlto = Integer.parseInt(almacen_largo_field.getText());
+            Boolean hasAlmacenResize = almacenAncho != grid.getGrid_width() || almacenAlto != grid.getGrid_heigth();
             RadioButton activeRadio = (RadioButton) tipoAlmacen.getSelectedToggle();
             switch(activeRadio.getText()) {
-                case "Almacen Logico":
-                    int almacenAncho = Integer.parseInt(almacen_ancho_field.getText());
-                    int almacenAlto = Integer.parseInt(almacen_largo_field.getText());
-                    if (almacenAncho != grid.getGrid_width() || almacenAlto != grid.getGrid_heigth()) {
-                        System.out.println("Crea una nueva grilla");
-                        createNewSelectableGrid(10, 10, almacenAncho, almacenAlto);
-                    }   
+                case "Almacen Logico":        
+                    if (hasAlmacenResize) {
+                        System.out.println("Crea una nueva grilla para Almacen Logico");
+                        createNewLinearSelectableGrid(10, 10, almacenAncho, almacenAlto);
+                    }
                     break;
                 case "Almacen Fisico":
+                    if (hasAlmacenResize) {
+                        System.out.println("Crea una nueva grilla para Almacen Fisico");
+                        createNewRectangularSelectableGrid(10, 10, almacenAncho, almacenAlto);
+                    }
                     break;
                 default:
                     break;
