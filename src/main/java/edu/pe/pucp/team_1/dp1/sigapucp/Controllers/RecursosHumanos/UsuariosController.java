@@ -10,26 +10,16 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxMenu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.PrivilegioEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
-import edu.pe.pucp.team_1.dp1.sigapucp.Utils.GUIUtils;
-import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -100,12 +90,9 @@ public class UsuariosController extends Controller{
     private TreeTableView<String> ArbolPrivilegiosTabla;
     @FXML
     private TreeTableColumn<String, String> ArbolPrivilegiosColumna;
-   
-
-    
+      
     private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();     
-    
-    private List<Usuario> tempUsuarios;
+     
     private Usuario usuarioSelecionado;
     private Boolean crearNuevo;
     private InformationAlertController infoController;
@@ -116,7 +103,7 @@ public class UsuariosController extends Controller{
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         
-        tempUsuarios = Usuario.findAll();               
+        List<Usuario> tempUsuarios = Usuario.findAll();               
         for (Usuario usuario : tempUsuarios) {
             usuarios.add(usuario);
         }                               
@@ -145,7 +132,7 @@ public class UsuariosController extends Controller{
         String estado = BusquedaEstado.getValue();
         String rol = BusquedaRol.getValue();
         
-        tempUsuarios = Usuario.findAll();
+        List<Usuario> tempUsuarios = Usuario.findAll();
         
         if(codigo!=null&&!codigo.isEmpty())
         {            
@@ -174,7 +161,7 @@ public class UsuariosController extends Controller{
         RefrescarTabla(tempUsuarios);
         try {                        
         } catch (Exception e) {
-            
+            infoController.show("El Usuario contiene errores : " + e);                    
         }
     }          
     
@@ -194,12 +181,9 @@ public class UsuariosController extends Controller{
             VerCorreo.setText(email);          
             VerRol.setValue(rol);
             
-            mostrarUsuarioPrivilegios(usuario);
-            
-            List<Menu> a = usuarioRol.getAll(Menu.class);                        
-            
+            mostrarUsuarioPrivilegios(usuario);                                                   
         } catch (Exception e) {
-            
+            infoController.show("El Usuario contiene errores : " + e);                    
         }                                
     }
     
@@ -229,6 +213,7 @@ public class UsuariosController extends Controller{
 
            Base.commitTransaction();
         } catch (Exception e) {
+           infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();
         }
      }
@@ -246,16 +231,16 @@ public class UsuariosController extends Controller{
     public void guardar()
     {        
         if(crearNuevo)
-        {
+        {           
             crearUsuario();   
             limpiarVerUsuario();
         }else
         {
-             if(usuarioSelecionado==null) 
+            if(usuarioSelecionado==null) 
             {
                 infoController.show("No ha seleccionado un usuario");            
                 return;
-            }
+            }           
             editarUsuario(usuarioSelecionado);
         }                
         RefrescarTabla(Usuario.findAll());
@@ -289,6 +274,7 @@ public class UsuariosController extends Controller{
         infoController.show("El usuario ha sido editado satisfactoriamente");        
         }
         catch(Exception e){
+            infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();
         }                
     }
@@ -302,14 +288,13 @@ public class UsuariosController extends Controller{
         String email = VerCorreo.getText();     
         String rol = VerRol.getSelectionModel().getSelectedItem();
         
+        
         String cod = "USR" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from usuarios_usuario_id_seq")))) + 1);  
         if(!confirmatonController.show("Se creara el usuario con codigo: " + cod, "¿Desea continuar?")) return;
         
         try{      
 
-        Base.openTransaction();    
-
-        
+        Base.openTransaction();           
         Usuario usuario = new Usuario();
         usuario.set("usuario_cod",cod);        
         usuario.set("nombre",nombre);
@@ -328,24 +313,25 @@ public class UsuariosController extends Controller{
         infoController.show("El usuario ha sido creado satisfactoriamente");        
         }
         catch(Exception e){
+           infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();           
         }finally{
            crearNuevo = false; 
         }        
     }    
     
-    private void RefrescarTabla(List<Usuario> tempUsuarios)
-    {
-        
+    private void RefrescarTabla(List<Usuario> usuariosRefresh)
+    {        
         try {
             usuarios.removeAll(usuarios);                 
-            if(tempUsuarios == null) return;
-            for (Usuario usuario : tempUsuarios) {
+            if(usuariosRefresh == null) return;
+            for (Usuario usuario : usuariosRefresh) {
                 usuarios.add(usuario);
             }               
             TablaUsuarios.getColumns().get(0).setVisible(false);
             TablaUsuarios.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
+            infoController.show("El Usuario contiene errores : " + e);        
         }                                  
     }
     
@@ -386,12 +372,9 @@ public class UsuariosController extends Controller{
             
             ArbolPrivilegiosColumna.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getValue())); 
                         
-            ObservableList<String> estados = FXCollections.observableArrayList();    
-            ObservableList<String> estadosNoPad = FXCollections.observableArrayList(); 
-            
+            ObservableList<String> estados = FXCollections.observableArrayList();                           
             estados.add("");
-            estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));            
-            estadosNoPad.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
+            estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
             
             
             ObservableList<String> rolesNames = FXCollections.observableArrayList();   
@@ -414,6 +397,7 @@ public class UsuariosController extends Controller{
             ArbolPrivilegiosTabla.setShowRoot(false);
             
         } catch (Exception e) {
+            infoController.show("El Usuario contiene errores : " + e);        
         }       
     } 
 

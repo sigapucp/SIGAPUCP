@@ -25,6 +25,8 @@ insert into accionesxmenus values (22,'VIW',3,'Se ingresa al menu de Simulacion'
 insert into accionesxmenus values (23,'VIW',3,'Se ingresa al menu de Parametros de Sistema');
 insert into accionesxmenus values (24,'VIW',3,'Se ingresa al menu de Unidades');
 insert into accionesxmenus values (25,'VIW',3,'Se ingresa al menu de Monedas');
+insert into accionesxmenus values (26,'VIW',3,'Se ingresa al menu de Guia de Remisiones');
+insert into accionesxmenus values (27,'VIW',3,'Se ingresa al tu Cuenta');
 
 insert into accionesxmenus values (5,'CRE',4,'Se crea un nuevo almacen');
 insert into accionesxmenus values (6,'CRE',4,'Se crea una nueva categoria de producto');

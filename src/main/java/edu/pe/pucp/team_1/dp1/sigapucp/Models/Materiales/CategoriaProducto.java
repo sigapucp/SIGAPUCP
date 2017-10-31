@@ -17,7 +17,6 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("categoriasproducto")
 @IdName("categoria_id")
 @Many2Many(other = TipoProducto.class, join = "categoriasxtipos", sourceFKName = "categoria_id", targetFKName = "tipo_id")
-
 public class CategoriaProducto extends Model{
     
     public void asignar_atributos(String usuario,String codigo, String nombre, String descripcion){

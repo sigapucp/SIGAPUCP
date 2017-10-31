@@ -16,5 +16,7 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("OrdenesCompra")
 @IdName("orden_compra_id")
 public class OrdenCompra extends Model{
-    
+    static {
+        dateFormat("dd/MM/yyyy", "fecha_emision");
+    }   
 }

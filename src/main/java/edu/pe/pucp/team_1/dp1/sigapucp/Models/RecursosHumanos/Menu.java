@@ -44,7 +44,9 @@ public class Menu extends Model{
         Simulacion,
         ParametrosdeSistema,
         Unidades,
-        Monedas;
+        Monedas,
+        GuiaDeRemision,
+        Cuenta;
         public static int getId(MENU menu)
         {
             return menu.ordinal() + 1;

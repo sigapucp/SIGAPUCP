@@ -7,6 +7,8 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,6 +28,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import java.util.stream.Collectors;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -70,6 +74,8 @@ public class ClientesController extends Controller{
     private TextField telf;
     @FXML
     private AnchorPane cliente_formulario;
+    
+    
     @FXML
     private TableColumn<Cliente, String> columna_ruc;
     @FXML
@@ -90,9 +96,9 @@ public class ClientesController extends Controller{
     
     public ClientesController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-                          
         
         infoController = new InformationAlertController();
+        
                 
         cliente_seleccioando = null;
         crear_nuevo = false;        
@@ -100,16 +106,17 @@ public class ClientesController extends Controller{
     
     public String obtener_tipo_cliente(){
         String tipo_cliente = "";
-        tipo_cliente = (persoNatu.isSelected()) ? "persona natural" : "";
-        tipo_cliente = (persoJuri.isSelected()) ? "persona natural" : "";
+        tipo_cliente = (persoNatu.isSelected()) ? Cliente.TIPO.PersonaNatural.name() : Cliente.TIPO.PersonaJuridica.name();        
         return tipo_cliente;
     }
     
     public void crear_cliente(){
         try{
+            cliente_seleccioando = null;
             Base.openTransaction();  
             Cliente nuevo_cliente = new Cliente();
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
+            nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_cliente.saveIt();
             Base.commitTransaction();
             infoController.show("El cliente ha sido creado satisfactoriamente"); 
@@ -117,17 +124,22 @@ public class ClientesController extends Controller{
         catch(Exception e){
             System.out.println(e);
             Base.rollbackTransaction();
+        }finally{
+            crear_nuevo = false;
         }        
     }
     
     public void editar_cliente(Cliente cliente){
         try{
+            Base.openTransaction();  
             cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
+            cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             cliente.saveIt();
+            Base.commitTransaction();
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
-            //Base.rollbackTransaction();
+            Base.rollbackTransaction();
         }
     }
     
@@ -136,8 +148,13 @@ public class ClientesController extends Controller{
     public void guardar() {
         if (crear_nuevo){
             crear_cliente();
+            limpiar_formulario();
         }else{
-            if (cliente_seleccioando == null) return;
+            System.out.println("editando");
+            if (cliente_seleccioando == null) {
+                infoController.show("No ha seleccionado un cliente");            
+                return;
+            }
             editar_cliente(cliente_seleccioando);
         }
         clientes = Cliente.findAll();
@@ -161,6 +178,36 @@ public class ClientesController extends Controller{
         repLegal.clear();
         telf.clear();
     }
+
+    @FXML
+    public void mostrar_detalle_cliente(ActionEvent event) throws IOException{
+        try{
+            Cliente registro_seleccionado = tabla_clientes.getSelectionModel().getSelectedItem();
+            cliente_formulario.setDisable(false);
+            if (registro_seleccionado.getString("tipo_cliente").equals("persona natural")){
+                dni.setText(registro_seleccionado.getString("dni"));
+                ruc.setDisable(true);
+                persoNatu.setSelected(true);
+                persoJuri.setSelected(false);
+            }else if (registro_seleccionado.getString("tipo_cliente").equals("persona juridica")){
+                ruc.setText(registro_seleccionado.getString("ruc"));
+                dni.setDisable(true);
+                persoNatu.setSelected(false);
+                persoJuri.setSelected(true);
+            }
+            clienteSh.setText(registro_seleccionado.getString("nombre"));
+            telf.setText(registro_seleccionado.getString("telef_contacto"));
+            repLegal.setText(registro_seleccionado.getString("nombre_contacto"));
+            envioDir.setText(registro_seleccionado.getString("direccion_despacho"));
+            factDir.setText(registro_seleccionado.getString("direccion_facturacion"));
+            
+            
+        }
+        catch( Exception e){
+            System.out.println(e);
+        }
+    }  
+
     
     public void habilitar_formulario(){
         cliente_formulario.setDisable(false);
@@ -189,17 +236,38 @@ public class ClientesController extends Controller{
     }
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
-        clientes = Cliente.findAll();
-        masterData.clear();
-        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();        
-        try{
-            for(Cliente cliente : clientes){
-                if (cumple_condicion_busqueda(cliente, rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado)){
-                    masterData.add(cliente);
-                }
-            }
-        }catch(Exception e){
-            System.out.println(e);
+
+        String ruc = rucBusq.getText();
+        String dni = dniBusq.getText();
+        String nombres = nombreBusq.getText();
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+        System.out.println(estado);
+        List<Cliente> temp_clientes = Cliente.findAll();
+        
+        if(ruc!=null&&!ruc.isEmpty())
+        {            
+            temp_clientes = temp_clientes.stream().filter(p -> p.getString("ruc").equals(ruc)).collect(Collectors.toList());
+        }
+
+        if(dni!=null&&!dni.isEmpty())
+        {            
+            temp_clientes = temp_clientes.stream().filter(p -> p.getString("dni").equals(ruc)).collect(Collectors.toList());
+        }
+                
+        if(nombres!=null&&!nombres.isEmpty())
+        {
+            temp_clientes = temp_clientes.stream().filter(p -> p.getString("nombre").equals(nombres)).collect(Collectors.toList());
+        }
+
+        if(estado!=null&&!estado.isEmpty())
+        {
+            temp_clientes = temp_clientes.stream().filter(p -> p.getString("tipo_cliente").equals(nombres)).collect(Collectors.toList());
+        }        
+        clientes = temp_clientes;
+        cargar_tabla_index();
+        try {                        
+        } catch (Exception e) {
+            infoController.show("El Usuario contiene errores : " + e);                    
         }
     }
     
@@ -214,6 +282,7 @@ public class ClientesController extends Controller{
     
     public void cargar_tabla_index(){
         limpiar_tabla_index();
+        masterData.clear();
         for( Cliente cliente : clientes){
             masterData.add(cliente);
         }
@@ -225,6 +294,12 @@ public class ClientesController extends Controller{
     }
     
     @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Clientes;
+    }
+    
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         inhabilitar_formulario();
@@ -233,6 +308,12 @@ public class ClientesController extends Controller{
         clientes = null;
         clientes = Cliente.findAll();
         cargar_tabla_index();
+        tabla_clientes.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
+            if (newSelection != null){
+                cliente_seleccioando = tabla_clientes.getSelectionModel().getSelectedItem();                
+                tabla_clientes.getSelectionModel().clearSelection();        
+            }
+        });
     }    
     
     private void manejarAreaTexto(TextField texto, TextField texto2){    

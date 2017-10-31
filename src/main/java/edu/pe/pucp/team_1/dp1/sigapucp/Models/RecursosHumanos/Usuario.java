@@ -51,7 +51,7 @@ public class Usuario extends Model{
     public static boolean tienePermiso(List<AccionxRol> permisos,Menu.MENU menu,Accion.ACCION accion) {
         return (permisos.stream().anyMatch(x->x.getInteger("menu_id").equals(Menu.MENU.getId(menu)) && x.getInteger("accion_id").equals(Accion.ACCION.getId(accion))));        
     }
-    
+      
     public Rol getRol()
     {
         return Rol.findFirst("rol_id = ?", getInteger("rol_id"));        
