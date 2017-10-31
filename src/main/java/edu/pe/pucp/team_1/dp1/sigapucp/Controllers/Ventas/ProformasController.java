@@ -400,6 +400,7 @@ public class ProformasController extends Controller {
         if(estado!=null&&!estado.isEmpty()) {
             tempCotizaciones = tempCotizaciones.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
         }
+
         RefrescarTabla(tempCotizaciones);
         try {                        
         } catch (Exception e) { 
