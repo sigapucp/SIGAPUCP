@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
@@ -29,5 +30,11 @@ public class DocumentosDeVentaController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     
+    }
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.DocumentosdeVenta;
     }
 }    

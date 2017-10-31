@@ -12,6 +12,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertCo
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
@@ -815,6 +816,8 @@ public class PromocionesController extends Controller{
             botonTipo2.setDisable(true);
             botonCategoria2.setDisable(true);
         } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
+            //rbPorTipo.setDisable(false);
+            //rbPorCategoria.setDisable(false); 
             habilitar_CantBoni();
             deshabilitar_Porcentaje();
             limpiarPorCantidad();
@@ -824,5 +827,11 @@ public class PromocionesController extends Controller{
             habilitar_Porcentaje();
             deshabilitar_CantBoni();
         }
+    }
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Promociones;
     }
 }
