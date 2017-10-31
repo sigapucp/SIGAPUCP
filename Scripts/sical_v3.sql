@@ -607,7 +607,7 @@ CREATE TABLE Promociones
  tipo_id        SERIAL NOT NULL ,
  categoria_code VARCHAR(20) NULL ,
  categoria_id   SERIAL NOT NULL ,
- tipo_cod       VARCHAR(20) NOT NULL ,
+ tipo_cod       VARCHAR(20) NULL ,
 
  CONSTRAINT pk_888 PRIMARY KEY  (promocion_cod , promocion_id ),
  CONSTRAINT fk_951 FOREIGN KEY (tipo_cod, tipo_id)
@@ -1046,9 +1046,9 @@ CREATE TABLE PesoFletes
 --SKIP Index: fkIdx_988
 
 
---************************************** PromocionBonificaciones
+--************************************** PromocionCantidades
 
-CREATE TABLE PromocionBonificaciones
+CREATE TABLE PromocionCantidades
 (
  promocion_cod VARCHAR(30) NOT NULL ,
  promocion_id  SERIAL NOT NULL ,
@@ -1065,9 +1065,9 @@ CREATE TABLE PromocionBonificaciones
 --SKIP Index: fkIdx_901
 
 
---************************************** PromocionCantidades
+--************************************** PromocionBonificaciones
 
-CREATE TABLE PromocionCantidades
+CREATE TABLE PromocionBonificaciones
 (
  promocion_cod        VARCHAR(30) NOT NULL ,
  promocion_id         SERIAL NOT NULL ,
