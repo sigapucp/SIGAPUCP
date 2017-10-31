@@ -241,6 +241,7 @@ public class ProformasController extends Controller {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         //llenar tabla:
+
         try {            
             llenar_tabla_index();               
             llenar_combobox();
