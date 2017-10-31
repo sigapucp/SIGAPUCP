@@ -22,7 +22,7 @@ public class Cliente extends Model{
         validateNumericalityOf("telef_contacto");
         validateNumericalityOf("dni");
         validateNumericalityOf("ruc");
-        validateRegexpOf("provuder_ruc", "\\d{1,8}");
+        validateRegexpOf("dni", "\\d{1,8}");
         validateRegexpOf("ruc", "\\d{1,11}");
         validateRegexpOf("telef_contacto", "\\d{1,9}");
     }
