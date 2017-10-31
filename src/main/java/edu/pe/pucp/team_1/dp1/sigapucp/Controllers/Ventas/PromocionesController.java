@@ -421,17 +421,6 @@ public class PromocionesController extends Controller{
     
     public void habilitar_formulario(){
         promo_formulario.setDisable(false);
-        
-        rbPorTipo.setDisable(true);
-        rbPorCategoria.setDisable(true);
-        
-        botonTipo1.setDisable(true);
-        botonTipo2.setDisable(true);
-        botonTipo3.setDisable(true);
-        
-        botonCategoria1.setDisable(true);
-        botonCategoria2.setDisable(true);
-        botonCategoria3.setDisable(true);
     }
     
     public void limpiar_formulario(){
@@ -451,12 +440,15 @@ public class PromocionesController extends Controller{
                 
         SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spCompro.setValueFactory(spComproValues);
+        spCompro.setDisable(true);
         
         SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spLlevo.setValueFactory(spLlevoValues);
+        spLlevo.setDisable(true);
         
         SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spPorc.setValueFactory(spPorcValues);
+        spPorc.setDisable(true);
         
         comboBoxTipoPromo.getItems().clear();
         comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name().toLowerCase()
@@ -469,6 +461,23 @@ public class PromocionesController extends Controller{
         
         dpFecha1.getEditor().clear();
         dpFecha2.getEditor().clear();
+        
+        rbPorTipo.setDisable(true);
+        rbPorCategoria.setDisable(true);
+        
+        txtFieCodigoProducto1.setDisable(true);
+        txtFieCodigoProducto2.setDisable(true);
+        txtFieCodigoProducto3.setDisable(true);
+        
+        botonTipo1.setDisable(true);
+        botonTipo2.setDisable(true);
+        botonTipo3.setDisable(true);
+        
+        botonCategoria1.setDisable(true);
+        botonCategoria2.setDisable(true);
+        botonCategoria3.setDisable(true);
+        
+        desc_concepto.setDisable(true);
     }
     
     private void manejarrbPorTipo(){
@@ -528,6 +537,8 @@ public class PromocionesController extends Controller{
         
         botonTipo3.setDisable(true);
         botonCategoria3.setDisable(true);
+        
+        desc_concepto.clear();
         desc_concepto.setDisable(true);
     }
     
