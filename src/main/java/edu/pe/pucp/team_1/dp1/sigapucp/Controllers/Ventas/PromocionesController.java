@@ -13,6 +13,8 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionPorcentaje;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -140,11 +142,12 @@ public class PromocionesController extends Controller{
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto1);
         });
         botonTipo2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            es_tipo = true;
+            es_categoria_obtener = false;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto2);
         });   
         botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
             es_tipo = true;
+            es_categoria_obtener = false;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto3);
         });   
         botonCategoria1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -152,11 +155,12 @@ public class PromocionesController extends Controller{
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto1);
         }); 
         botonCategoria2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            es_tipo = false;
+            es_categoria_obtener = true;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto2);
         }); 
         botonCategoria3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
             es_tipo = false;
+            es_categoria_obtener = true;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto3);
         }); 
     }
@@ -194,7 +198,7 @@ public class PromocionesController extends Controller{
         inhabilitar_formulario();
         promocion_seleccionada = null;
         promociones = null;
-        es_categoria_obtener = false;
+        
         promociones = Promocion.findAll();
         cargar_tabla_index();
         //Formulario
@@ -311,24 +315,23 @@ public class PromocionesController extends Controller{
     public void crear_promocion(){
         try{
             Base.openTransaction();  
-            promocion_seleccionada = new Promocion();
-            //Agregando las promociones a las tablas hijas por tipo de promoción
+            //Obteniendo valores para Objeto Promoción
+            promocion_seleccionada = new Promocion();            
             String codigoPromo = txtFieCodigoPromo.getText();
-            String tipoPromo = obtener_tipo_promo();
-            String es_categoria = obtener_clasificacion();
-            String flag_categoria = (es_categoria_obtener) ? "S":"N";
-            
-            String codigo = "";
-            String id = "";            
-            
-            //Obteniendo valores para Objeto Promoción  
             String fechaIni = formatoFecha(dpFecha1.getValue(),"dd/MM/yyyy"); 
             String fechaFin = formatoFecha(dpFecha2.getValue(),"dd/MM/yyyy");
             String prioridad = obtener_prioridad();
-            String estado = "ACTIVO"; //obtener_estado();                      
+            String es_categoria = obtener_clasificacion();
+            String estado = "ACTIVO"; //obtener_estado();
+            String tipoPromo = obtener_tipo_promo();
             
+            String flag_categoria = (es_categoria_obtener) ? "S":"N";
+            
+            String codigo = "";
             codigo = (tipoPromo.equals("Por porcentaje")) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
+            System.err.println(codigo);
             
+            String id = "";               
             if (es_tipo){
                 TipoProducto tipo = new TipoProducto();
                 tipo = TipoProducto.findFirst("tipo_cod = ?", codigo);
@@ -340,71 +343,68 @@ public class PromocionesController extends Controller{
             }           
             
             promocion_seleccionada.asignar_atributos(codigoPromo, fechaIni, fechaFin, prioridad, es_categoria, estado, tipoPromo, codigo,id);                                  
-            promocion_seleccionada.saveIt();
-            
-            System.out.println("---------------------------------");
-            System.out.println(promocion_seleccionada);
-            PromocionBonificacion pb = PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId(), "promocion_cod", promocion_seleccionada.get("promocion_cod"), "nr_comprar", (Integer)spCompro.getValue(), "nr_obtener",(Integer)spLlevo.getValue() );
-            
-            System.out.println(pb);
-            System.out.println("---------------------------------");
-            //promocionB.asignar_atributos(codigoPromo, (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
-            //promocionB.saveIt();
-            //promocion_seleccionada.add(promocionB);
-                                    
-            Base.commitTransaction();            
-            /*
-            //Base.commitTransaction();
-            String id_padre = promocion_seleccionada.getString("promocion_id");
-            System.out.println(id_padre);
-            System.out.println("ahora hijos");
-                        
-            if (tipoPromo.equals("Por cantidad")){
-                PromocionCantidad promocionC = new PromocionCantidad();  
-                String id_llevar = "";
-                if (es_categoria_obtener){
-                    CategoriaProducto categoria = new CategoriaProducto();
-                    categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
-                    id_llevar = categoria.getString("categoria_id");
-                }
-                promocionC.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue(), flag_categoria, txtFieCodigoProducto2.getText(),id_llevar);
-                promocionC.saveIt();
-                //Base.commitTransaction();
-            } else if (tipoPromo.equals("Por bonificación")){
-                System.out.println("CodigoPromoPadre "+ codigoPromo);
-                System.out.println("Padre: "+ id_padre);
-                System.out.println("Compro "+ (Integer)spCompro.getValue());
-                System.out.println("Llevo "+(Integer)spLlevo.getValue());
-                
-                PromocionBonificacion promocionB = new PromocionBonificacion();
-                promocionB.asignar_atributos(codigoPromo,id_padre , (Integer)spCompro.getValue(), (Integer)spLlevo.getValue());
-                System.out.println("Promocion :  "+ promocionB);
-                if (promocionB.saveIt())
-                    System.out.println("Bien");
-                else
-                    System.out.println(promocionB.errors());
-                //Base.commitTransaction();
-            } else {
-                PromocionPorcentaje promocionP = new PromocionPorcentaje();
-                String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();
-                promocionP.asignar_atributos(codigoPromo,id_padre , (Integer)spPorc.getValue(), concepto);
-                promocionP.saveIt();
-                //Base.commitTransaction();
-            }     
-            
+            promocion_seleccionada.saveIt();      
+                   
+            //llenando tablas hijas de promocion
+            llenarTablasHijas(tipoPromo,flag_categoria);
             
             infoController = new InformationAlertController();
             infoController.show("La promoción ha sido creado satisfactoriamente");
-            */
-            //limpiar_formulario(); 
-
+                        
+            Base.commitTransaction();
+            limpiar_formulario(); 
         }
         catch(Exception e){
             Logger.getLogger(PromocionesController.class.getName()).log(Level.SEVERE, null, e);
-            //Base.rollbackTransaction();
+            Base.rollbackTransaction();
         }       
     }
     
+    private void llenarTablasHijas(String tipoPromo, String flag_categoria){
+        if (tipoPromo.equals("Por cantidad")){
+            String id_llevar = "";
+            if (es_categoria_obtener){
+                CategoriaProducto categoria = new CategoriaProducto();
+                categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
+                id_llevar = categoria.getString("categoria_id");
+            } else{
+                TipoProducto tipo = new TipoProducto();
+                tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto2.getText());
+                id_llevar = tipo.getString("tipo_id");
+            }                               
+            if (flag_categoria.equals("S"))
+                PromocionCantidad.createIt("promocion_id", promocion_seleccionada.getId()
+                                        , "promocion_cod", promocion_seleccionada.get("promocion_cod")
+                                        , "nr_comprar", (Integer)spCompro.getValue()
+                                        , "nr_obtener",(Integer)spLlevo.getValue()
+                                        , "es_categoria_obtener", flag_categoria
+                                        , "categoria_code", txtFieCodigoProducto2.getText()
+                                        , "categoria_id" ,Integer.parseInt(id_llevar) 
+                                        );
+            else
+                PromocionCantidad.createIt("promocion_id", promocion_seleccionada.getId()
+                                        , "promocion_cod", promocion_seleccionada.get("promocion_cod")
+                                        , "nr_comprar", (Integer)spCompro.getValue()
+                                        , "nr_obtener",(Integer)spLlevo.getValue()
+                                        , "es_categoria_obtener", flag_categoria
+                                        , "tipo_cod", txtFieCodigoProducto2.getText()
+                                        , "tipo_id" ,Integer.parseInt(id_llevar) 
+                                        );                
+        } else if (tipoPromo.equals("Por bonificación")){
+            PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId()
+                                        , "promocion_cod", promocion_seleccionada.get("promocion_cod")
+                                        , "nr_comprar", (Integer)spCompro.getValue()
+                                        , "nr_obtener",(Integer)spLlevo.getValue()
+                                        );
+        } else {
+            String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();                                
+            PromocionPorcentaje.createIt("promocion_id", promocion_seleccionada.getId()
+                                        , "promocion_cod", promocion_seleccionada.get("promocion_cod")
+                                        , "valor_desc", (Integer)spPorc.getValue()
+                                        , "concepto_desc",concepto
+                                        );
+        }
+    }
     
     
     public void habilitar_formulario(){
@@ -413,17 +413,41 @@ public class PromocionesController extends Controller{
     
     public void limpiar_formulario(){
         txtFieCodigoPromo.clear();
+        
         rbPorTipo.setSelected(false);
+        rbPorTipo.setDisable(false);
+        
         rbPorCategoria.setSelected(false);
+        rbPorCategoria.setDisable(false);
+        
+        txtFieCodigoProducto1.clear();
+        txtFieCodigoProducto1.setDisable(false);
+        
         txtFieCodigoProducto2.clear();
+        txtFieCodigoProducto2.setDisable(false);
+        
         txtFieCodigoProducto3.clear();
+        txtFieCodigoProducto3.setDisable(false);
+        
         txtFiePrecioUnitario.clear();
+        
         SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spCompro.setValueFactory(spComproValues);
+        
         SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spLlevo.setValueFactory(spLlevoValues);
+        
         SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spPorc.setValueFactory(spPorcValues);
+        
+        comboBoxTipoPromo.getItems().clear();
+        comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
+        
+        comboxPrioridad.getItems().clear();
+        comboxPrioridad.getItems().addAll("1", "2","3");
+        
+        dpFecha1.getEditor().clear();
+        dpFecha2.getEditor().clear();
     }
     
     private void manejarrbPorTipo(){
