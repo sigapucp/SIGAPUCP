@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
@@ -88,6 +89,7 @@ public class ClientesController extends Controller{
     private Cliente cliente_seleccioando;
     private Boolean crear_nuevo;
     private InformationAlertController infoController;
+    private ConfirmationAlertController confirmatonController;
     private List<Cliente> clientes;
     private final ObservableList<Cliente> masterData = FXCollections.observableArrayList();
     /**
@@ -98,7 +100,7 @@ public class ClientesController extends Controller{
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         
         infoController = new InformationAlertController();
-        
+        confirmatonController = new ConfirmationAlertController();
                 
         cliente_seleccioando = null;
         crear_nuevo = false;        
@@ -115,6 +117,7 @@ public class ClientesController extends Controller{
             cliente_seleccioando = null;
             Base.openTransaction();  
             Cliente nuevo_cliente = new Cliente();
+            if(!confirmatonController.show("Se creará el cliente con código: " + clienteSh.getText(), "¿Desea continuar?")) return;
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             if (nuevo_cliente.is_valid()){
@@ -127,7 +130,7 @@ public class ClientesController extends Controller{
         }
         catch(Exception e){
             System.out.println(e);
-            infoController.show("El cliente contiene errores"); 
+            infoController.show("El cliente contiene errores :"+ e); 
             Base.rollbackTransaction();
         }finally{
             crear_nuevo = false;
@@ -137,6 +140,7 @@ public class ClientesController extends Controller{
     public void editar_cliente(Cliente cliente){
         try{
             Base.openTransaction();  
+            if(!confirmatonController.show("Se editará el cliente con código: " + clienteSh.getText(), "¿Desea continuar?")) return;
             cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             cliente.saveIt();
@@ -273,7 +277,7 @@ public class ClientesController extends Controller{
         cargar_tabla_index();
         try {                        
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);                    
+            infoController.show("El Cliente contiene errores : " + e);                    
         }
     }
     

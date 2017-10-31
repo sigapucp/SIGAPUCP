@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -96,4 +97,9 @@ public class FletesController extends Controller {
     private void buscar_promocion(ActionEvent event) {
     }
     
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Fletes;
+    }
 }
