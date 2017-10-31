@@ -63,7 +63,7 @@ public class TipoProducto extends Model{
             }            
         }
         
-        precioValor = precios.stream().filter(x->x.getBoolean("es_default")).findFirst().get().getDouble("precio");
+        precioValor = precios.stream().findFirst().get().getDouble("precio");
         return precioValor;
     }
     
