@@ -385,6 +385,7 @@ public class ProductosController extends Controller {
     public void nuevo(){
         crear_nuevo = true;
         limpiar_formulario();
+        habilitar_formulario();
         codigo_producto.setEditable(true);
     }
     
@@ -393,7 +394,8 @@ public class ProductosController extends Controller {
             
             if(precios.isEmpty())
             {
-                infoController.show("Debe agregar un precio por default al Tipod de producto");
+                infoController.show("Debe agregar un precio por default al Tipo de producto");
+                crear_nuevo = true;
                 return;
             }
             Base.openTransaction();            
@@ -424,13 +426,16 @@ public class ProductosController extends Controller {
                
             infoController.show("El producto ha sido creado satisfactoriamente"); 
             limpiar_formulario();
+            crear_nuevo = false;
+            limpiar_formulario();
+            inhabilitar_formulario();            
         }
         catch(Exception e){
-            infoController.show("El producto contiene errores : " + e);        
+            infoController.show("El producto contiene errores : " + e);
+            crear_nuevo = true;
             Base.rollbackTransaction();
         }finally{
-            crear_nuevo = false;
-            codigo_producto.setEditable(false);                        
+            codigo_producto.setEditable(true);                        
         }            
     }    
     
@@ -524,7 +529,7 @@ public class ProductosController extends Controller {
     @Override
     public void guardar(){
         if (crear_nuevo){
-            crear_tipo_producto();         
+            crear_tipo_producto();
         }
         else {
             if(producto_seleccionado==null) 
@@ -534,7 +539,6 @@ public class ProductosController extends Controller {
             }
             editar_producto(producto_seleccionado);
         }    
-        crear_nuevo = false;
         RefrescarTabla(TipoProducto.findAll());
     }
     
@@ -563,7 +567,7 @@ public class ProductosController extends Controller {
     public void initialize(URL location, ResourceBundle resources) {
         
         try {
-            //inhabilitar_formulario();
+            inhabilitar_formulario();
             ColumnaCodigoProducto.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             ColumnaTipoProducto.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
             ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
@@ -603,7 +607,7 @@ public class ProductosController extends Controller {
             tablaProductos.setItems(productos);
             TablaCategorias.setItems(categorias);
             TablaPrecios.setItems(precios);
-            codigo_producto.setEditable(false);
+            //codigo_producto.setEditable(false);
             
         } catch (Exception e) {
             infoController.show("El producto contiene errores : " + e);      
