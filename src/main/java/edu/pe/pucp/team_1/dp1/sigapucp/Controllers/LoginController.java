@@ -19,8 +19,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
@@ -52,6 +52,7 @@ public class LoginController implements Initializable{
             Scene main_content_scene = new Scene((Parent)loader.load());
             Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             app_stage.setScene(main_content_scene);
+            app_stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));    
             Base.close();
             app_stage.show();
         }else {

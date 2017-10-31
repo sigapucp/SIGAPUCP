@@ -72,11 +72,7 @@ public class PromocionesController extends Controller{
     @FXML
     private TableColumn<Promocion, String> columna_codigo;
     @FXML
-    private TableColumn<Promocion, String> columna_tipo;
-    
-    //Crear, editar
-    @FXML
-    private Label labelNombrePromocion;
+    private TableColumn<Promocion, String> columna_tipo;    
     @FXML
     private TextField txtFieCodigoPromo;
     @FXML
@@ -92,7 +88,7 @@ public class PromocionesController extends Controller{
     @FXML
     private RadioButton rbPorCategoria;
     @FXML
-    private Spinner<?> spCompro;
+    private Spinner<Integer> spCompro;
     @FXML
     private TextField txtFieCodigoProducto1;
     @FXML
@@ -108,15 +104,13 @@ public class PromocionesController extends Controller{
     @FXML
     private Button botonCategoria2;
     @FXML
-    private Spinner<?> spPorc;    
+    private Spinner<Integer> spPorc;    
     @FXML
     private TextField txtFieCodigoProducto3;
     @FXML
     private Button botonTipo3;
     @FXML
-    private Button botonCategoria3;
-    @FXML
-    private TextField txtFiePrecioUnitario;    
+    private Button botonCategoria3;     
     @FXML
     private TextField desc_concepto;
       
@@ -173,6 +167,10 @@ public class PromocionesController extends Controller{
             controller.abrirModal.addHandler((sender,tipargs)->{
                 codigo_promo = tipargs.getCodigo();
                 id_promo = tipargs.getId();
+                if(txtField.getId().equals("txtFieCodigoProducto1")&&comboBoxTipoPromo.getSelectionModel().getSelectedItem().equals("Por cantidad"))
+                {
+                    txtFieCodigoProducto2.setText(codigo_promo);
+                }                    
                 txtField.setText(codigo_promo);
             });
             openModal(currentStage, contenido);
@@ -184,7 +182,7 @@ public class PromocionesController extends Controller{
     private void openModal(Stage currentStage, AnchorPane contenido) {
         Scene modal_content_scene = new Scene(contenido);                
         currentStage.setScene(modal_content_scene);
-        currentStage.initModality(Modality.APPLICATION_MODAL);
+        if(currentStage.getModality() != Modality.APPLICATION_MODAL) currentStage.initModality(Modality.APPLICATION_MODAL);
         currentStage.setScene(modal_content_scene);
         currentStage.showAndWait();
     }
@@ -192,16 +190,18 @@ public class PromocionesController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
-        //infoController = new InformationAlertController();
+        infoController = new InformationAlertController();
         inhabilitar_formulario();
         promocion_seleccionada = null;
         promociones = null;
         
         promociones = Promocion.findAll();
-        cargar_tabla_index();
+        cargar_tabla_index();       
         //Formulario
         rbPorTipo.setOnAction(e -> manejarrbPorTipo());
         rbPorCategoria.setOnAction(e -> manejarrbPorCategoria());
+        
+        rbPorTipo.setSelected(true);        
         
         comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
         comboBoxTipoPromo.setOnAction(e -> manejarcomboBoxTipoPromo());
@@ -220,8 +220,7 @@ public class PromocionesController extends Controller{
         limpiar_tabla_index();
         for( Promocion promocion : promociones){
             masterData.add(promocion);
-        }
-        //System.out.println(masterData.size());
+        }    
         tabla_promociones.setEditable(false);
         columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("promocion_cod")));
         columna_tipo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
@@ -286,7 +285,7 @@ public class PromocionesController extends Controller{
         }
     }
     
-    //Botón visualizar
+
     @FXML
     private void visualizar_promocion(ActionEvent event) {      
         crear_nuevo = false;
@@ -328,7 +327,7 @@ public class PromocionesController extends Controller{
             String estado = "ACTIVO"; //obtener_estado();
             String tipoPromo = obtener_tipo_promo();
             
-            String flag_categoria = (es_categoria_obtener) ? "S":"N";
+            String flag_categoria = (rbPorCategoria.isSelected()) ? "S":"N";
             
             String codigo = "";
             codigo = (tipoPromo.equals("Por porcentaje")) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
@@ -416,13 +415,7 @@ public class PromocionesController extends Controller{
     
     public void limpiar_formulario(){
         txtFieCodigoPromo.clear();
-        
-        rbPorTipo.setSelected(false);
-        rbPorTipo.setDisable(false);
-        
-        rbPorCategoria.setSelected(false);
-        rbPorCategoria.setDisable(false);
-        
+                     
         txtFieCodigoProducto1.clear();
         txtFieCodigoProducto1.setDisable(false);
         
@@ -431,20 +424,19 @@ public class PromocionesController extends Controller{
         
         txtFieCodigoProducto3.clear();
         txtFieCodigoProducto3.setDisable(false);
-        
-        txtFiePrecioUnitario.clear();
-        
-        SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+             
+        SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
         spCompro.setValueFactory(spComproValues);
         
-        SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
         spLlevo.setValueFactory(spLlevoValues);
         
-        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
         spPorc.setValueFactory(spPorcValues);
         
         comboBoxTipoPromo.getItems().clear();
         comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
+        comboBoxTipoPromo.getSelectionModel().select("Por cantidad");
         
         comboxPrioridad.getItems().clear();
         comboxPrioridad.getItems().addAll("1", "2","3");
@@ -452,12 +444,13 @@ public class PromocionesController extends Controller{
         dpFecha1.getEditor().clear();
         dpFecha2.getEditor().clear();
         
-        botonTipo1.setDisable(false);
-        botonTipo2.setDisable(false);
+        botonTipo1.setDisable(false);     
         botonTipo3.setDisable(false);
-        botonCategoria1.setDisable(false);
-        botonCategoria2.setDisable(false);
+        botonCategoria1.setDisable(false);       
         botonCategoria3.setDisable(false);
+      
+        rbPorCategoria.setDisable(false);
+        rbPorTipo.setDisable(false);                              
     }
     
     private void manejarrbPorTipo(){
@@ -470,7 +463,10 @@ public class PromocionesController extends Controller{
             botonCategoria1.setDisable(true);
             botonCategoria2.setDisable(true);
             botonTipo1.setDisable(false);
-            botonTipo2.setDisable(false);
+            if(!tipoPromo.equals("Por cantidad"))
+            {
+                botonTipo2.setDisable(false);                
+            }
         }
     }
     
@@ -483,8 +479,11 @@ public class PromocionesController extends Controller{
         } else {
             botonTipo1.setDisable(true);
             botonTipo2.setDisable(true);
-            botonCategoria1.setDisable(false);
-            botonCategoria2.setDisable(false);
+            botonCategoria1.setDisable(false);        
+            if(!tipoPromo.equals("Por cantidad"))
+            {
+                botonCategoria2.setDisable(false);                
+            }
         } 
     }
     
@@ -524,11 +523,11 @@ public class PromocionesController extends Controller{
     
     //función para limpiar lo necesario para el tipo de promoción: Por Cantidad
     private void limpiarPorCantidad(){
-        rbPorTipo.setSelected(false);
-        rbPorTipo.setDisable(true);
+        rbPorTipo.setSelected(true);
+        rbPorTipo.setDisable(false);
         
         rbPorCategoria.setSelected(false);
-        rbPorCategoria.setDisable(true);
+        rbPorCategoria.setDisable(false);
         
         botonTipo1.setDisable(false);
         botonTipo2.setDisable(false);
@@ -548,7 +547,7 @@ public class PromocionesController extends Controller{
     }
     
     private void deshabilitar_CantBoni(){
-        SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        SpinnerValueFactory spComproValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
         spCompro.setValueFactory(spComproValues);
         spCompro.setDisable(true);
         
@@ -558,7 +557,7 @@ public class PromocionesController extends Controller{
         botonTipo1.setDisable(true);
         botonCategoria1.setDisable(true);
         
-        SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
         spLlevo.setValueFactory(spLlevoValues);
         spLlevo.setDisable(true);
         
@@ -568,13 +567,15 @@ public class PromocionesController extends Controller{
         botonTipo2.setDisable(true);
         botonCategoria2.setDisable(true);
     }
-    
+       
     private void manejarcomboBoxTipoPromo(){
         String tipoPromo = obtener_tipo_promo();
-        if (tipoPromo.equals("Por cantidad")){
-            habilitar_CantBoni();
+        if (tipoPromo.equals("Por cantidad")){                      
             deshabilitar_Porcentaje();   
-            limpiarPorCantidad();
+            limpiarPorCantidad();                        
+            botonTipo2.setDisable(true);
+            botonCategoria2.setDisable(true);            
+            txtFieCodigoProducto2.setText(txtFieCodigoProducto1.getText());            
         } else if (tipoPromo.equals("Por bonificación")){
             habilitar_CantBoni();
             deshabilitar_Porcentaje();
