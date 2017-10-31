@@ -18,6 +18,8 @@ public class SelectableGrid extends AnchorPane  {
     private int num_columns;
     private int grid_width;
     private int grid_heigth;
+    private int grid_real_width;
+    private int grid_real_heigth;
     private List<GridTile> tiles;
     private List<Integer> active_tiles;
     private List<Integer> temp_tiles;
@@ -26,11 +28,13 @@ public class SelectableGrid extends AnchorPane  {
     private Boolean directionY;
     private IEvent<createRackArgs> createRackEvent;
     
-    public SelectableGrid(int rows, int columns, int width, int height) {
-        num_rows = rows;
-        num_columns = columns;
-        grid_width = width;
-        grid_heigth = height;
+    public SelectableGrid(int rows, int columns, int width, int heigth) {
+        grid_width = width > 400 ? 400 : width;
+        grid_heigth = heigth > 400 ? 400 : heigth;
+        num_rows = rows*(width/400);
+        num_columns = columns*(heigth/400);
+        grid_real_width = width;
+        grid_real_heigth = heigth;
         tiles = new ArrayList<>();
         active_tiles = new ArrayList<>();
         temp_tiles = new ArrayList<>();
@@ -43,8 +47,8 @@ public class SelectableGrid extends AnchorPane  {
     }
     
     private void initializeTiles() {
-        double aspect_ratio_width = grid_width/num_rows;
-        double aspect_ratio_heigth = grid_heigth/num_columns;
+        int aspect_ratio_width = grid_width/num_rows;
+        int aspect_ratio_heigth = grid_heigth/num_columns;
         
         for(int i = 0; i < num_columns; i++)
             for(int j = 0; j < num_rows; j++) {
@@ -52,7 +56,7 @@ public class SelectableGrid extends AnchorPane  {
                 tile.setTranslateX(j * aspect_ratio_width);
                 tile.setTranslateY(i * aspect_ratio_heigth);
                 tile.getActiveTileEvent().addHandler((sender, args) -> {
-                    int index = num_columns*args.getX_cord() + args.getY_cord();
+                    int index = num_rows*args.getX_cord() + args.getY_cord();
                     if (!active_tiles.contains(index) && !saved_tiles.contains(index)) active_tiles.add(index);
                 });
                 tile.getReleaseEvent().addHandler((sender, args) -> {
@@ -137,5 +141,19 @@ public class SelectableGrid extends AnchorPane  {
     
     public void setNumColumns(int columns) {
         num_columns = columns;
+    }
+
+    /**
+     * @return the grid_width
+     */
+    public int getGrid_width() {
+        return grid_real_width;
+    }
+
+    /**
+     * @return the grid_heigth
+     */
+    public int getGrid_heigth() {
+        return grid_real_heigth;
     }
 }

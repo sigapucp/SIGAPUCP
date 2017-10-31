@@ -34,16 +34,16 @@ public class GridTile extends StackPane {
         y_cord = y;
         releaseTileEvent = new Event<>();
         activeTileEvent = new Event<>();
-        Text text = new Text();
-        
-        text.setFont(Font.font(14));
-        text.setText(String.format("%d/%d", x, y));
+//        Text text = new Text();
+//        
+//        text.setFont(Font.font(14));
+//        text.setText(String.format("%d/%d", x, y));
 
         border = new Rectangle(width, height);
         border.setFill(null);
         border.setStroke(Color.BLACK);
         setAlignment(Pos.CENTER);
-        getChildren().addAll(border, text);
+//        getChildren().addAll(border, text);
         setMouseEvents();
     }
     
