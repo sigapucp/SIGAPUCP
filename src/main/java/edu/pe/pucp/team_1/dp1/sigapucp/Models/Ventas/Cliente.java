@@ -45,6 +45,5 @@ public class Cliente extends Model{
     {
         PersonaNatural,
         PersonaJuridica
-    }
-    
+    }    
 }

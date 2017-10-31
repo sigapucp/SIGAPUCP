@@ -19,4 +19,11 @@ public class OrdenCompra extends Model{
     static {
         dateFormat("dd/MM/yyyy", "fecha_emision");
     }   
+    
+    public enum ESTADO
+    {
+        PENDIENTE,
+        ENPROCESO,
+        COMPLETA
+    }
 }

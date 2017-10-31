@@ -22,7 +22,7 @@
             <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label layoutX="82.0" layoutY="10.0" text="Búsqueda">
+                  <Label layoutX="25.0" layoutY="10.0" text="Búsqueda">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -32,15 +32,15 @@
             </AnchorPane>
             <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="192.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
-                  <TextField fx:id="clienteBusq" layoutX="130.0" layoutY="67.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField fx:id="clienteBusq" layoutX="86.0" layoutY="67.0" prefHeight="25.0" prefWidth="150.0" />
                   <Button layoutX="176.0" layoutY="150.0" mnemonicParsing="false" onAction="#buscarPedido" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
                   <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Codigo">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="estadoBusq" layoutX="130.0" layoutY="104.0" prefHeight="25.0" prefWidth="106.0" />
-                  <TextField fx:id="pedidoBusq" layoutX="131.0" layoutY="30.0" prefHeight="25.0" prefWidth="106.0" />
+                  <ComboBox fx:id="estadoBusq" layoutX="86.0" layoutY="104.0" prefHeight="25.0" prefWidth="150.0" />
+                  <TextField fx:id="pedidoBusq" layoutX="87.0" layoutY="30.0" prefHeight="25.0" prefWidth="150.0" />
                   <Label layoutX="12.0" layoutY="67.0" prefHeight="21.0" prefWidth="114.0" text="Cliente:">
                      <font>
                         <Font size="14.0" />
@@ -55,7 +55,7 @@
             </AnchorPane>
             <AnchorPane layoutX="29.0" layoutY="342.0" prefHeight="330.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <TableView fx:id="tablaPedidos" layoutX="12.0" layoutY="19.0" prefHeight="202.0" prefWidth="225.0">
+                  <TableView fx:id="tablaPedidos" layoutX="14.0" layoutY="20.0" prefHeight="216.0" prefWidth="225.0">
                      <columns>
                         <TableColumn fx:id="proformaColumn" prefWidth="65.0" text="Codigo" />
                         <TableColumn fx:id="clienteColumn" prefWidth="182.0" text="Cliente" />
@@ -78,7 +78,7 @@
             <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="proformaSub" layoutX="33.0" layoutY="10.0" text="Nueva Proforma">
+                  <Label fx:id="proformaSub" layoutX="33.0" layoutY="10.0" text="Detalle Proforma">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -86,45 +86,9 @@
                   <Line endX="600.0" layoutX="133.0" layoutY="49.0" startX="-100.0" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="proforma_formulario" layoutX="45.0" layoutY="83.0" prefHeight="120.0" prefWidth="750.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
-               <children>
-                  <DatePicker fx:id="fechaProfSh" layoutX="88.0" layoutY="96.0" />
-                  <TextField fx:id="clienteSh" layoutX="88.0" layoutY="16.0" prefHeight="25.0" prefWidth="248.0" />
-                  <Label layoutX="12.0" layoutY="94.0" text="Fecha:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="12.0" layoutY="16.0" prefHeight="21.0" prefWidth="54.0" text="Cliente:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="315.0" layoutY="97.0" text="Tipo de Moneda:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="355.0" layoutY="18.0" prefHeight="21.0" prefWidth="64.0" text="Teléfono:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="telfSh" editable="false" layoutX="442.0" layoutY="14.0" prefHeight="25.0" prefWidth="151.0" />
-                  <Label layoutX="12.0" layoutY="55.0" prefHeight="21.0" prefWidth="72.0" text="Direccion:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="direccionSh" editable="false" layoutX="88.0" layoutY="55.0" prefHeight="25.0" prefWidth="248.0" />
-                  <ComboBox fx:id="VerMoneda" layoutX="443.0" layoutY="96.0" prefWidth="150.0" />
-                  <Label fx:id="dniLabel" layoutX="355.0" layoutY="59.0" text="DNI:" />
-                  <TextField fx:id="VerDocCliente" editable="false" layoutX="442.0" layoutY="55.0" prefHeight="25.0" prefWidth="151.0" />
-               </children>
-            </AnchorPane>
             <AnchorPane fx:id="proforma_tabla" layoutX="33.0" layoutY="339.0" prefHeight="402.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <AnchorPane layoutX="38.0" layoutY="195.0" prefHeight="330.0" prefWidth="520.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="72.0">
+                  <AnchorPane layoutX="38.0" layoutY="77.0" prefHeight="330.0" prefWidth="532.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="77.0">
                      <children>
                         <TableView fx:id="TablaProductos" layoutX="12.0" layoutY="14.0" prefHeight="216.0" prefWidth="520.0">
                           <columns>
@@ -140,27 +104,27 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <Label layoutX="339.0" layoutY="242.0" text="Subtotal :" />
-                        <Label layoutX="341.0" layoutY="272.0" text="I.G.V. - 18%:" />
-                        <Label layoutX="341.0" layoutY="302.0" text="Total:" />
-                        <TextField fx:id="subTotalFinal" editable="false" layoutX="416.0" layoutY="235.0" prefHeight="20.0" prefWidth="116.0">
+                        <Label layoutX="348.0" layoutY="244.0" text="Subtotal :" />
+                        <Label layoutX="348.0" layoutY="270.0" text="I.G.V. - 18%:" />
+                        <Label layoutX="348.0" layoutY="297.0" text="Total:" />
+                        <TextField fx:id="subTotalFinal" editable="false" layoutX="416.0" layoutY="240.0" minHeight="-Infinity" prefHeight="25.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField fx:id="igvTotal" editable="false" layoutX="416.0" layoutY="265.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="igvTotal" editable="false" layoutX="416.0" layoutY="266.0" minHeight="-Infinity" prefHeight="25.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField fx:id="total" editable="false" layoutX="416.0" layoutY="295.0" prefHeight="20.0" prefWidth="116.0">
+                        <TextField fx:id="total" editable="false" layoutX="416.0" layoutY="293.0" minHeight="-Infinity" prefHeight="25.0" prefWidth="116.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
                      </children>
                   </AnchorPane>
-                  <TitledPane animated="false" collapsible="false" layoutX="550.0" layoutY="85.0" prefHeight="311.0" prefWidth="194.0" text="Acciones" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="550.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="85.0">
+                  <TitledPane animated="false" collapsible="false" layoutX="550.0" layoutY="55.0" prefHeight="341.0" prefWidth="194.0" text="Acciones" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="550.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="55.0">
                      <content>
                         <AnchorPane prefHeight="285.0" prefWidth="190.0">
                            <children>
@@ -186,7 +150,7 @@
                         </AnchorPane>
                      </content>
                   </TitledPane>
-                  <AnchorPane layoutX="1.0" layoutY="-52.0" prefHeight="72.0" prefWidth="750.0" AnchorPane.bottomAnchor="330.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane layoutY="14.0" prefHeight="83.0" prefWidth="750.0" AnchorPane.bottomAnchor="305.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="14.0">
                      <children>
                         <Label layoutX="12.0" layoutY="50.0" text="Cant.:">
                            <font>
@@ -209,6 +173,50 @@
                   </AnchorPane>
                </children>
             </AnchorPane>
+            <TitledPane animated="false" layoutX="14.0" layoutY="59.0" prefHeight="155.0" prefWidth="720.0" text="Información General">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane fx:id="proforma_formulario" prefHeight="120.0" prefWidth="750.0">
+                           <children>
+                              <DatePicker fx:id="fechaProfSh" layoutX="88.0" layoutY="96.0" />
+                              <TextField fx:id="clienteSh" layoutX="88.0" layoutY="16.0" prefHeight="25.0" prefWidth="248.0" />
+                              <Label layoutX="12.0" layoutY="94.0" text="Fecha:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="12.0" layoutY="16.0" prefHeight="21.0" prefWidth="54.0" text="Cliente:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="315.0" layoutY="97.0" text="Tipo de Moneda:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="355.0" layoutY="18.0" prefHeight="21.0" prefWidth="64.0" text="Teléfono:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="telfSh" editable="false" layoutX="442.0" layoutY="14.0" prefHeight="25.0" prefWidth="151.0" />
+                              <Label layoutX="12.0" layoutY="55.0" prefHeight="21.0" prefWidth="72.0" text="Direccion:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="direccionSh" editable="false" layoutX="88.0" layoutY="55.0" prefHeight="25.0" prefWidth="248.0" />
+                              <ComboBox fx:id="VerMoneda" layoutX="443.0" layoutY="96.0" prefWidth="150.0" />
+                              <Label fx:id="dniLabel" layoutX="355.0" layoutY="59.0" text="DNI:" />
+                              <TextField fx:id="VerDocCliente" editable="false" layoutX="442.0" layoutY="55.0" prefHeight="25.0" prefWidth="151.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </TitledPane>
          </children>
          <opaqueInsets>
             <Insets />

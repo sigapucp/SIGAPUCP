@@ -41,4 +41,15 @@ public class Promocion extends Model{
             this.set("tipo_id",auxidTipCat);
         }
     }
+    
+    public enum TIPO{
+        CANTIDAD,
+        BONIFICACIÓN,
+        PORCENTAJE
+    }
+    
+    public enum ESTADO{
+        ACTIVO,
+        INACTIVO
+    }
 }
