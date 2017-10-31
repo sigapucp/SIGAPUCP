@@ -333,7 +333,7 @@ public class PromocionesController extends Controller{
             String fechaFin = formatoFecha(dpFecha2.getValue(),"dd/MM/yyyy");
             String prioridad = obtener_prioridad();
             String es_categoria = obtener_clasificacion();
-            String estado = "ACTIVO"; //obtener_estado();
+            String estado = Promocion.ESTADO.ACTIVO.name();
             String tipoPromo = obtener_tipo_promo();
             
             es_categoria_obtener =((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name()) && rbPorCategoria.isSelected()) ? true : es_categoria_obtener;
