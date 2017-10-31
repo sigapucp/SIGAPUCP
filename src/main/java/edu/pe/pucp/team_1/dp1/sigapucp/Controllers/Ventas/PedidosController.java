@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import static edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProformasController.modal_stage;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
@@ -28,14 +29,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
@@ -43,7 +41,6 @@ import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -60,7 +57,6 @@ import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
-import org.javalite.activejdbc.LazyList;
 
 /**
  * FXML Controller class
@@ -166,7 +162,9 @@ public class PedidosController extends Controller {
     
     private Usuario vendedorSelecionado;            
      
-    private Boolean crearNuevo = false;           
+    private Boolean crearNuevo = false;    
+    
+    private Cotizacion cotizacionAnexada = null;
   
     private Double IGV;    
     @FXML
@@ -182,6 +180,7 @@ public class PedidosController extends Controller {
     public PedidosController(){
         if (!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         List<OrdenCompra> tempPedidos = OrdenCompra.findAll();
+        IGV = ParametroSistema.findFirst("nombre = ?", "IGV").getDouble("valor");
         for (OrdenCompra pedido : tempPedidos){
             pedidos.add(pedido);
         }
@@ -338,8 +337,70 @@ public class PedidosController extends Controller {
 
     @FXML
     void visualizarPedido(ActionEvent event) {
+        
+         crearNuevo = false;
+        try {
+            pedidoSeleccionado = TablaPedido.getSelectionModel().getSelectedItem();
+            if (pedidoSeleccionado == null) 
+            {
+                infoController.show("No ha seleccionado ningun Pedido");
+            }
+
+          setPedidoVisible(pedidoSeleccionado);                            
+        } catch (Exception e) {
+            infoController.show("Error al mostrar el pedido: " + e.getMessage());
+        }        
 
     }    
+                    
+    private void setPedidoVisible(OrdenCompra pedidoSeleccionado) throws Exception
+    {
+        Cliente cliente = Cliente.findById(pedidoSeleccionado.get("client_id"));
+        Usuario vendedor = Usuario.findById(pedidoSeleccionado.get("usuario_id"));
+        vendedorSelecionado = vendedor;
+        clienteSeleccionado = cliente;
+        
+        setInformacionCliente(cliente,false);     
+        VerCliente.setText(cliente.getString("nombre"));
+        VerVendedor.setText(vendedor.getString("nombre"));
+        
+        String direccionFacturacion = pedidoSeleccionado.getString("direccion_facturacion");        
+        String direccionDespacho = pedidoSeleccionado.getString("direccion_despacho");
+        
+        VerDireccionDespacho.setText(direccionDespacho);
+        VerDireccionFacturacion.setText(direccionFacturacion);
+        
+        LocalDate date = pedidoSeleccionado.getDate("fecha_emision").toLocalDate();
+        VerFecha.setValue(date);
+        
+        VerMoneda.getSelectionModel().select(Moneda.findById(pedidoSeleccionado.get("moneda_id")).getString("nombre"));       
+        setValorTotal(pedidoSeleccionado.getDouble("total"));
+        
+//        List<CotizacionxProducto> cotizacionesxProductos = CotizacionxProducto.where("cotizacion_id = ?", proformaSelecionado.getId());        
+//        productos.clear();
+//        productos.addAll(cotizacionesxProductos);                   
+    }
+    
+      
+    private void recalcularTotal(Double cambio)
+    {
+        String totalValue = (!subTotal.getText().isEmpty()) ? subTotal.getText() : "0.0";
+        Double subTotalSinIgv = Double.valueOf(totalValue);                    
+        subTotalSinIgv += cambio;
+        subTotal.setText(String.valueOf(subTotalSinIgv));
+        Double valorIgv = IGV*subTotalSinIgv;            
+        igvPedido.setText(String.valueOf(valorIgv));
+        totalPedido.setText(String.valueOf(subTotalSinIgv+valorIgv));        
+    }
+    
+    private void setValorTotal(Double valor)
+    {        
+        subTotal.setText(String.valueOf(valor));
+        Double valorIgv = IGV*valor;            
+        igvPedido.setText(String.valueOf(valorIgv));
+        totalPedido.setText(String.valueOf(valor+valorIgv));                
+    }
+    
     
     
     private void clienteToString() throws Exception{
@@ -379,43 +440,139 @@ public class PedidosController extends Controller {
         pedidoTable.setDisable(false);
     }
     
-    private void editarPedido(OrdenCompra orden)
+    private void editarPedido(OrdenCompra pedido)
     {
+        try{
+            
+        if(clienteSeleccionado == null)
+        {
+            infoController.show("No hay un cliente seleccionado");
+            return;
+        }
         
+        if(vendedorSelecionado == null)
+        {
+            infoController.show("No hay un vendedor seleccionado");
+            return;            
+        }
+        
+//        if(totalPedido.getText().isEmpty())
+//        {
+//            infoController.show("Debe agregar algun producto a la Orden");
+//            return;
+//        }
+        
+        Base.openTransaction();
+        LocalDate fechaLocal = VerFecha.getValue();
+        java.sql.Date fecha = java.sql.Date.valueOf(fechaLocal);                    
+        
+        Double igvValue = Double.valueOf(igvPedido.getText());
+        Double totalValue = Double.valueOf(subTotal.getText());
+        if(igvValue == null) igvValue = 0.0;
+        if(totalValue == null) totalValue = 0.0;
+        String monedaNombre = VerMoneda.getSelectionModel().getSelectedItem();
+        Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
+        String direccionFacturacion = VerDireccionFacturacion.getText();
+        String direccionDespacho = VerDireccionDespacho.getText();
+              
+        Integer cotizacion_id = null;
+        if(cotizacionAnexada != null)
+        {
+            cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
+        }
+        asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion);          
+        String cod = pedido.getString("orden_compra_cod");        
+        pedido.saveIt();
+      
+        setProductos(pedido);
+        Base.commitTransaction();       
+        infoController.show("Se ha editado la Orden de Compra: " + String.valueOf(cod));        
+        }
+        catch(Exception e){
+           infoController.show("No se pudo editar la Proforma: " + e.getMessage());
+           Base.rollbackTransaction();
+        }                    
     }
 
     private void crearPedido() {
         //extraemos la informacion del formulario:
-//        Integer clienteId = clienteAsociado.getInteger("client_id");
-//        String vendedor = vendedorSh.getText();
-//        LocalDate fechaLocal = fechaPed.getValue();
-//        if (fechaLocal == null){ 
-//            infoController.show("Debe seleccionar la fecha de emision");
+    try{
+        
+        if(clienteSeleccionado == null)
+        {
+            infoController.show("No hay un cliente seleccionado");
+            return;
+        }
+        
+        if(vendedorSelecionado == null)
+        {
+            infoController.show("No hay un vendedor seleccionado");
+            return;            
+        }
+        
+//        if(totalPedido.getText().isEmpty())
+//        {
+//            infoController.show("Debe agregar algun producto a la Orden");
 //            return;
 //        }
-//        Date fecha = Date.from(fechaLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-//        String fechaEmision = dateFormat.format(fecha);
-//        Double subtotal = Double.valueOf(subTotal.getText());
-//        //Double subtotal = 0.0;
-//        //Integer cantProductos = (Integer) cantProd.getValue();
-//        String orden_compra_cod = "ORD";
-//        Integer monedaId = 1;
-//        if (moneda.getValue() == null) {
-//            infoController.show("Debe seleccionar la moneda usada para la orden de compra");
-//            return;
-//        }
-//        LazyList<Moneda> lista_monedas = Moneda.findAll();
-//        for (Moneda monedita : lista_monedas){
-//            if (monedita.get("nombre").equals(moneda.getValue())){
-//                monedaId = monedita.getInteger("moneda_id");    
-//            }
-//        }
-//        String usuario = usuarioActual.getString("usuario_cod"); 
-//        char flag = '1';
-//        Integer usuario_id = usuarioActual.getInteger("usuario_id");
-//        Integer proforma = 1;
-//        asignar_data(orden_compra_cod, clienteId, fechaEmision, subtotal, usuario, flag,usuario, usuario_id , monedaId, proforma);
+        
+        Base.openTransaction();
+        LocalDate fechaLocal = VerFecha.getValue();
+        java.sql.Date fecha = java.sql.Date.valueOf(fechaLocal);                    
+        
+        Double igvValue = Double.valueOf(igvPedido.getText());
+        Double totalValue = Double.valueOf(subTotal.getText());
+        if(igvValue == null) igvValue = 0.0;
+        if(totalValue == null) totalValue = 0.0;
+        String monedaNombre = VerMoneda.getSelectionModel().getSelectedItem();
+        Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
+        String direccionFacturacion = VerDireccionFacturacion.getText();
+        String direccionDespacho = VerDireccionDespacho.getText();
+        
+        OrdenCompra pedido = new OrdenCompra();
+        Integer cotizacion_id = null;
+        if(cotizacionAnexada != null)
+        {
+            cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
+        }
+        asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion);  
+        
+        String cod = "PED" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenescompra_orden_compra_id_seq")))) + 1);
+        pedido.set("orden_compra_cod",cod);        
+        pedido.saveIt();
+      
+        setProductos(pedido);
+        Base.commitTransaction();       
+        infoController.show("Se ha creado la Orden de Compra: " + String.valueOf(cod));        
+        }
+        catch(Exception e){
+           infoController.show("No se pudo crear la Proforma: " + e.getMessage());
+           Base.rollbackTransaction();
+        }    
+    }
+    
+     private void asignar_data(OrdenCompra pedido,String usuarioAccion, Integer clienteId, Date fechaEmision, Double igvVale, Double total, 
+             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion) throws Exception{
+                       
+        pedido.set("client_id",clienteId);
+        pedido.setDate("fecha_emision", fechaEmision);
+        pedido.set("total", total);
+        pedido.set("igv", total);
+        pedido.set("estado", estado);
+        pedido.set("last_user_change",usuarioAccion);        
+        pedido.set("moneda_id", monedaId);        
+        pedido.set("cotizacion_id", cotizacion_id);
+        pedido.set("usuario_cod",vendedor.get("usuario_cod"));
+        pedido.set("usuario_id",vendedor.getId());                                                        
+        pedido.set("direccion_despacho",direccionDespacho);
+        pedido.set("direccion_facturacion",direccionFacturacion);                
+    } 
+     
+    private void setProductos(OrdenCompra pedido)
+    {
+
     }
     
     @FXML
@@ -426,39 +583,12 @@ public class PedidosController extends Controller {
     private void eliminarProducto(ActionEvent event) {
     }
     
-    private void asignar_data(String orden_compra_cod, Integer clienteId, String fechaEmision, Double subtotal, String usuario, char flag, String usuario_cod, Integer usuario_id, Integer monedaId, Integer cotizacion_id){
-        try{      
-            Base.openTransaction();  
-            Integer cod = Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenescompra_orden_compra_id_seq")))) + 1;        
-            orden_compra_cod = orden_compra_cod + Integer.toString(cod);
-            OrdenCompra pedido = new OrdenCompra();
-            pedido.set("orden_compra_cod",orden_compra_cod);
-            pedido.set("client_id",clienteId);
-            pedido.setDate("fecha_emision", fechaEmision);
-            pedido.set("subtotal", subtotal);
-            //pedido.set("estado", estado);
-            //proforma.set("last_user_change",usuarioActual.getString("cotizacion_cod"));
-            pedido.set("last_user_change", usuario);
-            pedido.set("flag_last_operation", flag);
-            pedido.set("moneda_id", monedaId);
-            pedido.set("cotizacion_id", cotizacion_id);
-            pedido.set("usuario_cod",usuario);
-            pedido.set("usuario_id",usuario_id);
-            pedido.saveIt();
-            Base.commitTransaction();
-            System.out.println("Todo Correcto BD");
-            infoController.show("Se ha creado la orden de compra: ORD"+String.valueOf(cod));
-        }
-        catch(Exception e){
-           System.out.println(e);
-           Base.rollbackTransaction();
-        }     
-    } 
+   
    private void RefrescarTabla(List<OrdenCompra> tempPedidos)
     {
         try {
             if(tempPedidos == null) return;
-            pedidos.removeAll(tempPedidos);                        
+            pedidos.removeAll(pedidos);                        
             for (OrdenCompra pedido : tempPedidos) {
                 pedidos.add(pedido);
             }               
@@ -479,38 +609,44 @@ public class PedidosController extends Controller {
         int i = 0;
         for (Cliente cliente : autoCompletadoList){
             if (cliente.getString("nombre").equals(VerCliente.getText())){
-                clienteSeleccionado = cliente;
-                
-                String direccionFacturacion = cliente.getString("direccion_facturacion");
-                String direccionDespacho = cliente.getString("direccion_despacho");
-                
-                String tipo_cliente = cliente.getString("tipo_cliente");
-                String dni = cliente.getString("dni");
-                String ruc = cliente.getString("ruc");
-                                
-                VerDireccionDespacho.setText(direccionDespacho);
-                VerDireccionFacturacion.setText(direccionFacturacion);
-                
-                if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
-                {
-                    VerDocumentoLabel.setText("DNI:");
-                    VerDocumento.setText(dni);
-                    TipoDocBoleta.setSelected(true);
-                    TipoDocFactura.setDisable(false);  
-                    
-                }else
-                {
-                    VerDocumentoLabel.setText("RUC:");
-                    VerDocumento.setText(ruc);
-                    TipoDocFactura.setSelected(true);
-                    TipoDocBoleta.setDisable(true);                    
-                }                                                    
+                clienteSeleccionado = cliente;                               
+                setInformacionCliente(cliente,true);
 //                if (cliente.getString("direccion_despacho").equals(cliente.getString("direccion_facturacion"))){ 
 //                    mismaDir.setSelected(true);
 //                    factDir.setDisable(true);
 //                }                
             }
         }
+    }
+    
+    private void setInformacionCliente(Cliente cliente,Boolean cambiarDireccion)
+    {         
+     
+        String tipo_cliente = cliente.getString("tipo_cliente");
+        String dni = cliente.getString("dni");
+        String ruc = cliente.getString("ruc");
+
+        if(cambiarDireccion)
+        {
+            String direccionFacturacion = cliente.getString("direccion_facturacion");
+            String direccionDespacho = cliente.getString("direccion_despacho");
+
+            VerDireccionDespacho.setText(direccionDespacho);
+            VerDireccionFacturacion.setText(direccionFacturacion);            
+        }        
+        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
+        {
+            VerDocumentoLabel.setText("DNI:");
+            VerDocumento.setText(dni);
+            TipoDocBoleta.setSelected(true);
+            TipoDocFactura.setDisable(false);  
+        }else
+        {
+            VerDocumentoLabel.setText("RUC:");
+            VerDocumento.setText(ruc);
+            TipoDocFactura.setSelected(true);
+            TipoDocBoleta.setDisable(true);                    
+        }                                   
     }
     
      private void productoToString() {
@@ -544,4 +680,5 @@ public class PedidosController extends Controller {
             }
         }
     }    
+       
 }

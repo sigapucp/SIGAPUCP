@@ -708,7 +708,7 @@ CREATE TABLE OrdenesCompra
  client_id           SERIAL NOT NULL ,
  orden_compra_id     SERIAL NOT NULL ,
  fecha_emision       DATE NOT NULL ,
- subtotal            DECIMAL NOT NULL ,
+ total               DECIMAL(10,2) NOT NULL ,
  last_user_change    VARCHAR(20) NOT NULL ,
  last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
@@ -717,6 +717,11 @@ CREATE TABLE OrdenesCompra
  moneda_id           SERIAL NOT NULL ,
  cotizacion_cod      VARCHAR(20) NULL ,
  cotizacion_id       SERIAL NOT NULL ,
+ igv                 DECIMAL(10,2) NOT NULL ,
+ estado              VARCHAR(30) NOT NULL ,
+ direccion_despacho  VARCHAR(150) NULL ,
+ direccion_facturacion   VARCHAR(150) NULL ,
+
 
  CONSTRAINT pk_469 PRIMARY KEY  (orden_compra_cod , client_id , orden_compra_id ),
  CONSTRAINT fk_471 FOREIGN KEY (client_id)
