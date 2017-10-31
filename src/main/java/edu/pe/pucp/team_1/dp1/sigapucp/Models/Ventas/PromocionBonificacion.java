@@ -6,13 +6,16 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.CompositePK;
+import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
- * @author Jauma
+ * @author Alberto
  */
-@Table("PromocionBonificaciones")
+@Table("promocionbonificaciones")
+@CompositePK({ "promocion_id", "promocion_cod"})
 public class PromocionBonificacion extends Model{
     
 }

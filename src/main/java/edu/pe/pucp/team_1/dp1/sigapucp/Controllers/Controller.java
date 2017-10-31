@@ -23,7 +23,7 @@ public class Controller implements Initializable {
 
     public Usuario usuarioActual = null;
     public List<AccionxRol> permisosActual = null;
-     
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
