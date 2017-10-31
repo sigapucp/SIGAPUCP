@@ -280,6 +280,7 @@ public class PedidosController extends Controller {
             llenar_combobox();
             llenar_autocompletado();
             setAgregarProductos();
+            inhabilitar_formulario();
                     
         } catch (Exception e) {            
             infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
@@ -290,7 +291,7 @@ public class PedidosController extends Controller {
     @Override
     public void nuevo(){
         crearNuevo = true;
-        //habilitar_formulario();
+        habilitar_formulario();
         VerVendedor.setText(usuarioActual.getString("usuario_cod"));
         vendedorSelecionado = usuarioActual;
         LabelPedido.setText("Nuevo Pedido");
