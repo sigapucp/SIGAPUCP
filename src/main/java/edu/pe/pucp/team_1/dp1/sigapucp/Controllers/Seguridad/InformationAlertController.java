@@ -18,8 +18,7 @@ public class InformationAlertController {
     private Alert alert;
     public InformationAlertController()
     {
-        System.out.println("AQUI VA LA PANTALLA DE INFORMACION");                       
-       
+        System.out.println("AQUI VA LA PANTALLA DE INFORMACION");                              
     }
     
     public void show(String mensaje)
