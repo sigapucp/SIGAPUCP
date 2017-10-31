@@ -226,6 +226,7 @@ public class ProductosController extends Controller {
     private void visualizar_producto(ActionEvent event) {                
         producto_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
         limpiar_formulario();
+        habilitar_formulario();
         if(producto_seleccionado == null) 
         {
             infoController.show("Producto no seleccionada");  
