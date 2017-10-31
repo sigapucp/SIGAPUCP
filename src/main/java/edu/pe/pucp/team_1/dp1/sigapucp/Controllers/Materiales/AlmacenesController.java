@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.LinearDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -216,4 +217,9 @@ public class AlmacenesController extends Controller{
         });
     }    
     
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Almacenes;
+    }
 }

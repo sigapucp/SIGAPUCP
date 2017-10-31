@@ -20,6 +20,7 @@ public class Proveedor extends Model{
     static{
         validatePresenceOf("name");
         validateNumericalityOf("provuder_ruc");
+        validateRegexpOf("provuder_ruc", "\\d{1,11}");
     }
     
     public void asignar_atributos(String nombre, String nombre_contacto, String telf_contacto, String ruc, String comentarios){

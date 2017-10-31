@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
@@ -62,6 +63,7 @@ public class ProveedoresController extends Controller{
     private Boolean crear_nuevo;
     private Proveedor proveedor_seleccionado;
     private InformationAlertController infoController;
+    private ConfirmationAlertController confirmatonController;
     private List<Proveedor> proveedores;
     private final ObservableList<Proveedor> masterData = FXCollections.observableArrayList();
     
@@ -73,6 +75,7 @@ public class ProveedoresController extends Controller{
     public ProveedoresController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         infoController = new InformationAlertController();
+        confirmatonController = new ConfirmationAlertController();
         proveedor_seleccionado = null;
         crear_nuevo = false;
     }
@@ -82,15 +85,21 @@ public class ProveedoresController extends Controller{
         try{
             Base.openTransaction();  
             Proveedor nuevo_proveedor = new Proveedor();
+            if(!confirmatonController.show("Se creará el proveedor : " + proveedor_nombre.getText(), "¿Desea continuar?")) return;
             nuevo_proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
             nuevo_proveedor.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_proveedor.saveIt();
             Base.commitTransaction();
-            infoController.show("El cliente ha sido creado satisfactoriamente"); 
+            infoController.show("El proveedor ha sido creado satisfactoriamente"); 
+            limpiar_formulario();
+            inhabilitar_formulario();
+            crear_nuevo = false;
         }
         catch(Exception e){
             System.out.println(e);
             Base.rollbackTransaction();
+            infoController.show("El proveedor contiene errores"); 
+            crear_nuevo = true;
         }   
         
     }
@@ -98,13 +107,15 @@ public class ProveedoresController extends Controller{
     public void editar_proveedor(Proveedor proveedor){
         try{
             Base.openTransaction();  
+            if(!confirmatonController.show("Se editará el proveedor con código: " + proveedor_nombre.getText(), "¿Desea continuar?")) return;
             proveedor.asignar_atributos(proveedor_nombre.getText(), repLegal.getText(), telf.getText(), ruc.getText(), comentarios.getText());
             proveedor.saveIt();
             Base.commitTransaction();
-            infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
+            infoController.show("El proveedor ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
             Base.rollbackTransaction();
+            infoController.show("El proveedor contiene errores: "+e); 
         }        
     }
     
