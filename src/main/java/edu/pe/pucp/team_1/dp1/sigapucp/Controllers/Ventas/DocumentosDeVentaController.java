@@ -9,6 +9,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
+import org.javalite.activejdbc.Base;
 
 /**
  * FXML Controller class
@@ -20,9 +21,13 @@ public class DocumentosDeVentaController extends Controller{
     /**
      * Initializes the controller class.
      */
+    
+    public void DocumentosDeVentaController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+    } 
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
     
-}
+    }
+}    

@@ -123,6 +123,7 @@ public class ClientesController extends Controller{
         }
         catch(Exception e){
             System.out.println(e);
+            infoController.show("El cliente contiene errores"); 
             Base.rollbackTransaction();
         }finally{
             crear_nuevo = false;
