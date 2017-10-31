@@ -96,7 +96,6 @@ public class ModalTipoProdController extends ModalController {
     @FXML
     private void agregarDatosTipo(ActionEvent event) {  
         tipo_seleccionado = tabla_tipPro.getSelectionModel().getSelectedItem();
-        System.out.println(tipo_seleccionado);
         if(tipo_seleccionado == null) return; 
         
         String codigo = tipo_seleccionado.getString("tipo_cod");
