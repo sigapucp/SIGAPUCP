@@ -6,15 +6,12 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.ContenidoPrincipalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
@@ -24,11 +21,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.net.URL;
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,8 +113,7 @@ public class ProformasController extends Controller {
     @FXML
     private TableColumn<CotizacionxProducto, String> precioUnitarioColumn;
     @FXML
-    private TableColumn<Cotizacion, String> ColumnaEstado;
-    
+    private TableColumn<Cotizacion, String> ColumnaEstado;    
     @FXML
     private TextField subTotalFinal;
     @FXML
@@ -178,7 +170,7 @@ public class ProformasController extends Controller {
     private void llenar_tabla_index() throws Exception{
         List<Cotizacion> tempCotizaciones = Cotizacion.findAll();
         cotizaciones.clear();
-        producto.clear();;
+        producto.clear();
         
         proformaColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cotizacion_cod")));   
         clienteColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
@@ -197,52 +189,64 @@ public class ProformasController extends Controller {
         TablaProductos.setItems(productos);
     }
     
+    private void llenar_combobox() throws Exception
+    {
+        ObservableList<String> monedas = FXCollections.observableArrayList();            
+        monedas.addAll(Moneda.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
+        VerMoneda.setItems(monedas);
+
+        ObservableList<String> estados = FXCollections.observableArrayList();       
+        estados.add("");
+        estados.addAll(Arrays.asList(Cotizacion.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
+        estadoBusq.setItems(estados);   
+        cantProd.setValueFactory(valueFactory);  
+    }
+    
+    private void llenar_autocompletado() throws Exception
+    {
+        autoCompletadoList = Cliente.findAll();
+        autoCompletadoProductoList = TipoProducto.findAll();
+
+        clienteToString();
+        autoCompletionBinding = TextFields.bindAutoCompletion(clienteSh, possiblewords);
+        autoCompletionBinding.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletar();
+        });
+
+        productoToString();
+        autoCompletionBindingProducto = TextFields.bindAutoCompletion(producto, possiblewordsProducto);
+
+        autoCompletionBindingProducto.addEventHandler(EventType.ROOT, (event) -> {
+        handleAutoCompletarProducto();
+        });        
+    }
+    
+    
+    private void setAgregarProductos() throws Exception
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductos.fxml"));
+        AgregarProductosController controller = new AgregarProductosController();
+        loader.setController(controller);                      
+        Scene modal_content_scene = new Scene((Parent)loader.load());
+        modal_stage.setScene(modal_content_scene);
+        if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
+
+        controller.devolverProductoEvent.addHandler((Object sender, agregarProductoArgs args) -> {
+            productoDevuelto = args.producto;
+        });
+             
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         //llenar tabla:
-        try {
-            llenar_tabla_index();   
-            inhabilitar_formulario();
-            ObservableList<String> monedas = FXCollections.observableArrayList();            
-            monedas.addAll(Moneda.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
-            VerMoneda.setItems(monedas);
-            
-            ObservableList<String> estados = FXCollections.observableArrayList();       
-            estados.add("");
-            estados.addAll(Arrays.asList(Cotizacion.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
-            estadoBusq.setItems(estados);
-            
-            
-            autoCompletadoList = Cliente.findAll();
-            autoCompletadoProductoList = TipoProducto.findAll();
-                        
-            clienteToString();
-            autoCompletionBinding = TextFields.bindAutoCompletion(clienteSh, possiblewords);
-            autoCompletionBinding.addEventHandler(EventType.ROOT, (event) -> {
-                handleAutoCompletar();
-            });
-            
-            productoToString();
-            autoCompletionBindingProducto = TextFields.bindAutoCompletion(producto, possiblewordsProducto);
-            
-            autoCompletionBindingProducto.addEventHandler(EventType.ROOT, (event) -> {
-            handleAutoCompletarProducto();
-            });
-            
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductos.fxml"));
-            AgregarProductosController controller = new AgregarProductosController();
-            loader.setController(controller);                      
-            Scene modal_content_scene = new Scene((Parent)loader.load());
-            modal_stage.setScene(modal_content_scene);
-            if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
-            
-            controller.devolverProductoEvent.addHandler((Object sender, agregarProductoArgs args) -> {
-                productoDevuelto = args.producto;
-            });
-            
-            cantProd.setValueFactory(valueFactory);
-            //        inhabilitar_formulario();                                    
+
+        try {            
+            llenar_tabla_index();               
+            llenar_combobox();
+            llenar_autocompletado();
+            setAgregarProductos();                                            
         } catch (Exception e) {
             infoController.show("Error al cargar las proformas " + e.getMessage());
         }                                      
@@ -388,10 +392,11 @@ public class ProformasController extends Controller {
     @FXML
     private void buscarPedido(ActionEvent event) {        
         String proformaId = pedidoBusq.getText();
-        String cliente = clienteBusq.getText();
-        Integer clienteId = null;
-        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+        String cliente = clienteBusq.getText();      
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem();
+        Integer clienteId = Cliente.first("nombre = ?", cliente).getInteger("client_id");
         List<Cotizacion> tempCotizaciones = Cotizacion.findAll();
+        
         if(proformaId!=null&&!proformaId.isEmpty()) {            
             tempCotizaciones = tempCotizaciones.stream().filter(p -> p.getString("cotizacion_cod").equals(proformaId)).collect(Collectors.toList());
         }
@@ -405,6 +410,7 @@ public class ProformasController extends Controller {
         RefrescarTabla(tempCotizaciones);
         try {                        
         } catch (Exception e) { 
+            infoController.show("Eror al buscar Proforma " + e.getMessage());
         }
     }      
     
@@ -450,6 +456,7 @@ public class ProformasController extends Controller {
             tablaPedidos.getColumns().get(0).setVisible(false);
             tablaPedidos.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
+            infoController.show("Error al refrescar Tabla: " + e.getMessage());
         }                                  
     }
     
@@ -532,9 +539,7 @@ public class ProformasController extends Controller {
             CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();
             Integer cantidad = cantProd.getValue();
             Double precio = productoDevuelto.getPrecioActual();
-            
-          
-            
+                                  
             cotizacionxproducto.set("tipo_id",productoDevuelto.getId());
             cotizacionxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));            
             cotizacionxproducto.set("cantidad",cantidad);                        
@@ -606,6 +611,16 @@ public class ProformasController extends Controller {
         possiblewords = words;
     }
     
+    
+    private void handleAutoCompletar() {
+        int i = 0;
+        for (Cliente cliente : autoCompletadoList){
+            if (cliente.getString("nombre").equals(clienteSh.getText())){                
+                setInformacionCliente(cliente);                             
+            }
+        }
+    }
+    
     private void productoToString() {
         ArrayList<String> words = new ArrayList<>();
         for (TipoProducto producto : autoCompletadoProductoList){
@@ -622,14 +637,6 @@ public class ProformasController extends Controller {
         }
     }
 
-    private void handleAutoCompletar() {
-        int i = 0;
-        for (Cliente cliente : autoCompletadoList){
-            if (cliente.getString("nombre").equals(clienteSh.getText())){                
-                setInformacionCliente(cliente);                             
-            }
-        }
-    }
     
     private void setInformacionCliente(Cliente cliente)
     {
