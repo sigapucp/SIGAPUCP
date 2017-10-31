@@ -203,7 +203,7 @@ public class ProformasController extends Controller {
         //llenar tabla:
         try {
             llenar_tabla_index();   
-            
+            inhabilitar_formulario();
             ObservableList<String> monedas = FXCollections.observableArrayList();            
             monedas.addAll(Moneda.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
             VerMoneda.setItems(monedas);
