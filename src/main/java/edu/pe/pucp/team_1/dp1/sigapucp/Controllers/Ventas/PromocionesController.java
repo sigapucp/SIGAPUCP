@@ -18,7 +18,6 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionPorcentaje;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -35,7 +34,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -66,7 +64,7 @@ public class PromocionesController extends Controller{
     @FXML
     private TextField busqCodigoPromo;
     @FXML
-    private TextField busqTipoPromo;    
+    private ComboBox<String> busqTipoPromo;    
     @FXML
     private DatePicker busqFecha;
     @FXML
@@ -204,9 +202,12 @@ public class PromocionesController extends Controller{
         //Formulario
         rbPorTipo.setOnAction(e -> manejarrbPorTipo());
         rbPorCategoria.setOnAction(e -> manejarrbPorCategoria());
+        
         comboBoxTipoPromo.getItems().addAll("Por cantidad", "Por bonificación","Por porcentaje");
         comboBoxTipoPromo.setOnAction(e -> manejarcomboBoxTipoPromo());
         comboxPrioridad.getItems().addAll("1", "2","3");
+        
+        busqTipoPromo.getItems().addAll("","Por cantidad", "Por bonificación","Por porcentaje");
         manejoDeModales();        
     }    
     
@@ -231,7 +232,7 @@ public class PromocionesController extends Controller{
         promo_formulario.setDisable(true);
     }
     
-    public static Calendar stringToCalendar(String dateString, String format) {
+    /*public static Calendar stringToCalendar(String dateString, String format) {
  
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
@@ -243,7 +244,7 @@ public class PromocionesController extends Controller{
             System.out.println(e);
         }
         return calendar;
-    }
+    }*/
     
     public String formatoFecha(LocalDate fecha, String formato) {
         LocalDate fechaLocal = fecha;
@@ -253,17 +254,19 @@ public class PromocionesController extends Controller{
         return fechaEmision;
     }
     
-    public boolean cumple_condicion_busqueda(Promocion promocion, String codigo, String tipo, Calendar fecha){
-        boolean match = true;
-        if ( codigo.equals("") && tipo.equals("") && fecha.equals("")){
-            match = false;
-        }
-        else {
-            match = (!codigo.equals("")) ? (match && (promocion.get("promocion_cod")).equals(codigo)) : true;
-            match = (!tipo.equals("")) ? (match && (promocion.get("tipo")).equals(tipo)) : true;
-            Calendar fechaIni = stringToCalendar(promocion.get("fecha_inicio").toString(),"dd/MM/yyyy");
-            Calendar fechaFin = stringToCalendar(promocion.get("fecha_fin").toString(),"dd/MM/yyyy");
-            match = (!fecha.equals("")) ? (match && fechaIni.before(fecha) && fechaFin.after(fecha)) : true;
+    public boolean cumple_condicion_busqueda(Promocion promocion, String codigo, String tipo, LocalDate fecha){
+        boolean match = true;        
+        if ( codigo.equals("") && tipo.equals("") && fecha==null){
+            match = true;
+        }else {
+            Date fechaDate = new Date();
+            if (!(fecha==null))
+                fechaDate = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            match = (!codigo.equals("")) ? (match && (promocion.get("promocion_cod")).equals(codigo)) : match;
+            match = (!tipo.equals("")) ? (match && (promocion.get("tipo")).equals(tipo)) : match;
+            Date fechaIni = promocion.getDate("fecha_inicio");            
+            Date fechaFin = promocion.getDate("fecha_fin");            
+            match = (!(fecha==null)) ? (match && fechaIni.before(fechaDate) && fechaFin.after(fechaDate)) : match;
         }
         return match;
     }
@@ -271,10 +274,10 @@ public class PromocionesController extends Controller{
     public void buscar_promocion(ActionEvent event) throws IOException{
         promociones = Promocion.findAll();
         masterData.clear();
-        Calendar fecha = stringToCalendar(busqFecha.getValue().toString(), "dd/MM/yyyy");
+        LocalDate fecha = busqFecha.getValue();
         try{
             for(Promocion promocion : promociones){
-                if (cumple_condicion_busqueda(promocion, busqCodigoPromo.getText(), busqTipoPromo.getText(), fecha)){
+                if (cumple_condicion_busqueda(promocion, busqCodigoPromo.getText(), busqTipoPromo.getSelectionModel().getSelectedItem(), fecha)){
                     masterData.add(promocion);
                 }
             }
@@ -283,7 +286,7 @@ public class PromocionesController extends Controller{
         }
     }
     
-    //Botón editar
+    //Botón visualizar
     @FXML
     private void visualizar_promocion(ActionEvent event) {      
         crear_nuevo = false;

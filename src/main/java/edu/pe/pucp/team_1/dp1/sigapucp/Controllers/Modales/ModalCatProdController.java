@@ -70,8 +70,8 @@ public class ModalCatProdController extends ModalController {
             match = false;
         }
         else {
-            match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : true;
-            match = (!nombre.equals("")) ? (match && (categoria.get("nombre")).equals(nombre)) : true;
+            match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : match;
+            match = (!nombre.equals("")) ? (match && (categoria.get("nombre")).equals(nombre)) : match;
         }
         return match;
     }
