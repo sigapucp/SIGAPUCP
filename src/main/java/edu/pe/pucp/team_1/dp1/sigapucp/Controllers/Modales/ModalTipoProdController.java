@@ -73,8 +73,8 @@ public class ModalTipoProdController extends ModalController {
             match = false;
         }
         else {
-            match = (!codigo.equals("")) ? (match && (tipo.get("tipo_cod")).equals(codigo)) : true;
-            match = (!nombre.equals("")) ? (match && (tipo.get("nombre")).equals(nombre)) : true;
+            match = (!codigo.equals("")) ? (match && (tipo.get("tipo_cod")).equals(codigo)) : match;
+            match = (!nombre.equals("")) ? (match && (tipo.get("nombre")).equals(nombre)) : match;
         }
         return match;
     }
