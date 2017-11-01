@@ -10,12 +10,18 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.Promociones;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionPorcentaje;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirDetallesArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
@@ -24,7 +30,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -548,7 +556,7 @@ public class ProformasController extends Controller {
             cotizacionxproducto.set("precio_unitario",precio);    
             cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
             
-            Double descuento = calcularDescuento(productoDevuelto);
+            Double descuento = 0.0;
             Double flete = calcularFlete(productoDevuelto);
             
             cotizacionxproducto.set("descuento",descuento); 
@@ -582,10 +590,143 @@ public class ProformasController extends Controller {
         total.setText(String.valueOf(valor+valorIgv));                
     }
     
-    private Double calcularDescuento(TipoProducto producto)
+    private Double calcularDescuento(CotizacionxProducto producto) throws Exception
     {
+        // Magic. Se que es el id 2. Puesto asi en la Bd
+        Double prioridadBonficacion = Double.valueOf(ParametroSistema.findById(1).getInteger("valor"));
+        Double prioridadCantidad = Double.valueOf(ParametroSistema.findById(2).getInteger("valor")) + 0.25;
+        Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) + 0.5;
+        
+        List<Promocion> promociones = Promocion.where("tipo_id = ?",producto.get("tipo_id"));        
+        List<CategoriaProducto> categorias = CategoriaProducto.where("tipo_id = ?", producto.get("tipo_id"));
+        
+        for(CategoriaProducto categoria:categorias)
+        {
+            promociones.addAll(Promocion.where("categoria_id = ?", categoria.get("categoria_id")));
+        }                   
+        
+        Date today = Date.valueOf(LocalDate.now());        
+        List<Promocion> promocionesActual = promociones.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
+        Integer cantidad = producto.getInteger("cantidad");
+        Double precioActual = producto.getDouble("precio_actual");
+        
+        if(prioridadPorcentaje>prioridadCantidad&&prioridadPorcentaje>prioridadBonficacion)
+        {
+            return aplicarPromocionPorcentaje(promociones, cantidad, precioActual);
+        }
+        
+        if(prioridadCantidad>prioridadPorcentaje&&prioridadCantidad>prioridadBonficacion)
+        {
+            return aplicarPromocionCantidad(promociones, cantidad, precioActual);            
+        }
+        
+        if(prioridadBonficacion>prioridadCantidad&&prioridadBonficacion>prioridadPorcentaje)
+        {
+            return aplicarPromocionBonificacion(promociones, cantidad, precioActual);
+        }        
         return 0.0;        
     }
+    
+    private Double aplicarPromocionBonificacion(List<Promocion> promociones,int cantidad,Double precioActual) throws Exception
+    {               
+        List<Promocion> promocionesBonificacion = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
+        if(promocionesBonificacion == null) return 0.0;                       
+        promocionesBonificacion.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
+        
+        if(promocionesBonificacion == null) return 0.0;
+        Double valorPromocion = 0.0;
+                
+        Promocion promocionAplicada = promocionesBonificacion.stream().findFirst().get();        
+        PromocionBonificacion promocionBonificacion = PromocionBonificacion.findFirst("promocion_id", promocionAplicada.getId());              
+        Boolean es_categoria = promocionBonificacion.getString("es_categoria_comprar").equals("S");
+           
+        Integer cantidadComprando = 0;
+        if(!es_categoria)
+        {
+            CotizacionxProducto cotizacionxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("tipo_id"), promocionBonificacion.getInteger("tipo_id"))).findFirst().get();
+            cantidadComprando = cotizacionxproducto.getInteger("cantidad");                                              
+        }else
+        {
+            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("categoria_id"), promocionBonificacion.getInteger("tipo_id"))).collect(Collectors.toList());
+           
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
+            {
+                cantidadComprando += cotizacionxProducto.getInteger("cantidad");
+            }
+        }
+        
+        Integer nrPromociones = cantidadComprando / promocionBonificacion.getInteger("nr_comprar");        
+        Integer nrProdctosObtenerGratis = nrPromociones * promocionBonificacion.getInteger("nr_obtener");
+
+        if(nrProdctosObtenerGratis > cantidad)
+        {                
+            valorPromocion = cantidad*precioActual;
+        }else
+        {
+            valorPromocion = nrProdctosObtenerGratis*precioActual; 
+        }                                
+        return valorPromocion;
+    }
+    
+    private Double aplicarPromocionCantidad(List<Promocion> promociones,int cantidad,Double precioActual) throws Exception
+    {
+        List<Promocion> promocionesCantidad = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
+        if(promocionesCantidad == null) return 0.0;                       
+        promocionesCantidad.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
+        
+        if(promocionesCantidad == null) return 0.0;
+        Double valorPromocion = 0.0;
+                
+        Promocion promocionAplicada = promocionesCantidad.stream().findFirst().get();    
+        Boolean es_categoria = promocionAplicada.getString("es_categoria").equals("S");
+        Integer id = (es_categoria) ? promocionAplicada.getInteger("tipo_id") : promocionAplicada.getInteger("categoria_id");
+        
+        PromocionCantidad promocionCantidad = PromocionCantidad.findFirst("promocion_id", promocionAplicada.getId());        
+        Integer cantidadComprando = 0;
+        
+        if(!es_categoria)
+        {            
+            cantidadComprando = cantidad;                                        
+        }else
+        {
+            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("categoria_id"), id)).collect(Collectors.toList());           
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
+            {
+                cantidadComprando += cotizacionxProducto.getInteger("cantidad");
+            }
+        }
+        
+        Integer nrPromociones = cantidadComprando / promocionCantidad.getInteger("nr_comprar");        
+        Integer nrProdctosObtenerGratis = nrPromociones * promocionCantidad.getInteger("nr_obtener");
+
+        if(nrProdctosObtenerGratis > cantidad)
+        {                
+            valorPromocion = cantidad*precioActual;
+        }else
+        {
+            valorPromocion = nrProdctosObtenerGratis*precioActual; 
+        }                                
+        return valorPromocion;              
+    }
+    
+    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,int cantidad,Double precioActual)
+    {
+        List<Promocion> promocionesProcentaje = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());
+        if(promocionesProcentaje == null) return 0.0;                       
+        
+        Double valorPromocion = 0.0;
+                
+        Double cantidadPorcentaje = 0.0;
+        for(Promocion promocion:promocionesProcentaje)
+        {            
+            PromocionPorcentaje promocionPorcentaje = PromocionPorcentaje.findFirst("promocion_id", promocion.getId());
+            cantidadPorcentaje += promocionPorcentaje.getDouble("valor_desc");
+        }
+        if(cantidadPorcentaje == 0) return 0.0;
+        return valorPromocion = cantidad*precioActual*(1-cantidadPorcentaje/100);         
+    }
+    
+    
     
     private Double calcularFlete(TipoProducto producto)
     {
