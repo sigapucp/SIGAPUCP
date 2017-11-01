@@ -18,14 +18,15 @@ public class ErrorAlertController {
     private Alert alert;
     public ErrorAlertController()
     {                     
-        alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("SIGAPUCP - Error");              
-        stage = (Stage) alert.getDialogPane().getScene().getWindow();            
-        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
+        
     }
     
     public void show(String descripcionError,String codigoError)
-    {           
+    {      
+        alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("SIGAPUCP - Error");              
+        stage = (Stage) alert.getDialogPane().getScene().getWindow();            
+        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));    
         alert.setHeaderText(descripcionError);
         alert.setContentText(codigoError);
         stage.showAndWait();

@@ -21,14 +21,15 @@ public class ConfirmationAlertController {
     public ConfirmationAlertController()
     {
         System.out.println("AQUI VA LA PANTALLA DE CONFIRMACION");                       
+       
+    }
+    
+    public boolean show(String descripcion,String pregunta)
+    {     
         alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("SIGAPUCP - Confirmacion");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
         stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
-    }
-    
-    public boolean show(String descripcion,String pregunta)
-    {           
         alert.setHeaderText(descripcion);
         alert.setContentText(pregunta);
         

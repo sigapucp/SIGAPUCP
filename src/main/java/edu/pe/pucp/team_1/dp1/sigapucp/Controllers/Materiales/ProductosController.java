@@ -227,6 +227,7 @@ public class ProductosController extends Controller {
         habilitar_formulario();
         producto_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
         limpiar_formulario();
+        habilitar_formulario();
         if(producto_seleccionado == null) 
         {
             infoController.show("Producto no seleccionada");  
@@ -342,6 +343,12 @@ public class ProductosController extends Controller {
                 return;                
             }
             
+            if(esDefault.equals('F')&&precios.isEmpty())
+            {
+                infoController.show("Debe agregar un precio por default primero");
+                return;                                
+            }
+            
             Precio precio = new Precio();
             precio.setFloat("precio",valor);
             precio.set("moneda_id",moneda.getId());
@@ -428,7 +435,6 @@ public class ProductosController extends Controller {
             infoController.show("El producto ha sido creado satisfactoriamente"); 
             limpiar_formulario();
             crear_nuevo = false;
-            limpiar_formulario();
             inhabilitar_formulario();            
         }
         catch(Exception e){

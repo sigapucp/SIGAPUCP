@@ -6,8 +6,10 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -59,6 +61,7 @@ public class CategoriasController extends Controller{
     private CategoriaProducto categoria_seleccionada;
     
     private InformationAlertController infoController;
+    private ConfirmationAlertController confirmatonController;
     
     private Boolean crear_nuevo;
     
@@ -69,7 +72,7 @@ public class CategoriasController extends Controller{
     public CategoriasController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         infoController = new InformationAlertController();
-                
+        confirmatonController = new ConfirmationAlertController();        
         categoria_seleccionada = null;
         crear_nuevo = false;
     }
@@ -109,14 +112,19 @@ public class CategoriasController extends Controller{
         try{
             Base.openTransaction();
             CategoriaProducto nueva_categoria = new CategoriaProducto();
+            if(!confirmatonController.show("Se creará la categoria con código: " + codigo_categoria.getText(), "¿Desea continuar?")) return;
             nueva_categoria.asignar_atributos(usuarioActual.getString(("usuario_cod")),codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             nueva_categoria.saveIt();
             Base.commitTransaction();
-            infoController.show("La categoria ha sido creado satisfactoriamente");             
+            infoController.show("La categoria ha sido creado satisfactoriamente");       
+            limpiar_formulario();
+            deshabilitar_formulario();
+            crear_nuevo = false;
         }
         catch(Exception e){
-            System.out.println("La categoria contiene errores");      
+            System.out.println("La categoria contiene errores: "+e);    
             Base.rollbackTransaction();
+            crear_nuevo = true;
         }
     }
     
@@ -124,13 +132,15 @@ public class CategoriasController extends Controller{
         crear_nuevo = true;
         DetalleCategoria.setDisable(false);
         limpiar_formulario();
+        habilitar_formulario();
     }
   
     public void editar_categoria(CategoriaProducto categoria){
         try{
+            if(!confirmatonController.show("Se editará la categoria con código: " + codigo_categoria.getText(), "¿Desea continuar?")) return;
             categoria.asignar_atributos(usuarioActual.getString(("usuario_cod")),codigo_categoria.getText(), nombre_categoria.getText(), descripcion_categoria.getText());
             categoria.saveIt();
-            infoController.show("la categoria ha sido editada");
+            infoController.show("La categoria ha sido editada");
         }
         catch(Exception e){
             
@@ -147,7 +157,6 @@ public class CategoriasController extends Controller{
     public void guardar(){
         if (crear_nuevo){
             crear_categoria();
-            limpiar_formulario();
         }else{
             if (categoria_seleccionada == null) return;
             editar_categoria(categoria_seleccionada);
@@ -182,12 +191,20 @@ public class CategoriasController extends Controller{
         catch( Exception e){
             System.out.println(e);
         }
-    }     
+    }
+    
+    public void habilitar_formulario(){
+        DetalleCategoria.setDisable(false);
+    }
+    
+    public void deshabilitar_formulario(){
+        DetalleCategoria.setDisable(true);
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        DetalleCategoria.setDisable(true);
+        deshabilitar_formulario();
         categorias = null;
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
@@ -199,4 +216,10 @@ public class CategoriasController extends Controller{
         });
        
     } 
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Categorias;
+    }
 }

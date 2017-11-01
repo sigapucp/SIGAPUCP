@@ -246,6 +246,7 @@ public class ProformasController extends Controller {
             llenar_tabla_index();               
             llenar_combobox();
             llenar_autocompletado();
+            inhabilitar_formulario();
             setAgregarProductos();                                            
         } catch (Exception e) {
             infoController.show("Error al cargar las proformas " + e.getMessage());
@@ -417,6 +418,7 @@ public class ProformasController extends Controller {
     @FXML
     private void visualizarProforma(ActionEvent event){
         crearNuevo = false;
+        habilitar_formulario();
         try {
             proformaSelecionado = tablaPedidos.getSelectionModel().getSelectedItem();
             if (proformaSelecionado == null) 
