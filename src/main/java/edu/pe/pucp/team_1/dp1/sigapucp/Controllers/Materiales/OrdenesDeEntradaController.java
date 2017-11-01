@@ -489,7 +489,9 @@ public class OrdenesDeEntradaController extends Controller {
     private void handleAutoCompletarCliente() {
         int i = 0;
         for (Cliente cliente : autoCompletadoClienteList){
-            if (cliente.getString("nombre").equals(ClienteBuscar.getText())){           
+            String nombre = cliente.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(ClienteBuscar.getText())){           
                   clienteDevuelto = cliente;
             }
         }
@@ -498,7 +500,9 @@ public class OrdenesDeEntradaController extends Controller {
     private void handleAutoCompletarProveedor() {
         int i = 0;
         for (Proveedor proveedor : autoCompletadoProveedorList){
-            if (proveedor.getString("nombre").equals(ProveedorBuscar.getText())){           
+            String nombre = proveedor.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(ProveedorBuscar.getText())){           
                proveedorDevuelto = proveedor;
             }
         }
@@ -507,7 +511,9 @@ public class OrdenesDeEntradaController extends Controller {
     private void handleAutoCompletarProducto() {
         int i = 0;
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
-            if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
+            String nombre = tipoProducto.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(VerProducto.getText())){           
                 productoDevuelto = tipoProducto;             
             }
         }

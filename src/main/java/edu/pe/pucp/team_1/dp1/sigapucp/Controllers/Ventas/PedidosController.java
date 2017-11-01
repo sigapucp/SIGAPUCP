@@ -10,7 +10,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import static edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProformasController.modal_stage;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
@@ -88,8 +91,6 @@ public class PedidosController extends Controller {
     private Spinner<Integer> cantProd;
     @FXML
     private TextField VerProducto;
-    @FXML
-    private Button buscarProducto;
     @FXML
     private TextField subTotal;
     @FXML
@@ -298,7 +299,7 @@ public class PedidosController extends Controller {
     
     @Override
     public void guardar(){
-        if (crearNuevo){
+        if (crearNuevo){            
             crearPedido();
         } else {
             if (pedidoSeleccionado == null){ 
@@ -428,12 +429,7 @@ public class PedidosController extends Controller {
     private void manejoTextoRadBttn2(){
         TipoDocBoleta.setSelected(false);
         VerDocumentoLabel.setText("RUC:");        
-    }
-    
-    @FXML
-    private void handleAgregarProducto(ActionEvent event) throws IOException{
-        modal_stage.showAndWait();
-    }
+    }       
 
     private void habilitar_formulario() {
         pedidoForm.setDisable(false);
@@ -545,7 +541,8 @@ public class PedidosController extends Controller {
       
         setProductos(pedido);
         Base.commitTransaction();       
-        infoController.show("Se ha creado la Orden de Compra: " + String.valueOf(cod));        
+        infoController.show("Se ha creado la Orden de Compra: " + String.valueOf(cod));   
+        //AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, usuarioActual,MENU.Pedidos);
         }
         catch(Exception e){
            infoController.show("No se pudo crear la Proforma: " + e.getMessage());
@@ -570,18 +567,127 @@ public class PedidosController extends Controller {
         pedido.set("direccion_facturacion",direccionFacturacion);                
     } 
      
-    private void setProductos(OrdenCompra pedido)
+   
+    private Double calcularFlete(TipoProducto producto)
     {
-
+        return 0.0;
     }
     
     @FXML
     private void agregaProducto(ActionEvent event) {
+         if(productoDevuelto==null)
+        {
+            infoController.show("No ha seleccionado ningun producto"); 
+           return;
+        }
+        
+        try {
+            for(OrdenCompraxProducto productoOrd:productos)
+            {
+                if(productoOrd.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
+                {
+                    Integer cantidad = productoOrd.getInteger("cantidad") + cantProd.getValue();
+                    Double precioUnitario = productoOrd.getDouble("precio_unitario");                    
+                    recalcularTotal(cantProd.getValue()*precioUnitario);
+                    
+                    // Pueden varias las condiciones de descuento y fletes ...
+                    productoOrd.set("cantidad",cantidad);
+                    productoOrd.set("subtotal_final",precioUnitario*cantidad);
+                    TablaProductos.getColumns().get(0).setVisible(false);
+                    TablaProductos.getColumns().get(0).setVisible(true);
+                    return;
+                }
+            }
+
+            OrdenCompraxProducto productoOrd = new OrdenCompraxProducto();
+            Integer cantidad = cantProd.getValue();
+            Double precio = productoDevuelto.getPrecioActual();
+                                  
+            productoOrd.set("tipo_id",productoDevuelto.getId());
+            productoOrd.set("tipo_cod",productoDevuelto.get("tipo_cod"));            
+            productoOrd.set("cantidad",cantidad);                        
+            productoOrd.set("precio_unitario",precio);    
+            productoOrd.set("subtotal_previo",cantidad*precio); 
+            
+            Double descuento = calcularDescuento(productoDevuelto);
+            Double flete = calcularFlete(productoDevuelto);
+            
+            productoOrd.set("descuento",descuento); 
+            productoOrd.set("flete",flete);             
+            Double totalEntrada = cantidad*precio - descuento + flete;
+            productoOrd.set("subtotal_final",totalEntrada);
+            recalcularTotal(totalEntrada);
+                        
+            productos.add(productoOrd);            
+        } catch (Exception e) {
+            infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
+        }                
     }
 
     @FXML
     private void eliminarProducto(ActionEvent event) {
+        OrdenCompraxProducto pedidoxproducto = TablaProductos.getSelectionModel().getSelectedItem();
+        if(pedidoxproducto==null)
+        {
+            infoController.show("No ha seleccionado ninguna Cotizacion");
+            return;
+        }         
+      
+        if(!pedidoxproducto.isNew())
+        {
+            OrdenCompra pedido = OrdenCompra.findById(pedidoxproducto.get("order_compra_id"));
+            String estado = pedido.getString("estado");
+            if(estado.equals(OrdenCompra.ESTADO.ENPROCESO.name())||estado.equals(OrdenCompra.ESTADO.COMPLETA.name()))
+            {
+                infoController.show("No puede eliminar producto ya que este ya se encuentra con Productos despachados o siendo despachados");
+                return;                
+            }            
+        }             
+        Double totalEntrada = pedidoxproducto.getDouble("subtotal_final");      
+        recalcularTotal(-totalEntrada);               
+        productos.remove(pedidoxproducto);                 
     }
+    
+    private void setProductos(OrdenCompra pedido)
+    {
+        List<OrdenCompraxProducto> pedidosGuardados = OrdenCompraxProducto.where("orden_compra_id = ?", pedido.getId());
+        for(OrdenCompraxProducto pedidoxproducto:productos)
+        {
+            if(pedidoxproducto.isNew())
+            {
+                pedidoxproducto.set("orden_compra_id",pedido.getId());
+                pedidoxproducto.set("client_id",pedido.get("client_id"));
+                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
+            }
+            pedidoxproducto.saveIt();
+        }             
+        
+        if(pedidosGuardados == null) return;
+        List<OrdenCompraxProducto> cotizacionesProductosDelete = pedidosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+                y.getInteger("orden_compra_id").equals(x.getInteger("orden_compra_id")) && 
+                y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
+        
+        if(cotizacionesProductosDelete == null) return;
+        
+        for(OrdenCompraxProducto pedidoxproducto:pedidosGuardados)
+        {
+            OrdenCompraxProducto.delete("orden_compra_id = ? AND tipo_id = ?",pedidoxproducto.get("orden_compra_id"),pedidoxproducto.get("tipo_id"));
+        }
+    }
+    
+    private Double calcularDescuento(TipoProducto producto)
+    {
+        return 0.0;        
+    }
+    
+    
+    @FXML
+    private void buscarProducto(ActionEvent event) {
+        modal_stage.showAndWait();
+        if(productoDevuelto==null) return;        
+        VerProducto.setText(productoDevuelto.getString("nombre"));
+    }
+       
     
    
    private void RefrescarTabla(List<OrdenCompra> tempPedidos)
@@ -652,6 +758,7 @@ public class PedidosController extends Controller {
      private void productoToString() {
         ArrayList<String> words = new ArrayList<>();
         for (TipoProducto producto : autoCompletadoProductoList){
+            if(producto == null) continue;
             words.add(producto.getString("nombre"));
         }               
         possiblewordsProducto = words;
@@ -659,7 +766,8 @@ public class PedidosController extends Controller {
     
     private void handleAutoCompletarProducto() {      
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
-            if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
+            String nombre = tipoProducto.getString("nombre");
+            if (nombre.equals(VerProducto.getText())){           
                 productoDevuelto = tipoProducto;             
             }
         }
@@ -667,18 +775,27 @@ public class PedidosController extends Controller {
     
      private void usuarioToString() {
         ArrayList<String> words = new ArrayList<>();
-        for (Usuario usuario : autoCompletadoUsuarioList){
+        for (Usuario usuario : autoCompletadoUsuarioList){            
             words.add(usuario.getString("nombre"));
         }               
         possiblewordsUsuario = words;
     }          
     
     private void handleAutoCompletarUsuario() {      
-        for (Usuario usuario : autoCompletadoUsuarioList){
-            if (usuario.getString("nombre").equals(VerVendedor.getText())){           
+        for (Usuario usuario : autoCompletadoUsuarioList){            
+            String nombre = usuario.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(VerVendedor.getText())){           
                 vendedorSelecionado = usuario;             
             }
         }
-    }    
-       
+    }  
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Pedidos;
+    }
+
+
 }

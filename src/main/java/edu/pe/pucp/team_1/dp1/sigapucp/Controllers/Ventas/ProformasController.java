@@ -615,7 +615,9 @@ public class ProformasController extends Controller {
     private void handleAutoCompletar() {
         int i = 0;
         for (Cliente cliente : autoCompletadoList){
-            if (cliente.getString("nombre").equals(clienteSh.getText())){                
+            String nombre = cliente.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(clienteSh.getText())){                
                 setInformacionCliente(cliente);                             
             }
         }
@@ -623,7 +625,7 @@ public class ProformasController extends Controller {
     
     private void productoToString() {
         ArrayList<String> words = new ArrayList<>();
-        for (TipoProducto producto : autoCompletadoProductoList){
+        for (TipoProducto producto : autoCompletadoProductoList){            
             words.add(producto.getString("nombre"));
         }               
         possiblewordsProducto = words;
@@ -631,13 +633,14 @@ public class ProformasController extends Controller {
     
     private void handleAutoCompletarProducto() {      
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
-            if (tipoProducto.getString("nombre").equals(producto.getText())){           
+            String nombre = tipoProducto.getString("nombre");
+            if(nombre==null) continue;
+            if (nombre.equals(producto.getText())){           
                 productoDevuelto = tipoProducto;             
             }
         }
     }
-
-    
+       
     private void setInformacionCliente(Cliente cliente)
     {
         telfSh.setText(cliente.getString("telef_contacto")); 
