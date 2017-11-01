@@ -86,7 +86,7 @@ public class LinearDrawing implements Behavior{
         args.setY_ancla2(y_ancla2);
         double largo = directionX ? (y_ancla2 - y_ancla1) : (directionY ? (x_ancla2 - x_ancla1) : 0);
         args.setLongitud(largo);
-        args.setIs_uniforme(true);
+        args.setIs_uniforme('T');
         
         active_tiles.clear();
         createRackEvent.fire(this, args);

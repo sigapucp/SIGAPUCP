@@ -19,7 +19,7 @@ public class createRackArgs extends EventArgs {
     private int y_ancla1;
     private int y_ancla2;
     private double longitud;
-    private Boolean is_uniforme;
+    private char is_uniforme;
 
     /**
      * @return the x_ancla1
@@ -94,14 +94,14 @@ public class createRackArgs extends EventArgs {
     /**
      * @return the is_uniforme
      */
-    public Boolean getIs_uniforme() {
+    public char getIs_uniforme() {
         return is_uniforme;
     }
 
     /**
      * @param is_uniforme the is_uniforme to set
      */
-    public void setIs_uniforme(Boolean is_uniforme) {
+    public void setIs_uniforme(char is_uniforme) {
         this.is_uniforme = is_uniforme;
     }
     

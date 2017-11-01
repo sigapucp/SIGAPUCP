@@ -5,11 +5,13 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -21,6 +23,7 @@ public class RectangularDrawing implements Behavior {
     private List<Integer> saved_tiles;
     private Boolean directionX;
     private Boolean directionY;
+    private IEvent<createAlmacenArgs> createLogicalWarehouse;
     
     public RectangularDrawing() {
         active_tiles = new ArrayList<>();
@@ -28,50 +31,39 @@ public class RectangularDrawing implements Behavior {
         saved_tiles = new ArrayList<>();
         directionX = false;
         directionY = false;
+        createLogicalWarehouse = new Event<>();
     }
     
     @Override
     public Boolean checkDrawRules(List<GridTile> tiles, EventArgs args) {
-        int rectangleRowStart = 0;
-        int numElementsFirstRow = 0;
+        int currentRow = active_tiles.get(0)/10;
+        int previousRow = -1;
         int currentNumberOfRows = 0;
-        int previousRow = 0;
-        int currentRow = 0;
-        int lastCorner = 0;
-        int firstCorner = 0;
-        boolean indexDoesNotExist = true;
-        int indexInFirstRows = 0;
-
+        int previousNumberOfRows = 0;
+        
         Collections.sort(active_tiles);
-        firstCorner = active_tiles.get(0);
-        currentRow = firstCorner/10;
-        previousRow = currentRow;
-        rectangleRowStart = firstCorner/ 10;
-        for (Integer index : active_tiles) {
-            if(currentRow != index/10) {
-                previousRow =  currentRow;
-                currentNumberOfRows = 0;
-            };
-            currentRow = index/10;
-
-            if(currentRow == rectangleRowStart) {
-                numElementsFirstRow++;
-                lastCorner = index;
-            } else {
-                currentNumberOfRows++;
-                indexInFirstRows = index - (currentRow - rectangleRowStart)*10;
-                indexDoesNotExist = active_tiles.contains(indexInFirstRows);
+        
+        for(int tile : active_tiles) {
+            int tileFirstRow;
+            if(previousRow != -1) {
+                tileFirstRow = tile - (currentRow - previousRow)*10;
+                if(!active_tiles.contains(tileFirstRow)) return false;
             }
             
-            if(!indexDoesNotExist) break;
+            if(tile/10 == currentRow) {
+                currentNumberOfRows++;
+            } else {
+                previousRow = currentRow;
+                currentRow = tile/10;
+                tileFirstRow = tile - (currentRow - previousRow)*10;
+                if(!active_tiles.contains(tileFirstRow)) return false;
+                if(previousNumberOfRows != 0 && previousNumberOfRows != currentNumberOfRows) return false;
+                previousNumberOfRows = currentNumberOfRows;
+                currentNumberOfRows = 1;
+            }
         }
-
-        System.out.println(numElementsFirstRow);
-        System.out.println(lastCorner);
-        System.out.println(indexDoesNotExist);
-        System.out.println(active_tiles);
         
-        return false;
+        return previousNumberOfRows == currentNumberOfRows && currentNumberOfRows > 1;
     }
 
     @Override
@@ -85,7 +77,8 @@ public class RectangularDrawing implements Behavior {
 
     @Override
     public void saveActiveTiles(List<GridTile> tiles) {
-        //
+        temp_tiles.addAll(active_tiles);
+        active_tiles.clear();
     }
 
     @Override
@@ -112,5 +105,4 @@ public class RectangularDrawing implements Behavior {
     public Boolean isTileSavedOrActive(int index) {
         return !active_tiles.contains(index) && !saved_tiles.contains(index);
     }
-    
 }

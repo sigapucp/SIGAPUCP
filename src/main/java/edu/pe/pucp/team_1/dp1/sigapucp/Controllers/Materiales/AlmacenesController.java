@@ -72,6 +72,7 @@ public class AlmacenesController extends Controller{
     @FXML private Button buscar_rack_btn;
     @FXML private TextField rack_cod_input_search;
     @FXML private TitledPane create_racks_container;
+    @FXML private TitledPane create_almacen_container;
     @FXML private TextField rack_altura_field;
     @FXML private AnchorPane contenedor_grilla;
     @FXML private TabPane almacen_form_pane;

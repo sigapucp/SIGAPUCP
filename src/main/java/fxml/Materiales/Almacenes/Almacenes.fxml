@@ -158,6 +158,18 @@
                                     <AnchorPane fx:id="contenedor_grilla" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: lightblue;" />
                                  </content>
                               </TitledPane>
+                              <TitledPane fx:id="create_almacen_container" animated="false" collapsible="false" disable="true" layoutX="439.0" layoutY="194.0" prefHeight="139.0" prefWidth="291.0" text="Creacion de Almacen:">
+                                 <content>
+                                    <AnchorPane>
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="19.0" text="Altura:" />
+                                          <TextField fx:id="rack_altura_field1" layoutX="88.0" layoutY="14.0" prefHeight="27.0" prefWidth="179.0" />
+                                          <Button layoutX="168.0" layoutY="61.0" mnemonicParsing="false" onAction="#crearRack" text="Guardar" />
+                                          <Button layoutX="65.0" layoutY="61.0" mnemonicParsing="false" onAction="#cancelarCreacionRack" text="Cancelar" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
                            </children>
                         </AnchorPane>
                      </content>

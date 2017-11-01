@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javafx.scene.layout.AnchorPane;
 
@@ -16,9 +17,11 @@ public class SelectableGrid extends AnchorPane  {
     private int grid_heigth;
     private int grid_real_width;
     private int grid_real_heigth;
+//    private HashMap<Integer, List<GridTile>> tiles_aux;
     private List<GridTile> tiles;
     private Behavior behavior;
     
+    // Longitud de area nos define el tamano de un cuadrado dentro del dibujo para un almacen
     public SelectableGrid(int rows, int columns, int width, int heigth, Behavior external_behavior) {
         grid_width = width > 400 ? 400 : width;
         grid_heigth = heigth > 400 ? 400 : heigth;
@@ -46,7 +49,7 @@ public class SelectableGrid extends AnchorPane  {
                 });
                 tile.getReleaseEvent().addHandler((sender, args) -> {
                     if (behavior.checkDrawRules(tiles, args)) behavior.saveActiveTiles(tiles);
-                    else behavior.clearActiveTiles(tiles);
+                    else behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
                 });
                 
                 tiles.add(tile);
