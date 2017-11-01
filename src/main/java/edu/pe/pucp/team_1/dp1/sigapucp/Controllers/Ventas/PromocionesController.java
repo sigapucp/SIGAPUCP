@@ -775,10 +775,12 @@ public class PromocionesController extends Controller{
     }
     
     private void habilitar_CantBoni(){
+        //Compro
         spCompro.setDisable(false);        
         txtFieCodigoProducto1.setDisable(false);        
         botonTipo1.setDisable(false);
-        botonCategoria1.setDisable(false);        
+        botonCategoria1.setDisable(false);  
+        //Llevo
         spLlevo.setDisable(false);        
         txtFieCodigoProducto2.setDisable(false);        
         botonTipo2.setDisable(false);
@@ -812,8 +814,8 @@ public class PromocionesController extends Controller{
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())){
             habilitar_CantBoni();
             deshabilitar_Porcentaje(); 
-            rbPorTipo.setDisable(false);
-            rbPorCategoria.setDisable(false);  
+            //rbPorTipo.setDisable(false);
+            //rbPorCategoria.setDisable(false);  
             botonTipo1.setDisable(true);
             botonCategoria1.setDisable(true);
             botonTipo2.setDisable(true);
@@ -825,11 +827,13 @@ public class PromocionesController extends Controller{
             deshabilitar_Porcentaje();
             limpiarPorCantidad();
         } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
-            rbPorTipo.setDisable(false);
-            rbPorCategoria.setDisable(false);
+            //rbPorTipo.setDisable(false);
+            //rbPorCategoria.setDisable(false);
             habilitar_Porcentaje();
             deshabilitar_CantBoni();
         }
+        rbPorTipo.setDisable(false);
+        rbPorCategoria.setDisable(false); 
     }
     
     @Override
