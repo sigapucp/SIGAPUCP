@@ -126,7 +126,6 @@ public class PromocionesController extends Controller{
     private final ObservableList<Promocion> masterData = FXCollections.observableArrayList();
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmatonController;
-    private Boolean obtener_es_categoria; // es para saber si lo que se obtiene es tipo o categoria en cualquier promocion
     
     //Variables para manejar los custom events de los modales
     private final String TIPO_MODAL_PATH = "/fxml/Ventas/Promociones/ModalTipoProd.fxml";
@@ -134,6 +133,7 @@ public class PromocionesController extends Controller{
     private String codigo_promo;
     private String id_promo;
     private boolean comprar_es_categoria; //es para saber si lo que se compra en bonificacion es tipo o categoria
+    private Boolean obtener_es_categoria; // es para saber si lo que se obtiene es tipo o categoria en cualquier promocion
     
     private void manejoDeModales(){
         botonTipo1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -384,10 +384,10 @@ public class PromocionesController extends Controller{
                 if (es_categoria_comprar_aux.equals("S")){
                     codigo_aux = promocionB.getString("categoria_code");
                 } else if (es_categoria_comprar_aux.equals("N")){
-                    codigo_aux = promocionB.getString("tipo_code");
+                    codigo_aux = promocionB.getString("tipo_cod");
                 }
                 
-                mostrar_promoBonificacion(compro,codigoTipCat,llevo,codigo_aux);
+                mostrar_promoBonificacion(compro,codigo_aux,llevo,codigoTipCat);
                 
             } else if (tipo.equals(Promocion.TIPO.PORCENTAJE.name())) {
 
@@ -434,16 +434,15 @@ public class PromocionesController extends Controller{
             String fechaIni = formatoFecha(dpFecha1.getValue(),"dd/MM/yyyy"); 
             String fechaFin = formatoFecha(dpFecha2.getValue(),"dd/MM/yyyy");
             String prioridad = obtener_prioridad();
-            String es_categoria = (obtener_es_categoria) ? "S":"N";
+            String es_categoria = promocion_aux.getString("es_categoria");
             String estado = Promocion.ESTADO.ACTIVO.name();
             String tipoPromo = obtener_tipo_promo();
             
             String codigo = "";
             codigo = (tipoPromo.equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto2.getText();    
-            System.err.println(codigo);
-
+            
             String id = "";               
-            if (obtener_es_categoria){
+            if (es_categoria.equals("S") || obtener_es_categoria){
                 CategoriaProducto categoria = CategoriaProducto.findFirst("categoria_code = ?", codigo);
                 id = categoria.getString("categoria_id");                
             } else{
@@ -463,7 +462,6 @@ public class PromocionesController extends Controller{
             infoController.show("La promoción ha sido modificada satisfactoriamente");
 
             Base.commitTransaction();
-            limpiar_formulario();
         } catch (Exception e){
            infoController.show("La promoción contiene errores : " + e);        
            Base.rollbackTransaction();           
@@ -516,7 +514,6 @@ public class PromocionesController extends Controller{
             infoController.show("La promoción ha sido creado satisfactoriamente");
                         
             Base.commitTransaction();
-            limpiar_formulario(); 
         }
         catch(Exception e){
            infoController.show("La promoción contiene errores : " + e);        
@@ -530,11 +527,11 @@ public class PromocionesController extends Controller{
             String id_comprar = "";
             if (comprar_es_categoria){
                 CategoriaProducto categoria = new CategoriaProducto();
-                categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
+                categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto1.getText());
                 id_comprar = categoria.getString("categoria_id");
             } else{
                 TipoProducto tipo = new TipoProducto();
-                tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto2.getText());
+                tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto1.getText());
                 id_comprar = tipo.getString("tipo_id");
             }                               
             if (comprar_es_categoria){
@@ -559,12 +556,14 @@ public class PromocionesController extends Controller{
             PromocionCantidad promoC = PromocionCantidad.findFirst("promocion_id = ? AND  promocion_cod = ?",promocion_seleccionada.getId(),promocion_seleccionada.get("promocion_cod"));
             promoC.set("nr_comprar", (Integer)spCompro.getValue());
             promoC.set("nr_obtener",(Integer)spLlevo.getValue());
+            promoC.saveIt();
         } else {
             String concepto = (desc_concepto.getText() == null) ? "":desc_concepto.getText();                                
             
             PromocionPorcentaje promoP = PromocionPorcentaje.findFirst("promocion_id = ? AND  promocion_cod = ?",promocion_seleccionada.getId(),promocion_seleccionada.get("promocion_cod"));
             promoP.set("valor_desc", (Integer)spPorc.getValue());
             promoP.set("concepto_desc",concepto);
+            promoP.saveIt();
         }
     }
     
@@ -573,10 +572,10 @@ public class PromocionesController extends Controller{
             String id_comprar = "";
             String flag_comprar = (comprar_es_categoria) ? "S":"N";
             if (comprar_es_categoria){
-                CategoriaProducto categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
+                CategoriaProducto categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto1.getText());
                 id_comprar = categoria.getString("categoria_id");
             } else{
-                TipoProducto tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto2.getText());
+                TipoProducto tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto1.getText());
                 id_comprar = tipo.getString("tipo_id");
             }
             if (comprar_es_categoria)
