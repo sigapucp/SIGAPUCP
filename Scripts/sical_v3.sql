@@ -1078,7 +1078,7 @@ CREATE TABLE PromocionBonificaciones
  promocion_id         SERIAL NOT NULL ,
  nr_comprar           DECIMAL(10,2) NOT NULL ,
  nr_obtener           DECIMAL(10,2) NOT NULL ,
- es_categoria_obtener NCHAR(1) NOT NULL ,
+ es_categoria_comprar NCHAR(1) NOT NULL ,
  categoria_code       VARCHAR(20) NULL ,
  categoria_id         SERIAL NOT NULL ,
  tipo_id              SERIAL NOT NULL ,
