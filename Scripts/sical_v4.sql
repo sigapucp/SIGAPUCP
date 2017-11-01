@@ -69,7 +69,7 @@ CREATE TABLE OrdenesSalida
 
 CREATE TABLE ParametrosSistema
 (
- parametro_id INT NOT NULL ,
+ parametro_id SERIAL NOT NULL ,
  nombre       VARCHAR(100) NOT NULL ,
  valor        VARCHAR(50) NOT NULL ,
  descripcion  VARCHAR(200) NOT NULL ,
@@ -240,6 +240,7 @@ CREATE TABLE Clientes
  tipo_cliente          VARCHAR(20) NOT NULL ,
  direccion_despacho    VARCHAR(150) NOT NULL ,
  direccion_facturacion VARCHAR(150) NOT NULL ,
+ departamento          VARCHAR(50) NOT NULL ,
 
  CONSTRAINT pk_83 PRIMARY KEY  (client_id )
 );
@@ -704,24 +705,24 @@ CREATE TABLE NotasCredito
 
 CREATE TABLE OrdenesCompra
 (
- orden_compra_cod    VARCHAR(20) NOT NULL ,
- client_id           SERIAL NOT NULL ,
- orden_compra_id     SERIAL NOT NULL ,
- fecha_emision       DATE NOT NULL ,
- total               DECIMAL(10,2) NOT NULL ,
- last_user_change    VARCHAR(20) NOT NULL ,
- last_date_change    DATE NOT NULL ,
- flag_last_operation CHAR(1) NOT NULL ,
- usuario_cod         VARCHAR(20) NOT NULL ,
- usuario_id          SERIAL NOT NULL ,
- moneda_id           SERIAL NOT NULL ,
- cotizacion_cod      VARCHAR(20) NULL ,
- cotizacion_id       SERIAL NOT NULL ,
- igv                 DECIMAL(10,2) NOT NULL ,
- estado              VARCHAR(30) NOT NULL ,
- direccion_despacho  VARCHAR(150) NULL ,
- direccion_facturacion   VARCHAR(150) NULL ,
-
+ orden_compra_cod      VARCHAR(20) NOT NULL ,
+ client_id             SERIAL NOT NULL ,
+ orden_compra_id       SERIAL NOT NULL ,
+ fecha_emision         DATE NOT NULL ,
+ total                 DECIMAL NOT NULL ,
+ last_user_change      VARCHAR(20) NOT NULL ,
+ last_date_change      DATE NOT NULL ,
+ flag_last_operation   CHAR(1) NOT NULL ,
+ usuario_cod           VARCHAR(20) NOT NULL ,
+ usuario_id            SERIAL NOT NULL ,
+ moneda_id             SERIAL NOT NULL ,
+ cotizacion_cod        VARCHAR(20) NULL ,
+ cotizacion_id         SERIAL NOT NULL ,
+ igv                   DECIMAL(10,2) NOT NULL ,
+ estado                VARCHAR(30) NOT NULL ,
+ direccion_despacho    VARCHAR(150) NOT NULL ,
+ direccion_facturacion VARCHAR(150) NOT NULL ,
+ departamento          VARCHAR(50) NOT NULL ,
 
  CONSTRAINT pk_469 PRIMARY KEY  (orden_compra_cod , client_id , orden_compra_id ),
  CONSTRAINT fk_471 FOREIGN KEY (client_id)
@@ -1078,7 +1079,7 @@ CREATE TABLE PromocionBonificaciones
  promocion_id         SERIAL NOT NULL ,
  nr_comprar           DECIMAL(10,2) NOT NULL ,
  nr_obtener           DECIMAL(10,2) NOT NULL ,
- es_categoria_comprar NCHAR(1) NOT NULL ,
+ es_categoria_obtener NCHAR(1) NOT NULL ,
  categoria_code       VARCHAR(20) NULL ,
  categoria_id         SERIAL NOT NULL ,
  tipo_id              SERIAL NOT NULL ,

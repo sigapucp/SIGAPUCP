@@ -126,7 +126,7 @@ public class PromocionesController extends Controller{
     private final ObservableList<Promocion> masterData = FXCollections.observableArrayList();
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmatonController;
-    private Boolean es_categoria_obtener;
+    private Boolean es_categoria_comprar;
     
     //Variables para manejar los custom events de los modales
     private final String TIPO_MODAL_PATH = "/fxml/Ventas/Promociones/ModalTipoProd.fxml";
@@ -141,12 +141,12 @@ public class PromocionesController extends Controller{
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto1);
         });
         botonTipo2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            es_categoria_obtener = false;
+            es_categoria_comprar = false;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto2);
         });   
         botonTipo3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
             es_tipo = true;
-            es_categoria_obtener = false;
+            es_categoria_comprar = false;
             openModalEventHandler(TIPO_MODAL_PATH, txtFieCodigoProducto3);
         });   
         botonCategoria1.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
@@ -154,12 +154,12 @@ public class PromocionesController extends Controller{
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto1);
         }); 
         botonCategoria2.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            es_categoria_obtener = true;
+            es_categoria_comprar = true;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto2);
         }); 
         botonCategoria3.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
             es_tipo = false;
-            es_categoria_obtener = true;
+            es_categoria_comprar = true;
             openModalEventHandler(CATEGORIA_MODAL_PATH, txtFieCodigoProducto3);
         }); 
     }
@@ -174,7 +174,7 @@ public class PromocionesController extends Controller{
             controller.abrirModal.addHandler((sender,tipargs)->{
                 codigo_promo = tipargs.getCodigo();
                 id_promo = tipargs.getId();
-                if(txtField.getId().equals("txtFieCodigoProducto1")&&comboBoxTipoPromo.getSelectionModel().getSelectedItem().equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
+                if(txtField.getId().equals("txtFieCodigoProducto1")&&comboBoxTipoPromo.getSelectionModel().getSelectedItem().equals(Promocion.TIPO.CANTIDAD.name()))
                 {
                     txtFieCodigoProducto2.setText(codigo_promo);
                 }
@@ -203,7 +203,7 @@ public class PromocionesController extends Controller{
         promocion_seleccionada = null;
         promociones = null;
         
-        es_categoria_obtener = false;
+        es_categoria_comprar = false;
         es_tipo = false;
         
         promociones = Promocion.findAll();
@@ -212,16 +212,16 @@ public class PromocionesController extends Controller{
         rbPorTipo.setOnAction(e -> manejarrbPorTipo());
         rbPorCategoria.setOnAction(e -> manejarrbPorCategoria());
         
-        comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name().toLowerCase()
-                                        , Promocion.TIPO.BONIFICACIÓN.name().toLowerCase()
-                                        ,Promocion.TIPO.PORCENTAJE.name().toLowerCase()
+        comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name()
+                                        , Promocion.TIPO.BONIFICACIÓN.name()
+                                        ,Promocion.TIPO.PORCENTAJE.name()
                                         );
         comboBoxTipoPromo.setOnAction(e -> manejarcomboBoxTipoPromo());
         comboxPrioridad.getItems().addAll("1", "2","3");
         
-        busqTipoPromo.getItems().addAll("",Promocion.TIPO.CANTIDAD.name().toLowerCase()
-                                        , Promocion.TIPO.BONIFICACIÓN.name().toLowerCase()
-                                        ,Promocion.TIPO.PORCENTAJE.name().toLowerCase()
+        busqTipoPromo.getItems().addAll("",Promocion.TIPO.CANTIDAD.name()
+                                        , Promocion.TIPO.BONIFICACIÓN.name()
+                                        ,Promocion.TIPO.PORCENTAJE.name()
                                         );
         manejoDeModales();        
     }    
@@ -297,10 +297,13 @@ public class PromocionesController extends Controller{
         setPromocionVisible(promocion_seleccionada);                        
     }       
     
-    private void mostrar_promo(String codigo, Date fechaIni, Date fechaFin, String prioridad, String tipo){
+    private void mostrar_promo(String codigo, LocalDate fechaIni, LocalDate fechaFin, String prioridad, String tipo){
         txtFieCodigoPromo.setText(codigo);
         txtFieCodigoPromo.setDisable(true);
         //fechas
+        dpFecha1.setValue(fechaIni);
+        dpFecha2.setValue(fechaFin);
+                
         comboxPrioridad.setValue(prioridad);
         comboBoxTipoPromo.setValue(tipo);
     }
@@ -341,8 +344,8 @@ public class PromocionesController extends Controller{
     private void setPromocionVisible(Promocion promocion){
         try{
             String codigo = promocion.getString("promocion_cod");
-            Date fechaIni = promocion.getDate("fecha_inicio");
-            Date fechaFin = promocion.getDate("fecha_fin");
+            LocalDate fechaIni = promocion.getDate("fecha_inicio").toLocalDate();
+            LocalDate fechaFin = promocion.getDate("fecha_fin").toLocalDate();
             Integer prioridadAux = promocion.getInteger("prioridad");
             String prioridad = prioridadAux.toString();
             String tipo = promocion.getString("tipo");
@@ -358,7 +361,7 @@ public class PromocionesController extends Controller{
             labelNombrePromocion.setText(codigo);
             mostrar_promo(codigo,fechaIni,fechaFin,prioridad,tipo);
             
-            if (tipo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase())){
+            if (tipo.equals(Promocion.TIPO.CANTIDAD.name())){
                 if (es_categoria_aux.equals("S")){
                     rbPorCategoria.setSelected(true);
                     botonTipo1.setDisable(true);
@@ -372,23 +375,26 @@ public class PromocionesController extends Controller{
                 Integer llevo = promocionC.getInteger("nr_obtener");                
                 mostrar_promoCantidad(codigoTipCat, compro, llevo);
                 
-            } else if (tipo.equals(Promocion.TIPO.BONIFICACIÓN.name().toLowerCase())){
+
+            } else if (tipo.equals(Promocion.TIPO.BONIFICACIÓN.name())){
                 PromocionBonificacion promocionB = PromocionBonificacion.findFirst("promocion_cod = ? AND promocion_id = ?", codigo,promocion.getId());
                 
                 Integer compro = promocionB.getInteger("nr_comprar");
                 Integer llevo = promocionB.getInteger("nr_obtener");
-                String es_categoria_obtener_aux = promocionB.getString("es_categoria_obtener");
+
+                String es_categoria_comprar_aux = promocionB.getString("es_categoria_comprar");
                 String codigo_aux = "";
                 
-                if (es_categoria_obtener_aux.equals("S")){
+                if (es_categoria_comprar_aux.equals("S")){
                     codigo_aux = promocionB.getString("categoria_code");
-                } else if (es_categoria_obtener_aux.equals("N")){
+                } else if (es_categoria_comprar_aux.equals("N")){
                     codigo_aux = promocionB.getString("tipo_code");
                 }
                 
                 mostrar_promoBonificacion(compro,codigoTipCat,llevo,codigo_aux);
                 
-            } else if (tipo.equals(Promocion.TIPO.PORCENTAJE.name().toLowerCase())) {
+            } else if (tipo.equals(Promocion.TIPO.PORCENTAJE.name())) {
+
                 if (es_categoria_aux.equals("S")){
                     rbPorCategoria.setSelected(true);
                     botonTipo3.setDisable(true);
@@ -436,11 +442,12 @@ public class PromocionesController extends Controller{
             String estado = Promocion.ESTADO.ACTIVO.name();
             String tipoPromo = obtener_tipo_promo();
 
-            es_categoria_obtener =((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name()) && rbPorCategoria.isSelected()) ? true : es_categoria_obtener;
-            String flag_categoria = (es_categoria_obtener) ? "S":"N";
+
+            es_categoria_comprar =((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name()) && rbPorCategoria.isSelected()) ? true : es_categoria_comprar;
+            String flag_categoria = (es_categoria_comprar) ? "S":"N";
 
             String codigo = "";
-            codigo = ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
+            codigo = ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto2.getText();    
             System.err.println(codigo);
 
             String id = "";               
@@ -494,8 +501,9 @@ public class PromocionesController extends Controller{
             String estado = Promocion.ESTADO.ACTIVO.name();
             String tipoPromo = obtener_tipo_promo();
             
-            es_categoria_obtener =(tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()) && !es_tipo) ? true : es_categoria_obtener;
-            String flag_categoria = (es_categoria_obtener) ? "S":"N";
+
+            es_categoria_comprar =(tipoPromo.equals(Promocion.TIPO.CANTIDAD.name()) && !es_tipo) ? true : es_categoria_comprar;
+            String flag_categoria = (es_categoria_comprar) ? "S":"N";
             
             String codigo = "";
             codigo = ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto1.getText();    
@@ -534,32 +542,33 @@ public class PromocionesController extends Controller{
     
     private void modificarTablasHijas(String tipoPromo, String flag_categoria){
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
-            String id_llevar = "";
-            if (es_categoria_obtener){
+
+            String id_comprar = "";
+            if (es_categoria_comprar){
                 CategoriaProducto categoria = new CategoriaProducto();
                 categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
-                id_llevar = categoria.getString("categoria_id");
+                id_comprar = categoria.getString("categoria_id");
             } else{
                 TipoProducto tipo = new TipoProducto();
                 tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto2.getText());
-                id_llevar = tipo.getString("tipo_id");
+                id_comprar = tipo.getString("tipo_id");
             }                               
             if (flag_categoria.equals("S")){
                 PromocionBonificacion promoB = PromocionBonificacion.findFirst("promocion_id = ? AND  promocion_cod = ?",promocion_seleccionada.getId(),promocion_seleccionada.get("promocion_cod"));
                 promoB.set("nr_comprar", (Integer)spCompro.getValue());
                 promoB.set("nr_obtener",(Integer)spLlevo.getValue());
-                promoB.set("es_categoria_obtener", flag_categoria);
-                promoB.set("categoria_code", txtFieCodigoProducto2.getText());
-                promoB.set("categoria_id" ,Integer.parseInt(id_llevar));
+                promoB.set("es_categoria_comprar", flag_categoria);
+                promoB.set("categoria_code", txtFieCodigoProducto1.getText());
+                promoB.set("categoria_id" ,Integer.parseInt(id_comprar));
                 promoB.saveIt();
             }
             else{
                 PromocionBonificacion promoB = PromocionBonificacion.findFirst("promocion_id = ? AND  promocion_cod = ?",promocion_seleccionada.getId(),promocion_seleccionada.get("promocion_cod"));
                 promoB.set("nr_comprar", (Integer)spCompro.getValue());
                 promoB.set("nr_obtener",(Integer)spLlevo.getValue());
-                promoB.set("es_categoria_obtener", flag_categoria);
-                promoB.set("tipo_cod", txtFieCodigoProducto2.getText());
-                promoB.set("tipo_id" ,Integer.parseInt(id_llevar));
+                promoB.set("es_categoria_comprar", flag_categoria);
+                promoB.set("tipo_cod", txtFieCodigoProducto1.getText());
+                promoB.set("tipo_id" ,Integer.parseInt(id_comprar));
                 promoB.saveIt();
             }
         } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())){
@@ -577,33 +586,33 @@ public class PromocionesController extends Controller{
     
     private void llenarTablasHijas(String tipoPromo, String flag_categoria){
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
-            String id_llevar = "";
-            if (es_categoria_obtener){
+            String id_comprar = "";
+            if (es_categoria_comprar){
                 CategoriaProducto categoria = new CategoriaProducto();
                 categoria = CategoriaProducto.findFirst("categoria_code = ?", txtFieCodigoProducto2.getText());
-                id_llevar = categoria.getString("categoria_id");
+                id_comprar = categoria.getString("categoria_id");
             } else{
                 TipoProducto tipo = new TipoProducto();
                 tipo = TipoProducto.findFirst("tipo_cod = ?", txtFieCodigoProducto2.getText());
-                id_llevar = tipo.getString("tipo_id");
+                id_comprar = tipo.getString("tipo_id");
             }                               
             if (flag_categoria.equals("S"))
                 PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId()
                                         , "promocion_cod", promocion_seleccionada.get("promocion_cod")
                                         , "nr_comprar", (Integer)spCompro.getValue()
                                         , "nr_obtener",(Integer)spLlevo.getValue()
-                                        , "es_categoria_obtener", flag_categoria
-                                        , "categoria_code", txtFieCodigoProducto2.getText()
-                                        , "categoria_id" ,Integer.parseInt(id_llevar) 
+                                        , "es_categoria_comprar", flag_categoria
+                                        , "categoria_code", txtFieCodigoProducto1.getText()
+                                        , "categoria_id" ,Integer.parseInt(id_comprar) 
                                         );
             else
                 PromocionBonificacion.createIt("promocion_id", promocion_seleccionada.getId()
                                         , "promocion_cod", promocion_seleccionada.get("promocion_cod")
                                         , "nr_comprar", (Integer)spCompro.getValue()
                                         , "nr_obtener",(Integer)spLlevo.getValue()
-                                        , "es_categoria_obtener", flag_categoria
-                                        , "tipo_cod", txtFieCodigoProducto2.getText()
-                                        , "tipo_id" ,Integer.parseInt(id_llevar) 
+                                        , "es_categoria_comprar", flag_categoria
+                                        , "tipo_cod", txtFieCodigoProducto1.getText()
+                                        , "tipo_id" ,Integer.parseInt(id_comprar) 
                                         );                
         } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())){
             PromocionCantidad.createIt("promocion_id", promocion_seleccionada.getId()
@@ -654,9 +663,9 @@ public class PromocionesController extends Controller{
         spPorc.setDisable(true);
         
         comboBoxTipoPromo.getItems().clear();
-        comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name().toLowerCase()
-                                        , Promocion.TIPO.BONIFICACIÓN.name().toLowerCase()
-                                        ,Promocion.TIPO.PORCENTAJE.name().toLowerCase()
+        comboBoxTipoPromo.getItems().addAll(Promocion.TIPO.CANTIDAD.name()
+                                        , Promocion.TIPO.BONIFICACIÓN.name()
+                                        ,Promocion.TIPO.PORCENTAJE.name()
                                         );
         
         comboxPrioridad.getItems().clear();
@@ -693,7 +702,7 @@ public class PromocionesController extends Controller{
         } else {
             botonCategoria1.setDisable(true);
             botonTipo1.setDisable(false);
-            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
+            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name()))
             {
                 botonTipo2.setDisable(false);   
                 txtFieCodigoProducto2.clear();
@@ -712,7 +721,7 @@ public class PromocionesController extends Controller{
         } else {
             botonTipo1.setDisable(true);
             botonCategoria1.setDisable(false);
-            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
+            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name()))
             {
                 botonCategoria2.setDisable(false);  
                 txtFieCodigoProducto2.clear();                
