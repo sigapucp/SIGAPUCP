@@ -223,7 +223,8 @@ public class ProductosController extends Controller {
     } 
               
     @FXML
-    private void visualizar_producto(ActionEvent event) {                
+    private void visualizar_producto(ActionEvent event) {             
+        habilitar_formulario();
         producto_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
         limpiar_formulario();
         habilitar_formulario();
