@@ -293,7 +293,7 @@ public class PromocionesController extends Controller{
         promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
         if(promocion_seleccionada == null) return; 
         habilitar_formulario();
-        limpiar_formulario();
+        //limpiar_formulario();
         setPromocionVisible(promocion_seleccionada);                        
     }       
     
@@ -631,6 +631,7 @@ public class PromocionesController extends Controller{
     
     public void limpiar_formulario(){
         txtFieCodigoPromo.clear();
+        txtFieCodigoPromo.setDisable(false);
         
         rbPorTipo.setSelected(false);        
         rbPorCategoria.setSelected(false);
@@ -688,40 +689,56 @@ public class PromocionesController extends Controller{
     
     private void manejarrbPorTipo(){
         String tipoPromo = obtener_tipo_promo();
+        rbPorTipo.setSelected(true);
         rbPorCategoria.setSelected(false);
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
-            botonCategoria3.setDisable(true);
-            botonTipo3.setDisable(false);      
             txtFieCodigoProducto3.clear();
-        } else {
-            botonCategoria1.setDisable(true);
+            botonTipo3.setDisable(false);        
+            botonCategoria3.setDisable(true);            
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())) {
             botonTipo1.setDisable(false);
-            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
-            {
-                botonTipo2.setDisable(false);   
-                txtFieCodigoProducto2.clear();
-            }
+            botonCategoria1.setDisable(true); 
             txtFieCodigoProducto1.clear();
+            txtFieCodigoProducto2.clear();
+            
+            botonTipo2.setDisable(true);
+            botonCategoria2.setDisable(true);
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
+            botonTipo1.setDisable(false);
+            botonCategoria1.setDisable(true);
+            txtFieCodigoProducto1.clear();
+            txtFieCodigoProducto2.clear();
+            
+            botonTipo2.setDisable(false);
+            botonCategoria2.setDisable(false);
         }
     }
     
     private void manejarrbPorCategoria(){
         String tipoPromo = obtener_tipo_promo();
         rbPorTipo.setSelected(false);
+        rbPorCategoria.setSelected(true);
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
-            botonTipo3.setDisable(true);        
-            botonCategoria3.setDisable(false);
             txtFieCodigoProducto3.clear();
-        } else {
+            botonTipo3.setDisable(true);        
+            botonCategoria3.setDisable(false);            
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())) {
+            botonTipo1.setDisable(true);
+            botonCategoria1.setDisable(false); 
+            txtFieCodigoProducto1.clear();
+            txtFieCodigoProducto2.clear();
+            
+            botonTipo2.setDisable(true);
+            botonCategoria2.setDisable(true);
+        } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
             botonTipo1.setDisable(true);
             botonCategoria1.setDisable(false);
-            if(!tipoPromo.equals(Promocion.TIPO.CANTIDAD.name().toLowerCase()))
-            {
-                botonCategoria2.setDisable(false);  
-                txtFieCodigoProducto2.clear();                
-            }
             txtFieCodigoProducto1.clear();
-        } 
+            txtFieCodigoProducto2.clear();
+            
+            botonTipo2.setDisable(false);
+            botonCategoria2.setDisable(false);
+        }
     }
     
     private String obtener_tipo_promo(){
@@ -747,44 +764,23 @@ public class PromocionesController extends Controller{
         txtFieCodigoProducto3.clear();
         txtFieCodigoProducto3.setDisable(true);
         
-        botonTipo3.setDisable(true);
-        botonCategoria3.setDisable(true);
-        
         desc_concepto.clear();
         desc_concepto.setDisable(true);
     }
     
     private void habilitar_Porcentaje(){
         spPorc.setDisable(false);
-        txtFieCodigoProducto3.setDisable(false);   
+        txtFieCodigoProducto3.setDisable(false);
         desc_concepto.setDisable(false);
     }
-    
-    //función para limpiar lo necesario para el tipo de promoción: Por Cantidad
-    private void limpiarPorCantidad(){
-        rbPorTipo.setSelected(false);
-        rbPorTipo.setDisable(true);
         
-        rbPorCategoria.setSelected(false);
-        rbPorCategoria.setDisable(true);
-        
-        botonTipo1.setDisable(false);
-        botonTipo2.setDisable(false);
-        botonCategoria1.setDisable(false);
-        botonCategoria2.setDisable(false);
-    }
-    
     private void habilitar_CantBoni(){
         //Compro
         spCompro.setDisable(false);        
-        txtFieCodigoProducto1.setDisable(false);        
-        botonTipo1.setDisable(false);
-        botonCategoria1.setDisable(false);  
+        txtFieCodigoProducto1.setDisable(false);    
         //Llevo
         spLlevo.setDisable(false);        
-        txtFieCodigoProducto2.setDisable(false);        
-        botonTipo2.setDisable(false);
-        botonCategoria2.setDisable(false);
+        txtFieCodigoProducto2.setDisable(false);      
     }
     
     private void deshabilitar_CantBoni(){
@@ -795,43 +791,30 @@ public class PromocionesController extends Controller{
         txtFieCodigoProducto1.clear();
         txtFieCodigoProducto1.setDisable(true);
         
-        botonTipo1.setDisable(true);
-        botonCategoria1.setDisable(true);
-        
         SpinnerValueFactory spLlevoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
         spLlevo.setValueFactory(spLlevoValues);
         spLlevo.setDisable(true);
         
         txtFieCodigoProducto2.clear();
         txtFieCodigoProducto2.setDisable(true);
-        
-        botonTipo2.setDisable(true);
-        botonCategoria2.setDisable(true);
     }
     
     private void manejarcomboBoxTipoPromo(){
         String tipoPromo = obtener_tipo_promo();
+        //habilitando txtfields y spinners
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name())){
             habilitar_CantBoni();
-            deshabilitar_Porcentaje(); 
-            //rbPorTipo.setDisable(false);
-            //rbPorCategoria.setDisable(false);  
-            botonTipo1.setDisable(true);
-            botonCategoria1.setDisable(true);
-            botonTipo2.setDisable(true);
-            botonCategoria2.setDisable(true);
+            deshabilitar_Porcentaje();  
         } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
-            //rbPorTipo.setDisable(false);
-            //rbPorCategoria.setDisable(false); 
             habilitar_CantBoni();
             deshabilitar_Porcentaje();
-            limpiarPorCantidad();
         } else if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.PORCENTAJE.name())){
-            //rbPorTipo.setDisable(false);
-            //rbPorCategoria.setDisable(false);
             habilitar_Porcentaje();
             deshabilitar_CantBoni();
         }
+        //habilitar radio buttons
+        rbPorTipo.setSelected(false);        
+        rbPorCategoria.setSelected(false);
         rbPorTipo.setDisable(false);
         rbPorCategoria.setDisable(false); 
     }
