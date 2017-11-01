@@ -375,11 +375,13 @@ public class PromocionesController extends Controller{
                 Integer llevo = promocionC.getInteger("nr_obtener");                
                 mostrar_promoCantidad(codigoTipCat, compro, llevo);
                 
+
             } else if (tipo.equals(Promocion.TIPO.BONIFICACIÓN.name())){
                 PromocionBonificacion promocionB = PromocionBonificacion.findFirst("promocion_cod = ? AND promocion_id = ?", codigo,promocion.getId());
                 
                 Integer compro = promocionB.getInteger("nr_comprar");
                 Integer llevo = promocionB.getInteger("nr_obtener");
+
                 String es_categoria_comprar_aux = promocionB.getString("es_categoria_comprar");
                 String codigo_aux = "";
                 
@@ -392,6 +394,7 @@ public class PromocionesController extends Controller{
                 mostrar_promoBonificacion(compro,codigoTipCat,llevo,codigo_aux);
                 
             } else if (tipo.equals(Promocion.TIPO.PORCENTAJE.name())) {
+
                 if (es_categoria_aux.equals("S")){
                     rbPorCategoria.setSelected(true);
                     botonTipo3.setDisable(true);
@@ -438,6 +441,7 @@ public class PromocionesController extends Controller{
             String es_categoria = obtener_clasificacion();
             String estado = Promocion.ESTADO.ACTIVO.name();
             String tipoPromo = obtener_tipo_promo();
+
 
             es_categoria_comprar =((tipoPromo.toUpperCase()).equals(Promocion.TIPO.CANTIDAD.name()) && rbPorCategoria.isSelected()) ? true : es_categoria_comprar;
             String flag_categoria = (es_categoria_comprar) ? "S":"N";
@@ -497,6 +501,7 @@ public class PromocionesController extends Controller{
             String estado = Promocion.ESTADO.ACTIVO.name();
             String tipoPromo = obtener_tipo_promo();
             
+
             es_categoria_comprar =(tipoPromo.equals(Promocion.TIPO.CANTIDAD.name()) && !es_tipo) ? true : es_categoria_comprar;
             String flag_categoria = (es_categoria_comprar) ? "S":"N";
             
@@ -537,6 +542,7 @@ public class PromocionesController extends Controller{
     
     private void modificarTablasHijas(String tipoPromo, String flag_categoria){
         if ((tipoPromo.toUpperCase()).equals(Promocion.TIPO.BONIFICACIÓN.name())){
+
             String id_comprar = "";
             if (es_categoria_comprar){
                 CategoriaProducto categoria = new CategoriaProducto();
