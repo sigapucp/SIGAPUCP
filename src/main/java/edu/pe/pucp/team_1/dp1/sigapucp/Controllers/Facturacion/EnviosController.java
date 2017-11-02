@@ -80,48 +80,48 @@ public class EnviosController extends Controller{
     private TableColumn<Envio, String> columna_envio;
     @FXML
     private TableColumn<Envio, String> columna_pedido;
+    
     //LOGICA
-    //--------------------------------------------------//
+        //--------------------------------------------------//
+    
     private InformationAlertController infoController;    
     private final ObservableList<Envio> envios = FXCollections.observableArrayList();
     private Boolean crearNuevo = false;    
     private Cliente cliente_seleccionado = null;
-    //autocompletado
+
+    //AUTOCOMPLETAD
+        //--------------------------------------------------//
+
     private List<Cliente> auto_completado_list_cliente;
     ArrayList<String> posibles_clientes = new ArrayList<>();
     AutoCompletionBinding<String> autoCompletionBinding;    
     private List<Cliente> autoCompletadoList;    
-    //modales
+    
+    //MODALES FLUJO
+        //--------------------------------------------------//
     Stage modal_stage = new Stage();
     private List<OrdenCompraxProducto> productos_a_agregar;
     private List<OrdenCompraxProducto> productos_disponibles;
     private OrdenCompraxProducto producto_devuelto;
     private OrdenCompra orden_compra_seleccionada;
-    /*
-    private OrdenCompra pedidoSeleccionado;
-    */
-/*      
-    public void actualizar_lista_orden_de_compra_productos_a_enviar(){
-        
-    }
-    public void agregar_producto_a_enviar(ActionEvent event){
-        
-        actualizar_lista_orden_de_compra_productos_a_enviar();
-    }
-    public void eliminar_producto_a_enviar(){
-        actualizar_lista_orden_de_compra_productos_a_enviar();
-    }
-*/           
-    public enum MOVIMIENTO{
-        agregar,
-        descontar
-    }
-    private void actualizar_productos_en_listas(OrdenCompraxProducto producto){
-        //se debe enviar devuelta a envioscontroller
-        //se le dice que actualize su lsita de compra a enviar con la resta del producto seleccionado
-        //se le agregar el nuevo producto a la lista a mostar en la tabla
-        //fin           
-        
+ 
+    //----------------------------------------------------------------------------//
+
+    //SI SE AGREGA
+        //resta existencias
+        //inserta en lista a enviar
+    //SI SE ELIMINA
+        //suma existencis
+        //elimina en lista enviar    
+    private void agregar_producto_a_lista_enviar(OrdenCompraxProducto producto){
+        //busqueda en disponibles
+        //se verifica cantidad valida
+        //se rechaza o se acepta
+        for(OrdenCompraxProducto producto_disponible : productos_disponibles){
+            if (producto_disponible.getId() == producto.getId()){
+                
+            }
+        }
     }
     
     private void obtener_productos_disponibles_orden_compra(){
@@ -148,7 +148,6 @@ public class EnviosController extends Controller{
         controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
             producto_devuelto = args.orden_compra_producto;
         });   
-        actualizar_productos_en_listas();
         }catch(Exception e){
             System.out.println(e);
         }
