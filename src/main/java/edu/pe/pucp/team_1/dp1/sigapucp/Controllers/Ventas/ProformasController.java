@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.Promociones;
@@ -534,12 +535,19 @@ public class ProformasController extends Controller {
                 if(productoCot.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
                 {
                     Integer cantidad = productoCot.getInteger("cantidad") + cantProd.getValue();
-                    Double precioUnitario = productoCot.getDouble("precio_unitario");                    
-                    recalcularTotal(cantProd.getValue()*precioUnitario);
-                    
-                    // Pueden varias las condiciones de descuento y fletes ...
+                    Double precioUnitario = productoCot.getDouble("precio_unitario");   
                     productoCot.set("cantidad",cantidad);
-                    productoCot.set("subtotal_final",precioUnitario*cantidad);
+                    Double descuento = calcularDescuento(productoCot);
+                    Double flete = calcularFlete(productoCot);
+                    Double subtotal = cantidad*precioUnitario - descuento + flete;
+                 
+                    productoCot.set("descuento",descuento);
+                    productoCot.set("flete",flete);
+                  
+                    productoCot.set("subtotal_previo", precioUnitario*cantProd.getValue());
+                    productoCot.set("subtotal_final",subtotal);                    
+                    setValorTotal(subtotal);
+                    
                     TablaProductos.getColumns().get(0).setVisible(false);
                     TablaProductos.getColumns().get(0).setVisible(true);
                     return;
@@ -547,6 +555,8 @@ public class ProformasController extends Controller {
             }
 
             CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();
+           
+            
             Integer cantidad = cantProd.getValue();
             Double precio = productoDevuelto.getPrecioActual();
                                   
@@ -555,17 +565,16 @@ public class ProformasController extends Controller {
             cotizacionxproducto.set("cantidad",cantidad);                        
             cotizacionxproducto.set("precio_unitario",precio);    
             cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
+            productos.add(cotizacionxproducto);    
             
             Double descuento = calcularDescuento(cotizacionxproducto);
-            Double flete = calcularFlete(productoDevuelto);
+            Double flete = calcularFlete(cotizacionxproducto);
             
             cotizacionxproducto.set("descuento",descuento); 
             cotizacionxproducto.set("flete",flete);             
             Double totalEntrada = cantidad*precio - descuento + flete;
             cotizacionxproducto.set("subtotal_final",totalEntrada);
-            recalcularTotal(totalEntrada);
-                        
-            productos.add(cotizacionxproducto);            
+            recalcularTotal(totalEntrada);                                           
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         }                
@@ -594,11 +603,12 @@ public class ProformasController extends Controller {
     {
         // Magic. Se que es el id 1,2,3. Puesto asi en la Bd
         Double prioridadBonficacion = Double.valueOf(ParametroSistema.findById(1).getInteger("valor"));
-        Double prioridadCantidad = Double.valueOf(ParametroSistema.findById(2).getInteger("valor")) + 0.25;
-        Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) + 0.5;
+        Double prioridadCantidad = Double.valueOf(ParametroSistema.findById(2).getInteger("valor")) - 0.25;
+        Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) - 0.5;
         
+        TipoProducto productoReferenciado = TipoProducto.findById(producto.get("tipo_id"));
         List<Promocion> promociones = Promocion.where("tipo_id = ?",producto.get("tipo_id"));        
-        List<CategoriaProducto> categorias = CategoriaProducto.where("tipo_id = ?", producto.get("tipo_id"));
+        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class);
         
         for(CategoriaProducto categoria:categorias)
         {
@@ -608,19 +618,19 @@ public class ProformasController extends Controller {
         Date today = Date.valueOf(LocalDate.now());        
         List<Promocion> promocionesActual = promociones.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
         Integer cantidad = producto.getInteger("cantidad");
-        Double precioActual = producto.getDouble("precio_actual");
+        Double precioActual = producto.getDouble("precio_unitario");
         
-        if(prioridadPorcentaje>prioridadCantidad&&prioridadPorcentaje>prioridadBonficacion)
+        if(prioridadPorcentaje<prioridadCantidad&&prioridadPorcentaje<prioridadBonficacion)
         {
             return aplicarPromocionPorcentaje(promociones, cantidad, precioActual);
         }
         
-        if(prioridadCantidad>prioridadPorcentaje&&prioridadCantidad>prioridadBonficacion)
+        if(prioridadCantidad<prioridadPorcentaje&&prioridadCantidad<prioridadBonficacion)
         {
             return aplicarPromocionCantidad(promociones, cantidad, precioActual);            
         }
         
-        if(prioridadBonficacion>prioridadCantidad&&prioridadBonficacion>prioridadPorcentaje)
+        if(prioridadBonficacion<prioridadCantidad&&prioridadBonficacion<prioridadPorcentaje)
         {
             return aplicarPromocionBonificacion(promociones, cantidad, precioActual);
         }        
@@ -630,20 +640,22 @@ public class ProformasController extends Controller {
     private Double aplicarPromocionBonificacion(List<Promocion> promociones,int cantidad,Double precioActual) throws Exception
     {               
         List<Promocion> promocionesBonificacion = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
-        if(promocionesBonificacion == null) return 0.0;                       
+        if(promocionesBonificacion.isEmpty()) return 0.0;                       
         promocionesBonificacion.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
-        if(promocionesBonificacion == null) return 0.0;
+        if(promocionesBonificacion.isEmpty()) return 0.0;
         Double valorPromocion = 0.0;
                 
         Promocion promocionAplicada = promocionesBonificacion.stream().findFirst().get();        
-        PromocionBonificacion promocionBonificacion = PromocionBonificacion.findFirst("promocion_id", promocionAplicada.getId());              
+        PromocionBonificacion promocionBonificacion = PromocionBonificacion.findFirst("promocion_id = ?", promocionAplicada.getId());              
         Boolean es_categoria = promocionBonificacion.getString("es_categoria_comprar").equals("S");
            
         Integer cantidadComprando = 0;
         if(!es_categoria)
         {
-            CotizacionxProducto cotizacionxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("tipo_id"), promocionBonificacion.getInteger("tipo_id"))).findFirst().get();
+            List<CotizacionxProducto> cotizacionxproductos = productos.stream().filter(x -> Objects.equals(x.getInteger("tipo_id"), promocionBonificacion.getInteger("tipo_id"))).collect(Collectors.toList());
+            if(cotizacionxproductos.isEmpty()) return 0.0;
+            CotizacionxProducto cotizacionxproducto = cotizacionxproductos.stream().findFirst().get();
             cantidadComprando = cotizacionxproducto.getInteger("cantidad");                                              
         }else
         {
@@ -671,17 +683,17 @@ public class ProformasController extends Controller {
     private Double aplicarPromocionCantidad(List<Promocion> promociones,int cantidad,Double precioActual) throws Exception
     {
         List<Promocion> promocionesCantidad = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
-        if(promocionesCantidad == null) return 0.0;                       
+        if(promocionesCantidad.isEmpty()) return 0.0;                       
         promocionesCantidad.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
-        if(promocionesCantidad == null) return 0.0;
+        if(promocionesCantidad.isEmpty()) return 0.0;
         Double valorPromocion = 0.0;
                 
         Promocion promocionAplicada = promocionesCantidad.stream().findFirst().get();    
         Boolean es_categoria = promocionAplicada.getString("es_categoria").equals("S");
-        Integer id = (es_categoria) ? promocionAplicada.getInteger("tipo_id") : promocionAplicada.getInteger("categoria_id");
+        Integer id = (es_categoria) ?  promocionAplicada.getInteger("categoria_id") : promocionAplicada.getInteger("tipo_id");
         
-        PromocionCantidad promocionCantidad = PromocionCantidad.findFirst("promocion_id", promocionAplicada.getId());        
+        PromocionCantidad promocionCantidad = PromocionCantidad.findFirst("promocion_id = ?", promocionAplicada.getId());        
         Integer cantidadComprando = 0;
         
         if(!es_categoria)
@@ -689,46 +701,44 @@ public class ProformasController extends Controller {
             cantidadComprando = cantidad;                                        
         }else
         {
-            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("categoria_id"), id)).collect(Collectors.toList());           
+            
+            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> 
+                    TipoProducto.findById(x.get("tipo_id")).getAll(CategoriaProducto.class).stream().anyMatch(y -> 
+                            Objects.equals(y.getInteger("categoria_id"), id))).collect(Collectors.toList());
             for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
             {
                 cantidadComprando += cotizacionxProducto.getInteger("cantidad");
             }
         }
         
-        Integer nrPromociones = cantidadComprando / promocionCantidad.getInteger("nr_comprar");        
-        Integer nrProdctosObtenerGratis = nrPromociones * promocionCantidad.getInteger("nr_obtener");
-
-        if(nrProdctosObtenerGratis > cantidad)
-        {                
-            valorPromocion = cantidad*precioActual;
-        }else
-        {
-            valorPromocion = nrProdctosObtenerGratis*precioActual; 
-        }                                
-        return valorPromocion;              
+        Integer nrPromociones = cantidadComprando / promocionCantidad.getInteger("nr_obtener") ;        
+        if(nrPromociones <= 0) return 0.0;
+        
+        Double ganciaPorPromocion = (promocionCantidad.getInteger("nr_obtener")  - promocionCantidad.getInteger("nr_comprar"))*precioActual;
+                
+        return  nrPromociones*ganciaPorPromocion;                
     }
     
     public Double aplicarPromocionPorcentaje(List<Promocion> promociones,int cantidad,Double precioActual)
     {
         List<Promocion> promocionesProcentaje = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());
-        if(promocionesProcentaje == null) return 0.0;                       
+        if(promocionesProcentaje.isEmpty()) return 0.0;                       
         
         Double valorPromocion = 0.0;
                 
         Double cantidadPorcentaje = 0.0;
         for(Promocion promocion:promocionesProcentaje)
         {            
-            PromocionPorcentaje promocionPorcentaje = PromocionPorcentaje.findFirst("promocion_id", promocion.getId());
+            PromocionPorcentaje promocionPorcentaje = PromocionPorcentaje.findFirst("promocion_id = ?", promocion.getId());
             cantidadPorcentaje += promocionPorcentaje.getDouble("valor_desc");
         }
         if(cantidadPorcentaje == 0) return 0.0;
-        return valorPromocion = cantidad*precioActual*(1-cantidadPorcentaje/100);         
+        return valorPromocion = cantidad*precioActual*(cantidadPorcentaje/100);         
     }
     
     
     
-    private Double calcularFlete(TipoProducto producto)
+    private Double calcularFlete(CotizacionxProducto producto)
     {
         return 0.0;
     }

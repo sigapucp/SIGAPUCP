@@ -73,6 +73,7 @@ CREATE TABLE ParametrosSistema
  nombre       VARCHAR(100) NOT NULL ,
  valor        VARCHAR(50) NOT NULL ,
  descripcion  VARCHAR(200) NOT NULL ,
+ last_user_change VARCHAR(50) NOT NULL,
 
  CONSTRAINT pk_617 PRIMARY KEY  (parametro_id )
 );
