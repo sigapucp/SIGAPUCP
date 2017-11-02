@@ -13,6 +13,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenCompraProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
@@ -79,25 +80,6 @@ public class EnviosController extends Controller{
     private TableColumn<Envio, String> columna_envio;
     @FXML
     private TableColumn<Envio, String> columna_pedido;
-        //PRODUCTOS
-/*
-    @FXML
-    private TextField agregar_cod_producto;
-    @FXML
-    private TextField agregar_nombre_producto;
-    @FXML
-    private ComboBox agregar_cat_producto;
-    @FXML
-    private TableView<OrdenCompraxProducto> tabla_productos;
-    @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_cod_producto;
-    @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_nombre_producto;
-    @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_desc_producto;
-    @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_cant_producto;
-    */
     //LOGICA
     //--------------------------------------------------//
     private InformationAlertController infoController;    
@@ -114,6 +96,7 @@ public class EnviosController extends Controller{
     private List<OrdenCompraxProducto> productos_a_agregar;
     private List<OrdenCompraxProducto> productos_disponibles;
     private OrdenCompraxProducto producto_devuelto;
+    private OrdenCompra orden_compra_seleccionada;
     /*
     private OrdenCompra pedidoSeleccionado;
     */
@@ -128,16 +111,29 @@ public class EnviosController extends Controller{
     public void eliminar_producto_a_enviar(){
         actualizar_lista_orden_de_compra_productos_a_enviar();
     }
-*/            
-    private void actualizar_productos_en_listas(){
+*/           
+    public enum MOVIMIENTO{
+        agregar,
+        descontar
+    }
+    private void actualizar_productos_en_listas(OrdenCompraxProducto producto){
         //se debe enviar devuelta a envioscontroller
         //se le dice que actualize su lsita de compra a enviar con la resta del producto seleccionado
         //se le agregar el nuevo producto a la lista a mostar en la tabla
-        //fin                
+        //fin           
+        
     }
     
     private void obtener_productos_disponibles_orden_compra(){
-        
+        //falta setear la orden de compra
+        List<OrdenCompraxProducto> productos_en_orden_compra = OrdenCompraxProducto.where("orden_compra_id = ?", orden_compra_seleccionada.getId());
+        productos_disponibles.clear();
+        for(OrdenCompraxProducto producto : productos_en_orden_compra){
+          OrdenesCompraxProductosxenvio producto_seleccionado = OrdenesCompraxProductosxenvio.findFirst("orden_compra_id = ? and tipo_id = ?", orden_compra_seleccionada.getId(), producto.getId());
+          Integer cantidad = producto.getInteger("cantidad") - producto_seleccionado.getInteger("cantidad");
+          producto.set("cantidad", cantidad);
+          productos_disponibles.add(producto);
+        }
     }
     
     private void setAgregarProductos() throws Exception
