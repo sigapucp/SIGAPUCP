@@ -5,19 +5,19 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  *
  * @author herbert
  */
 public interface Behavior {
-    public void addSelectedTile(int tile_index);
-    public Boolean checkDrawRules(List<GridTile> tiles, EventArgs args);
-    public void clearActiveTiles(List<GridTile> tiles);
-    public void saveActiveTiles(List<GridTile> tiles);
-    public void clearCurrentActiveTiles(List<GridTile> tiles);
-    public void clearAndSaveTempTiles(List<GridTile> tiles);
-    public Boolean isTileSavedOrActive(int index);
+    public void addSelectedTile(int i_index, int j_index);
+    public Boolean checkDrawRules();
+    public void clearActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
+    public void saveActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
+    public void clearCurrentActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
+    public void clearAndSaveTempTiles(TreeMap<Integer, List<GridTile>> tiles);
+    public Boolean isNotTileSavedOrActive(int i_index, int j_index);
 }

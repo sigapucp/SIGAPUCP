@@ -6,110 +6,146 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
-import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.tileArgs;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
  * @author herbert
  */
 public class LinearDrawing implements Behavior{
-    private List<Integer> active_tiles;
-    private List<Integer> temp_tiles;
-    private List<Integer> saved_tiles;
+    private TreeMap<Integer, List<Integer>> active_tiles;
+    private TreeMap<Integer, List<Integer>> temp_tiles;
+    private TreeMap<Integer, List<Integer>> saved_tiles;
     private Boolean directionX;
     private Boolean directionY;
     private IEvent<createRackArgs> createRackEvent;
 
     public LinearDrawing() {
-        active_tiles = new ArrayList<>();
-        temp_tiles = new ArrayList<>();
-        saved_tiles = new ArrayList<>();
+        active_tiles = new TreeMap<>();
+        temp_tiles = new TreeMap<>();
+        saved_tiles = new TreeMap<>();
         directionX = false;
         directionY = false;
         createRackEvent = new Event<>();
     }
     
     @Override
-    public void addSelectedTile(int tile_index) {
-        active_tiles.add(tile_index);
+    public void addSelectedTile(int i_index, int j_index) {
+        List<Integer> tmpList = active_tiles.get(i_index);
+        
+        if(tmpList == null) {
+            tmpList = new ArrayList<>();
+            tmpList.add(j_index);
+            active_tiles.put(i_index, tmpList);
+        } else {
+            tmpList.add(j_index);
+            active_tiles.put(i_index, tmpList);
+        }
     }
     
     @Override
-    public Boolean checkDrawRules(List<GridTile> tiles, EventArgs args) {
-        AtomicBoolean conditionX = new AtomicBoolean(true);
-        AtomicBoolean conditionY = new AtomicBoolean(true);
-        tileArgs tile_args =  (tileArgs) args;
-        int x_init = tile_args.getX_cord();
-        int y_init = tile_args.getY_cord();
+        public Boolean checkDrawRules() {
+        boolean condition;
         
-        active_tiles.forEach((index) -> {
-            GridTile tile = tiles.get(index);
-            conditionX.set(conditionX.get() && x_init == tile.getXCord());
-            conditionY.set(conditionY.get() && y_init == tile.getYCord());
-        });
+        directionX = active_tiles.size() <= 1;
+        directionY = active_tiles.size() > 1;
         
-        directionX = conditionX.get();
-        directionY = conditionY.get();
-        
-        return conditionX.get() || conditionY.get();
+        if(active_tiles.size() < 2) {
+            condition = true;
+        } else {
+            AtomicBoolean atomicCond = new AtomicBoolean(true);
+
+            active_tiles.forEach((i, list) -> {
+                atomicCond.set(atomicCond.get() && list.size() == 1);
+            });
+            
+            condition = atomicCond.get();
+        }
+
+        return condition;
     }
 
     @Override
-    public void clearActiveTiles(List<GridTile> tiles) {
-        active_tiles.forEach((i) -> {
-            tiles.get(i).clearTile();
+    public void clearActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        active_tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                tiles.get(i).get(j).clearTile();
+            });
         });
         
         active_tiles.clear();
     }
 
     @Override
-    public void saveActiveTiles(List<GridTile> tiles) {
-        createRackArgs args = new createRackArgs();
-
-        temp_tiles.addAll(active_tiles);
+    public void saveActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        temp_tiles.putAll(active_tiles);
+        active_tiles.clear();
+    }
+    
+    @Override
+    public void clearCurrentActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        temp_tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                tiles.get(i).get(j).clearTile();
+            });
+        });
         
-        int x_ancla1 = tiles.get(active_tiles.get(0)).getXCord();
-        int x_ancla2 = tiles.get(active_tiles.get(active_tiles.size() - 1)).getXCord();
-        int y_ancla1 = tiles.get(active_tiles.get(0)).getYCord();
-        int y_ancla2 = tiles.get(active_tiles.get(active_tiles.size() - 1)).getYCord();
+        temp_tiles.clear();
+    }
+
+    @Override
+    public void clearAndSaveTempTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        createRackArgs args = new createRackArgs();
+        AtomicInteger index = new AtomicInteger(0);
+        AtomicInteger firstIndex = new AtomicInteger(0);
+        AtomicInteger lastIndex = new AtomicInteger(0);
+        
+        saved_tiles.putAll(temp_tiles);
+
+        temp_tiles.forEach((i, list) -> {
+            if(index.get() == 0 ) firstIndex.set(i);
+            if(index.get() == temp_tiles.size() - 1) lastIndex.set(i);
+            index.set(index.get() + 1);
+        });
+        
+        List<Integer> firstList = temp_tiles.get(firstIndex.get());
+        List<Integer> lastList = temp_tiles.get(lastIndex.get());
+        Collections.sort(firstList);
+        Collections.sort(lastList);
+        
+        int x_ancla1 = firstIndex.get();
+        int x_ancla2 = lastIndex.get();
+        int y_ancla1 = firstList.get(0);
+        int y_ancla2 = lastList.get(lastList.size() - 1);
         
         args.setX_ancla1(x_ancla1);
         args.setY_ancla1(y_ancla1);
         args.setX_ancla2(x_ancla2);
         args.setY_ancla2(y_ancla2);
-        double largo = directionX ? (y_ancla2 - y_ancla1) : (directionY ? (x_ancla2 - x_ancla1) : 0);
+        int largo = directionX ? (y_ancla2 - y_ancla1) : (directionY ? (x_ancla2 - x_ancla1) : 0);
         args.setLongitud(largo);
         args.setIs_uniforme('T');
-        
-        active_tiles.clear();
+
         createRackEvent.fire(this, args);
-    }
-    
-    @Override
-    public void clearCurrentActiveTiles(List<GridTile> tiles) {
-        temp_tiles.forEach((i) -> {
-            tiles.get(i).clearTile();
-        });
-        
         temp_tiles.clear();
     }
 
     @Override
-    public void clearAndSaveTempTiles(List<GridTile> tiles) {
-        saved_tiles.addAll(temp_tiles);
-        temp_tiles.clear();
-    }
+    public Boolean isNotTileSavedOrActive(int i_index, int j_index) {
+        List<Integer> active_tilesList = active_tiles.get(i_index);
+        List<Integer> saved_tilesList = active_tiles.get(i_index);
 
-    @Override
-    public Boolean isTileSavedOrActive(int index) {
-        return !active_tiles.contains(index) && !saved_tiles.contains(index);
+        return (active_tilesList == null || !active_tilesList.contains(j_index)) &&
+               (saved_tilesList == null || !saved_tilesList.contains(j_index));
     }
    
     public IEvent<createRackArgs> getCreateRackEvent() {

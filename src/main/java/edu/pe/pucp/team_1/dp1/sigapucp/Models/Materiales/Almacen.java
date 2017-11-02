@@ -15,5 +15,5 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("Almacenes")
 @IdName("almacen_id")
-public class Almacen extends Model{    
+public class Almacen extends Model{
 }

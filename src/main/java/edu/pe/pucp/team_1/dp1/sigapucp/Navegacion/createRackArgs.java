@@ -18,7 +18,7 @@ public class createRackArgs extends EventArgs {
     private int x_ancla2;
     private int y_ancla1;
     private int y_ancla2;
-    private double longitud;
+    private int longitud;
     private char is_uniforme;
 
     /**
@@ -80,14 +80,14 @@ public class createRackArgs extends EventArgs {
     /**
      * @return the longitud
      */
-    public double getLongitud() {
+    public int getLongitud() {
         return longitud;
     }
 
     /**
      * @param longitud the longitud to set
      */
-    public void setLongitud(double longitud) {
+    public void setLongitud(int longitud) {
         this.longitud = longitud;
     }
 

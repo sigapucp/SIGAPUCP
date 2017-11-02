@@ -6,103 +6,124 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
  * @author herbert
  */
 public class RectangularDrawing implements Behavior {
-    private List<Integer> active_tiles;
-    private List<Integer> temp_tiles;
-    private List<Integer> saved_tiles;
+    private HashMap<Integer, List<Integer>> active_tiles;
+    private HashMap<Integer, List<Integer>> temp_tiles;
+    private HashMap<Integer, List<Integer>> saved_tiles;
     private Boolean directionX;
     private Boolean directionY;
     private IEvent<createAlmacenArgs> createLogicalWarehouse;
     
     public RectangularDrawing() {
-        active_tiles = new ArrayList<>();
-        temp_tiles = new ArrayList<>();
-        saved_tiles = new ArrayList<>();
+        active_tiles = new HashMap<>();
+        temp_tiles = new HashMap<>();
+        saved_tiles = new HashMap<>();
         directionX = false;
         directionY = false;
         createLogicalWarehouse = new Event<>();
     }
     
     @Override
-    public Boolean checkDrawRules(List<GridTile> tiles, EventArgs args) {
-        int currentRow = active_tiles.get(0)/10;
-        int previousRow = -1;
-        int currentNumberOfRows = 0;
-        int previousNumberOfRows = 0;
+    public Boolean checkDrawRules() {
+        AtomicInteger expectedNumberOfRows = new AtomicInteger(0);
+        AtomicBoolean sameNumberOfRows = new AtomicBoolean(true);
         
-        Collections.sort(active_tiles);
+        active_tiles.forEach((i, list) -> {
+            if(expectedNumberOfRows.get() == 0) expectedNumberOfRows.set(list.size());
+            sameNumberOfRows.set(sameNumberOfRows.get() && expectedNumberOfRows.get() == list.size());
+        });
         
-        for(int tile : active_tiles) {
-            int tileFirstRow;
-            if(previousRow != -1) {
-                tileFirstRow = tile - (currentRow - previousRow)*10;
-                if(!active_tiles.contains(tileFirstRow)) return false;
-            }
-            
-            if(tile/10 == currentRow) {
-                currentNumberOfRows++;
-            } else {
-                previousRow = currentRow;
-                currentRow = tile/10;
-                tileFirstRow = tile - (currentRow - previousRow)*10;
-                if(!active_tiles.contains(tileFirstRow)) return false;
-                if(previousNumberOfRows != 0 && previousNumberOfRows != currentNumberOfRows) return false;
-                previousNumberOfRows = currentNumberOfRows;
-                currentNumberOfRows = 1;
-            }
+        return active_tiles.size() > 1 &&
+               expectedNumberOfRows.get() > 1 &&
+               sameNumberOfRows.get();
+    }
+
+    @Override
+    public void clearActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        active_tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                GridTile tile = tiles.get(i).get(j);
+                tile.clearTile();
+            });
+        });
+        active_tiles.clear();
+    }
+
+    @Override
+    public void saveActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {   
+        temp_tiles.putAll(active_tiles);
+        active_tiles.clear();
+    }
+
+    @Override
+    public void addSelectedTile(int i_index, int j_index) {
+        List<Integer> tmpList = active_tiles.get(i_index);
+        
+        if(tmpList == null) {
+            tmpList = new ArrayList<>();
+            tmpList.add(j_index);
+            active_tiles.put(i_index, tmpList);
+        } else {
+            tmpList.add(j_index);
+            active_tiles.replace(i_index, tmpList);
         }
-        
-        return previousNumberOfRows == currentNumberOfRows && currentNumberOfRows > 1;
     }
 
     @Override
-    public void clearActiveTiles(List<GridTile> tiles) {
-        active_tiles.forEach((i) -> {
-            tiles.get(i).clearTile();
-        });
-        
-        active_tiles.clear();
-    }
-
-    @Override
-    public void saveActiveTiles(List<GridTile> tiles) {
-        temp_tiles.addAll(active_tiles);
-        active_tiles.clear();
-    }
-
-    @Override
-    public void addSelectedTile(int tile_index) {
-        active_tiles.add(tile_index);
-    }
-
-    @Override
-    public void clearCurrentActiveTiles(List<GridTile> tiles) {
-        temp_tiles.forEach((i) -> {
-            tiles.get(i).clearTile();
+    public void clearCurrentActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        temp_tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                tiles.get(i).get(j).clearTile();
+            });
         });
         
         temp_tiles.clear();
     }
 
     @Override
-    public void clearAndSaveTempTiles(List<GridTile> tiles) {
-        saved_tiles.addAll(temp_tiles);
+    public void clearAndSaveTempTiles(TreeMap<Integer, List<GridTile>> tiles) {
+        saved_tiles.putAll(temp_tiles);
+        
+        Map.Entry<Integer, List<Integer>> entry = temp_tiles.entrySet().iterator().next();
+        List<Integer> tmpValues = entry.getValue();
+        Collections.sort(tmpValues);
+        
+        createAlmacenArgs args = new createAlmacenArgs();
+        args.setAncho(tmpValues.size());
+        args.setLargo(temp_tiles.size());
+        args.setEs_cental('F');
+        args.setX_relativo(entry.getKey());
+        args.setY_relativo(tmpValues.get(0));
+        createLogicalWarehouse.fire(this, args);
+        
         temp_tiles.clear();
     }
 
     @Override
-    public Boolean isTileSavedOrActive(int index) {
-        return !active_tiles.contains(index) && !saved_tiles.contains(index);
+    public Boolean isNotTileSavedOrActive(int i_index, int j_index) {
+        List<Integer> active_tilesList = active_tiles.get(i_index);
+        List<Integer> saved_tilesList = active_tiles.get(i_index);
+
+        return (active_tilesList == null || !active_tilesList.contains(j_index)) &&
+               (saved_tilesList == null || !saved_tilesList.contains(j_index));
+    }
+    
+    public IEvent<createAlmacenArgs> getCreateLogicalWarehouseEvent() {
+        return createLogicalWarehouse;
     }
 }
