@@ -35,8 +35,6 @@ public class ModalTipoProdController extends ModalController {
     @FXML
     private TextField busqNomTip;
     @FXML
-    private ComboBox<?> busqPerTip;
-    @FXML
     private TableView<TipoProducto> tabla_tipPro;
     @FXML
     private TableColumn<TipoProducto, String> columna_codTip;
@@ -70,7 +68,7 @@ public class ModalTipoProdController extends ModalController {
     public boolean cumple_condicion_busqueda(TipoProducto tipo, String codigo, String nombre){
         boolean match = true;
         if ( codigo.equals("") && nombre.equals("") ){
-            match = false;
+            match = true;
         }
         else {
             match = (!codigo.equals("")) ? (match && (tipo.get("tipo_cod")).equals(codigo)) : match;
