@@ -15,11 +15,14 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.LinearDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.TipoError;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
@@ -184,7 +187,7 @@ public class AlmacenesController extends Controller{
         
         rectangularBehavior.getCreateLogicalWarehouseEvent().addHandler((sender, args) -> {
             args.setNombre(almacen_logico_nombre_field.getText());
-            args.setLongitud_area(grid.getTileSize());
+            args.setLongitud_area(grid.getTileSize() > 10 ? grid.getTileSize()/10 : grid.getTileSize());
             args.setAncho((args.getAncho()*grid.getTileSize()));
             args.setLargo((args.getLargo()*grid.getTileSize()));
             setTempAlmacen(args);
@@ -237,10 +240,115 @@ public class AlmacenesController extends Controller{
         }
     }
     
+    private String generarErrores(String almacenNombre, String almacenLargoStr, String almacenAnchoStr, char almacenEsCentral, ObservableList<Almacen> almacenes, ObservableList<Rack> racks) {
+        String almacenNombreError = almacenNombre.equals("") ? "Es necesario que ingrese el nombre de un almacen" : "";
+        String almacenLargoError = almacenLargoStr.equals("") ? "Es necesario que ingrese el largo de un almacen" : "";
+        String almacenAnchoError = almacenAnchoStr.equals("") ? "Es necesario que ingrese el ancho de un almacen" : "";
+        String almacenCentralError = almacenEsCentral == ' ' ? "Es necesario que seleccione un tipo de almacen" : "";
+        String almacenesError = almacenes.size() < 1 ? "Es necesario que cree al menos un almacen logico" : "";
+        String racksError = racks.size() < 1 ? "Es necesario que cree un al menos un rack" : "";
+        StringBuilder errorMessage = new StringBuilder("");
+        
+        if(almacenNombreError.length() > 0) {
+            errorMessage.append(almacenNombreError);
+            errorMessage.append(System.lineSeparator());    
+        }
+        
+        if(almacenLargoError.length() > 0) {
+            errorMessage.append(almacenLargoError);
+            errorMessage.append(System.lineSeparator());
+        }
+        
+        if(almacenAnchoError.length() > 0) {
+            errorMessage.append(almacenAnchoError);
+            errorMessage.append(System.lineSeparator());    
+        }
+        
+        if(almacenCentralError.length() > 0) {
+            errorMessage.append(almacenCentralError);
+            errorMessage.append(System.lineSeparator());
+        }
+        
+        if(almacenEsCentral == 'T' && almacenesError.length() > 0) {
+            errorMessage.append(almacenesError);
+            errorMessage.append(System.lineSeparator());
+        }
+        
+        if(almacenEsCentral == 'F' && racksError.length() > 0) {
+            errorMessage.append(racksError);
+            errorMessage.append(System.lineSeparator());
+        }
+        
+        
+        return errorMessage.toString();
+    }
+    
+    private String generateAlmacenCode(char almacenEsCentral, String almacenCentralCod) {
+        String cod = "ALMCT";
+        try {
+            int index = Integer.valueOf(String.valueOf(Base.firstCell("select last_value from almacenes_almacen_id_seq"))) + 1;
+            
+            if(almacenEsCentral == 'T') {
+                cod = cod.concat(String.format("-%d", index));
+            } else {
+                cod = almacenCentralCod;
+                cod = cod.concat(String.format("-almlog-%d", index));
+            }
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+        
+        return cod;
+    }
+    
+    private void clearAlmacenForm() {
+        almacen_nombre_field.clear();
+        almacen_largo_field.clear();
+        almacen_ancho_field.clear();
+        almacen_lado_grilla.clear();
+        tipoAlmacen.selectToggle(null);
+        almacen_form_pane.setDisable(true);
+        list_almacenes_tab.setDisable(true);
+        list_racks_tab.setDisable(true);
+        almacenes_logicos.clear();
+        racks.clear();
+    }
     
     @FXML
     public void buscarAlmacen(ActionEvent event) {
         
+    }
+    
+    @FXML
+    public void visualizarAlmacen(ActionEvent event) {
+        Almacen almacen_seleccionado = tabla_almacenes.getSelectionModel().getSelectedItem();
+        almacen_form_pane.setDisable(false);
+        if( String.valueOf(almacen_seleccionado.get("es_central")).equals("T") ) {
+            try {
+                String nombreAlmacen = String.valueOf(almacen_seleccionado.get("nombre"));
+                String largoAlmacenStr = String.valueOf(almacen_seleccionado.get("largo"));
+                String anchoAlmacenStr = String.valueOf(almacen_seleccionado.get("ancho"));
+                String ladoGrillaAlmacenStr = String.valueOf(almacen_seleccionado.get("longitud_area"));
+                int ladoGrillaAlmacen = Double.valueOf(ladoGrillaAlmacenStr).intValue();
+                
+                tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
+                radio_btn_almacen_logico.setDisable(true);
+                almacen_nombre_field.setText(nombreAlmacen);
+                almacen_largo_field.setText(largoAlmacenStr);
+                almacen_ancho_field.setText(anchoAlmacenStr);
+                almacen_lado_grilla.setText(String.valueOf(ladoGrillaAlmacen));
+                LazyList<Almacen> almacenesLogicos = Almacen.find("es_central = ?", 'F');
+                almacenesLogicos.forEach(almacenes_logicos::add);
+                almacen_table_view.setItems(almacenes_logicos);
+                list_almacenes_tab.setDisable(false);
+                createNewRectangularSelectableGrid(Integer.valueOf(anchoAlmacenStr), Integer.valueOf(largoAlmacenStr), ladoGrillaAlmacen);
+                grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            
+            
+        }
     }
     
     @FXML
@@ -350,8 +458,10 @@ public class AlmacenesController extends Controller{
                     double almacenLongitudArea = Double.parseDouble(almacenLongitudAreaStr);
                     
                     try {
+                        String almacenCentralCod = generateAlmacenCode(almacenEsCentral, "");
                         Base.openTransaction();
                         almacen.asignarAtributosAlmacenCentral(almacenNombre,
+                                almacenCentralCod,
                                 almacenLargo,
                                 almacenAncho,
                                 almacenLongitudArea,
@@ -365,9 +475,12 @@ public class AlmacenesController extends Controller{
                         almacen.saveIt();
                         
                         almacenes_logicos.forEach((almacenLogico) -> {
+                            String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
+                            almacenLogico.set("almacen_cod", almacenLogCod);
                             almacenLogico.saveIt();
                         });
                         Base.commitTransaction();
+                        clearAlmacenForm();
                         
                         infoController.show("El almacen Central y los almacenes logicos se crearon satisfactoriamente");
                     } catch(Exception e) {
@@ -380,7 +493,17 @@ public class AlmacenesController extends Controller{
     //                almacen.asignarAtributosAlmacenLogico();                
                 }
             } else {
-    //            generarErrores(almacenNombre,almacenLargoStr, almacenAnchoStr, almacenEsCentral, almacenes, racks);
+                String errores = generarErrores(almacenNombre,almacenLargoStr, almacenAnchoStr, almacenEsCentral, almacenes_logicos, racks);
+                if(errores.length() > 0) {
+                    try {
+                        LazyList<TipoError> errorList = TipoError.find("error_cod = ?", "VAL400");
+                        TipoError error = errorList.get(0);
+                        
+                        warningController.show(error.getString("descripcion"), errores);    
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
+                }
             }
         } else {
             warningController.show("Error al crear Almacen", "Es necesario que seleccione el tipo de Almacen");

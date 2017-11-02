@@ -11,7 +11,6 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,18 +22,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author herbert
  */
 public class RectangularDrawing implements Behavior {
-    private HashMap<Integer, List<Integer>> active_tiles;
-    private HashMap<Integer, List<Integer>> temp_tiles;
-    private HashMap<Integer, List<Integer>> saved_tiles;
+    private TreeMap<Integer, List<Integer>> active_tiles;
+    private TreeMap<Integer, List<Integer>> temp_tiles;
+    private TreeMap<Integer, List<Integer>> saved_tiles;
     private Boolean directionX;
     private Boolean directionY;
     private IEvent<createAlmacenArgs> createLogicalWarehouse;
     private IEvent<EventArgs> disableGridEvent;
     
     public RectangularDrawing() {
-        active_tiles = new HashMap<>();
-        temp_tiles = new HashMap<>();
-        saved_tiles = new HashMap<>();
+        active_tiles = new TreeMap<>();
+        temp_tiles = new TreeMap<>();
+        saved_tiles = new TreeMap<>();
         directionX = false;
         directionY = false;
         createLogicalWarehouse = new Event<>();

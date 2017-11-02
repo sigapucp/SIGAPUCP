@@ -55,6 +55,7 @@ public class Almacen extends Model{
     }
     
     public void asignarAtributosAlmacenCentral(String almacen_nombre,
+            String almacenCod,
             int almacen_largo,
             int almacen_ancho,
             double longitud_area,
@@ -65,7 +66,7 @@ public class Almacen extends Model{
         set("largo", almacen_largo);
         set("ancho", almacen_ancho);
         set("es_central", almacen_central);
-        set("almacen_cod", "ALMCTR");
+        set("almacen_cod", almacenCod);
         set("longitud_area", longitud_area);
         
         set("x_relativo_central", 0);
@@ -83,7 +84,7 @@ public class Almacen extends Model{
             ObservableList<Almacen> almacenes_logicos,
             ObservableList<Rack> racks)
     {
-        boolean condition = !almacen_largo.equals("") && !almacen_ancho.equals("") && !almacen_longitud_area.equals("") ;
+        boolean condition = !almacen_nombre.equals("") && !almacen_largo.equals("") && !almacen_ancho.equals("") && !almacen_longitud_area.equals("") ;
 
         switch(almacen_central) {
             case 'T':

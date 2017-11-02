@@ -55,7 +55,7 @@
                      </image></ImageView>
                </children>
             </Pane>
-            <Button layoutX="151.0" layoutY="514.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="86.0" text="Visualizar" />
+            <Button layoutX="151.0" layoutY="514.0" mnemonicParsing="false" onAction="#visualizarAlmacen" prefHeight="27.0" prefWidth="86.0" text="Visualizar" />
          </children>
       </AnchorPane>
       <AnchorPane layoutX="250.0" prefHeight="572.0" prefWidth="750.0">
