@@ -5,44 +5,38 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
-import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
-import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.scene.layout.AnchorPane;
+import org.javalite.activejdbc.LazyList;
 
 public class SelectableGrid extends AnchorPane  {
     private int num_rows;
     private int num_columns;
+    private int tile_size;
     private int grid_width;
     private int grid_heigth;
     private int grid_real_width;
     private int grid_real_heigth;
-    private List<GridTile> tiles;
-    private List<Integer> active_tiles;
-    private List<Integer> temp_tiles;
-    private List<Integer> saved_tiles;
-    private Boolean directionX;
-    private Boolean directionY;
-    private IEvent<createRackArgs> createRackEvent;
+    private TreeMap<Integer, List<GridTile>> tiles;
+    private Behavior behavior;
     
-    public SelectableGrid(int rows, int columns, int width, int heigth) {
+    // Longitud de area nos define el tamano de un cuadrado dentro del dibujo para un almacen
+    public SelectableGrid(int width, int heigth, int grid_size, Behavior external_behavior) {
         grid_width = width > 400 ? 400 : width;
         grid_heigth = heigth > 400 ? 400 : heigth;
-        num_rows = rows*(width/400);
-        num_columns = columns*(heigth/400);
+        tile_size = grid_size;
+        num_rows = (int) Math.ceil(width/grid_size);
+        num_columns = (int) Math.ceil(heigth/grid_size);
+        tiles = new TreeMap<>();
         grid_real_width = width;
         grid_real_heigth = heigth;
-        tiles = new ArrayList<>();
-        active_tiles = new ArrayList<>();
-        temp_tiles = new ArrayList<>();
-        saved_tiles = new ArrayList<>();
-        directionX = false;
-        directionY = false;
-        createRackEvent = new Event<>();
-        
+        behavior = external_behavior;
         initializeTiles();
     }
     
@@ -50,89 +44,37 @@ public class SelectableGrid extends AnchorPane  {
         int aspect_ratio_width = grid_width/num_rows;
         int aspect_ratio_heigth = grid_heigth/num_columns;
         
-        for(int i = 0; i < num_columns; i++)
-            for(int j = 0; j < num_rows; j++) {
-                GridTile tile = new GridTile(aspect_ratio_width, aspect_ratio_heigth, i, j);
-                tile.setTranslateX(j * aspect_ratio_width);
-                tile.setTranslateY(i * aspect_ratio_heigth);
+        for(int i = 0; i < num_rows; i++)
+            for(int j = 0; j < num_columns; j++) {
+                GridTile tile = new GridTile(aspect_ratio_width, aspect_ratio_heigth, j, i);
+                tile.setTranslateX(i * aspect_ratio_width);
+                tile.setTranslateY(j * aspect_ratio_heigth);
                 tile.getActiveTileEvent().addHandler((sender, args) -> {
-                    int index = num_rows*args.getX_cord() + args.getY_cord();
-                    if (!active_tiles.contains(index) && !saved_tiles.contains(index)) active_tiles.add(index);
+                    if (behavior.isNotTileSavedOrActive(args.getY_cord(), args.getX_cord())) behavior.addSelectedTile(args.getY_cord(), args.getX_cord());
                 });
                 tile.getReleaseEvent().addHandler((sender, args) -> {
-                    if (checkDirectionOfActiveTiles(args.getX_cord(), args.getY_cord())) saveActiveTiles();
-                    else clearActiveTiles();
+                    if (behavior.checkDrawRules()) behavior.saveActiveTiles(tiles);
+                    else behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
                 });
-                
-                tiles.add(tile);
+                if(tiles.get(i) == null) {
+                    List<GridTile> tmpList = new ArrayList<>();
+                    tmpList.add(tile);
+                    tiles.put(i, tmpList);
+                } else {
+                    List<GridTile> tmpList = tiles.get(i);
+                    tmpList.add(tile);
+                    tiles.replace(i, tmpList);
+                }
                 getChildren().add(tile);
             }
     }
     
-    private Boolean checkDirectionOfActiveTiles(int x_init, int y_init) {
-        AtomicBoolean conditionX = new AtomicBoolean(true);
-        AtomicBoolean conditionY = new AtomicBoolean(true);
-        
-        active_tiles.forEach((index) -> {
-            GridTile tile = tiles.get(index);
-            conditionX.set(conditionX.get() && x_init == tile.getXCord());
-            conditionY.set(conditionY.get() && y_init == tile.getYCord());
-        });
-        
-        directionX = conditionX.get();
-        directionY = conditionY.get();
-        
-        return conditionX.get() || conditionY.get();
-    }
-    
-    private void saveActiveTiles() {
-        createRackArgs args = new createRackArgs();
-
-        temp_tiles.addAll(active_tiles);
-        
-        int x_ancla1 = tiles.get(active_tiles.get(0)).getXCord();
-        int x_ancla2 = tiles.get(active_tiles.get(active_tiles.size() - 1)).getXCord();
-        int y_ancla1 = tiles.get(active_tiles.get(0)).getYCord();
-        int y_ancla2 = tiles.get(active_tiles.get(active_tiles.size() - 1)).getYCord();
-        
-        args.setX_ancla1(x_ancla1);
-        args.setY_ancla1(y_ancla1);
-        args.setX_ancla2(x_ancla2);
-        args.setY_ancla2(y_ancla2);
-        double largo = directionX ? (y_ancla2 - y_ancla1) : (directionY ? (x_ancla2 - x_ancla1) : 0);
-        System.out.println(directionX);
-        System.out.println(directionY);
-        System.out.println(largo);
-        args.setLongitud(largo);
-        args.setIs_uniforme(true);
-        
-        active_tiles.clear();
-        createRackEvent.fire(this, args);
-    }
-    
-    private void clearActiveTiles() {
-        active_tiles.forEach((i) -> {
-            tiles.get(i).clearTile();
-        });
-        
-        active_tiles.clear();
-    }
-    
     public void clearCurrentActiveTiles() {
-        temp_tiles.forEach((i) -> {
-            tiles.get(i).clearTile();
-        });
-        
-        temp_tiles.clear();
-    }
-    
-    public IEvent<createRackArgs> getCreateRackEvent() {
-        return createRackEvent;
+        behavior.clearCurrentActiveTiles(tiles);
     }
     
     public void clearAndSaveTempTiles() {
-        saved_tiles.addAll(temp_tiles);
-        temp_tiles.clear();
+        behavior.clearAndSaveTempTiles(tiles);
     }
     
     public void setNumRow(int rows) {
@@ -155,5 +97,31 @@ public class SelectableGrid extends AnchorPane  {
      */
     public int getGrid_heigth() {
         return grid_real_heigth;
+    }
+    
+    public int getTileSize() {
+        return tile_size;
+    }
+    
+    public void drawAlmacenes(LazyList<Almacen> almacenes, int tileSize) {
+        AtomicInteger tileSizeAtomic = new AtomicInteger(tileSize);
+        almacenes.forEach((almacen) -> {
+            int largo = Integer.valueOf(String.valueOf(almacen.get("largo")));
+            int ancho = Integer.valueOf(String.valueOf(almacen.get("ancho")));
+            int x_relativo = Integer.valueOf(String.valueOf(almacen.get("x_relativo_central")));
+            int y_relativo = Integer.valueOf(String.valueOf(almacen.get("y_relativo_central")));
+            int numRow = largo/tileSizeAtomic.get();
+            int numColumn = ancho/tileSizeAtomic.get();
+            System.out.println(String.format("El inicio del almacen fisico es %d %d y las mediciones son %d y %d", x_relativo, y_relativo, numRow, numColumn ));
+            for(int i = x_relativo; i < x_relativo + numRow; i++)
+                for(int j = y_relativo; j < y_relativo + numColumn; j++) {
+                    System.out.println(String.format("Los valores que se deben visitar son %d %d", i, j));
+                    tiles.get(i).get(j).activeTile();
+                }
+        });
+    }
+    
+    public void drawRacks(LazyList<Rack> racks) {
+        
     }
 }
