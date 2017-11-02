@@ -254,14 +254,14 @@ public class PromocionesController extends Controller{
     
     public boolean cumple_condicion_busqueda(Promocion promocion, String codigo, String tipo, LocalDate fecha){
         boolean match = true;        
-        if ( codigo.equals("") && tipo.equals("") && fecha==null){
+        if ( codigo.equals("") && (tipo==null) && (fecha==null)){
             match = true;
         }else {
             Date fechaDate = new Date();
             if (!(fecha==null))
                 fechaDate = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
             match = (!codigo.equals("")) ? (match && (promocion.get("promocion_cod")).equals(codigo)) : match;
-            match = (!tipo.equals("")) ? (match && (promocion.get("tipo")).equals(tipo)) : match;
+            match = (!(tipo==null)) ? (match && (promocion.get("tipo")).equals(tipo)) : match;
             Date fechaIni = promocion.getDate("fecha_inicio");            
             Date fechaFin = promocion.getDate("fecha_fin");            
             match = (!(fecha==null)) ? (match && fechaIni.before(fechaDate) && fechaFin.after(fechaDate)) : match;

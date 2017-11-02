@@ -1,7 +1,6 @@
 package edu.pe.pucp.team_1.dp1.sigapucp;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.FleteVolumen;
 import java.util.List;
 import javafx.application.Application;
 import static javafx.application.Application.launch;

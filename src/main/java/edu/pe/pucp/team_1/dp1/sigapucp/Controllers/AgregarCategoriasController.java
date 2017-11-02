@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales;
+package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarCategoriaArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -17,18 +20,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
- * FXML Controller class
  *
- * @author Alberto Chang Lopez
+ * @author Jauma
  */
-public class ModalCatProdController extends ModalController {
-
+public class AgregarCategoriasController implements Initializable{
+    
     @FXML
     private TextField busqCodCat;
     @FXML
@@ -67,7 +71,7 @@ public class ModalCatProdController extends ModalController {
     public boolean cumple_condicion_busqueda(CategoriaProducto categoria, String codigo, String nombre){
         boolean match = true;
         if ( codigo.equals("") && nombre.equals("") ){
-            match = true;
+            match = false;
         }
         else {
             match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : match;
@@ -92,21 +96,18 @@ public class ModalCatProdController extends ModalController {
     
     @FXML
     private void agregarDatosCat(ActionEvent event) {   
-        categoria_seleccionada = tabla_catProd.getSelectionModel().getSelectedItem();
-        if(categoria_seleccionada == null) return; 
-        
-        String codPromo = categoria_seleccionada.getString("categoria_code");
-        String idPromo = categoria_seleccionada.getString("categoria_id");
-        
-        abrirModalPromoArgs args = new abrirModalPromoArgs();
-        args.setCodigo(codPromo);
-        args.setId(idPromo);
-        
-        abrirModal.fire(this, args);
-        getCurrentStage().close();
+        CategoriaProducto categoriaBusqueda = tabla_catProd.getSelectionModel().getSelectedItem();
+        if(categoriaBusqueda==null)
+        {
+            infoController.show("No ha seleccionado ningun producto");
+            return;
+        }
+        devolverCategoriaEvent.fire(this, new agregarCategoriaArgs(categoriaBusqueda));
+        Stage stage = (Stage) busqCodCat.getScene().getWindow();    
+        stage.close(); 
     }  
     
-    public ModalCatProdController(){
+    public AgregarCategoriasController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         
         infoController = new InformationAlertController();
@@ -120,4 +121,6 @@ public class ModalCatProdController extends ModalController {
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
     }
+    
+    public Event<agregarCategoriaArgs> devolverCategoriaEvent = new Event<>();         
 }
