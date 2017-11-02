@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class LinearDrawing implements Behavior{
     private Boolean directionX;
     private Boolean directionY;
     private IEvent<createRackArgs> createRackEvent;
+    private IEvent<EventArgs> disableGridEvent; 
 
     public LinearDrawing() {
         active_tiles = new TreeMap<>();
@@ -36,6 +38,7 @@ public class LinearDrawing implements Behavior{
         directionX = false;
         directionY = false;
         createRackEvent = new Event<>();
+        disableGridEvent = new Event<>();
     }
     
     @Override
@@ -89,6 +92,7 @@ public class LinearDrawing implements Behavior{
     public void saveActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {
         temp_tiles.putAll(active_tiles);
         active_tiles.clear();
+        disableGridEvent.fire(this, EventArgs.Empty);
     }
     
     @Override
@@ -150,5 +154,9 @@ public class LinearDrawing implements Behavior{
    
     public IEvent<createRackArgs> getCreateRackEvent() {
         return createRackEvent;
+    }
+    
+    public IEvent<EventArgs> getDisableGridEvent() {
+        return disableGridEvent;
     }
 }

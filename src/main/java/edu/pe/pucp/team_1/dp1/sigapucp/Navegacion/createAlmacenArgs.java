@@ -16,9 +16,9 @@ public class createAlmacenArgs extends EventArgs {
     private int ancho;
     private int x_relativo;
     private int y_relativo;
+    private int longitud_area;
     private String nombre;
     private char es_cental;
-    private int longitud_area;
 
     /**
      * @return the largo

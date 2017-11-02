@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class RectangularDrawing implements Behavior {
     private Boolean directionX;
     private Boolean directionY;
     private IEvent<createAlmacenArgs> createLogicalWarehouse;
+    private IEvent<EventArgs> disableGridEvent;
     
     public RectangularDrawing() {
         active_tiles = new HashMap<>();
@@ -36,6 +38,7 @@ public class RectangularDrawing implements Behavior {
         directionX = false;
         directionY = false;
         createLogicalWarehouse = new Event<>();
+        disableGridEvent = new Event<>();
     }
     
     @Override
@@ -68,6 +71,7 @@ public class RectangularDrawing implements Behavior {
     public void saveActiveTiles(TreeMap<Integer, List<GridTile>> tiles) {   
         temp_tiles.putAll(active_tiles);
         active_tiles.clear();
+        disableGridEvent.fire(this, EventArgs.Empty);
     }
 
     @Override
@@ -125,5 +129,9 @@ public class RectangularDrawing implements Behavior {
     
     public IEvent<createAlmacenArgs> getCreateLogicalWarehouseEvent() {
         return createLogicalWarehouse;
+    }
+    
+    public IEvent<EventArgs> getDisableGridEvent() {
+        return disableGridEvent;
     }
 }
