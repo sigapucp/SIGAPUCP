@@ -157,7 +157,13 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="telf" layoutX="161.0" layoutY="23.0" prefHeight="25.0" prefWidth="213.0" />
+                              <TextField fx:id="telf" layoutX="161.0" layoutY="23.0" prefHeight="25.0" prefWidth="182.0" />
+                              <Label layoutX="368.0" layoutY="26.0" text="Departamento:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="VerDepartamento" layoutX="481.0" layoutY="24.0" prefHeight="25.0" prefWidth="188.0" />
                            </children>
                         </AnchorPane>
                     </content>
