@@ -8,7 +8,6 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
-import static edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProformasController.modal_stage;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
@@ -136,8 +135,8 @@ public class PedidosController extends Controller {
     private TextField VerVendedor;
     @FXML
     private Label LabelPedido;
-  
-    static Stage modal_stage = new Stage();
+        
+    Stage modal_stage = new Stage();
     
     ArrayList<String> possiblewords = new ArrayList<>();        
     AutoCompletionBinding<String> autoCompletionBinding;    

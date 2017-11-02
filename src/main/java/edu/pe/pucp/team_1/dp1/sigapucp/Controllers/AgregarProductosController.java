@@ -130,7 +130,7 @@ public class AgregarProductosController implements Initializable {
             return;
         }
         devolverProductoEvent.fire(this, new agregarProductoArgs(ProductoBusqueda));
-         Stage stage = (Stage) agregarProductoButtom.getScene().getWindow();    
+        Stage stage = (Stage) agregarProductoButtom.getScene().getWindow();    
         stage.close();
     }
     

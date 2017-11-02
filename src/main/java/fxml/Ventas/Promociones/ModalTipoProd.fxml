@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -32,12 +31,6 @@
                </font>
             </Label>
             <TextField fx:id="busqNomTip" layoutX="100.0" layoutY="67.0" />
-            <Label layoutX="280.0" layoutY="42.0" text="Es Perecible?">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <ComboBox fx:id="busqPerTip" layoutX="370.0" layoutY="40.0" prefHeight="25.0" prefWidth="126.0" />
          </children>
       </AnchorPane>
       <Button layoutX="458.0" layoutY="130.0" mnemonicParsing="false" onAction="#buscar_tipo" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
