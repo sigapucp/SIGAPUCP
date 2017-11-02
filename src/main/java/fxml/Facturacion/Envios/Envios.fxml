@@ -18,22 +18,23 @@
    <children>
       <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
          <children>
-            <TextField fx:id="cod_pedido_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
-            <Button layoutX="136.0" layoutY="146.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+            <TextField fx:id="envio_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
+            <Button layoutX="136.0" layoutY="178.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
             <Line endX="100.0" layoutX="136.0" layoutY="50.0" startX="-100.0" />
-            <TableView fx:id="tabla_pedido" layoutX="13.0" layoutY="193.0" prefHeight="327.0" prefWidth="226.0">
+            <TableView fx:id="tabla_pedido" layoutX="13.0" layoutY="219.0" prefHeight="301.0" prefWidth="226.0">
                <columns>
-                  <TableColumn fx:id="columna_cliente" text="Cliente" />
-                  <TableColumn fx:id="columna_codigo_pedido" prefWidth="145.0" text="Código Pedido" />
+                  <TableColumn fx:id="columna_cliente" prefWidth="81.0" text="Cliente" />
+                  <TableColumn fx:id="columna_envio" prefWidth="69.0" text="Cod.Envio" />
+                  <TableColumn fx:id="columna_pedido" prefWidth="75.0" text="Cod.Pedido" />
                </columns>
             </TableView>
-            <TextField fx:id="cliente_pedido_buscar" layoutX="119.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
+            <TextField fx:id="cliente_buscar" layoutX="119.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
             <Label layoutX="20.0" layoutY="104.0" prefHeight="21.0" prefWidth="114.0" text="Cliente">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="20.0" layoutY="70.0" prefHeight="21.0" prefWidth="125.0" text="Cod. Pedido">
+            <Label layoutX="20.0" layoutY="70.0" prefHeight="21.0" prefWidth="125.0" text="Cod. Envio">
                <font>
                   <Font size="14.0" />
                </font>
@@ -53,6 +54,12 @@
                </children>
             </Pane>
             <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <TextField fx:id="pedido_buscar" layoutX="119.0" layoutY="137.0" prefHeight="27.0" prefWidth="114.0" />
+            <Label layoutX="20.0" layoutY="141.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Pedido">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="envio_formulario" layoutX="260.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">

@@ -11,10 +11,10 @@ import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
- * @author Jauma
+ * @author alulab14
  */
-@Table("GuiasRemision")
-@IdName("guia_id")
-public class GuiaRemision extends Model{
+@Table("envios")
+@IdName("envio_id")
+public class Envio extends Model{
     
 }

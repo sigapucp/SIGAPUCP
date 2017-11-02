@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
@@ -34,22 +35,19 @@ public class GuiasRemisionController extends Controller{
     //BUSQUEDA
     //-----------------------------------------------------//
     @FXML
-    private TextField cod_pedido_buscar;
+    private TextField envio_buscar;
     @FXML
-    private TextField cliente_pedido_buscar;
+    private TextField cliente_buscar;
     @FXML
-    private DatePicker fecha_inicio_buscar;
+    private TextField pedido_buscar;
     @FXML
-    private DatePicker fecha_fin_buscar;
-    
+    private TableView<Envio> tabla_envios;
     @FXML
-    private TableView<OrdenCompra> tabla_pedido;
+    private TableColumn<Envio, String> columna_cliente;
     @FXML
-    private TableColumn<OrdenCompra, String> columna_cliente;
+    private TableColumn<Envio, String> columna_envio;
     @FXML
-    private TableColumn<OrdenCompra, String> columna_codigo_pedido;
-    @FXML
-    private TableColumn<OrdenCompra, String> columna_pedido_fecha;
+    private TableColumn<Envio, String> columna_pedido;
     
     //FORMULARIO
     //--------------------------------------------------//
@@ -81,7 +79,7 @@ public class GuiasRemisionController extends Controller{
     //LOGICA
     //--------------------------------------------------//
     private InformationAlertController infoController;
-    private final ObservableList<OrdenCompra> pedidos = FXCollections.observableArrayList();
+    private final ObservableList<Envio> envios = FXCollections.observableArrayList();
     private Boolean crearNuevo = false;    
     private OrdenCompra pedidoSeleccionado;
 
@@ -93,14 +91,15 @@ public class GuiasRemisionController extends Controller{
         crearNuevo = false;
     }
     
-    public void llenar_pedidos_tabla_index(){
-        List<OrdenCompra> tem_pedido = OrdenCompra.findAll();
-        pedidos.clear();
-        columna_codigo_pedido.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));   
-        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
-        columna_pedido_fecha.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_emision")));
-        pedidos.addAll(tem_pedido);
-        tabla_pedido.setItems(pedidos);
+    public void llenar_tabla_envios(){
+        List<Envio> temp_envios = Envio.findAll();
+        envios.clear();
+        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
+        columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
+        columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
+        envios.addAll(temp_envios);
+        tabla_envios.setItems(envios);
+        
     }
     public void inhabilitar_formulario(){
         pedido_form.setDisable(true);
@@ -133,6 +132,7 @@ public class GuiasRemisionController extends Controller{
     
     @FXML
     public void visualizar_pedido(ActionEvent event){
+        /*
          crearNuevo = false;
         try {
             pedidoSeleccionado = tabla_pedido.getSelectionModel().getSelectedItem();
@@ -144,11 +144,12 @@ public class GuiasRemisionController extends Controller{
           mostrar_pedido(pedidoSeleccionado);                            
         } catch (Exception e) {
             infoController.show("Error al mostrar el pedido: " + e.getMessage());
-        }           
+        } 
+*/
     }
     public void initialize(DocFlavor.URL location, ResourceBundle resources) {
         try{
-            llenar_pedidos_tabla_index();
+            llenar_tabla_envios();
             inhabilitar_formulario();
         }catch(Exception e)    {
             infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
