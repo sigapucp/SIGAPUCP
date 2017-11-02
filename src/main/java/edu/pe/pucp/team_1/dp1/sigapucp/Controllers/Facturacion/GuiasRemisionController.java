@@ -93,7 +93,7 @@ public class GuiasRemisionController extends Controller{
         crearNuevo = false;
     }
     
-    public void llenar_tabla_index(){
+    public void llenar_pedidos_tabla_index(){
         List<OrdenCompra> tem_pedido = OrdenCompra.findAll();
         pedidos.clear();
         columna_codigo_pedido.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));   
@@ -148,7 +148,7 @@ public class GuiasRemisionController extends Controller{
     }
     public void initialize(DocFlavor.URL location, ResourceBundle resources) {
         try{
-            llenar_tabla_index();
+            llenar_pedidos_tabla_index();
             inhabilitar_formulario();
         }catch(Exception e)    {
             infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
