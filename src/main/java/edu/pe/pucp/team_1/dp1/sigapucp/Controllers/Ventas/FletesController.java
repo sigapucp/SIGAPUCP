@@ -450,5 +450,5 @@ public class FletesController extends Controller {
             flete.set("tipo_cod",productoDevuelto.get("tipo_cod"));
             flete.set("tipo_id",productoDevuelto.getId());
         }                
-    }
+    }       
 }
