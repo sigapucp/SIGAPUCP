@@ -25,6 +25,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,6 +40,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javax.print.DocFlavor;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -99,79 +102,22 @@ public class EnviosController extends Controller{
     //--------------------------------------------------//
     private InformationAlertController infoController;    
     private final ObservableList<Envio> envios = FXCollections.observableArrayList();
-    //private final ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
     private Boolean crearNuevo = false;    
     private Cliente cliente_seleccionado = null;
     //autocompletado
     private List<Cliente> auto_completado_list_cliente;
     ArrayList<String> posibles_clientes = new ArrayList<>();
+    AutoCompletionBinding<String> autoCompletionBinding;    
+    private List<Cliente> autoCompletadoList;    
+    //modales
+    Stage modal_stage = new Stage();
+    private List<OrdenCompraxProducto> productos_a_agregar;
+    private List<OrdenCompraxProducto> productos_disponibles;
+    private OrdenCompraxProducto producto_devuelto;
     /*
     private OrdenCompra pedidoSeleccionado;
-    private OrdenCompraxProducto producto_devuelto;
-    //lista que se maneja entre la vista principal y el modal
-    private List<OrdenCompraxProducto> productos_orden_de_compra_a_enviar;
-    //lista de productos a mostrar en la vista principal
-    private List<OrdenCompraxProducto> productos_seleccionados_a_enviar;
-    Stage modal_stage = new Stage();
     */
-    
-    //--------------------------------------------------//
-
-    /*
-
-
-    
-    public void completar_cliente(Cliente cliente){
-        String tipo_cliente = cliente.getString("tipo_cliente");
-        String dni = cliente.getString("dni");
-        String ruc = cliente.getString("ruc");   
-        String nombre = cliente.getString("nombre");
-        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
-        {
-            dni_cliente.setText(dni);
-            ruc_cliente.setDisable(true);
-        }else
-        {
-            ruc_cliente.setText(ruc);
-            dni_cliente.setDisable(true);
-        }
-        nombre_cliente.setText(nombre);        
-    }
-    
-    public void llenar_productos_tabla(){
-        productos.clear();
-        productos.addAll(productos_seleccionados_a_enviar);
-
-        columna_cod_producto.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-        columna_nombre_producto.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
-        columna_desc_producto.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
-        columna_cant_producto.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-
-        tabla_productos.setItems(productos);
-    }
-    
-    public void mostrar_pedido(OrdenCompra pedido_seleccionado){
-        Cliente cliente = Cliente.findById(pedido_seleccionado.get("client_id"));
-        completar_cliente(cliente);
-        productos_orden_de_compra_a_enviar = OrdenCompraxProducto.where("orden_compra_id = ?", pedido_seleccionado.getId());
-        llenar_productos_tabla();
-    }
-    
-    @FXML
-    public void visualizar_pedido(ActionEvent event){
-        crearNuevo = false;
-        try {
-            pedidoSeleccionado = tabla_pedido.getSelectionModel().getSelectedItem();
-            if (pedidoSeleccionado == null) 
-            {
-                infoController.show("No ha seleccionado ningun Pedido");
-            }
-
-          mostrar_pedido(pedidoSeleccionado);                            
-        } catch (Exception e) {
-            infoController.show("Error al mostrar el pedido: " + e.getMessage());
-        }           
-    }    
+/*      
     public void actualizar_lista_orden_de_compra_productos_a_enviar(){
         
     }
@@ -182,45 +128,88 @@ public class EnviosController extends Controller{
     public void eliminar_producto_a_enviar(){
         actualizar_lista_orden_de_compra_productos_a_enviar();
     }
+*/            
+    private void actualizar_productos_en_listas(){
+        //se debe enviar devuelta a envioscontroller
+        //se le dice que actualize su lsita de compra a enviar con la resta del producto seleccionado
+        //se le agregar el nuevo producto a la lista a mostar en la tabla
+        //fin                
+    }
+    
+    private void obtener_productos_disponibles_orden_compra(){
+        
+    }
+    
     private void setAgregarProductos() throws Exception
     {
         try{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
-        AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_orden_de_compra_a_enviar);
+        obtener_productos_disponibles_orden_compra();
+        AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_disponibles);
         loader.setController(controller);
         Scene modal_content_scene = new Scene((Parent)loader.load());
         modal_stage.setScene(modal_content_scene);       
         controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
             producto_devuelto = args.orden_compra_producto;
-        });    
-        //se debe enviar devuelta a envioscontroller
-        //se le dice que actualize su lsita de compra a enviar con la resta del producto seleccionado
-        //se le agregar el nuevo producto a la lista a mostar en la tabla
-        //fin        
+        });   
+        actualizar_productos_en_listas();
         }catch(Exception e){
-            //System.out.println(e);
+            System.out.println(e);
         }
     }
-            
     @FXML
     private void handleAgregarProducto(ActionEvent event) throws IOException{
         modal_stage.showAndWait();
     }    
-    */
     
     public void cliente_to_string() throws Exception{
-        
+        ArrayList<String> words = new ArrayList<>();
+        for (Cliente cliente : autoCompletadoList){
+            words.add(cliente.getString("nombre"));
+        }
+        posibles_clientes = words;        
     }
     
-    public void llenar_autocompletado() throws Exception{
-        auto_completado_list_cliente = Cliente.findAll();
-        
+    private void mostar_informacion_cliente(Cliente cliente){
+        String tipo_cliente = cliente.getString("tipo_cliente");
+        String dni = cliente.getString("dni");
+        String ruc = cliente.getString("ruc");
+   
+        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
+        {
+            dni_cliente.setText(dni);
+            ruc_cliente.setDisable(true);
+        }else
+        {
+            ruc_cliente.setText(ruc);
+            dni_cliente.setDisable(true);
+        }          
     }
-    
+
     public void llenar_ordenes_compra_cliente(){
         ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
         ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_id")).collect(Collectors.toList()) );
         ordenes_compra_combobox.setItems(ordenes_compra);
+    }
+    
+    private void handleAutoCompletar() {
+        
+        int i = 0;
+        for (Cliente cliente : autoCompletadoList){
+            if (cliente.getString("nombre").equals(nombre_cliente.getText())){
+                cliente_seleccionado = cliente;                               
+                mostar_informacion_cliente(cliente);
+                llenar_ordenes_compra_cliente();
+            }
+        }
+    }
+    public void llenar_autocompletado() throws Exception{
+        auto_completado_list_cliente = Cliente.findAll();
+        cliente_to_string();
+        autoCompletionBinding = TextFields.bindAutoCompletion(nombre_cliente, posibles_clientes);
+        autoCompletionBinding.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletar();
+        });        
     }
     
     public void inhabilitar_formulario(){
