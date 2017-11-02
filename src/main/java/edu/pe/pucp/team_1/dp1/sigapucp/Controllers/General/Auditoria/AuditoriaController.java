@@ -125,7 +125,7 @@ public class AuditoriaController extends Controller {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         acciones = AccionLog.findAll();
         for (AccionLog accion : acciones){
-            String fecha = accion.getString("fecha");
+            String fecha = accion.getString("tiempo");
             Usuario usuario = Usuario.findById(accion.getInteger("usuario_id"));
             String empleado = usuario.getString("nombre");
             Menu menu = Menu.findById(accion.getInteger("menu_id"));
