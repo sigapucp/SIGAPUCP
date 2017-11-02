@@ -119,7 +119,7 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane prefWidth="200.0" text="Simulacion">
+            <TitledPane prefWidth="200.0" text="Facturacion">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
