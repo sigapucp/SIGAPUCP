@@ -92,7 +92,9 @@ public class EnviosController extends Controller{
     private Boolean crearNuevo = false;    
     private OrdenCompra pedidoSeleccionado;
     private OrdenCompraxProducto producto_devuelto;
+    //lista que se maneja entre la vista principal y el modal
     private List<OrdenCompraxProducto> productos_orden_de_compra_a_enviar;
+    //lista de productos a mostrar en la vista principal
     private List<OrdenCompraxProducto> productos_seleccionados_a_enviar;
     Stage modal_stage = new Stage();
     
@@ -164,7 +166,16 @@ public class EnviosController extends Controller{
             infoController.show("Error al mostrar el pedido: " + e.getMessage());
         }           
     }    
-    
+    public void actualizar_lista_orden_de_compra_productos_a_enviar(){
+        
+    }
+    public void agregar_producto_a_enviar(ActionEvent event){
+        
+        actualizar_lista_orden_de_compra_productos_a_enviar();
+    }
+    public void eliminar_producto_a_enviar(){
+        actualizar_lista_orden_de_compra_productos_a_enviar();
+    }
     private void setAgregarProductos() throws Exception
     {
         try{
@@ -176,6 +187,10 @@ public class EnviosController extends Controller{
         controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
             producto_devuelto = args.orden_compra_producto;
         });    
+        //se debe enviar devuelta a envioscontroller
+        //se le dice que actualize su lsita de compra a enviar con la resta del producto seleccionado
+        //se le agregar el nuevo producto a la lista a mostar en la tabla
+        //fin        
         }catch(Exception e){
             //System.out.println(e);
         }

@@ -52,6 +52,9 @@ public class AgregarProductosEnviosController implements Initializable {
     private TableColumn<OrdenCompraxProducto, String> columna_descripcion;
     @FXML
     private TableColumn<OrdenCompraxProducto, String> columna_cantidad;
+    @FXML
+    private Button boton_agregar_producto;    
+        
     //LOGICA
     //----------------------------------------------------------//
     private InformationAlertController infoController;
@@ -83,12 +86,9 @@ public class AgregarProductosEnviosController implements Initializable {
             infoController.show("No ha seleccionado ningun producto");
             return;
         }
-        //se debe enviar devuelta a envioscontroller
-        //se le dice que actualize su lsita de compra a enviar con la resta del producto seleccionado
-        //se le agregar el nuevo producto a la lista a mostar en la tabla
-        //fin
+
         devolverProductoEvent.fire(this, new agregarOrdenCompraProductoArgs(producto_busqueda));
-        Stage stage = (Stage) agregarProductoButtom.getScene().getWindow();    
+        Stage stage = (Stage) boton_agregar_producto.getScene().getWindow();    
         stage.close();
     }
     
