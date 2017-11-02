@@ -86,7 +86,8 @@
                   <TableColumn fx:id="ColumnaEmpleado" prefWidth="169.0" text="Empleado" />
                   <TableColumn fx:id="ColumnaAccion" prefWidth="110.0" text="Acción" />
                   <TableColumn fx:id="ColumnaModulo" prefWidth="118.0" text="Módulo" />
-                  <TableColumn fx:id="ColumnaDescripcion" minWidth="0.0" prefWidth="372.0" text="Descripción" />
+                  <TableColumn fx:id="ColumnaDescripcion" minWidth="0.0" prefWidth="162.0" text="Descripción" />
+                  <TableColumn fx:id="ColumnaRol" prefWidth="75.0" text="Rol" />
               </columns>
             </TableView>
          </children>

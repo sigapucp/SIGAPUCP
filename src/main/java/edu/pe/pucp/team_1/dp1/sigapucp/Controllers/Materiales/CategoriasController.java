@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -155,6 +156,7 @@ public class CategoriasController extends Controller{
                 return;
             }
             crear_categoria();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Categorias ,this.usuarioActual);
             limpiar_formulario();
         }else{
             if (categoria_seleccionada == null){
@@ -166,6 +168,7 @@ public class CategoriasController extends Controller{
                 return;
             }
             editar_categoria(categoria_seleccionada);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Categorias ,this.usuarioActual);
         }
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
