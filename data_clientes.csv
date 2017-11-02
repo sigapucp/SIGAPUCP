@@ -1,0 +1,5 @@
+client_id,nombre,nombre_contacto,telef_contacto,ruc,dni,tipo_cliente,direccion_despacho,direccion_facturacion,departamento,
+,Interbank SAC,Juan Perez Gomez,5623423,2038463746573,78274657,PersonaJuridica,Av. Paseo de la Republica 5311,Av. Paseo de la Republica 5311,Lima,
+,Scotiabank SA,Luis Castro Perakta,4325426,2048475838342,79462783,PersonaJuridica,Av. Caminos del Inca 1203,Av. Argentina 2012,Lima,
+,Pedro Ruiz Gallo,,3490447,1023453245213,72847356,PersonaNatural,Av. Siempre Viva 212,Av. Siempre Viva 212,La Libertad,
+,Antonio Ruiz Montoya,,6348375,1054624624864,74838582,PersonaNatural,Av. Arequipa Nuestra 2153,Av. Arequipa Nuestra 2160,Arequipa,
