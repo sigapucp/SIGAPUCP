@@ -133,7 +133,7 @@ public class ProformasController extends Controller {
     @FXML
     private TextField VerDocCliente;    
     
-    static Stage modal_stage = new Stage();
+    Stage modal_stage = new Stage();
     
     public IEvent<abrirDetallesArgs> abrirDetalle;
     
@@ -556,7 +556,7 @@ public class ProformasController extends Controller {
             cotizacionxproducto.set("precio_unitario",precio);    
             cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
             
-            Double descuento = 0.0;
+            Double descuento = calcularDescuento(cotizacionxproducto);
             Double flete = calcularFlete(productoDevuelto);
             
             cotizacionxproducto.set("descuento",descuento); 
@@ -592,7 +592,7 @@ public class ProformasController extends Controller {
     
     private Double calcularDescuento(CotizacionxProducto producto) throws Exception
     {
-        // Magic. Se que es el id 2. Puesto asi en la Bd
+        // Magic. Se que es el id 1,2,3. Puesto asi en la Bd
         Double prioridadBonficacion = Double.valueOf(ParametroSistema.findById(1).getInteger("valor"));
         Double prioridadCantidad = Double.valueOf(ParametroSistema.findById(2).getInteger("valor")) + 0.25;
         Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) + 0.5;

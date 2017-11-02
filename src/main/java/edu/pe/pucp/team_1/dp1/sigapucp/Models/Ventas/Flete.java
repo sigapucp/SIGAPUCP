@@ -46,4 +46,17 @@ public class Flete extends Model{
         Ucayali;
     }
     
+    public enum TIPO
+    {
+        VOLUMEN,
+        PESO,
+        PORCENTAJE        
+    }
+    
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
+    }
+    
 }
