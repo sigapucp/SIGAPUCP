@@ -67,7 +67,7 @@ public class ModalCatProdController extends ModalController {
     public boolean cumple_condicion_busqueda(CategoriaProducto categoria, String codigo, String nombre){
         boolean match = true;
         if ( codigo.equals("") && nombre.equals("") ){
-            match = false;
+            match = true;
         }
         else {
             match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : match;
