@@ -18,6 +18,7 @@ import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.P
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
@@ -190,7 +191,7 @@ public class ProformasController extends Controller {
         cantProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
         precioUnitarioColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
         descProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad_descuento_disponible")));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
         subTotalProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
         
         cotizaciones.addAll(tempCotizaciones);
@@ -539,10 +540,16 @@ public class ProformasController extends Controller {
 
     @FXML
     private void agregarProducto(ActionEvent event) {                
-        if(productoDevuelto==null)
+        if(productoDevuelto == null)
         {
             infoController.show("No ha seleccionado ningun producto"); 
            return;
+        }
+        
+        if(clienteSeleccionado == null)
+        {
+            infoController.show("Debe seleccionar un cliente antes para el calculo del flete"); 
+           return;            
         }
         
         Boolean isNew = false;
@@ -562,8 +569,7 @@ public class ProformasController extends Controller {
                     cotizacionxproducto.set("precio_unitario",precio);    
                     cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
                     cotizacionxproducto.set("descuento",0);
-                    cotizacionxproducto.set("flete",0);
-                    cotizacionxproducto.set("flete",0);
+                    cotizacionxproducto.set("flete",0);                    
                     cotizacionxproducto.set("subtotal_final",cantidad*precio);    
                     productos.add(cotizacionxproducto);
                     isNew = true;
@@ -808,15 +814,79 @@ public class ProformasController extends Controller {
             cantidadPorcentaje += promocionPorcentaje.getDouble("valor_desc");
         }
         if(cantidadPorcentaje == 0) return 0.0;
-        return valorPromocion = cantidad*precioActual*(cantidadPorcentaje/100);         
+        return  cantidad*precioActual*(cantidadPorcentaje/100);         
+    }        
+    
+    private Double calcularFlete(CotizacionxProducto producto) throws Exception
+    {         
+        TipoProducto productoReferenciado = TipoProducto.findById(producto.get("tipo_id"));
+        List<Flete> fletes = Flete.where("tipo_id = ?",producto.get("tipo_id"));        
+        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class);
+        
+        for(CategoriaProducto categoria:categorias)
+        {
+            fletes.addAll(Flete.where("categoria_id = ?", categoria.get("categoria_id")));
+        }                   
+        
+        Date today = Date.valueOf(LocalDate.now());        
+        List<Flete> promocionesActual = fletes.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
+        Double distancia = ParametroSistema.findFirst("nombre = ?",clienteSeleccionado.getString("departamento")).getDouble("valor");
+        Integer cantidad = producto.getInteger("cantidad");
+        Double precio_unitario = producto.getDouble("precio_unitario");
+     
+        Double fleteVolumen = aplicarFleteVolumen(fletes, productoReferenciado, distancia, cantidad);
+        Double fletePeso = aplicarFletePeso(fletes, productoReferenciado, distancia, cantidad);
+        Double fletePorcentaje = aplicarFletePorcentaje(fletes, precio_unitario, cantidad);                
+        return fleteVolumen + fletePeso + fletePorcentaje;
     }
     
-    
-    
-    private Double calcularFlete(CotizacionxProducto producto)
+    private Double aplicarFleteVolumen(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
     {
-        return 0.0;
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.VOLUMEN.name())).collect(Collectors.toList());        
+        Double fleteTotal = 0.0;              
+        
+        Double alto = productoReferenciado.getDouble("alto");
+        Double ancho = productoReferenciado.getDouble("ancho");
+        Double largo = productoReferenciado.getDouble("longitud");
+        
+        if(alto == null || ancho == null || largo == null) return 0.0;        
+        Double volumen = alto*ancho*largo;
+        
+        for(Flete flete:fletesVolumen)
+        {
+            fleteTotal += volumen*flete.getDouble("valor")*distancia;                        
+        }
+        return fleteTotal*cantidad;
     }
+    
+    private Double aplicarFletePeso(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.PESO.name())).collect(Collectors.toList());        
+        Double fleteTotal = 0.0;              
+        
+        Double peso = productoReferenciado.getDouble("peso");
+        
+        for(Flete flete:fletesVolumen)
+        {
+            fleteTotal += peso*flete.getDouble("valor")*distancia;                        
+        }
+        return fleteTotal*cantidad;   
+    }
+    
+    private Double aplicarFletePorcentaje(List<Flete> fletes,Double precio,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.PORCENTAJE.name())).collect(Collectors.toList());        
+        if(fletesVolumen.isEmpty()) return 0.0;
+        Double fleteTotal = 0.0;              
+        
+        for(Flete flete:fletesVolumen)
+        {
+            fleteTotal += flete.getDouble("valor");
+        }
+        return precio*cantidad*(fleteTotal/100);
+    }
+    
+    
     
     private void calcularFinal()
     {
