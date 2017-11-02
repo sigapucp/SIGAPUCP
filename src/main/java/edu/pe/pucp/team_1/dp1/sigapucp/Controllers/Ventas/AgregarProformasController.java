@@ -46,8 +46,7 @@ public class AgregarProformasController implements Initializable {
     }    
 
     @FXML
-    private void volverParent(ActionEvent event) {
-        ProformasController.modal_stage.close();
+    private void volverParent(ActionEvent event) {        
     }
     
 }
