@@ -768,6 +768,7 @@ CREATE TABLE CotizacionxProductos
  precio_unitario DECIMAL(10,2) NOT NULL ,
  descuento       DECIMAL(10,2) NOT NULL ,
  flete           DECIMAL(10,2) NOT NULL ,
+ cantidad_descuento_disponible  DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_456 PRIMARY KEY  (tipo_id , client_id , cotizacion_cod , cotizacion_id , tipo_cod ),
  CONSTRAINT fk_453 FOREIGN KEY (tipo_cod, tipo_id)
@@ -1096,6 +1097,7 @@ CREATE TABLE OrdenesCompraxProductos
  precio_unitario  DECIMAL(10,2) NOT NULL ,
  descuento        DECIMAL(10,2) NOT NULL ,
  flete            DECIMAL(10,2) NOT NULL ,
+ cantidad_descuento_disponible  DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_577 PRIMARY KEY  (tipo_id , client_id , orden_compra_id , orden_compra_cod , tipo_cod ),
  CONSTRAINT fk_574 FOREIGN KEY (orden_compra_cod, client_id, orden_compra_id)
