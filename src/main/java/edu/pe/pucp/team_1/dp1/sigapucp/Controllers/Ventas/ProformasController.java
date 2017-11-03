@@ -649,8 +649,7 @@ public class ProformasController extends Controller {
             
         } catch (Exception e) {
             infoController.show("Error al cambiar de moneda: " + e.getMessage());
-        }
-             
+        }             
     }       
     
     private void setValorTotal(Double valor)
@@ -943,7 +942,11 @@ public class ProformasController extends Controller {
     
     @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
     //de controllers
-    private void handleGenerarPedido(ActionEvent event) {        
+    private void handleGenerarPedido(ActionEvent event) {   
+        if(proformaSelecionado==null)
+        {
+            infoController.show("No ha seleccionado ninguna proforma");
+        }
         cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Pedidos, "Ventas", proformaSelecionado.getInteger("cotizacion_id")));
     }      
 

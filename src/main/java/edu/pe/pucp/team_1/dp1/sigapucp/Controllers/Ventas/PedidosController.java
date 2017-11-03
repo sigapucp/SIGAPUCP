@@ -13,9 +13,11 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
@@ -24,6 +26,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionPorcentaje;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -38,6 +41,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -278,9 +282,7 @@ public class PedidosController extends Controller {
     }
          
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        
-//        mismaDir.setOnAction(e -> manejoTextoChckBox(factDir,mismaDir));
+    public void initialize(URL url, ResourceBundle rb) {        
         try {
             
             TipoDocBoleta.setOnAction(e -> manejoTextoRadBttn1());
@@ -291,11 +293,17 @@ public class PedidosController extends Controller {
             llenar_autocompletado();
             setAgregarProductos();
             inhabilitar_formulario();
+            
+               
+            VerMoneda.valueProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                if(newValue == null) return;
+                monedaSeleccionada = Moneda.findFirst("nombre = ?", newValue);
+                cambiarMoneda();
+            });
                     
         } catch (Exception e) {            
             infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
-        }                     
-        //inhabilitar_formulario();                      
+        }                                                   
     }   
     
     @Override
@@ -349,7 +357,8 @@ public class PedidosController extends Controller {
     @FXML
     void visualizarPedido(ActionEvent event) {
         
-         crearNuevo = false;
+        crearNuevo = false;
+        habilitar_formulario();
         try {
             pedidoSeleccionado = TablaPedido.getSelectionModel().getSelectedItem();
             if (pedidoSeleccionado == null) 
@@ -464,6 +473,7 @@ public class PedidosController extends Controller {
         Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
         String direccionFacturacion = VerDireccionFacturacion.getText();
         String direccionDespacho = VerDireccionDespacho.getText();
+        String departamento = clienteSeleccionado.getString("departamento");
               
         Integer cotizacion_id = null;
         if(cotizacionAnexada != null)
@@ -471,7 +481,7 @@ public class PedidosController extends Controller {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
-                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion);          
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);          
         String cod = pedido.getString("orden_compra_cod");        
         pedido.saveIt();
       
@@ -501,11 +511,11 @@ public class PedidosController extends Controller {
             return;            
         }
         
-//        if(totalPedido.getText().isEmpty())
-//        {
-//            infoController.show("Debe agregar algun producto a la Orden");
-//            return;
-//        }
+        if(totalPedido.getText().isEmpty())
+        {
+            infoController.show("Debe agregar algun producto a la Orden");
+            return;
+        }
         
         Base.openTransaction();
         LocalDate fechaLocal = VerFecha.getValue();
@@ -519,6 +529,7 @@ public class PedidosController extends Controller {
         Moneda moneda = Moneda.findFirst("nombre = ?", monedaNombre);
         String direccionFacturacion = VerDireccionFacturacion.getText();
         String direccionDespacho = VerDireccionDespacho.getText();
+        String departamento = clienteSeleccionado.getString("departamento");
         
         OrdenCompra pedido = new OrdenCompra();
         Integer cotizacion_id = null;
@@ -527,7 +538,7 @@ public class PedidosController extends Controller {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
-                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion);  
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);  
         
         String cod = "PED" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenescompra_orden_compra_id_seq")))) + 1);
         pedido.set("orden_compra_cod",cod);        
@@ -544,7 +555,7 @@ public class PedidosController extends Controller {
     }
     
      private void asignar_data(OrdenCompra pedido,String usuarioAccion, Integer clienteId, Date fechaEmision, Double igvVale, Double total, 
-             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion) throws Exception{
+             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion,String departamento) throws Exception{
                        
         pedido.set("client_id",clienteId);
         pedido.setDate("fecha_emision", fechaEmision);
@@ -558,6 +569,7 @@ public class PedidosController extends Controller {
         pedido.set("usuario_id",vendedor.getId());                                                        
         pedido.set("direccion_despacho",direccionDespacho);
         pedido.set("direccion_facturacion",direccionFacturacion);                
+        pedido.set("departamento",departamento);                
     } 
      
     private void setProductos(OrdenCompra pedido)
@@ -569,7 +581,7 @@ public class PedidosController extends Controller {
             {
                 pedidoxproducto.set("orden_compra_id",pedido.getId());
                 pedidoxproducto.set("client_id",pedido.get("client_id"));
-                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_id"));
+                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
             }
             pedidoxproducto.saveIt();
         }             
@@ -649,7 +661,7 @@ public class PedidosController extends Controller {
            return;            
         }
         
-        if(VerMoneda == null)
+        if(monedaSeleccionada == null)
         {
             infoController.show("Debe seleccionar una moneda utilizada primero");
             return;
@@ -847,7 +859,7 @@ public class PedidosController extends Controller {
         return valorPromocion;
     }
     
-    private Double aplicarPromocionCantidad(List<Promocion> promociones,CotizacionxProducto producto) throws Exception
+    private Double aplicarPromocionCantidad(List<Promocion> promociones,OrdenCompraxProducto producto) throws Exception
     {
         List<Promocion> promocionesCantidad = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
         if(promocionesCantidad.isEmpty()) return 0.0;                       
@@ -877,30 +889,30 @@ public class PedidosController extends Controller {
             valorDescuento = ganciaPorPromocion*nrPromociones;            
         }else
         {            
-            List<OrdenCompraxProducto> cotizacionesxproducto = productos.stream().filter(x -> 
+            List<OrdenCompraxProducto> pedidosxproductos = productos.stream().filter(x -> 
                     TipoProducto.findById(x.get("tipo_id")).getAll(CategoriaProducto.class).stream().anyMatch(y -> 
                             Objects.equals(y.getInteger("categoria_id"), id))).collect(Collectors.toList());
             Integer nrPromociones = 0;
             Integer nr_obtener = promocionCantidad.getInteger("nr_obtener");
             
-            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
+            for(OrdenCompraxProducto pedidoxproducto:pedidosxproductos)
             {
-                cantidadComprando += cotizacionxProducto.getInteger("cantidad_descuento_disponible");                
+                cantidadComprando += pedidoxproducto.getInteger("cantidad_descuento_disponible");                
             }
             
             nrPromociones = cantidadComprando / nr_obtener;
             Integer nrUtilizados = nrPromociones * nr_obtener;
             
-            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
+            for(OrdenCompraxProducto pedidoxproducto:pedidosxproductos)
             {
-                Integer cantidadDisponible = cotizacionxProducto.getInteger("cantidad_descuento_disponible");                
+                Integer cantidadDisponible = pedidoxproducto.getInteger("cantidad_descuento_disponible");                
                 if(nrUtilizados<=0) break;
                 if(nrUtilizados<=cantidadDisponible)
                 {
-                    cotizacionxProducto.set("cantidad_descuento_disponible",cantidadDisponible - nrUtilizados);
+                    pedidoxproducto.set("cantidad_descuento_disponible",cantidadDisponible - nrUtilizados);
                 }else
                 {
-                    cotizacionxProducto.set("cantidad_descuento_disponible",0);
+                    pedidoxproducto.set("cantidad_descuento_disponible",0);
                     nrUtilizados -= cantidadDisponible;
                 }                
             }
@@ -909,7 +921,7 @@ public class PedidosController extends Controller {
         return  valorDescuento;                
     }
     
-    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,CotizacionxProducto producto)
+    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,OrdenCompraxProducto producto)
     {
         List<Promocion> promocionesProcentaje = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());
         if(promocionesProcentaje.isEmpty()) return 0.0;                       
@@ -927,10 +939,91 @@ public class PedidosController extends Controller {
         }
         if(cantidadPorcentaje == 0) return 0.0;
         return  cantidad*precioActual*(cantidadPorcentaje/100);         
+    }     
+    
+    private Double calcularFlete(OrdenCompraxProducto producto) throws Exception
+    {         
+        TipoProducto productoReferenciado = TipoProducto.findById(producto.get("tipo_id"));
+        List<Flete> fletes = Flete.where("tipo_id = ?",producto.get("tipo_id"));        
+        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class);
+        
+        for(CategoriaProducto categoria:categorias)
+        {
+            fletes.addAll(Flete.where("categoria_id = ?", categoria.get("categoria_id")));
+        }                   
+        
+        java.sql.Date today = java.sql.Date.valueOf(LocalDate.now());        
+        List<Flete> fletesActual = fletes.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
+        Double distancia = ParametroSistema.findFirst("nombre = ?",clienteSeleccionado.getString("departamento")).getDouble("valor");
+        Integer cantidad = producto.getInteger("cantidad");
+        Double precio_unitario = producto.getDouble("precio_unitario");
+     
+        Double fleteVolumen = aplicarFleteVolumen(fletesActual, productoReferenciado, distancia, cantidad);
+        Double fletePeso = aplicarFletePeso(fletesActual, productoReferenciado, distancia, cantidad);
+        Double fletePorcentaje = aplicarFletePorcentaje(fletesActual, precio_unitario, cantidad);                                
+        
+        return fleteVolumen + fletePeso + fletePorcentaje;
+    }
+    
+    private Double aplicarFleteVolumen(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.VOLUMEN.name())).collect(Collectors.toList());        
+        Double fleteTotal = 0.0;              
+        
+        Double alto = productoReferenciado.getDouble("alto");
+        Double ancho = productoReferenciado.getDouble("ancho");
+        Double largo = productoReferenciado.getDouble("longitud");
+        
+        if(alto == null || ancho == null || largo == null) return 0.0;        
+        Double volumen = alto*ancho*largo;
+        
+        for(Flete flete:fletesVolumen)
+        {
+            Double factor = CambioMoneda.findFirst("moneda1_id = ? and moneda2_id = ?", monedaSeleccionada.getInteger("moneda_id"),flete.getInteger("moneda_id")).getDouble("factor");
+            fleteTotal += volumen*flete.getDouble("valor")*distancia*factor;                        
+        }
+        
+        return fleteTotal*cantidad/1000;
+    }
+    
+    private Double aplicarFletePeso(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.PESO.name())).collect(Collectors.toList());        
+        Double fleteTotal = 0.0;              
+        
+        Double peso = productoReferenciado.getDouble("peso");
+        
+        for(Flete flete:fletesVolumen)
+        {
+            Double factor = CambioMoneda.findFirst("moneda1_id = ? and moneda2_id = ?", monedaSeleccionada.getInteger("moneda_id"),flete.getInteger("moneda_id")).getDouble("factor");
+            fleteTotal += peso*flete.getDouble("valor")*distancia*factor;                        
+        }
+        return fleteTotal*cantidad/1000;   
+    }
+    
+    private Double aplicarFletePorcentaje(List<Flete> fletes,Double precio,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.PORCENTAJE.name())).collect(Collectors.toList());        
+        if(fletesVolumen.isEmpty()) return 0.0;
+        Double fleteTotal = 0.0;              
+        
+        for(Flete flete:fletesVolumen)
+        {
+            fleteTotal += flete.getDouble("valor");
+        }
+        return precio*cantidad*(fleteTotal/100);
     }        
     
-
- 
+    private void calcularFinal()
+    {
+        Double total = 0.0;
+        for(OrdenCompraxProducto pedidoxproducto:productos)
+        {
+            total += pedidoxproducto.getDouble("subtotal_final");
+        }
+        setValorTotal(total);
+    }
+    
                       
    private void RefrescarTabla(List<OrdenCompra> tempPedidos)
     {
@@ -954,17 +1047,23 @@ public class PedidosController extends Controller {
     
     private void handleAutoCompletar() {
         
-        int i = 0;
-        for (Cliente cliente : autoCompletadoList){
-            if (cliente.getString("nombre").equals(VerCliente.getText())){
-                clienteSeleccionado = cliente;                               
-                setInformacionCliente(cliente,true);
-//                if (cliente.getString("direccion_despacho").equals(cliente.getString("direccion_facturacion"))){ 
-//                    mismaDir.setSelected(true);
-//                    factDir.setDisable(true);
-//                }                
-            }
+        try {            
+             for (Cliente cliente : autoCompletadoList){
+                if (cliente.getString("nombre").equals(VerCliente.getText())){
+                    clienteSeleccionado = cliente;                               
+                    setInformacionCliente(cliente,true);
+                    for(OrdenCompraxProducto pedidoxproducto:productos)
+                    {
+                        pedidoxproducto.set("flete",calcularFlete(pedidoxproducto));
+                    }
+                    TablaProductos.getColumns().get(0).setVisible(false);
+                    TablaProductos.getColumns().get(0).setVisible(true);
+                }
+            }            
+        } catch (Exception e) {
+            infoController.show("No se ha podido cargar la informacion del cliente: " + e.getMessage());
         }
+       
     }
     
     private void setInformacionCliente(Cliente cliente,Boolean cambiarDireccion)
@@ -1028,7 +1127,67 @@ public class PedidosController extends Controller {
                 vendedorSelecionado = usuario;             
             }
         }
-    }    
+    } 
+    
+    @Override
+    public void menuCall(cambiarMenuArgs args)
+    {
+        try {
+            Integer cotizacion_id = args.related_id;
+        
+            Cotizacion cotizacion = Cotizacion.findById(cotizacion_id);
+
+            Cliente cliente = Cliente.findById(cotizacion.get("client_id"));             
+            clienteSeleccionado = cliente;
+
+            setInformacionCliente(cliente,false);     
+            VerCliente.setText(cliente.getString("nombre"));      
+
+            String direccionFacturacion = cliente.getString("direccion_facturacion");        
+            String direccionDespacho = cliente.getString("direccion_despacho");
+
+            VerDireccionDespacho.setText(direccionDespacho);
+            VerDireccionFacturacion.setText(direccionFacturacion);
+
+            LocalDate date = cotizacion.getDate("fecha_emision").toLocalDate();
+            VerFecha.setValue(date);
+
+            VerMoneda.getSelectionModel().select(Moneda.findById(cotizacion.get("moneda_id")).getString("nombre"));       
+            setValorTotal(cotizacion.getDouble("total"));
+          
+            productos.clear();
+            productos.addAll(generarProductos(cotizacion));  
+
+            crearNuevo = true;
+            habilitar_formulario();
+            
+        } catch (Exception e) {
+            infoController.show("No se ha podido crear el Pedido a partir de la Proforma: " + e.getMessage());
+        }
+        
+    }
+    
+    private List<OrdenCompraxProducto> generarProductos(Cotizacion cotizacion)
+    {
+        List<CotizacionxProducto> cotizacionxProductos = CotizacionxProducto.where("cotizacion_id = ?",cotizacion.getId());
+        List<OrdenCompraxProducto> ordenCompraxProductos = new ArrayList<>();
+        for(CotizacionxProducto cotizacionxProducto:cotizacionxProductos)
+        {
+            OrdenCompraxProducto pedidoxproducto = new OrdenCompraxProducto();
+                                    
+            pedidoxproducto.set("tipo_id",cotizacionxProducto.get("tipo_id"));
+            pedidoxproducto.set("tipo_cod",cotizacionxProducto.get("tipo_cod"));                                
+            pedidoxproducto.set("cantidad",cotizacionxProducto.get("cantidad"));                       
+            pedidoxproducto.set("cantidad_descuento_disponible",cotizacionxProducto.get("cantidad_descuento_disponible"));                                   
+            pedidoxproducto.set("precio_unitario",cotizacionxProducto.get("precio_unitario"));    
+            pedidoxproducto.set("subtotal_previo",cotizacionxProducto.get("subtotal_previo")); 
+            pedidoxproducto.set("descuento",cotizacionxProducto.get("descuento"));
+            pedidoxproducto.set("flete",cotizacionxProducto.get("flete"));                    
+            pedidoxproducto.set("subtotal_final",cotizacionxProducto.get("subtotal_final"));    
+            ordenCompraxProductos.add(pedidoxproducto);
+        }
+        return ordenCompraxProductos;
+    }        
     
     @Override
     public Menu.MENU getMenu()
