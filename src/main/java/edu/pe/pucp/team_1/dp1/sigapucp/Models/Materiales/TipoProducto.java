@@ -6,6 +6,8 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -44,10 +46,10 @@ public class TipoProducto extends Model{
         set("unidad_tamano_id", unidad_medida_id);
     }
     
-    public double getPrecioActual() throws Exception
+    public double getPrecioActual(Moneda moneda) throws Exception
     {
         List<Precio> precios = Precio.where("tipo_id = ?",getId());
-        
+                
         Date now = Date.valueOf(LocalDate.now());
         Double precioValor = 0.0;
         
@@ -59,12 +61,16 @@ public class TipoProducto extends Model{
             if(now.after(fFin)&&now.before(fFin))
             {
                 precioValor = precio.getDouble("precio");
-                return precioValor;                
+                Double factor = CambioMoneda.findFirst("moneda1_id = ? AND moneda2_id = ?", moneda.getInteger("moneda_id"),precio.getInteger("moneda_id")).getDouble("factor");
+                return precioValor*factor;                
             }            
         }
         
-        precioValor = precios.stream().findFirst().get().getDouble("precio");
-        return precioValor;
+        Precio precio = precios.stream().findFirst().get();
+        Double factor = CambioMoneda.findFirst("moneda1_id = ? AND moneda2_id = ?", moneda.getInteger("moneda_id"),precio.getInteger("moneda_id")).getDouble("factor");
+        precioValor = precio.getDouble("precio");
+        
+        return precioValor*factor;
     }
     
     public enum ESTADO

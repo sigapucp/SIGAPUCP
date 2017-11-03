@@ -331,7 +331,7 @@ public class PromocionesController extends Controller{
     private void mostrar_promoPorcentaje(String codigoTipCat,Integer valor,String concepto){
         txtFieCodigoProducto3.setText(codigoTipCat);
         
-        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, valor);
+        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, valor);
         spPorc.setValueFactory(spPorcValues);
         
         desc_concepto.setText(concepto);
@@ -517,7 +517,7 @@ public class PromocionesController extends Controller{
         }
         catch(Exception e){
            infoController.show("La promoción contiene errores : " + e);        
-           Base.rollbackTransaction();           
+           Base.rollbackTransaction();
         }    
     }
     
@@ -641,7 +641,7 @@ public class PromocionesController extends Controller{
         spLlevo.setValueFactory(spLlevoValues);
         spLlevo.setDisable(true);
         
-        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0,1);
         spPorc.setValueFactory(spPorcValues);
         spPorc.setDisable(true);
         
@@ -724,7 +724,7 @@ public class PromocionesController extends Controller{
     }
     
     private void deshabilitar_Porcentaje(){
-        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+        SpinnerValueFactory spPorcValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0,1);
         spPorc.setValueFactory(spPorcValues);
         spPorc.setDisable(true);
         

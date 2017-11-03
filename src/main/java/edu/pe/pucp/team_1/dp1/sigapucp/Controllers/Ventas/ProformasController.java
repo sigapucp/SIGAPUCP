@@ -11,12 +11,15 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.Promociones;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
@@ -36,6 +39,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -154,6 +159,7 @@ public class ProformasController extends Controller {
     private List<TipoProducto> autoCompletadoProductoList;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
     private Double IGV;    
+    private Moneda monedaSeleccionada = null;
   
     /**
      * Initializes the controller class.
@@ -255,7 +261,14 @@ public class ProformasController extends Controller {
             llenar_combobox();
             llenar_autocompletado();
             inhabilitar_formulario();
-            setAgregarProductos();                                            
+            setAgregarProductos();   
+            
+            VerMoneda.valueProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                if(newValue == null) return;
+                monedaSeleccionada = Moneda.findFirst("nombre = ?", newValue);
+                cambiarMoneda();
+            });
+            
         } catch (Exception e) {
             infoController.show("Error al cargar las proformas " + e.getMessage());
         }                                      
@@ -433,7 +446,6 @@ public class ProformasController extends Controller {
             {
                 infoController.show("No ha seleccionado ninguna proforma");
             }
-
           setProformaVisible(proformaSelecionado);                            
         } catch (Exception e) {
             infoController.show("Error al mostrar Cotizacion: " + e.getMessage());
@@ -496,91 +508,149 @@ public class ProformasController extends Controller {
     }      
         
     @FXML
-    private void eliminarProducto(ActionEvent event) {
-        
-        CotizacionxProducto cotizacionxProducto = TablaProductos.getSelectionModel().getSelectedItem();
-        if(cotizacionxProducto==null)
-        {
-            infoController.show("No ha seleccionado ninguna Cotizacion");
-            return;
-        }         
-      
-        if(!cotizacionxProducto.isNew())
-        {
-            Cotizacion cotizacion = Cotizacion.findById(cotizacionxProducto.get("cotizacion_id"));
-            String estado = cotizacion.getString("estado");
-            if(estado.equals(Cotizacion.ESTADO.CONPEDIDO.name()))
+    private void eliminarProducto(ActionEvent event) {        
+        try {            
+            CotizacionxProducto cotizacionxProducto = TablaProductos.getSelectionModel().getSelectedItem();
+            if(cotizacionxProducto==null)
             {
-                infoController.show("No puede eliminar producto ya que este ya se encuentra en un Pedido");
-                return;                
-            }            
-        }             
-        Double totalEntrada = cotizacionxProducto.getDouble("subtotal_final");      
-        recalcularTotal(-totalEntrada);               
-        productos.remove(cotizacionxProducto);              
+                infoController.show("No ha seleccionado ninguna Cotizacion");
+                return;
+            }         
+
+            if(!cotizacionxProducto.isNew())
+            {
+                Cotizacion cotizacion = Cotizacion.findById(cotizacionxProducto.get("cotizacion_id"));
+                String estado = cotizacion.getString("estado");
+                if(estado.equals(Cotizacion.ESTADO.CONPEDIDO.name()))
+                {
+                    infoController.show("No puede eliminar producto ya que este ya se encuentra en un Pedido");
+                    return;                
+                }            
+            }  
+            
+            productos.remove(cotizacionxProducto);          
+            for(CotizacionxProducto cotizacionxproducto:productos)
+            {
+                Double descuento = calcularDescuento(cotizacionxproducto);
+                Double flete = calcularFlete(cotizacionxproducto);
+                
+                cotizacionxproducto.set("descuento",descuento);
+                cotizacionxproducto.set("flete",flete);
+                cotizacionxproducto.set("subtotal_final",cotizacionxproducto.getDouble("subtotal_previo") + descuento - flete);
+            }
+            calcularFinal(); 
+             
+            TablaProductos.getColumns().get(0).setVisible(false);
+            TablaProductos.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+            infoController.show("Error al eliminar el producto");
+        }        
     }
 
     @FXML
     private void agregarProducto(ActionEvent event) {                
-        if(productoDevuelto==null)
+        if(productoDevuelto == null)
         {
             infoController.show("No ha seleccionado ningun producto"); 
            return;
         }
         
-        try {
-            for(CotizacionxProducto productoCot:productos)
-            {
-                if(productoCot.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
+        if(clienteSeleccionado == null)
+        {
+            infoController.show("Debe seleccionar un cliente antes para el calculo del flete"); 
+           return;            
+        }
+        
+        if(monedaSeleccionada == null)
+        {
+            infoController.show("Debe seleccionar una moneda utilizada primero");
+            return;
+        }        
+        Boolean isNew = false;             
+        try {                        
+                if(!productos.stream().anyMatch(x -> x.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id"))))
                 {
-                    Integer cantidad = productoCot.getInteger("cantidad") + cantProd.getValue();
-                    Double precioUnitario = productoCot.getDouble("precio_unitario");                    
-                    recalcularTotal(cantProd.getValue()*precioUnitario);
-                    
-                    // Pueden varias las condiciones de descuento y fletes ...
-                    productoCot.set("cantidad",cantidad);
-                    productoCot.set("subtotal_final",precioUnitario*cantidad);
-                    TablaProductos.getColumns().get(0).setVisible(false);
-                    TablaProductos.getColumns().get(0).setVisible(true);
-                    return;
-                }
-            }
-
-            CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();
-            Integer cantidad = cantProd.getValue();
-            Double precio = productoDevuelto.getPrecioActual();
-                                  
-            cotizacionxproducto.set("tipo_id",productoDevuelto.getId());
-            cotizacionxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));            
-            cotizacionxproducto.set("cantidad",cantidad);                        
-            cotizacionxproducto.set("precio_unitario",precio);    
-            cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
-            
-            Double descuento = calcularDescuento(cotizacionxproducto);
-            Double flete = calcularFlete(productoDevuelto);
-            
-            cotizacionxproducto.set("descuento",descuento); 
-            cotizacionxproducto.set("flete",flete);             
-            Double totalEntrada = cantidad*precio - descuento + flete;
-            cotizacionxproducto.set("subtotal_final",totalEntrada);
-            recalcularTotal(totalEntrada);
-                        
-            productos.add(cotizacionxproducto);            
+                    CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();                                           
+                    Integer cantidad = cantProd.getValue();
+                    Double precio = productoDevuelto.getPrecioActual(monedaSeleccionada);
+                    cotizacionxproducto.set("tipo_id",productoDevuelto.getId());
+                    cotizacionxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));                                
+                    cotizacionxproducto.set("cantidad",cantidad);                       
+                    cotizacionxproducto.set("cantidad_descuento_disponible",cantidad);                                   
+                    cotizacionxproducto.set("precio_unitario",precio);    
+                    cotizacionxproducto.set("subtotal_previo",cantidad*precio); 
+                    cotizacionxproducto.set("descuento",0);
+                    cotizacionxproducto.set("flete",0);                    
+                    cotizacionxproducto.set("subtotal_final",cantidad*precio);    
+                    productos.add(cotizacionxproducto);
+                    isNew = true;                    
+                }                          
+               RecalcularTabla(isNew);
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         }                
     }
     
-    private void recalcularTotal(Double cambio)
+    private void RecalcularTabla(Boolean isNew) throws Exception
     {
-        String totalValue = (!subTotalFinal.getText().isEmpty()) ? subTotalFinal.getText() : "0.0";
-        Double subTotalSinIgv = Double.valueOf(totalValue);                    
-        subTotalSinIgv += cambio;
-        subTotalFinal.setText(String.valueOf(subTotalSinIgv));
-        Double valorIgv = IGV*subTotalSinIgv;            
-        igvTotal.setText(String.valueOf(valorIgv));
-        total.setText(String.valueOf(subTotalSinIgv+valorIgv));        
+        for(CotizacionxProducto productoCot:productos)
+        {
+            Integer extraCant = 0;
+            if(!isNew && productoCot.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
+            {
+                extraCant += cantProd.getValue();
+            }
+
+            Double subtotal_anterior = productoCot.getDouble("subtotal_final");            
+            Double precioUnitario = productoCot.getDouble("precio_unitario");  
+            Integer cantidad = productoCot.getInteger("cantidad") + extraCant;
+            productoCot.set("cantidad",cantidad);
+            productoCot.set("cantidad_descuento_disponible",productoCot.getInteger("cantidad_descuento_disponible") + extraCant);     
+            Double descuento = calcularDescuento(productoCot) + productoCot.getDouble("descuento");
+            Double flete = calcularFlete(productoCot) + productoCot.getDouble("flete");
+            Double subtotal = cantidad*precioUnitario - descuento + flete;
+
+            productoCot.set("descuento",descuento);
+            productoCot.set("flete",flete);
+
+            productoCot.set("subtotal_previo", precioUnitario*cantidad);
+            productoCot.set("subtotal_final",subtotal);                                                                                               
+        }    
+        
+        TablaProductos.getColumns().get(0).setVisible(false);
+        TablaProductos.getColumns().get(0).setVisible(true);    
+        calcularFinal();        
     }
+    
+    private void cambiarMoneda()
+    {
+        if(monedaSeleccionada == null) return;
+        try {
+            for(CotizacionxProducto productoCot:productos)
+            {                
+                TipoProducto producto = TipoProducto.findById(productoCot.get("tipo_id"));               
+                
+                Double nuevoPrecio = producto.getPrecioActual(monedaSeleccionada);
+                Double factor = nuevoPrecio/productoCot.getDouble("precio_unitario");
+                Integer cantidad = productoCot.getInteger("cantidad");
+                
+                productoCot.set("precio_unitario",nuevoPrecio);    
+                productoCot.set("subtotal_previo",cantidad*nuevoPrecio); 
+                Double nuevoDescuento = productoCot.getDouble("descuento")*factor;
+                productoCot.set("descuento",nuevoDescuento);
+                Double nuevoFlete = calcularFlete(productoCot);
+                productoCot.set("flete",productoCot.getDouble("flete")*factor);                    
+                productoCot.set("subtotal_final",cantidad*nuevoPrecio - nuevoDescuento + nuevoFlete);                               
+            }         
+            
+            TablaProductos.getColumns().get(0).setVisible(false);
+            TablaProductos.getColumns().get(0).setVisible(true);    
+            calcularFinal();        
+            
+        } catch (Exception e) {
+            infoController.show("Error al cambiar de moneda: " + e.getMessage());
+        }             
+    }       
     
     private void setValorTotal(Double valor)
     {        
@@ -594,11 +664,12 @@ public class ProformasController extends Controller {
     {
         // Magic. Se que es el id 1,2,3. Puesto asi en la Bd
         Double prioridadBonficacion = Double.valueOf(ParametroSistema.findById(1).getInteger("valor"));
-        Double prioridadCantidad = Double.valueOf(ParametroSistema.findById(2).getInteger("valor")) + 0.25;
-        Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) + 0.5;
+        Double prioridadCantidad = Double.valueOf(ParametroSistema.findById(2).getInteger("valor")) - 0.25;
+        Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) - 0.5;
         
+        TipoProducto productoReferenciado = TipoProducto.findById(producto.get("tipo_id"));
         List<Promocion> promociones = Promocion.where("tipo_id = ?",producto.get("tipo_id"));        
-        List<CategoriaProducto> categorias = CategoriaProducto.where("tipo_id = ?", producto.get("tipo_id"));
+        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class);
         
         for(CategoriaProducto categoria:categorias)
         {
@@ -607,130 +678,259 @@ public class ProformasController extends Controller {
         
         Date today = Date.valueOf(LocalDate.now());        
         List<Promocion> promocionesActual = promociones.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
-        Integer cantidad = producto.getInteger("cantidad");
-        Double precioActual = producto.getDouble("precio_actual");
         
-        if(prioridadPorcentaje>prioridadCantidad&&prioridadPorcentaje>prioridadBonficacion)
+        if(prioridadPorcentaje<prioridadCantidad&&prioridadPorcentaje<prioridadBonficacion)
         {
-            return aplicarPromocionPorcentaje(promociones, cantidad, precioActual);
+            return aplicarPromocionPorcentaje(promocionesActual, producto);
         }
         
-        if(prioridadCantidad>prioridadPorcentaje&&prioridadCantidad>prioridadBonficacion)
+        if(prioridadCantidad<prioridadPorcentaje&&prioridadCantidad<prioridadBonficacion)
         {
-            return aplicarPromocionCantidad(promociones, cantidad, precioActual);            
+            return aplicarPromocionCantidad(promocionesActual, producto);            
         }
         
-        if(prioridadBonficacion>prioridadCantidad&&prioridadBonficacion>prioridadPorcentaje)
+        if(prioridadBonficacion<prioridadCantidad&&prioridadBonficacion<prioridadPorcentaje)
         {
-            return aplicarPromocionBonificacion(promociones, cantidad, precioActual);
+            return aplicarPromocionBonificacion(promocionesActual, producto);
         }        
         return 0.0;        
     }
     
-    private Double aplicarPromocionBonificacion(List<Promocion> promociones,int cantidad,Double precioActual) throws Exception
+    private Double aplicarPromocionBonificacion(List<Promocion> promociones,CotizacionxProducto producto) throws Exception
     {               
         List<Promocion> promocionesBonificacion = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
-        if(promocionesBonificacion == null) return 0.0;                       
+        if(promocionesBonificacion.isEmpty()) return 0.0;                       
         promocionesBonificacion.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
-        if(promocionesBonificacion == null) return 0.0;
+        if(promocionesBonificacion.isEmpty()) return 0.0;
         Double valorPromocion = 0.0;
                 
         Promocion promocionAplicada = promocionesBonificacion.stream().findFirst().get();        
-        PromocionBonificacion promocionBonificacion = PromocionBonificacion.findFirst("promocion_id", promocionAplicada.getId());              
+        PromocionBonificacion promocionBonificacion = PromocionBonificacion.findFirst("promocion_id = ?", promocionAplicada.getId());              
         Boolean es_categoria = promocionBonificacion.getString("es_categoria_comprar").equals("S");
-           
+                 
+        Double precioActual = producto.getDouble("precio_unitario");
+        Double ganciaPorPromocion = (promocionBonificacion.getInteger("nr_obtener"))*precioActual;
         Integer cantidadComprando = 0;
-        if(!es_categoria)
-        {
-            CotizacionxProducto cotizacionxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("tipo_id"), promocionBonificacion.getInteger("tipo_id"))).findFirst().get();
-            cantidadComprando = cotizacionxproducto.getInteger("cantidad");                                              
-        }else
-        {
-            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("categoria_id"), promocionBonificacion.getInteger("tipo_id"))).collect(Collectors.toList());
-           
-            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
-            {
-                cantidadComprando += cotizacionxProducto.getInteger("cantidad");
-            }
-        }
+        Integer cantidadObteniendo = 0;
         
-        Integer nrPromociones = cantidadComprando / promocionBonificacion.getInteger("nr_comprar");        
-        Integer nrProdctosObtenerGratis = nrPromociones * promocionBonificacion.getInteger("nr_obtener");
-
-        if(nrProdctosObtenerGratis > cantidad)
-        {                
-            valorPromocion = cantidad*precioActual;
+        if(!es_categoria)
+        {               
+            List<CotizacionxProducto> cotizacionxproductos = productos.stream().filter(x -> Objects.equals(x.getInteger("tipo_id"), promocionBonificacion.getInteger("tipo_id"))).collect(Collectors.toList());
+            if(cotizacionxproductos.isEmpty()) return 0.0;
+            
+            CotizacionxProducto cotizacionxproducto = cotizacionxproductos.stream().findFirst().get();
+            cantidadComprando = cotizacionxproducto.getInteger("cantidad_descuento_disponible");     
+            cantidadObteniendo = producto.getInteger("cantidad_descuento_disponible"); 
+            
+            Integer nr_obtener =  promocionBonificacion.getInteger("nr_obtener");                      
+            Integer nr_comprar = promocionBonificacion.getInteger("nr_comprar");                      
+            
+            Integer nrPromociones = Integer.min(cantidadComprando/nr_comprar, cantidadObteniendo/nr_obtener);
+            if(nrPromociones <= 0) return 0.0;
+            
+            producto.set("cantidad_descuento_disponible",cantidadObteniendo - nr_obtener*nrPromociones);
+            cotizacionxproducto.set("cantidad_descuento_disponible",cantidadComprando - nr_comprar*nrPromociones);
+            
+            valorPromocion = ganciaPorPromocion*nrPromociones;   
         }else
         {
-            valorPromocion = nrProdctosObtenerGratis*precioActual; 
-        }                                
+            List<CotizacionxProducto> cotizacionesxproductos = productos.stream().filter(x -> Objects.equals(x.getInteger("categoria_id"), promocionBonificacion.getInteger("categoria_id"))).collect(Collectors.toList());
+            if(cotizacionesxproductos.isEmpty()) return 0.0;
+            
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproductos)
+            {
+                cantidadComprando += cotizacionxProducto.getInteger("cantidad_descuento_disponible");                
+            }
+              
+            Integer nrPromociones = 0;
+            Integer nr_obtener = promocionBonificacion.getInteger("nr_obtener");
+            
+            nrPromociones = cantidadComprando / nr_obtener;
+            Integer nrUtilizados = nrPromociones * nr_obtener;
+            
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproductos)
+            {
+                Integer cantidadDisponible = cotizacionxProducto.getInteger("cantidad_descuento_disponible");                
+                if(nrUtilizados<=0) break;
+                if(nrUtilizados<=cantidadDisponible)
+                {
+                    cotizacionxProducto.set("cantidad_descuento_disponible",cantidadDisponible - nrUtilizados);
+                }else
+                {
+                    cotizacionxProducto.set("cantidad_descuento_disponible",0);
+                    nrUtilizados -= cantidadDisponible;
+                }                
+            }
+            valorPromocion = ganciaPorPromocion*nrPromociones;  
+        }
+                          
         return valorPromocion;
     }
     
-    private Double aplicarPromocionCantidad(List<Promocion> promociones,int cantidad,Double precioActual) throws Exception
+    private Double aplicarPromocionCantidad(List<Promocion> promociones,CotizacionxProducto producto) throws Exception
     {
         List<Promocion> promocionesCantidad = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
-        if(promocionesCantidad == null) return 0.0;                       
+        if(promocionesCantidad.isEmpty()) return 0.0;                       
         promocionesCantidad.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
-        if(promocionesCantidad == null) return 0.0;
-        Double valorPromocion = 0.0;
-                
+        if(promocionesCantidad.isEmpty()) return 0.0;
+    
         Promocion promocionAplicada = promocionesCantidad.stream().findFirst().get();    
         Boolean es_categoria = promocionAplicada.getString("es_categoria").equals("S");
-        Integer id = (es_categoria) ? promocionAplicada.getInteger("tipo_id") : promocionAplicada.getInteger("categoria_id");
+        Integer id = (es_categoria) ?  promocionAplicada.getInteger("categoria_id") : promocionAplicada.getInteger("tipo_id");
         
-        PromocionCantidad promocionCantidad = PromocionCantidad.findFirst("promocion_id", promocionAplicada.getId());        
+        PromocionCantidad promocionCantidad = PromocionCantidad.findFirst("promocion_id = ?", promocionAplicada.getId());        
         Integer cantidadComprando = 0;
+        
+        Double valorDescuento = 0.0;
+        Integer cantidad = producto.getInteger("cantidad_descuento_disponible");
+        Double precioActual = producto.getDouble("precio_unitario");
+        Double ganciaPorPromocion = (promocionCantidad.getInteger("nr_obtener")  - promocionCantidad.getInteger("nr_comprar"))*precioActual;
         
         if(!es_categoria)
         {            
-            cantidadComprando = cantidad;                                        
+            cantidadComprando = cantidad;                               
+            Integer nrPromociones = cantidadComprando / promocionCantidad.getInteger("nr_obtener");        
+            if(nrPromociones <= 0) return 0.0;
+            
+            producto.set("cantidad_descuento_disponible",cantidad - nrPromociones*promocionCantidad.getInteger("nr_obtener"));
+            valorDescuento = ganciaPorPromocion*nrPromociones;            
         }else
-        {
-            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> Objects.equals(x.getInteger("categoria_id"), id)).collect(Collectors.toList());           
+        {            
+            List<CotizacionxProducto> cotizacionesxproducto = productos.stream().filter(x -> 
+                    TipoProducto.findById(x.get("tipo_id")).getAll(CategoriaProducto.class).stream().anyMatch(y -> 
+                            Objects.equals(y.getInteger("categoria_id"), id))).collect(Collectors.toList());
+            Integer nrPromociones = 0;
+            Integer nr_obtener = promocionCantidad.getInteger("nr_obtener");
+            
             for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
             {
-                cantidadComprando += cotizacionxProducto.getInteger("cantidad");
+                cantidadComprando += cotizacionxProducto.getInteger("cantidad_descuento_disponible");                
             }
-        }
-        
-        Integer nrPromociones = cantidadComprando / promocionCantidad.getInteger("nr_comprar");        
-        Integer nrProdctosObtenerGratis = nrPromociones * promocionCantidad.getInteger("nr_obtener");
-
-        if(nrProdctosObtenerGratis > cantidad)
-        {                
-            valorPromocion = cantidad*precioActual;
-        }else
-        {
-            valorPromocion = nrProdctosObtenerGratis*precioActual; 
-        }                                
-        return valorPromocion;              
+            
+            nrPromociones = cantidadComprando / nr_obtener;
+            Integer nrUtilizados = nrPromociones * nr_obtener;
+            
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesxproducto)
+            {
+                Integer cantidadDisponible = cotizacionxProducto.getInteger("cantidad_descuento_disponible");                
+                if(nrUtilizados<=0) break;
+                if(nrUtilizados<=cantidadDisponible)
+                {
+                    cotizacionxProducto.set("cantidad_descuento_disponible",cantidadDisponible - nrUtilizados);
+                }else
+                {
+                    cotizacionxProducto.set("cantidad_descuento_disponible",0);
+                    nrUtilizados -= cantidadDisponible;
+                }                
+            }
+            valorDescuento = ganciaPorPromocion*nrPromociones;                            
+        }                              
+        return  valorDescuento;                
     }
     
-    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,int cantidad,Double precioActual)
+    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,CotizacionxProducto producto)
     {
         List<Promocion> promocionesProcentaje = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());
-        if(promocionesProcentaje == null) return 0.0;                       
+        if(promocionesProcentaje.isEmpty()) return 0.0;                       
         
         Double valorPromocion = 0.0;
+        Integer cantidad = producto.getInteger("cantidad_descuento_disponible");
+        Double precioActual = producto.getDouble("precio_unitario");
+        
                 
         Double cantidadPorcentaje = 0.0;
         for(Promocion promocion:promocionesProcentaje)
         {            
-            PromocionPorcentaje promocionPorcentaje = PromocionPorcentaje.findFirst("promocion_id", promocion.getId());
+            PromocionPorcentaje promocionPorcentaje = PromocionPorcentaje.findFirst("promocion_id = ?", promocion.getId());
             cantidadPorcentaje += promocionPorcentaje.getDouble("valor_desc");
         }
         if(cantidadPorcentaje == 0) return 0.0;
-        return valorPromocion = cantidad*precioActual*(1-cantidadPorcentaje/100);         
+        return  cantidad*precioActual*(cantidadPorcentaje/100);         
+    }        
+    
+    private Double calcularFlete(CotizacionxProducto producto) throws Exception
+    {         
+        TipoProducto productoReferenciado = TipoProducto.findById(producto.get("tipo_id"));
+        List<Flete> fletes = Flete.where("tipo_id = ?",producto.get("tipo_id"));        
+        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class);
+        
+        for(CategoriaProducto categoria:categorias)
+        {
+            fletes.addAll(Flete.where("categoria_id = ?", categoria.get("categoria_id")));
+        }                   
+        
+        Date today = Date.valueOf(LocalDate.now());        
+        List<Flete> fletesActual = fletes.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
+        Double distancia = ParametroSistema.findFirst("nombre = ?",clienteSeleccionado.getString("departamento")).getDouble("valor");
+        Integer cantidad = producto.getInteger("cantidad");
+        Double precio_unitario = producto.getDouble("precio_unitario");
+     
+        Double fleteVolumen = aplicarFleteVolumen(fletesActual, productoReferenciado, distancia, cantidad);
+        Double fletePeso = aplicarFletePeso(fletesActual, productoReferenciado, distancia, cantidad);
+        Double fletePorcentaje = aplicarFletePorcentaje(fletesActual, precio_unitario, cantidad);                                
+        
+        return fleteVolumen + fletePeso + fletePorcentaje;
     }
     
-    
-    
-    private Double calcularFlete(TipoProducto producto)
+    private Double aplicarFleteVolumen(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
     {
-        return 0.0;
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.VOLUMEN.name())).collect(Collectors.toList());        
+        Double fleteTotal = 0.0;              
+        
+        Double alto = productoReferenciado.getDouble("alto");
+        Double ancho = productoReferenciado.getDouble("ancho");
+        Double largo = productoReferenciado.getDouble("longitud");
+        
+        if(alto == null || ancho == null || largo == null) return 0.0;        
+        Double volumen = alto*ancho*largo;
+        
+        for(Flete flete:fletesVolumen)
+        {
+            Double factor = CambioMoneda.findFirst("moneda1_id = ? and moneda2_id = ?", monedaSeleccionada.getInteger("moneda_id"),flete.getInteger("moneda_id")).getDouble("factor");
+            fleteTotal += volumen*flete.getDouble("valor")*distancia*factor;                        
+        }
+        
+        return fleteTotal*cantidad/1000;
+    }
+    
+    private Double aplicarFletePeso(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.PESO.name())).collect(Collectors.toList());        
+        Double fleteTotal = 0.0;              
+        
+        Double peso = productoReferenciado.getDouble("peso");
+        
+        for(Flete flete:fletesVolumen)
+        {
+            Double factor = CambioMoneda.findFirst("moneda1_id = ? and moneda2_id = ?", monedaSeleccionada.getInteger("moneda_id"),flete.getInteger("moneda_id")).getDouble("factor");
+            fleteTotal += peso*flete.getDouble("valor")*distancia*factor;                        
+        }
+        return fleteTotal*cantidad/1000;   
+    }
+    
+    private Double aplicarFletePorcentaje(List<Flete> fletes,Double precio,Integer cantidad) throws Exception
+    {
+        List<Flete> fletesVolumen = fletes.stream().filter(x -> x.getString("tipo").equals(Flete.TIPO.PORCENTAJE.name())).collect(Collectors.toList());        
+        if(fletesVolumen.isEmpty()) return 0.0;
+        Double fleteTotal = 0.0;              
+        
+        for(Flete flete:fletesVolumen)
+        {
+            fleteTotal += flete.getDouble("valor");
+        }
+        return precio*cantidad*(fleteTotal/100);
+    }        
+    
+    private void calcularFinal()
+    {
+        Double total = 0.0;
+        for(CotizacionxProducto cotizacionxproducto:productos)
+        {
+            total += cotizacionxproducto.getDouble("subtotal_final");
+        }
+        setValorTotal(total);
     }
 
     @FXML
@@ -742,7 +942,11 @@ public class ProformasController extends Controller {
     
     @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
     //de controllers
-    private void handleGenerarPedido(ActionEvent event) {        
+    private void handleGenerarPedido(ActionEvent event) {   
+        if(proformaSelecionado==null)
+        {
+            infoController.show("No ha seleccionado ninguna proforma");
+        }
         cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Pedidos, "Ventas", proformaSelecionado.getInteger("cotizacion_id")));
     }      
 
@@ -756,12 +960,22 @@ public class ProformasController extends Controller {
     
     
     private void handleAutoCompletar() {
-        int i = 0;
-        for (Cliente cliente : autoCompletadoList){
-            if (cliente.getString("nombre").equals(clienteSh.getText())){                
-                setInformacionCliente(cliente);                             
+        try {
+            for (Cliente cliente : autoCompletadoList){
+            if (cliente.getString("nombre").equals(clienteSh.getText()))
+            {                
+                setInformacionCliente(cliente);  
+                for(CotizacionxProducto cotizacionxProducto:productos)
+                {
+                    cotizacionxProducto.set("flete",calcularFlete(cotizacionxProducto));
+                }
+                TablaProductos.getColumns().get(0).setVisible(false);
+                TablaProductos.getColumns().get(0).setVisible(true);
             }
-        }
+        }            
+        } catch (Exception e) {
+            infoController.show("No se pudo cargar a este cliente: " + e.getMessage());
+        }       
     }
     
     private void productoToString() {

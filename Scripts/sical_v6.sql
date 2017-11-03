@@ -69,11 +69,11 @@ CREATE TABLE OrdenesSalida
 
 CREATE TABLE ParametrosSistema
 (
- parametro_id SERIAL NOT NULL ,
- nombre       VARCHAR(100) NOT NULL ,
- valor        VARCHAR(50) NOT NULL ,
- descripcion  VARCHAR(200) NOT NULL ,
- last_user_change VARCHAR(50) NOT NULL,
+ parametro_id     SERIAL NOT NULL ,
+ nombre           VARCHAR(100) NOT NULL ,
+ valor            VARCHAR(50) NOT NULL ,
+ descripcion      VARCHAR(200) NOT NULL ,
+ last_user_change VARCHAR(50) NOT NULL ,
 
  CONSTRAINT pk_617 PRIMARY KEY  (parametro_id )
 );
@@ -580,7 +580,7 @@ CREATE TABLE Fletes
  categoria_id   SERIAL NOT NULL ,
  tipo_cod       VARCHAR(20) NULL ,
  moneda_id      SERIAL NOT NULL ,
- valor          DECIMAL(10,2),
+ valor          DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_933 PRIMARY KEY  (flete_id , flete_code ),
  CONSTRAINT fk_978 FOREIGN KEY (tipo_cod, tipo_id)
@@ -757,18 +757,18 @@ CREATE TABLE OrdenesCompra
 
 CREATE TABLE CotizacionxProductos
 (
- tipo_id         SERIAL NOT NULL ,
- client_id       SERIAL NOT NULL ,
- cotizacion_cod  VARCHAR(20) NOT NULL ,
- cotizacion_id   SERIAL NOT NULL ,
- tipo_cod        VARCHAR(20) NOT NULL ,
- cantidad        DECIMAL(10,2) NOT NULL ,
- subtotal_previo DECIMAL(10,2) NOT NULL ,
- subtotal_final  DECIMAL(10,2) NOT NULL ,
- precio_unitario DECIMAL(10,2) NOT NULL ,
- descuento       DECIMAL(10,2) NOT NULL ,
- flete           DECIMAL(10,2) NOT NULL ,
- cantidad_descuento_disponible  DECIMAL(10,2) NOT NULL ,
+ tipo_id                       SERIAL NOT NULL ,
+ client_id                     SERIAL NOT NULL ,
+ cotizacion_cod                VARCHAR(20) NOT NULL ,
+ cotizacion_id                 SERIAL NOT NULL ,
+ tipo_cod                      VARCHAR(20) NOT NULL ,
+ cantidad                      DECIMAL(10,2) NOT NULL ,
+ subtotal_previo               DECIMAL(10,2) NOT NULL ,
+ subtotal_final                DECIMAL(10,2) NOT NULL ,
+ precio_unitario               DECIMAL(10,2) NOT NULL ,
+ descuento                     DECIMAL(10,2) NOT NULL ,
+ flete                         DECIMAL(10,2) NOT NULL ,
+ cantidad_descuento_disponible DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_456 PRIMARY KEY  (tipo_id , client_id , cotizacion_cod , cotizacion_id , tipo_cod ),
  CONSTRAINT fk_453 FOREIGN KEY (tipo_cod, tipo_id)
@@ -955,6 +955,7 @@ CREATE TABLE ErrorLog
  error_cod     VARCHAR(20) NOT NULL ,
  error_type_id SERIAL NOT NULL ,
  error_id      SERIAL NOT NULL ,
+ error_log_id  SERIAL NOT NULL ,
  usuario_cod   VARCHAR(20) NOT NULL ,
  usuario_id    SERIAL NOT NULL ,
  descripcion   VARCHAR(300) NOT NULL ,
@@ -963,8 +964,9 @@ CREATE TABLE ErrorLog
  rol_cod       VARCHAR(30) NOT NULL ,
  rol_id        SERIAL NOT NULL ,
  accion_id     SERIAL NOT NULL ,
+ tiempo        TIME NOT NULL ,
 
- CONSTRAINT pk_1079 PRIMARY KEY  (error_cod , error_type_id , error_id ),
+ CONSTRAINT pk_1079 PRIMARY KEY  (error_cod , error_type_id , error_id , error_log_id ),
  CONSTRAINT fk_1076 FOREIGN KEY (error_cod, error_type_id)
   REFERENCES TiposError(error_cod, error_type_id),
  CONSTRAINT fk_1081 FOREIGN KEY (usuario_cod, usuario_id)
@@ -986,27 +988,28 @@ CREATE TABLE ErrorLog
 
 CREATE TABLE AccionLog
 (
- menu_id     SERIAL NOT NULL ,
- accion_cod  VARCHAR(30) NOT NULL ,
- rol_cod     VARCHAR(30) NOT NULL ,
- rol_id      SERIAL NOT NULL ,
- accion_id   SERIAL NOT NULL ,
- tiempo      DATE NOT NULL ,
- usuario_cod VARCHAR(20) NOT NULL ,
- usuario_id  SERIAL NOT NULL ,
+ accion_log_id SERIAL NOT NULL ,
+ tiempo        TIME NOT NULL ,
+ usuario_cod   VARCHAR(20) NOT NULL ,
+ usuario_id    SERIAL NOT NULL ,
+ menu_id       SERIAL NOT NULL ,
+ accion_cod    VARCHAR(30) NOT NULL ,
+ rol_cod       VARCHAR(30) NOT NULL ,
+ rol_id        SERIAL NOT NULL ,
+ accion_id     SERIAL NOT NULL ,
 
- CONSTRAINT pk_1059 PRIMARY KEY  (menu_id , accion_cod , rol_cod , rol_id , accion_id ),
- CONSTRAINT fk_1056 FOREIGN KEY (menu_id, accion_cod, rol_cod, rol_id, accion_id)
-  REFERENCES AccionesxRoles(menu_id, accion_cod, rol_cod, rol_id, accion_id),
+ CONSTRAINT pk_1059 PRIMARY KEY  (accion_log_id ),
  CONSTRAINT fk_1064 FOREIGN KEY (usuario_cod, usuario_id)
-  REFERENCES Usuarios(usuario_cod, usuario_id)
+  REFERENCES Usuarios(usuario_cod, usuario_id),
+ CONSTRAINT fk_1875 FOREIGN KEY (menu_id, accion_cod, rol_cod, rol_id, accion_id)
+  REFERENCES AccionesxRoles(menu_id, accion_cod, rol_cod, rol_id, accion_id)
 );
 
 
 
---SKIP Index: fkIdx_1056
-
 --SKIP Index: fkIdx_1064
+
+--SKIP Index: fkIdx_1875
 
 
 --************************************** PromocionCantidades
@@ -1086,18 +1089,18 @@ CREATE TABLE PromocionPorcentajes
 
 CREATE TABLE OrdenesCompraxProductos
 (
- tipo_id          SERIAL NOT NULL ,
- client_id        SERIAL NOT NULL ,
- orden_compra_id  SERIAL NOT NULL ,
- orden_compra_cod VARCHAR(20) NOT NULL ,
- tipo_cod         VARCHAR(20) NOT NULL ,
- cantidad         DECIMAL(10,2) NOT NULL ,
- subtotal_previo  DECIMAL(10,2) NOT NULL ,
- subtotal_final   DECIMAL(10,2) NOT NULL ,
- precio_unitario  DECIMAL(10,2) NOT NULL ,
- descuento        DECIMAL(10,2) NOT NULL ,
- flete            DECIMAL(10,2) NOT NULL ,
- cantidad_descuento_disponible  DECIMAL(10,2) NOT NULL ,
+ tipo_id                       SERIAL NOT NULL ,
+ client_id                     SERIAL NOT NULL ,
+ orden_compra_id               SERIAL NOT NULL ,
+ orden_compra_cod              VARCHAR(20) NOT NULL ,
+ tipo_cod                      VARCHAR(20) NOT NULL ,
+ cantidad                      DECIMAL(10,2) NOT NULL ,
+ subtotal_previo               DECIMAL(10,2) NOT NULL ,
+ subtotal_final                DECIMAL(10,2) NOT NULL ,
+ precio_unitario               DECIMAL(10,2) NOT NULL ,
+ descuento                     DECIMAL(10,2) NOT NULL ,
+ flete                         DECIMAL(10,2) NOT NULL ,
+ cantidad_descuento_disponible DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_577 PRIMARY KEY  (tipo_id , client_id , orden_compra_id , orden_compra_cod , tipo_cod ),
  CONSTRAINT fk_574 FOREIGN KEY (orden_compra_cod, client_id, orden_compra_id)

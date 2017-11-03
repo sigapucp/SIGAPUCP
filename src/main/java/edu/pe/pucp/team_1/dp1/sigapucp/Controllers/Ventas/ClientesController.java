@@ -22,9 +22,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import java.io.File;
+import java.io.FileNotFoundException;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,11 +57,7 @@ public class ClientesController extends Controller{
     @FXML
     private TextField rucBusq;
     @FXML
-    private TextField razSocial;
-    @FXML
     private TextField nombreBusq;
-    @FXML
-    private Button visualizarBttn;
     @FXML
     private TextField clienteSh;
     @FXML
@@ -92,6 +95,10 @@ public class ClientesController extends Controller{
     private ConfirmationAlertController confirmatonController;
     private List<Cliente> clientes;
     private final ObservableList<Cliente> masterData = FXCollections.observableArrayList();
+    @FXML
+    private AnchorPane mostrar_detalle_cliente;
+    @FXML
+    private ComboBox<String> VerDepartamento;
     /**
      * Initializes the controller class.
      */
@@ -120,6 +127,7 @@ public class ClientesController extends Controller{
             if(!confirmatonController.show("Se creará el cliente con código: " + clienteSh.getText(), "¿Desea continuar?")) return;
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
+            nuevo_cliente.set("departamento",VerDepartamento.getSelectionModel().getSelectedItem());
             if (nuevo_cliente.is_valid()){
                 nuevo_cliente.saveIt();
                 Base.commitTransaction();
@@ -143,6 +151,7 @@ public class ClientesController extends Controller{
             if(!confirmatonController.show("Se editará el cliente con código: " + clienteSh.getText(), "¿Desea continuar?")) return;
             cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
+            cliente.set("departamento",VerDepartamento.getSelectionModel().getSelectedItem());
             cliente.saveIt();
             Base.commitTransaction();
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
@@ -152,6 +161,47 @@ public class ClientesController extends Controller{
         }
     }
     
+    @Override
+    public void cargar(){
+        //validamos que los campos sean los correctos
+        if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre cliente,rep legal,telefono,ruc,dni,tipo cliente,dir. despacho, dir. facturacion, departamento,", "¿Desea continuar?")) return;
+        //csv
+        String filename = "data_clientes.csv";
+        File file = new File(filename);
+        Boolean primera_fila = true;
+        try {
+            Scanner inputStream = new Scanner(file);
+ 
+            while (inputStream.hasNext()){
+                String data = inputStream.nextLine();
+                //manejo de la data aquí:
+                String [] values = data.split(",");
+                if (primera_fila) {
+                    primera_fila = false;
+                    if (values.length != 9) {
+                        infoController.show("El archivo .csv no tiene el formato adecuado. Verifique que sea\nnombre cliente,rep legal,telefono,ruc,dni,tipo cliente,dir. despacho, dir. facturacion, departamento,"); 
+                        return;
+                    }                    
+                    continue; //nos saltamos el encabezado
+                }
+                Base.openTransaction();
+                Cliente nuevo_cliente = new Cliente();
+                nuevo_cliente.asignar_atributos(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
+                nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
+                nuevo_cliente.setString("departamento", values[8]);
+                nuevo_cliente.saveIt();
+                Base.commitTransaction();
+                System.out.println("CORRECTO");
+            }
+            infoController.show("¡Carga masiva de datos de clientes exitosa!");
+            inputStream.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("INCORRECTO");
+            Base.rollbackTransaction();
+            Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
     
     @Override
     public void guardar() {
@@ -195,7 +245,7 @@ public class ClientesController extends Controller{
             cliente_formulario.setDisable(false);
             if (registro_seleccionado.getString("tipo_cliente").equals("PersonaNatural")){
                 dni.setText(registro_seleccionado.getString("dni"));
-                ruc.setDisable(true);
+                ruc.setDisable(false);
                 persoNatu.setSelected(true);
                 persoJuri.setSelected(false);
                 repLegal.setDisable(true);
@@ -210,6 +260,7 @@ public class ClientesController extends Controller{
             telf.setText(registro_seleccionado.getString("telef_contacto"));
             envioDir.setText(registro_seleccionado.getString("direccion_despacho"));
             factDir.setText(registro_seleccionado.getString("direccion_facturacion"));
+            VerDepartamento.getSelectionModel().select(registro_seleccionado.getString("departamento"));
             
             
         }
@@ -315,9 +366,16 @@ public class ClientesController extends Controller{
         inhabilitar_formulario();
         llenar_estado_social_busqueda();
         control_check_box();
+        
         clientes = null;
         clientes = Cliente.findAll();
         cargar_tabla_index();
+          
+        ObservableList<String> departamentos = FXCollections.observableArrayList();       
+        departamentos.addAll(Arrays.asList(Flete.ZONA.values()).stream().map(x->x.name()).collect(Collectors.toList()));
+        VerDepartamento.setItems(departamentos);
+        
+        
         tabla_clientes.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
             if (newSelection != null){
                 cliente_seleccioando = tabla_clientes.getSelectionModel().getSelectedItem();                
@@ -331,6 +389,7 @@ public class ClientesController extends Controller{
             texto.setDisable(true);
             texto2.setDisable(true);
             dni.setDisable(false);
+            persoJuri.setDisable(false);
             persoJuri.setSelected(false);
         }
     }
