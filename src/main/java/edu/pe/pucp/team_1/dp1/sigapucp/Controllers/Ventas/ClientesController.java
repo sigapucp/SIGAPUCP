@@ -199,7 +199,7 @@ public class ClientesController extends Controller{
             cliente_formulario.setDisable(false);
             if (registro_seleccionado.getString("tipo_cliente").equals("PersonaNatural")){
                 dni.setText(registro_seleccionado.getString("dni"));
-                ruc.setDisable(true);
+                ruc.setDisable(false);
                 persoNatu.setSelected(true);
                 persoJuri.setSelected(false);
                 repLegal.setDisable(true);
