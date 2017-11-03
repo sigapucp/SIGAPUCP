@@ -54,6 +54,11 @@ public class Controller implements Initializable {
         System.out.println("Se hará la carga masiva de datos");
     }
     
+    public void menuCall(cambiarMenuArgs eventArgs)
+    {
+        System.out.println("Se responde a la llamada desde otro menu");
+    }
+    
     public void postInitialize(String gFxmlPath)
     {        
         fxmlPath = gFxmlPath;

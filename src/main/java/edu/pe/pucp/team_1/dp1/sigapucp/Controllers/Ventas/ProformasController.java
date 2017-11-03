@@ -446,7 +446,6 @@ public class ProformasController extends Controller {
             {
                 infoController.show("No ha seleccionado ninguna proforma");
             }
-
           setProformaVisible(proformaSelecionado);                            
         } catch (Exception e) {
             infoController.show("Error al mostrar Cotizacion: " + e.getMessage());
@@ -509,8 +508,7 @@ public class ProformasController extends Controller {
     }      
         
     @FXML
-    private void eliminarProducto(ActionEvent event) {
-        
+    private void eliminarProducto(ActionEvent event) {        
         try {            
             CotizacionxProducto cotizacionxProducto = TablaProductos.getSelectionModel().getSelectedItem();
             if(cotizacionxProducto==null)
@@ -651,20 +649,8 @@ public class ProformasController extends Controller {
             
         } catch (Exception e) {
             infoController.show("Error al cambiar de moneda: " + e.getMessage());
-        }
-             
-    }
-    
-    private void recalcularTotal(Double cambio)
-    {
-        String totalValue = (!subTotalFinal.getText().isEmpty()) ? subTotalFinal.getText() : "0.0";
-        Double subTotalSinIgv = Double.valueOf(totalValue);                    
-        subTotalSinIgv += cambio;
-        subTotalFinal.setText(String.valueOf(subTotalSinIgv));
-        Double valorIgv = IGV*subTotalSinIgv;            
-        igvTotal.setText(String.valueOf(valorIgv));
-        total.setText(String.valueOf(subTotalSinIgv+valorIgv));        
-    }
+        }             
+    }       
     
     private void setValorTotal(Double valor)
     {        
@@ -935,9 +921,7 @@ public class ProformasController extends Controller {
             fleteTotal += flete.getDouble("valor");
         }
         return precio*cantidad*(fleteTotal/100);
-    }
-    
-    
+    }        
     
     private void calcularFinal()
     {
@@ -958,7 +942,11 @@ public class ProformasController extends Controller {
     
     @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
     //de controllers
-    private void handleGenerarPedido(ActionEvent event) {        
+    private void handleGenerarPedido(ActionEvent event) {   
+        if(proformaSelecionado==null)
+        {
+            infoController.show("No ha seleccionado ninguna proforma");
+        }
         cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Pedidos, "Ventas", proformaSelecionado.getInteger("cotizacion_id")));
     }      
 
