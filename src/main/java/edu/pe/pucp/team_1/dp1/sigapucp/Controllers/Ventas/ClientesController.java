@@ -22,11 +22,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import java.io.File;
+import java.io.FileNotFoundException;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -156,6 +161,41 @@ public class ClientesController extends Controller{
         }
     }
     
+    @Override
+    public void cargar(){
+        //validamos que los campos sean los correctos
+        //csv
+        String filename = "data_clientes.csv";
+        File file = new File(filename);
+        Boolean primera_fila = true;
+        try {
+            Scanner inputStream = new Scanner(file);
+ 
+            while (inputStream.hasNext()){
+                String data = inputStream.nextLine();
+                //manejo de la data aquí:
+                String [] values = data.split(",");
+                if (primera_fila) {
+                    primera_fila = false;
+                    continue; //nos saltamos el encabezado
+                }
+                Base.openTransaction();
+                Cliente nuevo_cliente = new Cliente();
+                nuevo_cliente.asignar_atributos(values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
+                nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
+                nuevo_cliente.setString("departamento", values[9]);
+                nuevo_cliente.saveIt();
+                Base.commitTransaction();
+                System.out.println("CORRECTO");
+            }
+            inputStream.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("INCORRECTO");
+            Base.rollbackTransaction();
+            Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
     
     @Override
     public void guardar() {

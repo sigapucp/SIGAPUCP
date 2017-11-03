@@ -50,6 +50,10 @@ public class Controller implements Initializable {
         System.out.println("Desactivar");
     }
     
+    public void cargar(){
+        System.out.println("Se hará la carga masiva de datos");
+    }
+    
     public void postInitialize(String gFxmlPath)
     {        
         fxmlPath = gFxmlPath;
