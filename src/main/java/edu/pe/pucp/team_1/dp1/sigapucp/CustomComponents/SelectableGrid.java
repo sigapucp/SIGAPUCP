@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.LazyList;
 
@@ -26,13 +28,14 @@ public class SelectableGrid extends AnchorPane  {
     private TreeMap<Integer, List<GridTile>> tiles;
     private Behavior behavior;
     
-    // Longitud de area nos define el tamano de un cuadrado dentro del dibujo para un almacen
+    // Largo -> Width
+    // Ancho -> Height
     public SelectableGrid(int width, int heigth, int grid_size, Behavior external_behavior) {
         grid_width = width > 400 ? 400 : width;
         grid_heigth = heigth > 400 ? 400 : heigth;
         tile_size = grid_size;
-        num_rows = (int) Math.ceil(width/grid_size);
-        num_columns = (int) Math.ceil(heigth/grid_size);
+        num_columns = width/grid_size;
+        num_rows = heigth/grid_size;
         tiles = new TreeMap<>();
         grid_real_width = width;
         grid_real_heigth = heigth;
@@ -41,14 +44,14 @@ public class SelectableGrid extends AnchorPane  {
     }
     
     private void initializeTiles() {
-        int aspect_ratio_width = grid_width/num_rows;
-        int aspect_ratio_heigth = grid_heigth/num_columns;
-        
+        int aspect_ratio_heigth = grid_heigth/num_rows;
+        int aspect_ratio_width = grid_width/num_columns;
+        // X-> j && Y -> i
         for(int i = 0; i < num_rows; i++)
             for(int j = 0; j < num_columns; j++) {
                 GridTile tile = new GridTile(aspect_ratio_width, aspect_ratio_heigth, j, i);
-                tile.setTranslateX(i * aspect_ratio_width);
-                tile.setTranslateY(j * aspect_ratio_heigth);
+                tile.setTranslateX(j * aspect_ratio_width);
+                tile.setTranslateY(i * aspect_ratio_heigth);
                 tile.getActiveTileEvent().addHandler((sender, args) -> {
                     if (behavior.isNotTileSavedOrActive(args.getY_cord(), args.getX_cord())) behavior.addSelectedTile(args.getY_cord(), args.getX_cord());
                 });
@@ -112,17 +115,17 @@ public class SelectableGrid extends AnchorPane  {
                     int ancho = Integer.valueOf(String.valueOf(almacen.get("ancho")));
                     int x_relativo = Integer.valueOf(String.valueOf(almacen.get("x_relativo_central")));
                     int y_relativo = Integer.valueOf(String.valueOf(almacen.get("y_relativo_central")));
-                    int numRow = largo/tileSizeAtomic.get();
-                    int numColumn = ancho/tileSizeAtomic.get();
+                    int numRow = ancho/tileSizeAtomic.get();
+                    int numColumn = largo/tileSizeAtomic.get();
 
-                    for(int i = x_relativo; i < x_relativo + numRow; i++)
-                        for(int j = y_relativo; j < y_relativo + numColumn; j++) {
-                            tiles.get(i).get(j).activeTile();
+                    for(int i = y_relativo; i < y_relativo + numRow; i++)
+                        for(int j = x_relativo; j < x_relativo + numColumn; j++) {
+                            tiles.get(i).get(j).activeTile(false);
                             behavior.addToSavedTiles(i, j);
                         }
                 });        
             } catch(Exception e) {
-                System.out.println(e);
+                Logger.getLogger(SelectableGrid.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
@@ -135,15 +138,24 @@ public class SelectableGrid extends AnchorPane  {
                     int rack_x2 = Integer.valueOf(String.valueOf(rack.get("x_ancla2")));
                     int rack_y1 = Integer.valueOf(String.valueOf(rack.get("y_ancla1")));
                     int rack_y2 = Integer.valueOf(String.valueOf(rack.get("y_ancla2")));
-
-                    for(int i = rack_x1 ; i < rack_x2; i++)
-                        for(int j = rack_y1; j < rack_y2; j++){
-                            tiles.get(i).get(j).activeTile();
-                            behavior.addToSavedTiles(i, j);
+                    System.out.println(String.format("Rack: (X1, Y1) -> (%d, %d) - (X2, Y2) -> (%d, %d)", rack_x1, rack_y1, rack_x2, rack_y2));
+                    if(rack_x1 == rack_x2) {
+                        for(int i = rack_y1; i <= rack_y2; i++) {
+                            tiles.get(i).get(rack_x1).activeTile(false);
+                            behavior.addToSavedTiles(i, rack_x1);
                         }
+                            
+                    } 
+                    else if (rack_y1 == rack_y2) {
+                        for(int j = rack_x1; j <= rack_x2; j++) {
+                            tiles.get(rack_y1).get(j).activeTile(false);
+                            behavior.addToSavedTiles(rack_y1, j);
+                        }
+                            
+                    }
                 });
             } catch(Exception e) {
-                System.out.println(e);
+                Logger.getLogger(SelectableGrid.class.getName()).log(Level.SEVERE, null, e);
             }    
         }
     }

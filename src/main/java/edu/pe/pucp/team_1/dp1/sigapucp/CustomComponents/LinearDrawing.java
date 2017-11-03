@@ -56,13 +56,16 @@ public class LinearDrawing implements Behavior{
     }
     
     @Override
-        public Boolean checkDrawRules() {
+    public Boolean checkDrawRules() {
         boolean condition;
         
         directionX = active_tiles.size() <= 1;
         directionY = active_tiles.size() > 1;
         
-        if(active_tiles.size() < 2) {
+        Map.Entry<Integer, List<Integer>> entry = active_tiles.entrySet().iterator().next();
+        List<Integer> firstEntryList = entry.getValue();
+        
+        if(active_tiles.size() < 2 && firstEntryList.size() > 1) {
             condition = true;
         } else {
             AtomicBoolean atomicCond = new AtomicBoolean(true);
@@ -126,16 +129,16 @@ public class LinearDrawing implements Behavior{
         Collections.sort(firstList);
         Collections.sort(lastList);
         
-        int x_ancla1 = firstIndex.get();
-        int x_ancla2 = lastIndex.get();
-        int y_ancla1 = firstList.get(0);
-        int y_ancla2 = lastList.get(lastList.size() - 1);
+        int x_ancla1 = firstList.get(0);
+        int x_ancla2 = lastList.get(lastList.size() - 1);
+        int y_ancla1 = firstIndex.get();
+        int y_ancla2 = lastIndex.get();
         
         args.setX_ancla1(x_ancla1);
         args.setY_ancla1(y_ancla1);
         args.setX_ancla2(x_ancla2);
         args.setY_ancla2(y_ancla2);
-        int largo = directionX ? (y_ancla2 - y_ancla1) : (directionY ? (x_ancla2 - x_ancla1) : 0);
+        int largo = directionX ? (x_ancla2 - x_ancla1 + 1) : (directionY ? (y_ancla2 - y_ancla1 + 1) : 0);
         args.setLongitud(largo);
         args.setIs_uniforme('T');
 
@@ -146,7 +149,7 @@ public class LinearDrawing implements Behavior{
     @Override
     public Boolean isNotTileSavedOrActive(int i_index, int j_index) {
         List<Integer> active_tilesList = active_tiles.get(i_index);
-        List<Integer> saved_tilesList = active_tiles.get(i_index);
+        List<Integer> saved_tilesList = saved_tiles.get(i_index);
 
         return (active_tilesList == null || !active_tilesList.contains(j_index)) &&
                (saved_tilesList == null || !saved_tilesList.contains(j_index));

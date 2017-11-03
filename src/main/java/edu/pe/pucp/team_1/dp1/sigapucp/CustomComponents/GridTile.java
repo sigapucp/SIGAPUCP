@@ -34,10 +34,10 @@ public class GridTile extends StackPane {
         y_cord = y;
         releaseTileEvent = new Event<>();
         activeTileEvent = new Event<>();
-//        Text text = new Text();
-//        
-//        text.setFont(Font.font(14));
-//        text.setText(String.format("%d/%d", x, y));
+        Text text = new Text();
+        
+        text.setFont(Font.font(14));
+        text.setText(String.format("%d/%d", x, y));
 
         border = new Rectangle(width, height);
         border.setFill(null);
@@ -50,7 +50,7 @@ public class GridTile extends StackPane {
     private void setMouseEvents() {
         // Se ejecuta cuando solo en el primer tile seleccionado
         setOnMousePressed((event) -> {
-            activeTile();
+            activeTile(true);
         });
         
         // Se ejecuta cuando solo en el primer tile seleccionado
@@ -60,7 +60,7 @@ public class GridTile extends StackPane {
         
         // Se ejecuta cuando entra a un nuevo tile
         setOnMouseDragEntered((event) -> {
-            activeTile();
+            activeTile(true);
         });
         
         // Siempre se ejecuta desde el primer tile seleccionado
@@ -81,14 +81,18 @@ public class GridTile extends StackPane {
         return activeTileEvent;
     }
     
-    public void activeTile() {
-        tileArgs args = new tileArgs();
-        args.setX_cord(x_cord);
-        args.setY_cord(y_cord);
+    public void activeTile(boolean fromEvent) {
+        if(fromEvent) {
+            tileArgs args = new tileArgs();
+            args.setX_cord(x_cord);
+            args.setY_cord(y_cord);
+
+            activeTileEvent.fire(this, args);    
+        }
         
-        activeTileEvent.fire(this, args);
         border.setFill(Color.RED);
     }
+    
     
     public void clearTile() {
         border.setFill(null);

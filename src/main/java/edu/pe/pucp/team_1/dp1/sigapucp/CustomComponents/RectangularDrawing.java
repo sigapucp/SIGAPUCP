@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  *
  * @author herbert
+ * TreeMap<RowIndex, List<ColumnIndex>> elements;
  */
 public class RectangularDrawing implements Behavior {
     private TreeMap<Integer, List<Integer>> active_tiles;
@@ -44,7 +45,7 @@ public class RectangularDrawing implements Behavior {
     public Boolean checkDrawRules() {
         AtomicInteger expectedNumberOfRows = new AtomicInteger(0);
         AtomicBoolean sameNumberOfRows = new AtomicBoolean(true);
-        
+                
         active_tiles.forEach((i, list) -> {
             if(expectedNumberOfRows.get() == 0) expectedNumberOfRows.set(list.size());
             sameNumberOfRows.set(sameNumberOfRows.get() && expectedNumberOfRows.get() == list.size());
@@ -107,11 +108,12 @@ public class RectangularDrawing implements Behavior {
         Collections.sort(tmpValues);
         
         createAlmacenArgs args = new createAlmacenArgs();
-        args.setAncho(tmpValues.size());
-        args.setLargo(temp_tiles.size());
+        
+        args.setLargo(tmpValues.size());
+        args.setAncho(temp_tiles.size());
         args.setEs_cental('F');
-        args.setX_relativo(entry.getKey());
-        args.setY_relativo(tmpValues.get(0));
+        args.setX_relativo(tmpValues.get(0));
+        args.setY_relativo(entry.getKey());
         createLogicalWarehouse.fire(this, args);
         
         temp_tiles.clear();
@@ -120,7 +122,7 @@ public class RectangularDrawing implements Behavior {
     @Override
     public Boolean isNotTileSavedOrActive(int i_index, int j_index) {
         List<Integer> active_tilesList = active_tiles.get(i_index);
-        List<Integer> saved_tilesList = active_tiles.get(i_index);
+        List<Integer> saved_tilesList = saved_tiles.get(i_index);
 
         return (active_tilesList == null || !active_tilesList.contains(j_index)) &&
                (saved_tilesList == null || !saved_tilesList.contains(j_index));

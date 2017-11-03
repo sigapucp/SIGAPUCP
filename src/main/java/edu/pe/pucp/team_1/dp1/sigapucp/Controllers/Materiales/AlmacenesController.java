@@ -19,19 +19,16 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.TipoError;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -60,6 +57,7 @@ public class AlmacenesController extends Controller{
     private ConfirmationAlertController confirmatonController;
     private Rack temp_rack;
     private Almacen temp_almacen;
+    private Almacen almacen_seleccionado;
     private AtomicBoolean skipValidationOnTabChange;
     @FXML private AnchorPane AnchorPane;
     @FXML private TableView<Almacen> tabla_almacenes;
@@ -110,13 +108,15 @@ public class AlmacenesController extends Controller{
     }
     
     private void setTempRack(createRackArgs args) {
-        temp_rack.set("x_ancla1",args.getX_ancla1());
-        temp_rack.set("y_ancla1",args.getY_ancla1());
-        temp_rack.set("x_ancla2",args.getX_ancla2());
-        temp_rack.set("y_ancla2",args.getY_ancla2());
-        temp_rack.set("longitud",args.getLongitud());
-        temp_rack.set("es_uniforme",args.getIs_uniforme());
-        temp_rack.set("estado", "ACTIVO");
+        temp_rack.asignarAtributosRack(
+                "RackCod", //Rack Cod - Sera generado despues
+                args.getLongitud(),
+                args.getIs_uniforme(),
+                args.getX_ancla1(),
+                args.getY_ancla1(),
+                args.getX_ancla2(),
+                args.getY_ancla2(),
+                "ACTIVO");
 
         racks.add(temp_rack);
         rack_table_view.setItems(racks);
@@ -158,9 +158,9 @@ public class AlmacenesController extends Controller{
                 tipoAlmacen.getSelectedToggle() == null);
     }
     
-    private void createNewLinearSelectableGrid(int columns, int rows, int size) {
+    private void createNewLinearSelectableGrid(int width, int height, int size) {
         LinearDrawing linearBehavior = new LinearDrawing();
-        grid = new SelectableGrid(rows, columns, size, linearBehavior);
+        grid = new SelectableGrid(width, height, size, linearBehavior);
         
         linearBehavior.getDisableGridEvent().addHandler((sender, args) -> {
             create_racks_container.setDisable(false);
@@ -196,22 +196,23 @@ public class AlmacenesController extends Controller{
     
     private void setTypeOfShow(boolean success) {
         if (success && tipoAlmacen.getSelectedToggle() != null) {
-            int almacenAlto = Integer.parseInt(almacen_largo_field.getText());
+            int almacenLargo = Integer.parseInt(almacen_largo_field.getText());
             int almacenAncho = Integer.parseInt(almacen_ancho_field.getText());
             int tileSize = Integer.parseInt(almacen_lado_grilla.getText());
-            Boolean hasAlmacenResize = grid == null || almacenAlto != grid.getGrid_heigth() || almacenAncho != grid.getGrid_width()|| tileSize != grid.getTileSize();
+            Boolean hasAlmacenResize = grid == null || almacenLargo != grid.getGrid_width() || almacenAncho != grid.getGrid_heigth()|| tileSize != grid.getTileSize();
+//            System.out.println(String.format("Los valores que debo ver son %d == %d, %d == %d, %d == %d", almacenAlto, grid.getGrid_heigth(), almacenAncho, grid.getGrid_width(), tileSize, grid.getTileSize()));
             RadioButton activeRadio = (RadioButton) tipoAlmacen.getSelectedToggle();
             switch(activeRadio.getText()) {
                 case "Almacen Logico":        
                     if (hasAlmacenResize) {
                         System.out.println("Crea una nueva grilla para Almacen Logico");
-                        createNewLinearSelectableGrid(almacenAncho, almacenAlto, tileSize);
+                        createNewLinearSelectableGrid(almacenLargo, almacenAncho, tileSize);
                     }
                     break;
                 case "Almacen Fisico":
                     if (hasAlmacenResize) {
                         System.out.println("Crea una nueva grilla para Almacen Fisico");
-                        createNewRectangularSelectableGrid(almacenAncho, almacenAlto, tileSize);
+                        createNewRectangularSelectableGrid(almacenLargo, almacenAncho, tileSize);
                     }
                     break;
                 default:
@@ -223,6 +224,7 @@ public class AlmacenesController extends Controller{
     
     private void actualizarTablaBusqueda() {
         LazyList<Almacen> almacenActuales = Almacen.findAll();
+
         if(almacenActuales.size() < 1) {
             radio_btn_almacen_logico.setDisable(true);
             tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
@@ -293,7 +295,7 @@ public class AlmacenesController extends Controller{
                 cod = cod.concat(String.format("-almlog-%d", index));
             }
         } catch(Exception e) {
-            System.out.println(e);
+            Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
         }
         
         return cod;
@@ -319,7 +321,7 @@ public class AlmacenesController extends Controller{
     
     @FXML
     public void visualizarAlmacen(ActionEvent event) {
-        Almacen almacen_seleccionado = tabla_almacenes.getSelectionModel().getSelectedItem();
+        almacen_seleccionado = tabla_almacenes.getSelectionModel().getSelectedItem();
         almacen_form_pane.setDisable(false);
         try {
             String nombreAlmacen = String.valueOf(almacen_seleccionado.get("nombre"));
@@ -331,20 +333,22 @@ public class AlmacenesController extends Controller{
             almacen_largo_field.setText(largoAlmacenStr);
             almacen_ancho_field.setText(anchoAlmacenStr);
             almacen_lado_grilla.setText(String.valueOf(ladoGrillaAlmacen));
-                
+            radio_btn_almacen_logico.setDisable(false);
+            radio_btn_almacen_fisico.setDisable(false);
+            
             if( String.valueOf(almacen_seleccionado.get("es_central")).equals("T") ) {
                 tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
                 radio_btn_almacen_logico.setDisable(true);
                 list_objects_pane.getSelectionModel().select(list_almacenes_tab);
-                
+
                 LazyList<Almacen> almacenesLogicos = Almacen.find("es_central = ?", 'F');
                 almacenes_logicos.clear();
                 almacenesLogicos.forEach(almacenes_logicos::add);
                 almacen_table_view.setItems(almacenes_logicos);
-                
+
                 list_racks_tab.setDisable(true);
                 list_almacenes_tab.setDisable(false);
-                createNewRectangularSelectableGrid(400, 400, ladoGrillaAlmacen);
+                createNewRectangularSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);
                 grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);
             } else {
                 tipoAlmacen.selectToggle(radio_btn_almacen_logico);
@@ -358,26 +362,26 @@ public class AlmacenesController extends Controller{
                 
                 list_racks_tab.setDisable(false);
                 list_almacenes_tab.setDisable(true);
-                createNewLinearSelectableGrid(400, 400, ladoGrillaAlmacen);
+                createNewLinearSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);
                 grid.drawRacks(racks_temporales, ladoGrillaAlmacen);
-                
             }
         } catch (Exception e) {
-            System.out.println(e);
+            Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
         }
     }
     
     @FXML
     public void crearRack(ActionEvent event) {
-        if (!rack_altura_field.getText().equals("")) {
-            int altura = Integer.parseInt(String.valueOf(rack_altura_field.getText()));
+        String rackAlturaStr = rack_altura_field.getText();
+        if (!rackAlturaStr.equals("") && rackAlturaStr.matches("[-+]?\\d*\\.?\\d+") ) {
+            int altura = Integer.parseInt(rackAlturaStr);
             temp_rack = new Rack();
             temp_rack.set("altura", altura);
             grid.clearAndSaveTempTiles();
             infoController.show("Se agrego el rack correctamente");
             afterCreateOrCancelRack();
         } else {
-            warningController.show("Error de Creacion de Rack", "Se debe ingresar una altura");
+            warningController.show("Error de Creacion de Rack", "Se debe ingresar una altura valida");
         }
         
     }
@@ -403,7 +407,7 @@ public class AlmacenesController extends Controller{
             infoController.show("Se creo correctamente el almacen");
             afterCreateOrCancelAlmacen();
         } else {
-            warningController.show("Error de Creacion de Almacen", "Se debe ingresar un nombre");
+            warningController.show("Error de Creacion de Almacen", "Se debe ingresar un nombre del Almacen");
         }
     }
     
@@ -463,14 +467,13 @@ public class AlmacenesController extends Controller{
             String almacenAnchoStr = almacen_ancho_field.getText();
             String almacenLongitudAreaStr = almacen_lado_grilla.getText();
             char almacenEsCentral = tipoAlmacenRadio.getText().equals("Almacen Logico") ? 'F' : 'T';
-            Almacen almacen = new Almacen();
+            Almacen almacen = almacen_seleccionado == null ? new Almacen() : almacen_seleccionado;
             
             if(almacen.esValido(almacenNombre,almacenLargoStr, almacenAnchoStr, almacenLongitudAreaStr, almacenEsCentral, almacenes_logicos, racks)) {
+                int almacenLargo = Integer.parseInt(almacenLargoStr);
+                int almacenAncho = Integer.parseInt(almacenAnchoStr);
+                double almacenLongitudArea = Double.parseDouble(almacenLongitudAreaStr);
                 if(almacenEsCentral == 'T') {
-                    int almacenLargo = Integer.parseInt(almacenLargoStr);
-                    int almacenAncho = Integer.parseInt(almacenAnchoStr);
-                    double almacenLongitudArea = Double.parseDouble(almacenLongitudAreaStr);
-                    
                     try {
                         String almacenCentralCod = generateAlmacenCode(almacenEsCentral, "");
                         Base.openTransaction();
@@ -481,10 +484,6 @@ public class AlmacenesController extends Controller{
                                 almacenLongitudArea,
                                 almacenEsCentral,
                                 usuarioActual);
-
-                        System.out.println("Almacen con datos");
-                        System.out.println(almacen);
-                        System.out.println(almacenes_logicos);
                         
                         almacen.saveIt();
                         
@@ -497,14 +496,32 @@ public class AlmacenesController extends Controller{
                         clearAlmacenForm();
                         
                         infoController.show("El almacen Central y los almacenes logicos se crearon satisfactoriamente");
+                        actualizarTablaBusqueda();
                     } catch(Exception e) {
                         infoController.show("El almacen contiene errores : " + e);        
                         Base.rollbackTransaction();
                     }
                     
                 } else {
-                    System.out.println("No se que hago");
-    //                almacen.asignarAtributosAlmacenLogico();                
+                    try {
+//                        System.out.println(almacen);
+                        Base.openTransaction();
+                        almacen.updateAtributosAlmacenLogico(almacenNombre,
+                                almacenLargo,
+                                almacenAncho,
+                                almacenLongitudArea,
+                                almacenEsCentral,
+                                usuarioActual,
+                                racks);                        
+                        almacen.saveIt();
+                        Base.commitTransaction();
+                        clearAlmacenForm();
+                        
+                        infoController.show("El almacen Logico y los racks se crearon satisfactoriamente");
+                    } catch(Exception e) {
+                        infoController.show("El almacen contiene errores : " + e);
+                        Base.rollbackTransaction();
+                    }
                 }
             } else {
                 String errores = generarErrores(almacenNombre,almacenLargoStr, almacenAnchoStr, almacenEsCentral, almacenes_logicos, racks);
@@ -515,7 +532,7 @@ public class AlmacenesController extends Controller{
                         
                         warningController.show(error.getString("descripcion"), errores);    
                     } catch(Exception e) {
-                        System.out.println(e);
+                        Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
                     }
                 }
             }

@@ -46,12 +46,6 @@ public class Almacen extends Model{
         set("last_user_change", usuario_actual.get("email"));
         set("flag_last_operation", 'T');
         setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        
-        if(racks.size() > 0) {
-            racks.forEach((rack) -> {
-                add(rack);
-            });
-        }
     }
     
     public void asignarAtributosAlmacenCentral(String almacen_nombre,
@@ -89,13 +83,41 @@ public class Almacen extends Model{
         switch(almacen_central) {
             case 'T':
                 System.out.println("Almacen Central");
-                System.out.println(condition && almacenes_logicos.size() > 0);
                 return condition && almacenes_logicos.size() > 0;
             case 'F':
                 System.out.println("Almacen Logico");
                 return condition && racks.size() > 0;
             default:
                 return false;
+        }
+    }
+    
+    public void updateAtributosAlmacenLogico(String almacen_nombre,
+            int almacen_largo,
+            int almacen_ancho,
+            double almacen_longitud_area,
+            char almacen_central,
+            Usuario usuario_actual,
+            ObservableList<Rack> racks)
+    {
+        set("nombre", almacen_nombre);
+        set("largo", almacen_largo);
+        set("ancho", almacen_ancho);
+        set("longitud_area", almacen_longitud_area);
+        set("es_central", almacen_central);
+        set("last_user_change", usuario_actual.get("email"));
+        setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        
+        if(racks.size() > 0) {
+            racks.forEach((rack) -> {
+                int almacenId = Integer.valueOf(String.valueOf(get("almacen_id")));
+                String almacenCod = String.valueOf(get("almacen_cod"));
+                rack.set("rack_cod", rack.generarCodigoRack(almacenCod));
+                rack.set("almacen_id", almacenId);
+                rack.set("almacen_cod", almacenCod);
+
+                add(rack);
+            });
         }
     }
 }
