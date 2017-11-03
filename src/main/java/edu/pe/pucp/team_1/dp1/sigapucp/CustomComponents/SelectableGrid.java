@@ -104,24 +104,47 @@ public class SelectableGrid extends AnchorPane  {
     }
     
     public void drawAlmacenes(LazyList<Almacen> almacenes, int tileSize) {
-        AtomicInteger tileSizeAtomic = new AtomicInteger(tileSize);
-        almacenes.forEach((almacen) -> {
-            int largo = Integer.valueOf(String.valueOf(almacen.get("largo")));
-            int ancho = Integer.valueOf(String.valueOf(almacen.get("ancho")));
-            int x_relativo = Integer.valueOf(String.valueOf(almacen.get("x_relativo_central")));
-            int y_relativo = Integer.valueOf(String.valueOf(almacen.get("y_relativo_central")));
-            int numRow = largo/tileSizeAtomic.get();
-            int numColumn = ancho/tileSizeAtomic.get();
-            System.out.println(String.format("El inicio del almacen fisico es %d %d y las mediciones son %d y %d", x_relativo, y_relativo, numRow, numColumn ));
-            for(int i = x_relativo; i < x_relativo + numRow; i++)
-                for(int j = y_relativo; j < y_relativo + numColumn; j++) {
-                    System.out.println(String.format("Los valores que se deben visitar son %d %d", i, j));
-                    tiles.get(i).get(j).activeTile();
-                }
-        });
+        if(almacenes.size() > 0) {
+            try {
+                AtomicInteger tileSizeAtomic = new AtomicInteger(tileSize);
+                almacenes.forEach((almacen) -> {
+                    int largo = Integer.valueOf(String.valueOf(almacen.get("largo")));
+                    int ancho = Integer.valueOf(String.valueOf(almacen.get("ancho")));
+                    int x_relativo = Integer.valueOf(String.valueOf(almacen.get("x_relativo_central")));
+                    int y_relativo = Integer.valueOf(String.valueOf(almacen.get("y_relativo_central")));
+                    int numRow = largo/tileSizeAtomic.get();
+                    int numColumn = ancho/tileSizeAtomic.get();
+
+                    for(int i = x_relativo; i < x_relativo + numRow; i++)
+                        for(int j = y_relativo; j < y_relativo + numColumn; j++) {
+                            tiles.get(i).get(j).activeTile();
+                            behavior.addToSavedTiles(i, j);
+                        }
+                });        
+            } catch(Exception e) {
+                System.out.println(e);
+            }
+        }
     }
     
-    public void drawRacks(LazyList<Rack> racks) {
-        
+    public void drawRacks(LazyList<Rack> racks, int tileSize) {
+        if(racks.size() > 0) {
+            try {
+                racks.forEach((rack) -> {
+                    int rack_x1 = Integer.valueOf(String.valueOf(rack.get("x_ancla1")));
+                    int rack_x2 = Integer.valueOf(String.valueOf(rack.get("x_ancla2")));
+                    int rack_y1 = Integer.valueOf(String.valueOf(rack.get("y_ancla1")));
+                    int rack_y2 = Integer.valueOf(String.valueOf(rack.get("y_ancla2")));
+
+                    for(int i = rack_x1 ; i < rack_x2; i++)
+                        for(int j = rack_y1; j < rack_y2; j++){
+                            tiles.get(i).get(j).activeTile();
+                            behavior.addToSavedTiles(i, j);
+                        }
+                });
+            } catch(Exception e) {
+                System.out.println(e);
+            }    
+        }
     }
 }

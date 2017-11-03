@@ -107,8 +107,6 @@ public class AlmacenesController extends Controller{
         almacenes = FXCollections.observableArrayList();
         almacenes_logicos = FXCollections.observableArrayList();
         skipValidationOnTabChange = new AtomicBoolean(false);
-        
-//        createNewLinearSelectableGrid(400, 400, 10);
     }
     
     private void setTempRack(createRackArgs args) {
@@ -187,7 +185,7 @@ public class AlmacenesController extends Controller{
         
         rectangularBehavior.getCreateLogicalWarehouseEvent().addHandler((sender, args) -> {
             args.setNombre(almacen_logico_nombre_field.getText());
-            args.setLongitud_area(grid.getTileSize() > 10 ? grid.getTileSize()/10 : grid.getTileSize());
+            args.setLongitud_area(grid.getTileSize());
             args.setAncho((args.getAncho()*grid.getTileSize()));
             args.setLargo((args.getLargo()*grid.getTileSize()));
             setTempAlmacen(args);
@@ -323,38 +321,56 @@ public class AlmacenesController extends Controller{
     public void visualizarAlmacen(ActionEvent event) {
         Almacen almacen_seleccionado = tabla_almacenes.getSelectionModel().getSelectedItem();
         almacen_form_pane.setDisable(false);
-        if( String.valueOf(almacen_seleccionado.get("es_central")).equals("T") ) {
-            try {
-                String nombreAlmacen = String.valueOf(almacen_seleccionado.get("nombre"));
-                String largoAlmacenStr = String.valueOf(almacen_seleccionado.get("largo"));
-                String anchoAlmacenStr = String.valueOf(almacen_seleccionado.get("ancho"));
-                String ladoGrillaAlmacenStr = String.valueOf(almacen_seleccionado.get("longitud_area"));
-                int ladoGrillaAlmacen = Double.valueOf(ladoGrillaAlmacenStr).intValue();
+        try {
+            String nombreAlmacen = String.valueOf(almacen_seleccionado.get("nombre"));
+            String largoAlmacenStr = String.valueOf(almacen_seleccionado.get("largo"));
+            String anchoAlmacenStr = String.valueOf(almacen_seleccionado.get("ancho"));
+            String ladoGrillaAlmacenStr = String.valueOf(almacen_seleccionado.get("longitud_area"));
+            int ladoGrillaAlmacen = Double.valueOf(ladoGrillaAlmacenStr).intValue();
+            almacen_nombre_field.setText(nombreAlmacen);
+            almacen_largo_field.setText(largoAlmacenStr);
+            almacen_ancho_field.setText(anchoAlmacenStr);
+            almacen_lado_grilla.setText(String.valueOf(ladoGrillaAlmacen));
                 
+            if( String.valueOf(almacen_seleccionado.get("es_central")).equals("T") ) {
                 tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
                 radio_btn_almacen_logico.setDisable(true);
-                almacen_nombre_field.setText(nombreAlmacen);
-                almacen_largo_field.setText(largoAlmacenStr);
-                almacen_ancho_field.setText(anchoAlmacenStr);
-                almacen_lado_grilla.setText(String.valueOf(ladoGrillaAlmacen));
+                list_objects_pane.getSelectionModel().select(list_almacenes_tab);
+                
                 LazyList<Almacen> almacenesLogicos = Almacen.find("es_central = ?", 'F');
+                almacenes_logicos.clear();
                 almacenesLogicos.forEach(almacenes_logicos::add);
                 almacen_table_view.setItems(almacenes_logicos);
+                
+                list_racks_tab.setDisable(true);
                 list_almacenes_tab.setDisable(false);
-                createNewRectangularSelectableGrid(Integer.valueOf(anchoAlmacenStr), Integer.valueOf(largoAlmacenStr), ladoGrillaAlmacen);
+                createNewRectangularSelectableGrid(400, 400, ladoGrillaAlmacen);
                 grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);
-            } catch (Exception e) {
-                System.out.println(e);
+            } else {
+                tipoAlmacen.selectToggle(radio_btn_almacen_logico);
+                radio_btn_almacen_fisico.setDisable(true);
+                list_objects_pane.getSelectionModel().select(list_racks_tab);
+                
+                LazyList<Rack> racks_temporales = almacen_seleccionado.getAll(Rack.class);
+                racks.clear();
+                racks_temporales.forEach(racks::add);
+                rack_table_view.setItems(racks);
+                
+                list_racks_tab.setDisable(false);
+                list_almacenes_tab.setDisable(true);
+                createNewLinearSelectableGrid(400, 400, ladoGrillaAlmacen);
+                grid.drawRacks(racks_temporales, ladoGrillaAlmacen);
+                
             }
-            
-            
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
     
     @FXML
     public void crearRack(ActionEvent event) {
         if (!rack_altura_field.getText().equals("")) {
-            int altura = Integer.parseInt(rack_altura_field.getText());
+            int altura = Integer.parseInt(String.valueOf(rack_altura_field.getText()));
             temp_rack = new Rack();
             temp_rack.set("altura", altura);
             grid.clearAndSaveTempTiles();
@@ -393,8 +409,6 @@ public class AlmacenesController extends Controller{
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-//        pane_grilla.getChildren().setAll(grid);
         // Creacion de almacen logico, tabla de Racks creados hasta el momento
         rack_column_codigo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod") ));
         rack_column_largo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("longitud") ));

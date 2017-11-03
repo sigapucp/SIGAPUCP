@@ -151,6 +151,20 @@ public class LinearDrawing implements Behavior{
         return (active_tilesList == null || !active_tilesList.contains(j_index)) &&
                (saved_tilesList == null || !saved_tilesList.contains(j_index));
     }
+    
+    @Override
+    public void addToSavedTiles(int i_index, int j_index) {
+        List<Integer> tmpList = saved_tiles.get(i_index);
+        
+        if(tmpList == null) {
+            tmpList = new ArrayList<>();
+            tmpList.add(j_index);
+            saved_tiles.put(i_index, tmpList);
+        } else {
+            tmpList.add(j_index);
+            saved_tiles.replace(i_index, tmpList);
+        }
+    }
    
     public IEvent<createRackArgs> getCreateRackEvent() {
         return createRackEvent;

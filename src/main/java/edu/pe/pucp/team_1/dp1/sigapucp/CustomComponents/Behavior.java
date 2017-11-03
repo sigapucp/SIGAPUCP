@@ -20,4 +20,5 @@ public interface Behavior {
     public void clearCurrentActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
     public void clearAndSaveTempTiles(TreeMap<Integer, List<GridTile>> tiles);
     public Boolean isNotTileSavedOrActive(int i_index, int j_index);
+    public void addToSavedTiles(int i_index, int j_index);
 }
