@@ -16,6 +16,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.Promociones;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
@@ -38,6 +39,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -156,6 +159,7 @@ public class ProformasController extends Controller {
     private List<TipoProducto> autoCompletadoProductoList;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
     private Double IGV;    
+    private Moneda monedaSeleccionada = null;
   
     /**
      * Initializes the controller class.
@@ -257,7 +261,14 @@ public class ProformasController extends Controller {
             llenar_combobox();
             llenar_autocompletado();
             inhabilitar_formulario();
-            setAgregarProductos();                                            
+            setAgregarProductos();   
+            
+            VerMoneda.valueProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                if(newValue == null) return;
+                monedaSeleccionada = Moneda.findFirst("nombre = ?", newValue);
+                cambiarMoneda();
+            });
+            
         } catch (Exception e) {
             infoController.show("Error al cargar las proformas " + e.getMessage());
         }                                      
@@ -435,7 +446,6 @@ public class ProformasController extends Controller {
             {
                 infoController.show("No ha seleccionado ninguna proforma");
             }
-
           setProformaVisible(proformaSelecionado);                            
         } catch (Exception e) {
             infoController.show("Error al mostrar Cotizacion: " + e.getMessage());
@@ -498,8 +508,7 @@ public class ProformasController extends Controller {
     }      
         
     @FXML
-    private void eliminarProducto(ActionEvent event) {
-        
+    private void eliminarProducto(ActionEvent event) {        
         try {            
             CotizacionxProducto cotizacionxProducto = TablaProductos.getSelectionModel().getSelectedItem();
             if(cotizacionxProducto==null)
@@ -552,18 +561,20 @@ public class ProformasController extends Controller {
            return;            
         }
         
-        Boolean isNew = false;
-             
+        if(monedaSeleccionada == null)
+        {
+            infoController.show("Debe seleccionar una moneda utilizada primero");
+            return;
+        }        
+        Boolean isNew = false;             
         try {                        
                 if(!productos.stream().anyMatch(x -> x.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id"))))
                 {
-                    CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();                      
-                    
+                    CotizacionxProducto cotizacionxproducto = new CotizacionxProducto();                                           
                     Integer cantidad = cantProd.getValue();
-                    Double precio = productoDevuelto.getPrecioActual();
+                    Double precio = productoDevuelto.getPrecioActual(monedaSeleccionada);
                     cotizacionxproducto.set("tipo_id",productoDevuelto.getId());
-                    cotizacionxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));            
-                    
+                    cotizacionxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));                                
                     cotizacionxproducto.set("cantidad",cantidad);                       
                     cotizacionxproducto.set("cantidad_descuento_disponible",cantidad);                                   
                     cotizacionxproducto.set("precio_unitario",precio);    
@@ -572,52 +583,74 @@ public class ProformasController extends Controller {
                     cotizacionxproducto.set("flete",0);                    
                     cotizacionxproducto.set("subtotal_final",cantidad*precio);    
                     productos.add(cotizacionxproducto);
-                    isNew = true;
-                }        
-                
-            for(CotizacionxProducto productoCot:productos)
-            {
-               
-                Integer extraCant = 0;
-                if(!isNew && productoCot.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
-                {
-                    extraCant += cantProd.getValue();
-                }
-                
-                Double subtotal_anterior = productoCot.getDouble("subtotal_final");            
-                Double precioUnitario = productoCot.getDouble("precio_unitario");  
-                Integer cantidad = productoCot.getInteger("cantidad") + extraCant;
-                productoCot.set("cantidad",cantidad);
-                productoCot.set("cantidad_descuento_disponible",productoCot.getInteger("cantidad_descuento_disponible") + extraCant);     
-                Double descuento = calcularDescuento(productoCot) + productoCot.getDouble("descuento");
-                Double flete = calcularFlete(productoCot) + productoCot.getDouble("flete");
-                Double subtotal = cantidad*precioUnitario - descuento + flete;
-
-                productoCot.set("descuento",descuento);
-                productoCot.set("flete",flete);
-
-                productoCot.set("subtotal_previo", precioUnitario*cantidad);
-                productoCot.set("subtotal_final",subtotal);                                                                                       
-
-                TablaProductos.getColumns().get(0).setVisible(false);
-                TablaProductos.getColumns().get(0).setVisible(true);    
-            }                
-            calcularFinal();
+                    isNew = true;                    
+                }                          
+               RecalcularTabla(isNew);
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         }                
     }
     
-    private void recalcularTotal(Double cambio)
+    private void RecalcularTabla(Boolean isNew) throws Exception
     {
-        String totalValue = (!subTotalFinal.getText().isEmpty()) ? subTotalFinal.getText() : "0.0";
-        Double subTotalSinIgv = Double.valueOf(totalValue);                    
-        subTotalSinIgv += cambio;
-        subTotalFinal.setText(String.valueOf(subTotalSinIgv));
-        Double valorIgv = IGV*subTotalSinIgv;            
-        igvTotal.setText(String.valueOf(valorIgv));
-        total.setText(String.valueOf(subTotalSinIgv+valorIgv));        
+        for(CotizacionxProducto productoCot:productos)
+        {
+            Integer extraCant = 0;
+            if(!isNew && productoCot.getInteger("tipo_id").equals(productoDevuelto.getInteger("tipo_id")))
+            {
+                extraCant += cantProd.getValue();
+            }
+
+            Double subtotal_anterior = productoCot.getDouble("subtotal_final");            
+            Double precioUnitario = productoCot.getDouble("precio_unitario");  
+            Integer cantidad = productoCot.getInteger("cantidad") + extraCant;
+            productoCot.set("cantidad",cantidad);
+            productoCot.set("cantidad_descuento_disponible",productoCot.getInteger("cantidad_descuento_disponible") + extraCant);     
+            Double descuento = calcularDescuento(productoCot) + productoCot.getDouble("descuento");
+            Double flete = calcularFlete(productoCot) + productoCot.getDouble("flete");
+            Double subtotal = cantidad*precioUnitario - descuento + flete;
+
+            productoCot.set("descuento",descuento);
+            productoCot.set("flete",flete);
+
+            productoCot.set("subtotal_previo", precioUnitario*cantidad);
+            productoCot.set("subtotal_final",subtotal);                                                                                               
+        }    
+        
+        TablaProductos.getColumns().get(0).setVisible(false);
+        TablaProductos.getColumns().get(0).setVisible(true);    
+        calcularFinal();        
     }
+    
+    private void cambiarMoneda()
+    {
+        if(monedaSeleccionada == null) return;
+        try {
+            for(CotizacionxProducto productoCot:productos)
+            {                
+                TipoProducto producto = TipoProducto.findById(productoCot.get("tipo_id"));               
+                
+                Double nuevoPrecio = producto.getPrecioActual(monedaSeleccionada);
+                Double factor = nuevoPrecio/productoCot.getDouble("precio_unitario");
+                Integer cantidad = productoCot.getInteger("cantidad");
+                
+                productoCot.set("precio_unitario",nuevoPrecio);    
+                productoCot.set("subtotal_previo",cantidad*nuevoPrecio); 
+                Double nuevoDescuento = productoCot.getDouble("descuento")*factor;
+                productoCot.set("descuento",nuevoDescuento);
+                Double nuevoFlete = calcularFlete(productoCot);
+                productoCot.set("flete",productoCot.getDouble("flete")*factor);                    
+                productoCot.set("subtotal_final",cantidad*nuevoPrecio - nuevoDescuento + nuevoFlete);                               
+            }         
+            
+            TablaProductos.getColumns().get(0).setVisible(false);
+            TablaProductos.getColumns().get(0).setVisible(true);    
+            calcularFinal();        
+            
+        } catch (Exception e) {
+            infoController.show("Error al cambiar de moneda: " + e.getMessage());
+        }             
+    }       
     
     private void setValorTotal(Double valor)
     {        
@@ -648,17 +681,17 @@ public class ProformasController extends Controller {
         
         if(prioridadPorcentaje<prioridadCantidad&&prioridadPorcentaje<prioridadBonficacion)
         {
-            return aplicarPromocionPorcentaje(promociones, producto);
+            return aplicarPromocionPorcentaje(promocionesActual, producto);
         }
         
         if(prioridadCantidad<prioridadPorcentaje&&prioridadCantidad<prioridadBonficacion)
         {
-            return aplicarPromocionCantidad(promociones, producto);            
+            return aplicarPromocionCantidad(promocionesActual, producto);            
         }
         
         if(prioridadBonficacion<prioridadCantidad&&prioridadBonficacion<prioridadPorcentaje)
         {
-            return aplicarPromocionBonificacion(promociones, producto);
+            return aplicarPromocionBonificacion(promocionesActual, producto);
         }        
         return 0.0;        
     }
@@ -829,14 +862,15 @@ public class ProformasController extends Controller {
         }                   
         
         Date today = Date.valueOf(LocalDate.now());        
-        List<Flete> promocionesActual = fletes.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
+        List<Flete> fletesActual = fletes.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
         Double distancia = ParametroSistema.findFirst("nombre = ?",clienteSeleccionado.getString("departamento")).getDouble("valor");
         Integer cantidad = producto.getInteger("cantidad");
         Double precio_unitario = producto.getDouble("precio_unitario");
      
-        Double fleteVolumen = aplicarFleteVolumen(fletes, productoReferenciado, distancia, cantidad);
-        Double fletePeso = aplicarFletePeso(fletes, productoReferenciado, distancia, cantidad);
-        Double fletePorcentaje = aplicarFletePorcentaje(fletes, precio_unitario, cantidad);                
+        Double fleteVolumen = aplicarFleteVolumen(fletesActual, productoReferenciado, distancia, cantidad);
+        Double fletePeso = aplicarFletePeso(fletesActual, productoReferenciado, distancia, cantidad);
+        Double fletePorcentaje = aplicarFletePorcentaje(fletesActual, precio_unitario, cantidad);                                
+        
         return fleteVolumen + fletePeso + fletePorcentaje;
     }
     
@@ -854,9 +888,11 @@ public class ProformasController extends Controller {
         
         for(Flete flete:fletesVolumen)
         {
-            fleteTotal += volumen*flete.getDouble("valor")*distancia;                        
+            Double factor = CambioMoneda.findFirst("moneda1_id = ? and moneda2_id = ?", monedaSeleccionada.getInteger("moneda_id"),flete.getInteger("moneda_id")).getDouble("factor");
+            fleteTotal += volumen*flete.getDouble("valor")*distancia*factor;                        
         }
-        return fleteTotal*cantidad;
+        
+        return fleteTotal*cantidad/1000;
     }
     
     private Double aplicarFletePeso(List<Flete> fletes,TipoProducto productoReferenciado, Double distancia,Integer cantidad) throws Exception
@@ -868,9 +904,10 @@ public class ProformasController extends Controller {
         
         for(Flete flete:fletesVolumen)
         {
-            fleteTotal += peso*flete.getDouble("valor")*distancia;                        
+            Double factor = CambioMoneda.findFirst("moneda1_id = ? and moneda2_id = ?", monedaSeleccionada.getInteger("moneda_id"),flete.getInteger("moneda_id")).getDouble("factor");
+            fleteTotal += peso*flete.getDouble("valor")*distancia*factor;                        
         }
-        return fleteTotal*cantidad;   
+        return fleteTotal*cantidad/1000;   
     }
     
     private Double aplicarFletePorcentaje(List<Flete> fletes,Double precio,Integer cantidad) throws Exception
@@ -884,9 +921,7 @@ public class ProformasController extends Controller {
             fleteTotal += flete.getDouble("valor");
         }
         return precio*cantidad*(fleteTotal/100);
-    }
-    
-    
+    }        
     
     private void calcularFinal()
     {
@@ -907,7 +942,11 @@ public class ProformasController extends Controller {
     
     @FXML //Aun falta que de la proforma pueda generar un pedido. tanto en navegabilidad como comunicacion
     //de controllers
-    private void handleGenerarPedido(ActionEvent event) {        
+    private void handleGenerarPedido(ActionEvent event) {   
+        if(proformaSelecionado==null)
+        {
+            infoController.show("No ha seleccionado ninguna proforma");
+        }
         cambiarMenuEvent.fire(this, new cambiarMenuArgs(Menu.MENU.Pedidos, "Ventas", proformaSelecionado.getInteger("cotizacion_id")));
     }      
 
@@ -921,12 +960,22 @@ public class ProformasController extends Controller {
     
     
     private void handleAutoCompletar() {
-        int i = 0;
-        for (Cliente cliente : autoCompletadoList){
-            if (cliente.getString("nombre").equals(clienteSh.getText())){                
-                setInformacionCliente(cliente);                             
+        try {
+            for (Cliente cliente : autoCompletadoList){
+            if (cliente.getString("nombre").equals(clienteSh.getText()))
+            {                
+                setInformacionCliente(cliente);  
+                for(CotizacionxProducto cotizacionxProducto:productos)
+                {
+                    cotizacionxProducto.set("flete",calcularFlete(cotizacionxProducto));
+                }
+                TablaProductos.getColumns().get(0).setVisible(false);
+                TablaProductos.getColumns().get(0).setVisible(true);
             }
-        }
+        }            
+        } catch (Exception e) {
+            infoController.show("No se pudo cargar a este cliente: " + e.getMessage());
+        }       
     }
     
     private void productoToString() {

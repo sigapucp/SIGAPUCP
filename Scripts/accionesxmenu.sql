@@ -81,7 +81,7 @@ insert into accionesxmenus values (17,'DES',6,'Se deshabilita un Documento de Ve
 insert into accionesxmenus values (18,'DES',6,'Se deshabilita una Nota de Credito');
 insert into accionesxmenus values (19,'DES',6,'Se deshabilita un Usuario');
 insert into accionesxmenus values (20,'DES',6,'Se deshabilita un Rol');
-insert into accionesxmenus values (28,'MOD',6,'Se modifica un Envio');
+insert into accionesxmenus values (28,'DES',6,'Se deshabilita un Envio');
 
 
 insert into accionesxmenus values (5,'CSV',7,'Se con archivo con formato especifico un Almacen');
