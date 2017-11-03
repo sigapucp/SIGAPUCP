@@ -21,7 +21,13 @@ public class OrdenEntrada extends Model{
     {
         Pendiente,
         Parcial,
-        Completa
+        Completa;
+        
+        private static ESTADO[] vals = values();
+        public ESTADO next()
+        {
+            return vals[(this.ordinal()+1) % vals.length];
+        }
     }
     
     public enum TIPO

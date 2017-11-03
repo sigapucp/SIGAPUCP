@@ -17,4 +17,12 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("alamace_xy_id")
 public class AlmacenAreaXY extends Model{
     
+    public enum POSICION
+    {
+        ADELANTE,
+        ATRAS,
+        IZQUIERDA,
+        DERECHA        
+    }
+    
 }

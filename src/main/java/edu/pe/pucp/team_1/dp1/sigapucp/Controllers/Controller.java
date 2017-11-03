@@ -50,6 +50,11 @@ public class Controller implements Initializable {
         System.out.println("Desactivar");
     }
     
+    public void cambiarEstado()
+    {
+        System.out.println("Cambiar estado");
+    }
+    
     public void cargar(){
         System.out.println("Se hará la carga masiva de datos");
     }

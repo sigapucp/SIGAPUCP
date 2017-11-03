@@ -253,9 +253,9 @@ CREATE TABLE Clientes
 
 CREATE TABLE AccionesxMenus
 (
- menu_id     SERIAL NOT NULL ,
+ menu_id     INT NOT NULL ,
  accion_cod  VARCHAR(30) NOT NULL ,
- accion_id   SERIAL NOT NULL ,
+ accion_id   INT NOT NULL ,
  descripcion VARCHAR(200) NOT NULL ,
 
  CONSTRAINT pk_1624 PRIMARY KEY  (menu_id , accion_cod , accion_id ),
@@ -307,12 +307,12 @@ CREATE TABLE OrdenesEntrada
 
 CREATE TABLE SolucionesxDespachos
 (
- ruta_despacho_id    SERIAL NOT NULL ,
+ ruta_despacho_id    INT NOT NULL ,
  creation_date       DATE NOT NULL ,
  nrProductos         INT NOT NULL ,
  distancia_recorrida DECIMAL(10,2) NOT NULL ,
  salida_cod          VARCHAR(30) NOT NULL ,
- salida_id           SERIAL NOT NULL ,
+ salida_id           INT NOT NULL ,
 
  CONSTRAINT pk_753 PRIMARY KEY  (ruta_despacho_id ),
  CONSTRAINT fk_757 FOREIGN KEY (ruta_despacho_id)
@@ -332,8 +332,8 @@ CREATE TABLE SolucionesxDespachos
 
 CREATE TABLE CambioMonedas
 (
- moneda1_id SERIAL NOT NULL ,
- moneda2_id SERIAL NOT NULL ,
+ moneda1_id INT NOT NULL ,
+ moneda2_id INT NOT NULL ,
  factor     DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_446 PRIMARY KEY  (moneda1_id , moneda2_id ),
@@ -355,7 +355,7 @@ CREATE TABLE CambioMonedas
 CREATE TABLE Cotizaciones
 (
  cotizacion_cod      VARCHAR(20) NOT NULL ,
- client_id           SERIAL NOT NULL ,
+ client_id           INT NOT NULL ,
  cotizacion_id       SERIAL NOT NULL ,
  fecha_emision       DATE NOT NULL ,
  estado              VARCHAR(20) NOT NULL ,
@@ -363,7 +363,7 @@ CREATE TABLE Cotizaciones
  last_user_change    VARCHAR(20) NOT NULL ,
  last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
- moneda_id           SERIAL NOT NULL ,
+ moneda_id           INT NOT NULL ,
  igv                 DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_414 PRIMARY KEY  (cotizacion_cod , client_id , cotizacion_id ),
@@ -388,7 +388,7 @@ CREATE TABLE Lotes
  lote_id       SERIAL NOT NULL ,
  fecha_entrada DATE NOT NULL ,
  proveedor_ruc VARCHAR(20) NOT NULL ,
- proveedor_id  SERIAL NOT NULL ,
+ proveedor_id  INT NOT NULL ,
 
  CONSTRAINT pk_331 PRIMARY KEY  (lote_cod , lote_id ),
  CONSTRAINT fk_354 FOREIGN KEY (proveedor_ruc, proveedor_id)
@@ -416,9 +416,9 @@ CREATE TABLE TiposProducto
  estado              VARCHAR(20) NOT NULL ,
  longitud            DECIMAL(10,2) NULL ,
  ancho               DECIMAL(10,2) NULL ,
- unidad_peso_id      SERIAL NOT NULL ,
+ unidad_peso_id      INT NOT NULL ,
  alto                DECIMAL(10,2) NULL ,
- unidad_tamano_id    SERIAL NOT NULL ,
+ unidad_tamano_id    INT NOT NULL ,
 
  CONSTRAINT pk_289 PRIMARY KEY  (tipo_cod , tipo_id ),
  CONSTRAINT fk_295 FOREIGN KEY (unidad_peso_id)
@@ -439,7 +439,7 @@ CREATE TABLE TiposProducto
 CREATE TABLE Racks
 (
  rack_cod    VARCHAR(50) NOT NULL ,
- almacen_id  SERIAL NOT NULL ,
+ almacen_id  INT NOT NULL ,
  rack_id     SERIAL NOT NULL ,
  almacen_cod VARCHAR(50) NOT NULL ,
  longitud    INT NOT NULL ,
@@ -466,12 +466,12 @@ CREATE TABLE Racks
 CREATE TABLE AlmacenAreaXYs
 (
  almacen_xy_cod VARCHAR(50) NOT NULL ,
- almacen_id     SERIAL NOT NULL ,
+ almacen_id     INT NOT NULL ,
  almacen_xy_id  SERIAL NOT NULL ,
  almacen_cod    VARCHAR(50) NOT NULL ,
  alto           INT NULL ,
  estado         CHAR(1) NOT NULL ,
- tipo_area_id   SERIAL NOT NULL ,
+ tipo_area_id   INT NOT NULL ,
 
  CONSTRAINT pk_190 PRIMARY KEY  (almacen_xy_cod , almacen_id , almacen_xy_id , almacen_cod ),
  CONSTRAINT fk_197 FOREIGN KEY (almacen_cod, almacen_id)
@@ -504,7 +504,7 @@ CREATE TABLE Usuarios
  estado                VARCHAR(50) NOT NULL ,
  contrasena_nullable   VARCHAR(100) NULL ,
  rol_cod               VARCHAR(30) NOT NULL ,
- rol_id                SERIAL NOT NULL ,
+ rol_id                INT NOT NULL ,
  flag_last_operation   CHAR(1) NOT NULL ,
 
  CONSTRAINT pk_96 PRIMARY KEY  (usuario_cod , usuario_id ),
@@ -521,7 +521,7 @@ CREATE TABLE Usuarios
 
 CREATE TABLE Stocks
 (
- tipo_id      SERIAL NOT NULL ,
+ tipo_id      INT NOT NULL ,
  tipo_cod     VARCHAR(20) NOT NULL ,
  stock_real   INT NOT NULL ,
  stock_logico INT NOT NULL ,
@@ -540,7 +540,7 @@ CREATE TABLE Stocks
 
 CREATE TABLE Precios
 (
- tipo_id      SERIAL NOT NULL ,
+ tipo_id      INT NOT NULL ,
  tipo_cod     VARCHAR(20) NOT NULL ,
  precio_id    SERIAL NOT NULL ,
  precio       DECIMAL(10,4) NOT NULL ,
@@ -575,11 +575,11 @@ CREATE TABLE Fletes
  es_categoria   CHAR(1) NOT NULL ,
  tipo           VARCHAR(50) NOT NULL ,
  estado         VARCHAR(20) NOT NULL ,
- tipo_id        SERIAL NOT NULL ,
+ tipo_id        INT NOT NULL ,
  categoria_code VARCHAR(20) NULL ,
- categoria_id   SERIAL NOT NULL ,
+ categoria_id   INT NOT NULL ,
  tipo_cod       VARCHAR(20) NULL ,
- moneda_id      SERIAL NOT NULL ,
+ moneda_id      INT NOT NULL ,
  valor          DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_933 PRIMARY KEY  (flete_id , flete_code ),
@@ -612,9 +612,9 @@ CREATE TABLE Promociones
  es_categoria   CHAR(1) NOT NULL ,
  estado         VARCHAR(20) NOT NULL ,
  tipo           VARCHAR(20) NOT NULL ,
- tipo_id        SERIAL NOT NULL ,
+ tipo_id        INT NOT NULL ,
  categoria_code VARCHAR(20) NULL ,
- categoria_id   SERIAL NOT NULL ,
+ categoria_id   INT NOT NULL ,
  tipo_cod       VARCHAR(20) NULL ,
 
  CONSTRAINT pk_888 PRIMARY KEY  (promocion_cod , promocion_id ),
@@ -635,9 +635,9 @@ CREATE TABLE Promociones
 
 CREATE TABLE CategoriasxTipos
 (
- tipo_id        SERIAL NOT NULL ,
+ tipo_id        INT NOT NULL ,
  categoria_code VARCHAR(20) NOT NULL ,
- categoria_id   SERIAL NOT NULL ,
+ categoria_id   INT NOT NULL ,
  tipo_cod       VARCHAR(20) NOT NULL ,
 
  CONSTRAINT pk_865 PRIMARY KEY  (tipo_id , categoria_code , categoria_id , tipo_cod ),
@@ -658,13 +658,13 @@ CREATE TABLE CategoriasxTipos
 
 CREATE TABLE OrdenesEntradaxProductos
 (
- orden_entrada_id  SERIAL NOT NULL ,
+ orden_entrada_id  INT NOT NULL ,
  orden_entrada_cod VARCHAR(30) NOT NULL ,
  tipo_cod          VARCHAR(20) NOT NULL ,
- tipo_id           SERIAL NOT NULL ,
+ tipo_id           INT NOT NULL ,
  estado            VARCHAR(20) NOT NULL ,
  cantidad          INT NOT NULL ,
- ingresado         CHAR(1),
+ ingresado         CHAR(1) NOT NULL ,
 
  CONSTRAINT pk_778 PRIMARY KEY  (orden_entrada_id , orden_entrada_cod , tipo_cod , tipo_id ),
  CONSTRAINT fk_783 FOREIGN KEY (orden_entrada_cod, orden_entrada_id)
@@ -685,14 +685,14 @@ CREATE TABLE OrdenesEntradaxProductos
 CREATE TABLE NotasCredito
 (
  credit_note_cod     VARCHAR(20) NOT NULL ,
- client_id           SERIAL NOT NULL ,
+ client_id           INT NOT NULL ,
  credit_note_id      SERIAL NOT NULL ,
  last_user_change    VARCHAR(20) NOT NULL ,
  last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
  explicacion         VARCHAR(150) NOT NULL ,
  fecha_emision       DATE NOT NULL ,
- orden_entrada_id    SERIAL NOT NULL ,
+ orden_entrada_id    INT NOT NULL ,
  orden_entrada_cod   VARCHAR(30) NOT NULL ,
 
  CONSTRAINT pk_629 PRIMARY KEY  (credit_note_cod , client_id , credit_note_id ),
@@ -714,7 +714,7 @@ CREATE TABLE NotasCredito
 CREATE TABLE OrdenesCompra
 (
  orden_compra_cod      VARCHAR(20) NOT NULL ,
- client_id             SERIAL NOT NULL ,
+ client_id             INT NOT NULL ,
  orden_compra_id       SERIAL NOT NULL ,
  fecha_emision         DATE NOT NULL ,
  total                 DECIMAL NOT NULL ,
@@ -722,10 +722,10 @@ CREATE TABLE OrdenesCompra
  last_date_change      DATE NOT NULL ,
  flag_last_operation   CHAR(1) NOT NULL ,
  usuario_cod           VARCHAR(20) NOT NULL ,
- usuario_id            SERIAL NOT NULL ,
- moneda_id             SERIAL NOT NULL ,
+ usuario_id            INT NOT NULL ,
+ moneda_id             INT NOT NULL ,
  cotizacion_cod        VARCHAR(20) NULL ,
- cotizacion_id         SERIAL NOT NULL ,
+ cotizacion_id         INT NOT NULL ,
  igv                   DECIMAL(10,2) NOT NULL ,
  estado                VARCHAR(30) NOT NULL ,
  direccion_despacho    VARCHAR(150) NOT NULL ,
@@ -758,10 +758,10 @@ CREATE TABLE OrdenesCompra
 
 CREATE TABLE CotizacionxProductos
 (
- tipo_id                       SERIAL NOT NULL ,
- client_id                     SERIAL NOT NULL ,
+ tipo_id                       INT NOT NULL ,
+ client_id                     INT NOT NULL ,
  cotizacion_cod                VARCHAR(20) NOT NULL ,
- cotizacion_id                 SERIAL NOT NULL ,
+ cotizacion_id                 INT NOT NULL ,
  tipo_cod                      VARCHAR(20) NOT NULL ,
  cantidad                      DECIMAL(10,2) NOT NULL ,
  subtotal_previo               DECIMAL(10,2) NOT NULL ,
@@ -789,12 +789,12 @@ CREATE TABLE CotizacionxProductos
 
 CREATE TABLE RutasRacks
 (
- rack1_id     SERIAL NOT NULL ,
- almacen1_id  SERIAL NOT NULL ,
+ rack1_id     INT NOT NULL ,
+ almacen1_id  INT NOT NULL ,
  rack1_cod    VARCHAR(50) NOT NULL ,
  almacen1_cod VARCHAR(50) NOT NULL ,
- rack2_id     SERIAL NOT NULL ,
- almacen2_id  SERIAL NOT NULL ,
+ rack2_id     INT NOT NULL ,
+ almacen2_id  INT NOT NULL ,
  rack2_cod    VARCHAR(50) NOT NULL ,
  almacen2_cod VARCHAR(50) NOT NULL ,
  distancia1   DECIMAL(10,2) NOT NULL ,
@@ -827,9 +827,9 @@ CREATE TABLE RutasRacks
 CREATE TABLE AlmacenAreaZs
 (
  almacen_z_cod  VARCHAR(50) NOT NULL ,
- almacen_id     SERIAL NOT NULL ,
+ almacen_id     INT NOT NULL ,
  almacen_xy_cod VARCHAR(50) NOT NULL ,
- almacen_xy_id  SERIAL NOT NULL ,
+ almacen_xy_id  INT NOT NULL ,
  almacen_z_id   SERIAL NOT NULL ,
  almacen_cod    VARCHAR(50) NOT NULL ,
  capacity       DECIMAL(10,2) NOT NULL ,
@@ -850,11 +850,11 @@ CREATE TABLE AlmacenAreaZs
 
 CREATE TABLE AccionesxRoles
 (
- menu_id    SERIAL NOT NULL ,
+ menu_id    INT NOT NULL ,
  accion_cod VARCHAR(30) NOT NULL ,
  rol_cod    VARCHAR(30) NOT NULL ,
- rol_id     SERIAL NOT NULL ,
- accion_id  SERIAL NOT NULL ,
+ rol_id     INT NOT NULL ,
+ accion_id  INT NOT NULL ,
  solo_admin CHAR(1) NOT NULL ,
 
  CONSTRAINT pk_126 PRIMARY KEY  (menu_id , accion_cod , rol_cod , rol_id , accion_id ),
@@ -878,8 +878,8 @@ CREATE TABLE Envios
  envio_id            SERIAL NOT NULL ,
  envio_cod           VARCHAR(30) NOT NULL ,
  orden_compra_cod    VARCHAR(20) NOT NULL ,
- client_id           SERIAL NOT NULL ,
- orden_compra_id     SERIAL NOT NULL ,
+ client_id           INT NOT NULL ,
+ orden_compra_id     INT NOT NULL ,
  estado              VARCHAR(30) NOT NULL ,
  last_user_change    VARCHAR(50) NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
@@ -899,11 +899,11 @@ CREATE TABLE Envios
 
 CREATE TABLE CotizacionesxProductosxFletes
 (
- tipo_id        SERIAL NOT NULL ,
- client_id      SERIAL NOT NULL ,
+ tipo_id        INT NOT NULL ,
+ client_id      INT NOT NULL ,
  cotizacion_cod VARCHAR(20) NOT NULL ,
- cotizacion_id  SERIAL NOT NULL ,
- flete_id       SERIAL NOT NULL ,
+ cotizacion_id  INT NOT NULL ,
+ flete_id       INT NOT NULL ,
  tipo_cod       VARCHAR(20) NOT NULL ,
  flete_code     VARCHAR(30) NOT NULL ,
  valor_flete    DECIMAL(10,2) NOT NULL ,
@@ -927,11 +927,11 @@ CREATE TABLE CotizacionesxProductosxFletes
 CREATE TABLE CotizacionesxProductosxPromociones
 (
  promocion_cod   VARCHAR(30) NOT NULL ,
- promocion_id    SERIAL NOT NULL ,
- tipo_id         SERIAL NOT NULL ,
- client_id       SERIAL NOT NULL ,
+ promocion_id    INT NOT NULL ,
+ tipo_id         INT NOT NULL ,
+ client_id       INT NOT NULL ,
  cotizacion_cod  VARCHAR(20) NOT NULL ,
- cotizacion_id   SERIAL NOT NULL ,
+ cotizacion_id   INT NOT NULL ,
  tipo_cod        VARCHAR(20) NOT NULL ,
  valor_descuento DECIMAL(10,2) NOT NULL ,
 
@@ -954,20 +954,19 @@ CREATE TABLE CotizacionesxProductosxPromociones
 CREATE TABLE ErrorLog
 (
  error_cod     VARCHAR(20) NOT NULL ,
- error_type_id SERIAL NOT NULL ,
- error_id      SERIAL NOT NULL ,
- error_log_id  SERIAL NOT NULL ,
+ error_type_id INT NOT NULL ,
+ error_id      INT NOT NULL ,
  usuario_cod   VARCHAR(20) NOT NULL ,
- usuario_id    SERIAL NOT NULL ,
+ usuario_id    INT NOT NULL ,
  descripcion   VARCHAR(300) NOT NULL ,
- menu_id       SERIAL NOT NULL ,
+ menu_id       INT NOT NULL ,
  accion_cod    VARCHAR(30) NOT NULL ,
  rol_cod       VARCHAR(30) NOT NULL ,
- rol_id        SERIAL NOT NULL ,
- accion_id     SERIAL NOT NULL ,
+ rol_id        INT NOT NULL ,
+ accion_id     INT NOT NULL ,
  tiempo        TIMESTAMP NOT NULL ,
 
- CONSTRAINT pk_1079 PRIMARY KEY  (error_cod , error_type_id , error_id , error_log_id ),
+ CONSTRAINT pk_1079 PRIMARY KEY  (error_cod , error_type_id , error_id ),
  CONSTRAINT fk_1076 FOREIGN KEY (error_cod, error_type_id)
   REFERENCES TiposError(error_cod, error_type_id),
  CONSTRAINT fk_1081 FOREIGN KEY (usuario_cod, usuario_id)
@@ -992,12 +991,12 @@ CREATE TABLE AccionLog
  accion_log_id SERIAL NOT NULL ,
  tiempo        TIMESTAMP NOT NULL ,
  usuario_cod   VARCHAR(20) NOT NULL ,
- usuario_id    SERIAL NOT NULL ,
- menu_id       SERIAL NOT NULL ,
+ usuario_id    INT NOT NULL ,
+ menu_id       INT NOT NULL ,
  accion_cod    VARCHAR(30) NOT NULL ,
  rol_cod       VARCHAR(30) NOT NULL ,
- rol_id        SERIAL NOT NULL ,
- accion_id     SERIAL NOT NULL ,
+ rol_id        INT NOT NULL ,
+ accion_id     INT NOT NULL ,
 
  CONSTRAINT pk_1059 PRIMARY KEY  (accion_log_id ),
  CONSTRAINT fk_1064 FOREIGN KEY (usuario_cod, usuario_id)
@@ -1018,7 +1017,7 @@ CREATE TABLE AccionLog
 CREATE TABLE PromocionCantidades
 (
  promocion_cod VARCHAR(30) NOT NULL ,
- promocion_id  SERIAL NOT NULL ,
+ promocion_id  INT NOT NULL ,
  nr_comprar    DECIMAL(10,2) NOT NULL ,
  nr_obtener    DECIMAL(10,2) NOT NULL ,
 
@@ -1037,13 +1036,13 @@ CREATE TABLE PromocionCantidades
 CREATE TABLE PromocionBonificaciones
 (
  promocion_cod        VARCHAR(30) NOT NULL ,
- promocion_id         SERIAL NOT NULL ,
+ promocion_id         INT NOT NULL ,
  nr_comprar           DECIMAL(10,2) NOT NULL ,
  nr_obtener           DECIMAL(10,2) NOT NULL ,
  es_categoria_comprar NCHAR(1) NOT NULL ,
  categoria_code       VARCHAR(20) NULL ,
- categoria_id         SERIAL NOT NULL ,
- tipo_id              SERIAL NOT NULL ,
+ categoria_id         INT NOT NULL ,
+ tipo_id              INT NOT NULL ,
  tipo_cod             VARCHAR(20) NULL ,
 
  CONSTRAINT pk_535 PRIMARY KEY  (promocion_cod , promocion_id ),
@@ -1069,12 +1068,12 @@ CREATE TABLE PromocionBonificaciones
 CREATE TABLE PromocionPorcentajes
 (
  promocion_cod      VARCHAR(30) NOT NULL ,
- promocion_id       SERIAL NOT NULL ,
+ promocion_id       INT NOT NULL ,
  valor_desc         DECIMAL(10,4) NOT NULL ,
- concepto_desc      VARCHAR(30) NOT NULL ,
- valor_condition    VARCHAR(20) NOT NULL ,
- concepto_condition VARCHAR(30) NOT NULL ,
- relacion_condition CHAR(1) NOT NULL ,
+ concepto_desc      VARCHAR(30) NULL ,
+ valor_condition    VARCHAR(20) NULL ,
+ concepto_condition VARCHAR(30) NULL ,
+ relacion_condition CHAR(1) NULL ,
 
  CONSTRAINT pk_519 PRIMARY KEY  (promocion_cod , promocion_id ),
  CONSTRAINT fk_904 FOREIGN KEY (promocion_cod, promocion_id)
@@ -1090,9 +1089,9 @@ CREATE TABLE PromocionPorcentajes
 
 CREATE TABLE OrdenesCompraxProductos
 (
- tipo_id                       SERIAL NOT NULL ,
- client_id                     SERIAL NOT NULL ,
- orden_compra_id               SERIAL NOT NULL ,
+ tipo_id                       INT NOT NULL ,
+ client_id                     INT NOT NULL ,
+ orden_compra_id               INT NOT NULL ,
  orden_compra_cod              VARCHAR(20) NOT NULL ,
  tipo_cod                      VARCHAR(20) NOT NULL ,
  cantidad                      DECIMAL(10,2) NOT NULL ,
@@ -1125,22 +1124,22 @@ CREATE TABLE Productos
  producto_id       SERIAL NOT NULL ,
  tipo_cod          VARCHAR(20) NOT NULL ,
  orden_entrada_cod VARCHAR(30) NOT NULL ,
- orden_entrada_id  SERIAL NOT NULL ,
- tipo_id           SERIAL NOT NULL ,
+ orden_entrada_id  INT NOT NULL ,
+ tipo_id           INT NOT NULL ,
  fecha_entrada     DATE NULL ,
  fecha_caducidad   DATE NULL ,
  fecha_adquirida   DATE NOT NULL ,
  almacen_xy_cod    VARCHAR(50) NOT NULL ,
- almacen_xy_id     SERIAL NOT NULL ,
+ almacen_xy_id     INT NOT NULL ,
  almacen_z_cod     VARCHAR(50) NOT NULL ,
- almacen_z_id      SERIAL NOT NULL ,
+ almacen_z_id      INT NOT NULL ,
  rack_cod          VARCHAR(50) NOT NULL ,
- rack_id           SERIAL NOT NULL ,
+ rack_id           INT NOT NULL ,
  lote_cod          VARCHAR(10) NULL ,
- lote_id           SERIAL NOT NULL ,
+ lote_id           INT NOT NULL ,
  almacen_cod       VARCHAR(50) NOT NULL ,
- almacen_id        SERIAL NOT NULL ,
- ubicado           CHAR(1) NOT NULL,
+ almacen_id        INT NOT NULL ,
+ ubicado           CHAR(1) NOT NULL ,
 
  CONSTRAINT pk_221 PRIMARY KEY  (producto_cod , producto_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id ),
  CONSTRAINT fk_265 FOREIGN KEY (rack_cod, rack_id, almacen_cod, almacen_id)
@@ -1170,11 +1169,11 @@ CREATE TABLE GuiasRemision
 (
  guia_id               SERIAL NOT NULL ,
  guia_cod              VARCHAR(30) NOT NULL ,
- envio_id              SERIAL NOT NULL ,
+ envio_id              INT NOT NULL ,
  envio_cod             VARCHAR(30) NOT NULL ,
  orden_compra_cod      VARCHAR(20) NOT NULL ,
- client_id             SERIAL NOT NULL ,
- orden_compra_id       SERIAL NOT NULL ,
+ client_id             INT NOT NULL ,
+ orden_compra_id       INT NOT NULL ,
  estado                VARCHAR(50) NOT NULL ,
  last_user_change      VARCHAR(50) NOT NULL ,
  flag_last_operation   CHAR(1) NOT NULL ,
@@ -1200,11 +1199,11 @@ CREATE TABLE GuiasRemision
 CREATE TABLE OrdenesSalidaxEnvio
 (
  orden_compra_cod VARCHAR(20) NOT NULL ,
- client_id        SERIAL NOT NULL ,
- orden_compra_id  SERIAL NOT NULL ,
+ client_id        INT NOT NULL ,
+ orden_compra_id  INT NOT NULL ,
  salida_cod       VARCHAR(30) NOT NULL ,
- salida_id        SERIAL NOT NULL ,
- envio_id         SERIAL NOT NULL ,
+ salida_id        INT NOT NULL ,
+ envio_id         INT NOT NULL ,
  envio_cod        VARCHAR(30) NOT NULL ,
 
  CONSTRAINT pk_1738 PRIMARY KEY  (orden_compra_cod , client_id , orden_compra_id , salida_cod , salida_id , envio_id , envio_cod ),
@@ -1226,11 +1225,11 @@ CREATE TABLE OrdenesSalidaxEnvio
 CREATE TABLE OrdenesCompraxProductosxEnvio
 (
  orden_compra_cod VARCHAR(20) NOT NULL ,
- client_id        SERIAL NOT NULL ,
- orden_compra_id  SERIAL NOT NULL ,
- tipo_id          SERIAL NOT NULL ,
+ client_id        INT NOT NULL ,
+ orden_compra_id  INT NOT NULL ,
+ tipo_id          INT NOT NULL ,
  tipo_cod         VARCHAR(20) NOT NULL ,
- envio_id         SERIAL NOT NULL ,
+ envio_id         INT NOT NULL ,
  envio_cod        VARCHAR(30) NOT NULL ,
 
  CONSTRAINT pk_1700 PRIMARY KEY  (orden_compra_cod , client_id , orden_compra_id , tipo_id , tipo_cod , envio_id , envio_cod ),
@@ -1251,12 +1250,12 @@ CREATE TABLE OrdenesCompraxProductosxEnvio
 
 CREATE TABLE OrdenesCompraxProductosxFletes
 (
- tipo_id          SERIAL NOT NULL ,
- client_id        SERIAL NOT NULL ,
- orden_compra_id  SERIAL NOT NULL ,
+ tipo_id          INT NOT NULL ,
+ client_id        INT NOT NULL ,
+ orden_compra_id  INT NOT NULL ,
  orden_compra_cod VARCHAR(20) NOT NULL ,
  tipo_cod         VARCHAR(20) NOT NULL ,
- flete_id         SERIAL NOT NULL ,
+ flete_id         INT NOT NULL ,
  flete_code       VARCHAR(30) NOT NULL ,
  valor_flete      DECIMAL(10,2) NOT NULL ,
 
@@ -1278,13 +1277,13 @@ CREATE TABLE OrdenesCompraxProductosxFletes
 
 CREATE TABLE OrdenesCompraxProductosxPromociones
 (
- tipo_id          SERIAL NOT NULL ,
- client_id        SERIAL NOT NULL ,
- orden_compra_id  SERIAL NOT NULL ,
+ tipo_id          INT NOT NULL ,
+ client_id        INT NOT NULL ,
+ orden_compra_id  INT NOT NULL ,
  orden_compra_cod VARCHAR(20) NOT NULL ,
  tipo_cod         VARCHAR(20) NOT NULL ,
  promocion_cod    VARCHAR(30) NOT NULL ,
- promocion_id     SERIAL NOT NULL ,
+ promocion_id     INT NOT NULL ,
  valor_desc       DECIMAL(10,2) NOT NULL ,
 
  CONSTRAINT pk_1501 PRIMARY KEY  (tipo_id , client_id , orden_compra_id , orden_compra_cod , tipo_cod , promocion_cod , promocion_id ),
@@ -1306,13 +1305,13 @@ CREATE TABLE OrdenesCompraxProductosxPromociones
 CREATE TABLE OrdenesSalidaxProductosFinal
 (
  producto_cod      VARCHAR(30) NOT NULL ,
- producto_id       SERIAL NOT NULL ,
+ producto_id       INT NOT NULL ,
  salida_cod        VARCHAR(30) NOT NULL ,
- salida_id         SERIAL NOT NULL ,
+ salida_id         INT NOT NULL ,
  tipo_cod          VARCHAR(20) NOT NULL ,
  orden_entrada_cod VARCHAR(30) NOT NULL ,
- orden_entrada_id  SERIAL NOT NULL ,
- tipo_id           SERIAL NOT NULL ,
+ orden_entrada_id  INT NOT NULL ,
+ tipo_id           INT NOT NULL ,
  estado            VARCHAR(30) NOT NULL ,
 
  CONSTRAINT pk_719 PRIMARY KEY  (producto_cod , producto_id , salida_cod , salida_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id ),
@@ -1334,14 +1333,14 @@ CREATE TABLE OrdenesSalidaxProductosFinal
 CREATE TABLE DocVentas
 (
  doc_venta_cod       VARCHAR(30) NOT NULL ,
- client_id           SERIAL NOT NULL ,
+ client_id           INT NOT NULL ,
  doc_venta_id        SERIAL NOT NULL ,
  estado              VARCHAR(30) NOT NULL ,
  last_user_change    VARCHAR(20) NOT NULL ,
  last_date_change    CHAR(1) NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
  fecha_emision       DATE NOT NULL ,
- guia_id             SERIAL NOT NULL ,
+ guia_id             INT NOT NULL ,
  guia_cod            VARCHAR(30) NOT NULL ,
 
  CONSTRAINT pk_624 PRIMARY KEY  (doc_venta_cod , client_id , doc_venta_id ),
