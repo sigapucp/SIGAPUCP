@@ -17,4 +17,46 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("flete_id")
 public class Flete extends Model{
     
+    public enum ZONA
+    {
+        Amazonas,
+        Ancash,
+        Apurimac,
+        Arequipa,
+        Ayacucho,
+        Cajamarca,
+        Callao,
+        Cuzco,
+        Huancavelica,
+        Huanuco,
+        Ica,
+        Junin,
+        LaLibertad,
+        Lambayeque,
+        Lima,
+        Loreto,
+        MadredeDios,
+        Moquegua,
+        Pasco,
+        Piura,
+        Puno,
+        SanMartin,
+        Tacna,
+        Tumbes,
+        Ucayali;
+    }
+    
+    public enum TIPO
+    {
+        VOLUMEN,
+        PESO,
+        PORCENTAJE        
+    }
+    
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
+    }
+    
 }

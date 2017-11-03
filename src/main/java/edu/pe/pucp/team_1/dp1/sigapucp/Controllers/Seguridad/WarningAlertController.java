@@ -16,17 +16,20 @@ import javafx.stage.Stage;
 public class WarningAlertController {
     private Stage stage;
     private Alert alert;
-    public WarningAlertController()
-    {
-        System.out.println("AQUI VA LA PANTALLA DE WARNING");                       
+    
+    public WarningAlertController() {
+        System.out.println("AQUI VA LA PANTALLA DE WARNING");                              
+    }
+    
+    public void createNewAlert() {
         alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("SIGAPUCP - Alerta");              
         stage = (Stage) alert.getDialogPane().getScene().getWindow();            
-        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));     
+        stage.getIcons().add(new Image(this.getClass().getResource("/fxml/Imagenes/fork_lift_icon.png").toString()));
     }
     
-    public void show(String tituloAlerta,String explicacionAlerta)
-    {           
+    public void show(String tituloAlerta,String explicacionAlerta) {
+        createNewAlert();
         alert.setHeaderText(tituloAlerta);
         alert.setContentText(explicacionAlerta);
         stage.showAndWait();

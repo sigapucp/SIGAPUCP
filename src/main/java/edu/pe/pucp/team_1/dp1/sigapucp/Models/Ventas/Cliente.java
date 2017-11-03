@@ -37,4 +37,22 @@ public class Cliente extends Model{
         this.set("estado", "activo");
         this.set("last_user_change","user");
     }
+    
+    public boolean is_valid(){
+        boolean match = true;
+        if (!this.get("ruc").equals("")){
+            match = (this.get("ruc").toString().length() == 11 );
+        }
+        if (!this.get("dni").equals("")){
+            match = (this.get("dni").toString().length() == 8 );
+        }
+                
+        return match;
+    }
+    
+      public enum TIPO
+    {
+        PersonaNatural,
+        PersonaJuridica
+    }    
 }

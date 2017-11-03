@@ -140,7 +140,7 @@ public class OrdenesDeEntradaController extends Controller {
     private List<TipoProducto> autoCompletadoProductoList;
     ArrayList<String> possiblewordsCliente = new ArrayList<>();    
     ArrayList<String> possiblewordsProveedor = new ArrayList<>();    
-    ArrayList<String> possiblewordsProducto = new ArrayList<>();    
+    ArrayList<String> possiblewordsProducto = new ArrayList<>();       
     AutoCompletionBinding<String> autoCompletionBindingCliente;
     AutoCompletionBinding<String> autoCompletionBindingProveedor;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
@@ -150,7 +150,7 @@ public class OrdenesDeEntradaController extends Controller {
     
     public OrdenesDeEntradaController()
     {
-         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         
         
         List<OrdenEntrada> tempEntradas = OrdenEntrada.findAll();        
@@ -236,6 +236,7 @@ public class OrdenesDeEntradaController extends Controller {
         if(productoDevuelto==null)
         {
             infoController.show("No ha seleccionado ningun producto");
+            return;
         }
         
         for(OrdenEntradaxProducto producto:productos)
@@ -267,11 +268,16 @@ public class OrdenesDeEntradaController extends Controller {
             return;
         } 
         
-        String estado = entradaSelecionada.getString("estado");
-        if(!ordenSeleccionada.isNew()&&(estado.equals(OrdenEntrada.ESTADO.Parcial.name())||estado.equals(OrdenEntrada.ESTADO.Completa.name())))
+       
+        if(!ordenSeleccionada.isNew())
         {
-            infoController.show("No puede eliminar producto ya que este ya se encuentra en almacen. Debera utilizar una Orden de Salida");
-            return;
+            OrdenEntrada orden = OrdenEntrada.findById(ordenSeleccionada.get("orden_entrada_id"));         
+             String estado = orden.getString("estado");
+            if((estado.equals(OrdenEntrada.ESTADO.Parcial.name())||estado.equals(OrdenEntrada.ESTADO.Completa.name())))
+            {
+                infoController.show("No puede eliminar producto ya que este ya se encuentra en almacen. Debera utilizar una Orden de Salida");
+                return;                
+            }                        
         }
         productos.remove(ordenSeleccionada);      
     }    
@@ -338,7 +344,8 @@ public class OrdenesDeEntradaController extends Controller {
             set_productos(orden);
             
             infoController.show("La orden ha sido creada exitosamente");
-            Base.commitTransaction();              
+            Base.commitTransaction();    
+            limpiar_formulario();
         } catch (Exception e) {
             infoController.show("La orden contiene errores : " + e);        
             Base.rollbackTransaction();

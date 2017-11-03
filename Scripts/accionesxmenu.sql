@@ -26,6 +26,8 @@ insert into accionesxmenus values (23,'VIW',3,'Se ingresa al menu de Parametros 
 insert into accionesxmenus values (24,'VIW',3,'Se ingresa al menu de Unidades');
 insert into accionesxmenus values (25,'VIW',3,'Se ingresa al menu de Monedas');
 insert into accionesxmenus values (26,'VIW',3,'Se ingresa al menu de Guia de Remisiones');
+insert into accionesxmenus values (27,'VIW',3,'Se ingresa al tu Cuenta');
+insert into accionesxmenus values (28,'VIW',3,'Se ingresa a menu de Envios');
 
 insert into accionesxmenus values (5,'CRE',4,'Se crea un nuevo almacen');
 insert into accionesxmenus values (6,'CRE',4,'Se crea una nueva categoria de producto');
@@ -43,6 +45,7 @@ insert into accionesxmenus values (17,'CRE',4,'Se crea un nuevo Documento de Ven
 insert into accionesxmenus values (18,'CRE',4,'Se crea una nueva Nota de Credito');
 insert into accionesxmenus values (19,'CRE',4,'Se crea un nuevo Usuario');
 insert into accionesxmenus values (20,'CRE',4,'Se crea un nuevo Rol');
+insert into accionesxmenus values (28,'CRE',4,'Se crea un nuevo Envio');
 
 insert into accionesxmenus values (5,'MOD',5,'Se modifica un almacen');
 insert into accionesxmenus values (6,'MOD',5,'Se modifica una categoria de producto');
@@ -60,6 +63,7 @@ insert into accionesxmenus values (17,'MOD',5,'Se modifica un Documento de Venta
 insert into accionesxmenus values (18,'MOD',5,'Se modifica una Nota de Credito');
 insert into accionesxmenus values (19,'MOD',5,'Se modifica un Usuario');
 insert into accionesxmenus values (20,'MOD',5,'Se modifica un Rol');
+insert into accionesxmenus values (28,'MOD',5,'Se modifica un Envio');
 
 insert into accionesxmenus values (5,'DES',6,'Se deshabilita un almacen');
 insert into accionesxmenus values (6,'DES',6,'Se deshabilita una categoria de producto');
@@ -77,6 +81,7 @@ insert into accionesxmenus values (17,'DES',6,'Se deshabilita un Documento de Ve
 insert into accionesxmenus values (18,'DES',6,'Se deshabilita una Nota de Credito');
 insert into accionesxmenus values (19,'DES',6,'Se deshabilita un Usuario');
 insert into accionesxmenus values (20,'DES',6,'Se deshabilita un Rol');
+insert into accionesxmenus values (28,'MOD',6,'Se modifica un Envio');
 
 
 insert into accionesxmenus values (5,'CSV',7,'Se con archivo con formato especifico un Almacen');

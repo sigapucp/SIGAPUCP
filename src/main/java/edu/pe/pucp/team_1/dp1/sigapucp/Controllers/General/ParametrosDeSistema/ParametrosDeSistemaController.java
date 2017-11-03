@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.ParametrosDeSistema;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import java.net.URL;
@@ -39,6 +40,7 @@ public class ParametrosDeSistemaController extends Controller{
     private TextField ParametroValor;
     private List<ParametroSistema> parametros;
     private ErrorAlertController errorController;
+    private InformationAlertController infoController;
 
     /**
      * Initializes the controller class.
@@ -48,6 +50,7 @@ public class ParametrosDeSistemaController extends Controller{
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         errorController = new ErrorAlertController();
+        infoController = new InformationAlertController();
     }
     
     @Override
@@ -56,13 +59,25 @@ public class ParametrosDeSistemaController extends Controller{
         try {
             String nombre = ParametroSeleccion.getSelectionModel().getSelectedItem();
             ParametroSistema parametro = parametros.stream().filter(x->x.getString("nombre").equals(nombre)).collect(Collectors.toList()).get(0); 
-            Base.openTransaction();
             String valor = ParametroValor.getText();
+            if(parametro.getInteger("parametro_id")<=3)
+            {
+                Integer prioridad = Integer.valueOf(valor);
+                if(prioridad >3 || prioridad < 1)
+                {
+                    errorController.show("Error de Valor. La prioridades debe ser entre 1,2,3", valor);
+                    return;
+                }
+            }
+            Base.openTransaction();            
             parametro.set("valor",valor);
             parametro.set("last_user_change",usuarioActual.getString("usuario_cod"));
             parametro.saveIt();
+            infoController.show("Se edito el parametro satisfactoriamente:");
             Base.commitTransaction();
+            
         } catch (Exception e) {
+            errorController.show("Error de Valor. La prioridades debe ser entre 1,2,3", e.getMessage());
             Base.rollbackTransaction();
         }        
     }
@@ -76,6 +91,7 @@ public class ParametrosDeSistemaController extends Controller{
             ParametroValor.setText(parametro.getString("valor"));
             ParametroDescripcion.setText(parametro.getString("descripcion"));                        
         } catch (Exception e) {
+            infoController.show("Error al mostrar parametro: " + e.getMessage());
         }                    
     }
     
@@ -107,6 +123,7 @@ public class ParametrosDeSistemaController extends Controller{
                 }
             });
         } catch (Exception e) {
+            infoController.show("Error en cargar parametros: " + e.getMessage());
         }
     }    
     
