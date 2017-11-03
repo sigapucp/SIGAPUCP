@@ -33,6 +33,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -62,6 +63,8 @@ public class EnviosController extends Controller{
     private TextField ruc_cliente;
     @FXML
     private ComboBox<String> ordenes_compra_combobox;
+    @FXML
+    private Spinner<Integer> cantidad_producto;
     
     //BUSQUEDA
     //-----------------------------------------------------//
@@ -107,20 +110,47 @@ public class EnviosController extends Controller{
  
     //----------------------------------------------------------------------------//
 
-    //SI SE AGREGA
-        //resta existencias
-        //inserta en lista a enviar
+    private void eliinar_producto_de_lista_enviar(){
     //SI SE ELIMINA
         //suma existencis
-        //elimina en lista enviar    
-    private void agregar_producto_a_lista_enviar(OrdenCompraxProducto producto){
-        //busqueda en disponibles
-        //se verifica cantidad valida
-        //se rechaza o se acepta
-        for(OrdenCompraxProducto producto_disponible : productos_disponibles){
-            if (producto_disponible.getId() == producto.getId()){
-                
-            }
+        //elimina en lista enviar
+    }
+    private void agregar_producto_a_lista_enviar(ActionEvent event){
+        try{
+            for(OrdenCompraxProducto producto_disponible : productos_disponibles){
+                if (producto_disponible.getId() == producto_devuelto.getId()){
+                    Integer cantidad = producto_disponible.getInteger("cantidad") - cantidad_producto.getValue();
+                    if (cantidad > 0){
+                        producto_disponible.setInteger("cantidad", cantidad);
+                        productos_a_agregar.add(producto_disponible);
+                    }
+                    else{
+                        //mensaje de error
+                    }
+                    break;
+                }
+            }            
+        }catch(Exception e){
+            infoController.show("Error " + e.getMessage());
+        }
+
+
+    }
+    
+    private void setAgregarProductos() throws Exception
+    {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
+            obtener_productos_disponibles_orden_compra();
+            AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_disponibles);
+            loader.setController(controller);
+            Scene modal_content_scene = new Scene((Parent)loader.load());
+            modal_stage.setScene(modal_content_scene);       
+            controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
+                producto_devuelto = args.orden_compra_producto;
+            });   
+        }catch(Exception e){
+            System.out.println(e);
         }
     }
     
@@ -136,22 +166,7 @@ public class EnviosController extends Controller{
         }
     }
     
-    private void setAgregarProductos() throws Exception
-    {
-        try{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
-        obtener_productos_disponibles_orden_compra();
-        AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_disponibles);
-        loader.setController(controller);
-        Scene modal_content_scene = new Scene((Parent)loader.load());
-        modal_stage.setScene(modal_content_scene);       
-        controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
-            producto_devuelto = args.orden_compra_producto;
-        });   
-        }catch(Exception e){
-            System.out.println(e);
-        }
-    }
+
     @FXML
     private void handleAgregarProducto(ActionEvent event) throws IOException{
         modal_stage.showAndWait();
@@ -165,7 +180,7 @@ public class EnviosController extends Controller{
         posibles_clientes = words;        
     }
     
-    private void mostar_informacion_cliente(Cliente cliente){
+    private void mostrar_informacion_cliente(Cliente cliente){
         String tipo_cliente = cliente.getString("tipo_cliente");
         String dni = cliente.getString("dni");
         String ruc = cliente.getString("ruc");
@@ -193,7 +208,7 @@ public class EnviosController extends Controller{
         for (Cliente cliente : autoCompletadoList){
             if (cliente.getString("nombre").equals(nombre_cliente.getText())){
                 cliente_seleccionado = cliente;                               
-                mostar_informacion_cliente(cliente);
+                mostrar_informacion_cliente(cliente);
                 llenar_ordenes_compra_cliente();
             }
         }
@@ -227,7 +242,7 @@ public class EnviosController extends Controller{
         cliente_seleccionado = null;
     }    
     
-    public void llenar_tabla_pedidos(){
+    public void llenar_tabla_envios(){
         List<Envio> temp_envios = Envio.findAll();
         envios.clear();
         columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
@@ -240,7 +255,7 @@ public class EnviosController extends Controller{
     public void initialize(URL location, ResourceBundle resources) {
         try{
             if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-            llenar_tabla_pedidos();
+            llenar_tabla_envios();
             inhabilitar_formulario();
         }catch(Exception e)    {
             infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
