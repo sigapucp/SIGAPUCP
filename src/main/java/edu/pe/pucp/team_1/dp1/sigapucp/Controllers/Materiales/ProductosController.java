@@ -17,6 +17,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import java.io.IOException;
@@ -542,7 +543,9 @@ public class ProductosController extends Controller {
                 crear_nuevo = false;
                 return;
             }
-            crear_tipo_producto();         
+            crear_tipo_producto();   
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Productos ,this.usuarioActual);
+            limpiar_formulario();
         }
         else {
             if(producto_seleccionado==null) 
@@ -555,6 +558,7 @@ public class ProductosController extends Controller {
                 return;
             }
             editar_producto(producto_seleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Productos ,this.usuarioActual);
         }    
         RefrescarTabla(TipoProducto.findAll());
     }

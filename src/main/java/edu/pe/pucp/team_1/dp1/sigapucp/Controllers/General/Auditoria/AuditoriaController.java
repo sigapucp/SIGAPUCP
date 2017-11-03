@@ -15,6 +15,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -131,10 +132,7 @@ public class AuditoriaController extends Controller {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         acciones = AccionLog.findAll();
         for (AccionLog accion : acciones){
-            String fecha = accion.getString("tiempo");
-            //Date fechaDate = accion.getDate("tiempo");
-            //LocalDate dateaux = fechaDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-           
+            String hora = accion.getString("tiempo");
             Usuario usuario = Usuario.findById(accion.getInteger("usuario_id"));
             String empleado = usuario.getString("nombre");
             Menu menu = Menu.findById(accion.getInteger("menu_id"));
@@ -144,7 +142,10 @@ public class AuditoriaController extends Controller {
             Accion acciond = Accion.findById(accion.getInteger("accion_id"));
             String nombreAccion = acciond.getString("nombre");
             String Descripcion = acciond.getString("descripcion");
-            masterData.add(new Auditoria(fecha,"12:00",empleado,nombreAccion,menus,Descripcion,roles));
+            LocalDate hoy_aux = LocalDate.now();
+            Date hoy = Date.from(hoy_aux.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            String fecha = new SimpleDateFormat("yyyy-MM-dd").format(hoy);
+            masterData.add(new Auditoria(fecha,hora,empleado,nombreAccion,menus,Descripcion,roles));
             
         }
         
@@ -159,6 +160,7 @@ public class AuditoriaController extends Controller {
         ColumnaAccion.setCellValueFactory(cellData -> cellData.getValue().AccionProperty());
         ColumnaModulo.setCellValueFactory(cellData -> cellData.getValue().ModuloProperty());
         ColumnaDescripcion.setCellValueFactory(cellData -> cellData.getValue().DescripcionProperty());
+        ColumnaRol.setCellValueFactory(cellData -> cellData.getValue().RolProperty());
         FilteredList<Auditoria> filteredData = new FilteredList<>(masterData, p -> true);
           
         TablaAuditoria.setItems(filteredData);

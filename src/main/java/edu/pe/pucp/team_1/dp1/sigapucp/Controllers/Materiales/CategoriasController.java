@@ -94,8 +94,6 @@ public class CategoriasController extends Controller{
     
     @FXML
     public void buscar_categoria(ActionEvent event) throws IOException{
-        //System.out.println("============================================");
-        //categorias = null;
         categorias = CategoriaProducto.findAll();
         masterData.clear();
         

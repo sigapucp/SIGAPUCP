@@ -5,6 +5,8 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,11 +26,8 @@ import org.javalite.activejdbc.annotations.Table;
 public class AccionLog extends Model{    
     
     public void asignar_atributos(String accion_code,int accion_id, int menu_id, String rol_cod, int rol_id, String usuario_code,int usuario_id) {
-        
-        LocalDate hoy_aux = LocalDate.now();
-        Date hoy = Date.from(hoy_aux.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        
-        this.setDate("tiempo",hoy);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        this.set("tiempo",timestamp);
         this.set("accion_cod",accion_code);
         this.set("accion_id",accion_id);
         this.set("menu_id", menu_id);
