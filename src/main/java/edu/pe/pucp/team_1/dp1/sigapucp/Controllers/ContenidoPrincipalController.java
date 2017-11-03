@@ -58,6 +58,7 @@ public class ContenidoPrincipalController extends Controller {
             setNuevaVista(args.getPathContenido(),args.getPathBotonesAcciones());
             activeController.cambiarMenuEvent.addHandler((Object sender1, cambiarMenuArgs args1) -> {                
                 setNuevaVista(args1.fxmlPath,args1.fxmlBotones);                                  
+                activeController.menuCall(args1);
             });                                                                     
         });
     }
