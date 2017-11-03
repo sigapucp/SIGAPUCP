@@ -27,6 +27,7 @@ public class AccionLog extends Model{
         
         LocalDate hoy_aux = LocalDate.now();
         Date hoy = Date.from(hoy_aux.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        
         this.setDate("tiempo",hoy);
         this.set("accion_cod",accion_code);
         this.set("accion_id",accion_id);

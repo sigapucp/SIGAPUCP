@@ -13,6 +13,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -126,6 +130,9 @@ public class AuditoriaController extends Controller {
         acciones = AccionLog.findAll();
         for (AccionLog accion : acciones){
             String fecha = accion.getString("tiempo");
+            //Date fechaDate = accion.getDate("tiempo");
+            //LocalDate dateaux = fechaDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+           
             Usuario usuario = Usuario.findById(accion.getInteger("usuario_id"));
             String empleado = usuario.getString("nombre");
             Menu menu = Menu.findById(accion.getInteger("menu_id"));
@@ -135,7 +142,7 @@ public class AuditoriaController extends Controller {
             Accion acciond = Accion.findById(accion.getInteger("accion_id"));
             String nombreAccion = acciond.getString("nombre");
             String Descripcion = acciond.getString("descripcion");
-            TablaAuditoriaData.add(new Auditoria(fecha,empleado,nombreAccion,menus,Descripcion,roles));
+            TablaAuditoriaData.add(new Auditoria(fecha,"12:00",empleado,nombreAccion,menus,Descripcion,roles));
             
         }
         
@@ -145,55 +152,13 @@ public class AuditoriaController extends Controller {
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
         ColumnaEmpleado.setCellValueFactory(cellData -> cellData.getValue().EmpleadoProperty());
-        //ColumnaHora.setCellValueFactory(cellData -> cellData.getValue().HoraProperty());
+        ColumnaHora.setCellValueFactory(cellData -> cellData.getValue().HoraProperty());
         ColumnaFecha.setCellValueFactory(cellData -> cellData.getValue().FechaProperty());
         ColumnaAccion.setCellValueFactory(cellData -> cellData.getValue().AccionProperty());
         ColumnaModulo.setCellValueFactory(cellData -> cellData.getValue().ModuloProperty());
         ColumnaDescripcion.setCellValueFactory(cellData -> cellData.getValue().DescripcionProperty());
-        ColumnaRol.setCellValueFactory(cellData -> cellData.getValue().RolProperty());
         FilteredList<Auditoria> filteredData = new FilteredList<>(TablaAuditoriaData, p -> true);
-        
-        
-        //Modulo.getItems().addAll("CATEGORIAS");
-        //AccionC.getItems().addAll("CREAR","MODIFICAR");
-        
-        /*ObjectProperty<Predicate<Auditoria>> ModuloFilter = new SimpleObjectProperty<>();
-        ObjectProperty<Predicate<Auditoria>> AccionFilter = new SimpleObjectProperty<>();
-        ObjectProperty<Predicate<Auditoria>> EmpleadoFilter = new SimpleObjectProperty<>();
-        ObjectProperty<Predicate<Auditoria>> DescripcionFilter = new SimpleObjectProperty<>();
-        ObjectProperty<Predicate<Auditoria>> FechaFilter = new SimpleObjectProperty<>();
-        
-        ModuloFilter.bind(Bindings.createObjectBinding(() ->
-            auditoria -> Modulo.getValue() == null || Modulo.getValue() == auditoria.getModulo(),
-            Modulo.valueProperty()));
-        
-        AccionFilter.bind(Bindings.createObjectBinding(() ->
-            auditoria -> Accion.getValue() == null || Accion.getValue() == auditoria.getAccion(),
-            Accion.valueProperty()));
-        
-        EmpleadoFilter.bind(Bindings.createObjectBinding(() -> 
-            auditoria -> auditoria.getEmpleado().toLowerCase().contains(EmpleadoAuditoria.getText().toLowerCase()), 
-            EmpleadoAuditoria.textProperty()));
-        
-        DescripcionFilter.bind(Bindings.createObjectBinding(() -> 
-            auditoria -> auditoria.getDescripcion().toLowerCase().contains(DescripcionAuditoria.getText().toLowerCase()), 
-            DescripcionAuditoria.textProperty()));
-        
-        FechaFilter.bind(Bindings.createObjectBinding(() -> 
-            auditoria -> AuditoriaFechaUno.getValue() == null || AuditoriaFechaUno.getValue().toString() == auditoria.getFecha(),
-            AuditoriaFechaUno.valueProperty()));
-        
-       
-        
-        filteredData.predicateProperty().bind(Bindings.createObjectBinding(
-            () -> ModuloFilter.get().and(AccionFilter.get()).and(EmpleadoFilter.get()).and(DescripcionFilter.get()).and(FechaFilter.get()),ModuloFilter,AccionFilter,EmpleadoFilter,DescripcionFilter,FechaFilter));
-        
-       
-        
-        
-        SortedList<Auditoria> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(TablaAuditoria.comparatorProperty());*/
-        
+          
         TablaAuditoria.setItems(filteredData);
                
     }

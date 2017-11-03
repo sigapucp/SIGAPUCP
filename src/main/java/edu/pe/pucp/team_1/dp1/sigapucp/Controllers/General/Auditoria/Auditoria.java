@@ -16,13 +16,14 @@ import javafx.beans.property.SimpleStringProperty;
 public class Auditoria {
     //private final StringProperty Hora;
     private final StringProperty Fecha;
+    private final StringProperty Hora;
     private final StringProperty Empleado;
     private final StringProperty Accion;
     private final StringProperty Modulo;
     private final StringProperty Descripcion;
     private final StringProperty Rol;
     
-    public Auditoria( String Fecha, String Empleado, String Accion, String Modulo, String Descripcion, String Rol) {
+    public Auditoria( String Fecha,String Hora, String Empleado, String Accion, String Modulo, String Descripcion, String Rol) {
         //this.Hora = new SimpleStringProperty(Hora);
         this.Fecha = new SimpleStringProperty(Fecha);
         this.Empleado = new SimpleStringProperty(Empleado);
@@ -30,6 +31,7 @@ public class Auditoria {
         this.Modulo = new SimpleStringProperty(Modulo);
         this.Descripcion = new SimpleStringProperty(Descripcion);
         this.Rol = new SimpleStringProperty(Rol);
+        this.Hora = new SimpleStringProperty(Hora);
     }
 
     /**
@@ -130,5 +132,9 @@ public class Auditoria {
     
     public StringProperty RolProperty(){
         return Rol;
+    }
+    
+    public StringProperty HoraProperty(){
+        return Hora;
     }
 }
