@@ -9,6 +9,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -111,11 +112,12 @@ public class EnviosController extends Controller{
  
     //----------------------------------------------------------------------------//
 
-    private void eliinar_producto_de_lista_enviar(){
+    private void eliminar_producto_de_lista_enviar(){
     //SI SE ELIMINA
         //suma existencis
         //elimina en lista enviar
     }
+    
     private void agregar_producto_a_lista_enviar(ActionEvent event){
         try{
             for(OrdenCompraxProducto producto_disponible : productos_disponibles){
@@ -134,8 +136,6 @@ public class EnviosController extends Controller{
         }catch(Exception e){
             infoController.show("Error " + e.getMessage());
         }
-
-
     }
     
     private void setAgregarProductos() throws Exception
@@ -151,7 +151,7 @@ public class EnviosController extends Controller{
                 producto_devuelto = args.orden_compra_producto;
             });   
         }catch(Exception e){
-            System.out.println(e);
+            infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
     }
     
@@ -166,7 +166,6 @@ public class EnviosController extends Controller{
           productos_disponibles.add(producto);
         }
     }
-    
 
     @FXML
     private void handleAgregarProducto(ActionEvent event) throws IOException{
@@ -256,7 +255,35 @@ public class EnviosController extends Controller{
         columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
         tabla_envios.setItems(masterData);   
-    }    
+    }
+    
+    public boolean cumple_condicion_busqueda(Envio envio, String codigo, String cliente, String codPedido){
+        boolean match = true;        
+        if ( codigo.equals("") && cliente.equals("") && codPedido.equals("")){
+            match = true;
+        }else {
+            match = (!codigo.equals("")) ? (match && (envio.get("promocion_cod")).equals(codigo)) : match;
+            Integer idCliente = (Integer) cliente_seleccionado.getId();
+            match = (!cliente.equals("")) ? (match && (envio.get("cliente_id")==idCliente)) : match;
+            match = (!codPedido.equals("")) ? (match && (envio.get("orden_compra_cod")).equals(codPedido)) : match;
+        }
+        return match;
+    }
+
+    @FXML
+    public void buscar_envio(ActionEvent event) throws IOException{
+        envios = Envio.findAll();
+        masterData.clear();
+        try{
+            for(Envio envio : envios){
+                if (cumple_condicion_busqueda(envio, envio_buscar.getText(), cliente_buscar.getText(), pedido_buscar.getText())){
+                    masterData.add(envio);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("No se pudo buscar el envio : " + e.getMessage());
+        }
+    }
     
     public void initialize(URL location, ResourceBundle resources) {        
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -264,4 +291,10 @@ public class EnviosController extends Controller{
         llenar_tabla_envios();
         inhabilitar_formulario();
     }    
+    
+    /*@Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Envios;
+    }*/
 }
