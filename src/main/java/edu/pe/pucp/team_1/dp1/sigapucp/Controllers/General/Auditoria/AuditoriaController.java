@@ -12,6 +12,8 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -100,7 +102,7 @@ public class AuditoriaController extends Controller {
     
     private List<AccionLog> acciones;
     
-    private final ObservableList<Auditoria> TablaAuditoriaData = FXCollections.observableArrayList();
+    private final ObservableList<Auditoria> masterData = FXCollections.observableArrayList();
     
     @FXML
     private void handleCheckBoxUno(ActionEvent event){
@@ -142,7 +144,7 @@ public class AuditoriaController extends Controller {
             Accion acciond = Accion.findById(accion.getInteger("accion_id"));
             String nombreAccion = acciond.getString("nombre");
             String Descripcion = acciond.getString("descripcion");
-            TablaAuditoriaData.add(new Auditoria(fecha,"12:00",empleado,nombreAccion,menus,Descripcion,roles));
+            masterData.add(new Auditoria(fecha,"12:00",empleado,nombreAccion,menus,Descripcion,roles));
             
         }
         
@@ -157,12 +159,44 @@ public class AuditoriaController extends Controller {
         ColumnaAccion.setCellValueFactory(cellData -> cellData.getValue().AccionProperty());
         ColumnaModulo.setCellValueFactory(cellData -> cellData.getValue().ModuloProperty());
         ColumnaDescripcion.setCellValueFactory(cellData -> cellData.getValue().DescripcionProperty());
-        FilteredList<Auditoria> filteredData = new FilteredList<>(TablaAuditoriaData, p -> true);
+        FilteredList<Auditoria> filteredData = new FilteredList<>(masterData, p -> true);
           
         TablaAuditoria.setItems(filteredData);
                
     }
     
+    
+        /*public boolean cumple_condicion_busqueda(AccionLog accion, String codigo, String tipo, LocalDate fecha){
+        boolean match = true;        
+        if ( codigo.equals("") && (tipo==null) && (fecha==null)){
+            match = true;
+        }else {
+            Date fechaDate = new Date();
+            if (!(fecha==null))
+                fechaDate = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            match = (!codigo.equals("")) ? (match && (promocion.get("promocion_cod")).equals(codigo)) : match;
+            match = (!(tipo==null)) ? (match && (promocion.get("tipo")).equals(tipo)) : match;
+            Date fechaIni = promocion.getDate("fecha_inicio");            
+            Date fechaFin = promocion.getDate("fecha_fin");            
+            match = (!(fecha==null)) ? (match && fechaIni.before(fechaDate) && fechaFin.after(fechaDate)) : match;
+        }
+        return match;
+    }
+    @FXML
+    public void buscar_promocion(ActionEvent event) throws IOException{
+        acciones = AccionLog.findAll();
+        masterData.clear();
+        LocalDate fecha = AuditoriaFechaUno.getValue();
+        try{
+            for(AccionLog accion : acciones){
+                if (cumple_condicion_busqueda(promocion, busqCodigoPromo.getText(), busqTipoPromo.getSelectionModel().getSelectedItem(), fecha)){
+                    masterData.add(promocion);
+                }
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }*/
     @Override
     public Menu.MENU getMenu(){
         return Menu.MENU.Auditoria;
