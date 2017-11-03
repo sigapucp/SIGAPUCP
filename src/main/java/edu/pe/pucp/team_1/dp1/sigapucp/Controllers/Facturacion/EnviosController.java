@@ -88,7 +88,8 @@ public class EnviosController extends Controller{
         //--------------------------------------------------//
     
     private InformationAlertController infoController;    
-    private final ObservableList<Envio> envios = FXCollections.observableArrayList();
+    private final ObservableList<Envio> masterData = FXCollections.observableArrayList();
+    private List<Envio> envios;
     private Boolean crearNuevo = false;    
     private Cliente cliente_seleccionado = null;
 
@@ -242,23 +243,25 @@ public class EnviosController extends Controller{
         cliente_seleccionado = null;
     }    
     
+    public void limpiar_tabla_index(){
+        tabla_envios.getItems().clear();
+    }
+    
     public void llenar_tabla_envios(){
-        List<Envio> temp_envios = Envio.findAll();
-        envios.clear();
+        limpiar_tabla_index();
+        for( Envio envio : envios){
+            masterData.add(envio);
+        }
         columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
         columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
-        envios.addAll(temp_envios);
-        tabla_envios.setItems(envios);   
+        tabla_envios.setItems(masterData);   
     }    
     
-    public void initialize(URL location, ResourceBundle resources) {
-        try{
-            if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-            llenar_tabla_envios();
-            inhabilitar_formulario();
-        }catch(Exception e)    {
-            infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
-        }
+    public void initialize(URL location, ResourceBundle resources) {        
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        envios = Envio.findAll();
+        llenar_tabla_envios();
+        inhabilitar_formulario();
     }    
 }
