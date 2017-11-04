@@ -8,10 +8,14 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
@@ -318,13 +322,24 @@ public class PedidosController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Pedidos, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crearPedido();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Pedidos ,this.usuarioActual);
         } else {
-            if (pedidoSeleccionado == null){ 
-                infoController.show("No ha seleccionado ninguna Orden de Compra");            
+            if (pedidoSeleccionado == null){
+                infoController.show("No ha seleccionado un cliente");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Pedidos, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editarPedido(pedidoSeleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Pedidos ,this.usuarioActual);
         }
         crearNuevo = false;
         RefrescarTabla(OrdenCompra.findAll());

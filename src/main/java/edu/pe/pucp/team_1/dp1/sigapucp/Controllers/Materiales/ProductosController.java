@@ -14,8 +14,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import java.io.IOException;
@@ -561,7 +563,14 @@ public class ProductosController extends Controller {
     @Override
     public void guardar(){
         if (crear_nuevo){
-            crear_tipo_producto();
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Productos, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crear_nuevo = false;
+                return;
+            }
+            crear_tipo_producto();   
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Productos ,this.usuarioActual);
+            limpiar_formulario();
         }
         else {
             if(producto_seleccionado==null) 
@@ -569,9 +578,31 @@ public class ProductosController extends Controller {
                 infoController.show("No ha seleccionado un tipo de producto");            
                 return;
             }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Productos, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_producto(producto_seleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Productos ,this.usuarioActual);
         }    
         RefrescarTabla(TipoProducto.findAll());
+    }
+    
+    @Override
+    public void desactivar(){
+        if (producto_seleccionado==null){
+            infoController.show("No se ha seleccionado producto");
+            return;
+        }
+        try{
+            Base.openTransaction();
+            producto_seleccionado.set("estado",TipoProducto.ESTADO.INACTIVO.name());
+            producto_seleccionado.saveIt();
+            Base.commitTransaction();
+        }catch(Exception e){
+            infoController.show("El producto contiene errores: " + e);
+            Base.rollbackTransaction();
+        }
     }
     
     private void RefrescarTabla(List<TipoProducto> productoRefresh)
