@@ -39,7 +39,7 @@ public class OrdenesDeSalidaController  extends Controller{
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarEnviosOrdenSalida.fxml"));
-            AgregarEnviosController controller = new AgregarEnviosController(envios_disponibles);
+            AgregarEnviosController controller = new AgregarEnviosController();
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);       

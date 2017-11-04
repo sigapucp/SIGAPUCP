@@ -36,6 +36,7 @@ public class AgregarEnviosController implements  Initializable{
         //----------------------------------------------------------//
     private InformationAlertController infoController;
     private Envio envio_busqueda;
+    private List<Envio> lista_envios;
     
     @FXML
     private void agregar_envio(ActionEvent event){
@@ -48,7 +49,12 @@ public class AgregarEnviosController implements  Initializable{
         Stage stage = (Stage) boton_agregar_envio.getScene().getWindow();    
         stage.close();        
     }
-    public AgregarEnviosController(List<Envio> envios){
+    
+    public void llenar_tabla_envios(){
+        
+    }
+    
+    public AgregarEnviosController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");  
         infoController = new InformationAlertController();
     }
@@ -56,7 +62,7 @@ public class AgregarEnviosController implements  Initializable{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {  
-            //llenar_tabla_envios
+            llenar_tabla_envios();
         } catch (Exception e) {
             infoController.show("Problemas en la inicializaciond de busqueda de Producto");
         }       
