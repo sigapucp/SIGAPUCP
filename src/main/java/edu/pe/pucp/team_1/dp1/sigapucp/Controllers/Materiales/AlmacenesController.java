@@ -564,6 +564,7 @@ public class AlmacenesController extends Controller{
             Integer anchorX2 = rack.getInteger("x_ancla2");
             Integer anchorY1 = rack.getInteger("y_ancla1");
             Integer anchorY2 = rack.getInteger("y_ancla2");
+            Double rackCapacidad = rack.getDouble("capacidad");
             String rackCode = rack.getString("rack_cod");
             LazyList<AlmacenAreaXY> registrosExistentes = AlmacenAreaXY.find("rack_cod = ?", rackCode);
             
@@ -588,33 +589,33 @@ public class AlmacenesController extends Controller{
                  for(;start<finish;start++) {                  
                     AlmacenAreaXY areaXY = new AlmacenAreaXY();
 
-                    areaXY.set("x",start);
-                    areaXY.set("y",constant);    
+                    areaXY.set("x", start);
+                    areaXY.set("y", constant);    
 
-                    areaXY.set("rack_id",rack.getId());
-                    areaXY.set("rack_cod",rack.get("rack_cod"));
+                    areaXY.set("rack_id", rack.getId());
+                    areaXY.set("rack_cod", rack.get("rack_cod"));
 
-                    areaXY.set("almacen_id",rack.get("almacen_id"));
-                    areaXY.set("almacen_cod",rack.get("almacen_cod"));
+                    areaXY.set("almacen_id", rack.get("almacen_id"));
+                    areaXY.set("almacen_cod", rack.get("almacen_cod"));
                     // Libre
-                    areaXY.set("estado","L"); 
+                    areaXY.set("estado", "L"); 
                     areaXY.set("tipo",AlmacenAreaXY.TIPO.RACK.name()); 
 
                     Integer altura = rack.getInteger("altura");
-                    areaXY.set("alto",altura); 
+                    areaXY.set("alto", altura); 
 
                     areaXY.saveIt();
 
                     for(int i = 0;i<altura;i++) {
                         AlmanceAreaZ areaZ = new AlmanceAreaZ();
 
-                        areaZ.set("almacen_xy_id",areaXY.getId());
-                        areaZ.set("level",i);
+                        areaZ.set("almacen_xy_id", areaXY.getId());
+                        areaZ.set("level", i);
                         // Libre
-                        areaZ.set("state","L");
+                        areaZ.set("state", "L");
 
                         //HARCODED
-                        areaZ.set("capacity",1000);
+                        areaZ.set("capacity", rackCapacidad);
 
                         areaZ.saveIt();
                     }                                        
