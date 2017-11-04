@@ -14,11 +14,14 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.LinearDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaXY;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmanceAreaZ;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.TipoError;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -512,8 +515,9 @@ public class AlmacenesController extends Controller{
                                 almacenLongitudArea,
                                 almacenEsCentral,
                                 usuarioActual,
-                                racks);                        
-                        almacen.saveIt();
+                                racks);                                                    
+                        almacen.saveIt();                        
+                        crearPosicionesXY(racks);                        
                         Base.commitTransaction();
                         clearAlmacenForm();
                         
@@ -538,7 +542,75 @@ public class AlmacenesController extends Controller{
             }
         } else {
             warningController.show("Error al crear Almacen", "Es necesario que seleccione el tipo de Almacen");
-        }
-        
+        }        
+    }
+    
+    public void crearPosicionesXY(List<Rack> racks) throws Exception
+    {
+        for(Rack rack:racks)
+        {      
+            Integer anchorX1 = rack.getInteger("x_ancla1");
+            Integer anchorX2 = rack.getInteger("x_ancla2");
+            Integer anchorY1 = rack.getInteger("y_ancla1");
+            Integer anchorY2 = rack.getInteger("y_ancla2");
+            
+            Integer start = 0;
+            Integer finish = 0 ;
+            Integer constant = 0;
+            String increment = "x";
+            String other = "y";
+            
+            if(rack.getString("tipo").equals(Rack.TIPO.HORIZONTAL.name()))
+            {
+                start = Integer.min(anchorX1, anchorX2);
+                finish = Integer.max(anchorX1, anchorX2); 
+                constant = anchorY1;
+                increment = "x";
+                other = "y";                                               
+            }else
+            {                
+                start = Integer.min(anchorY1, anchorY2);
+                finish = Integer.max(anchorY1, anchorY2);
+                constant = anchorX1;
+            }     
+            
+             for(;start<finish;start++)
+                {                  
+                    AlmacenAreaXY areaXY = new AlmacenAreaXY();
+                                        
+                    areaXY.set("x",start);
+                    areaXY.set("y",constant);    
+                    
+                    areaXY.set("rack_id",rack.getId());
+                    areaXY.set("rack_cod",rack.get("rack_cod"));
+                    
+                    areaXY.set("almacen_id",rack.get("almacen_id"));
+                    areaXY.set("almacen_cod",rack.get("almacen_cod"));
+                    // Libre
+                    areaXY.set("estado","L"); 
+                    areaXY.set("tipo",AlmacenAreaXY.TIPO.RACK.name()); 
+                    
+                    Integer altura = rack.getInteger("altura");
+                    areaXY.set("alto",altura); 
+                    
+                    areaXY.saveIt();
+                    
+                    for(int i = 0;i<altura;i++)
+                    {
+                        AlmanceAreaZ areaZ = new AlmanceAreaZ();
+                        
+                        areaZ.set("almacen_xy_id",areaXY.getId());
+                        areaZ.set("level",i);
+                        // Libre
+                        areaZ.set("state","L");
+                        
+                        //HARCODED
+                        areaZ.set("capacity",1000);
+                        
+                        areaZ.saveIt();
+                    }                                        
+                    // Los que falta.
+                }
+        }        
     }
 }

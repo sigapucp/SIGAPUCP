@@ -39,6 +39,8 @@ public class ContenidoPrincipalController extends Controller {
                 controller.desactivar();
             case "Cargar":
                 controller.cargar();
+            case "Completar":
+                controller.cambiarEstado();
             default:
                 break;
         }

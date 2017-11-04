@@ -39,6 +39,17 @@ public class Rack extends Model{
         set("x_ancla2", rackXAncla2);
         set("y_ancla2", rackYAncla2);
         set("estado", rackEstado);
+        
+        // Hardcoded
+        set("capacidad", 100);
+        
+        if(rackXAncla1==rackXAncla2)
+        {
+            set("tipo",TIPO.VERTICAL.name());
+        }else
+        {
+            set("tipo",TIPO.HORIZONTAL.name());
+        }
     }
     
     public String generarCodigoRack(String almacenCod) {
@@ -50,5 +61,11 @@ public class Rack extends Model{
         
         cod = cod.concat(String.format("-X%dY%d-X%dY%d", rackX1, rackY1, rackX2, rackY2));
         return cod;
+    }
+    
+    public enum TIPO
+    {
+        VERTICAL,
+        HORIZONTAL
     }
 }
