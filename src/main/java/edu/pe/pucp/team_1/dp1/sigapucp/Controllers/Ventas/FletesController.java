@@ -110,6 +110,10 @@ public class FletesController extends Controller {
     private Boolean es_categoria = false;
     private Boolean crear_nuevo = false;
     private Flete fleteSeleccionado = null;
+    @FXML
+    private Label MonedaLabel;
+
+
     
     
     public FletesController(){
@@ -188,28 +192,30 @@ public class FletesController extends Controller {
             VerTipo.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if(newValue == null) return;
-                    if(newValue.equals(Flete.TIPO.PORCENTAJE))
-                    {
-                        NombreTipo.setText("Procentaje");
-                    }
+                    if(newValue == null) return;                   
                     
                     if(newValue.equals(Flete.TIPO.PORCENTAJE.name()))
                     {
                         NombreTipo.setText("Procentaje sobre Precio Base");
                         AbrvTipo.setText("  %  ");
+                        VerMoneda.setVisible(false);
+                        MonedaLabel.setVisible(false);
                     }
                     
                     if(newValue.equals(Flete.TIPO.VOLUMEN.name()))
                     {
                         NombreTipo.setText("Metro Cubico por Kilometro");
                         AbrvTipo.setText("M^3/Km");
+                        VerMoneda.setVisible(true);
+                        MonedaLabel.setVisible(true);
                     }
                     
                     if(newValue.equals(Flete.TIPO.PESO.name()))
                     {
                         NombreTipo.setText("Kilogramos por Kilometro");
                         AbrvTipo.setText("Kg/Km");
+                        VerMoneda.setVisible(true);
+                        MonedaLabel.setVisible(true);
                     }
                 }            
             });

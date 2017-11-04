@@ -166,6 +166,7 @@ public class ClientesController extends Controller{
     @Override
     public void cargar(){
         //validamos que los campos sean los correctos
+        if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre cliente,rep legal,telefono,ruc,dni,tipo cliente,dir. despacho, dir. facturacion, departamento,", "¿Desea continuar?")) return;
         //csv
         String filename = "data_clientes.csv";
         File file = new File(filename);
@@ -179,17 +180,22 @@ public class ClientesController extends Controller{
                 String [] values = data.split(",");
                 if (primera_fila) {
                     primera_fila = false;
+                    if (values.length != 9) {
+                        infoController.show("El archivo .csv no tiene el formato adecuado. Verifique que sea\nnombre cliente,rep legal,telefono,ruc,dni,tipo cliente,dir. despacho, dir. facturacion, departamento,"); 
+                        return;
+                    }                    
                     continue; //nos saltamos el encabezado
                 }
                 Base.openTransaction();
                 Cliente nuevo_cliente = new Cliente();
-                nuevo_cliente.asignar_atributos(values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
+                nuevo_cliente.asignar_atributos(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
                 nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
-                nuevo_cliente.setString("departamento", values[9]);
+                nuevo_cliente.setString("departamento", values[8]);
                 nuevo_cliente.saveIt();
                 Base.commitTransaction();
                 System.out.println("CORRECTO");
             }
+            infoController.show("¡Carga masiva de datos de clientes exitosa!");
             inputStream.close();
         } catch (FileNotFoundException ex) {
             System.out.println("INCORRECTO");
@@ -271,7 +277,7 @@ public class ClientesController extends Controller{
             cliente_formulario.setDisable(false);
             if (registro_seleccionado.getString("tipo_cliente").equals("PersonaNatural")){
                 dni.setText(registro_seleccionado.getString("dni"));
-                ruc.setDisable(true);
+                ruc.setDisable(false);
                 persoNatu.setSelected(true);
                 persoJuri.setSelected(false);
                 repLegal.setDisable(true);

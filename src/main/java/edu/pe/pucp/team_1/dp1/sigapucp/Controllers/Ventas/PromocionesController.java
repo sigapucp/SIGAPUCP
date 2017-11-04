@@ -534,7 +534,7 @@ public class PromocionesController extends Controller{
         }
         catch(Exception e){
            infoController.show("La promoción contiene errores : " + e);        
-           Base.rollbackTransaction();           
+           Base.rollbackTransaction();
         }    
     }
     

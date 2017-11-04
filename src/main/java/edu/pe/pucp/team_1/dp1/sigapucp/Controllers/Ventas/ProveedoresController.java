@@ -15,16 +15,20 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.util.stream.Collectors;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -148,10 +152,50 @@ public class ProveedoresController extends Controller{
         cargar_tabla_index();        
     }        
     
+    @Override
     public void nuevo(){
        crear_nuevo = true;
        habilitar_formulario();
        limpiar_formulario();
+    }
+    
+    @Override
+    public void cargar(){
+        //validamos que los campos sean los correctos
+        if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre,rep. legal,telefono,ruc proveedor,anotaciones,", "¿Desea continuar?")) return;
+        //csv
+        String filename = "data_usuarios.csv";
+        File file = new File(filename);
+        Boolean primera_fila = true;
+        try {
+            Scanner inputStream = new Scanner(file);
+            while (inputStream.hasNext()){
+                String data = inputStream.nextLine();
+                //manejo de la data aquí:
+                String [] values = data.split(",");
+                if (primera_fila) {
+                    primera_fila = false;
+                    if (values.length != 5) {
+                        infoController.show("El archivo .csv no tiene el formato adecuado. Verifique que sea\nnombre,rep. legal,telefono,ruc proveedor,anotaciones,"); 
+                        return;
+                    }      
+                    continue; //nos saltamos el encabezado
+                }
+                Base.openTransaction();
+                Proveedor nuevo_proveedor = new Proveedor();
+                nuevo_proveedor.asignar_atributos(values[0], values[1], values[2], values[3], values[4]);
+                nuevo_proveedor.set("last_user_change",usuarioActual.get("usuario_cod"));
+                nuevo_proveedor.saveIt();
+                Base.commitTransaction();
+                System.out.println("CORRECTO");
+            }
+            inputStream.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("INCORRECTO");
+            Base.rollbackTransaction();
+            Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
     }
     
     public void limpiar_formulario(){

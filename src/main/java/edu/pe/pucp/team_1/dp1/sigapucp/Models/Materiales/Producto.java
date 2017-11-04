@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.CompositePK;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
@@ -14,7 +15,7 @@ import org.javalite.activejdbc.annotations.Table;
  * @author Jauma
  */
 @Table("Productos")
-@IdName("producto_id")
+@CompositePK({ "producto_id", "orden_entrada_id", "tipo_id","producto_cod","orden_entrada_cod","tipo_cod" })
 public class Producto extends Model{
     
 }

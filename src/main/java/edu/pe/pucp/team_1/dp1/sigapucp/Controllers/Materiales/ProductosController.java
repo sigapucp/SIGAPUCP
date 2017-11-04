@@ -147,8 +147,19 @@ public class ProductosController extends Controller {
     private final ObservableList<TipoProducto> productos = FXCollections.observableArrayList();     
     private final ObservableList<CategoriaProducto> categorias = FXCollections.observableArrayList();         
     private final ObservableList<Precio> precios = FXCollections.observableArrayList();         
+    private final ObservableList<Producto> productosUnicos = FXCollections.observableArrayList();       
     
     private TipoProducto producto_seleccionado ;
+    @FXML
+    private TableView<Producto> TablaProductosUnicos;
+    @FXML
+    private TableColumn<Producto, String> ColumnaCodigoUnicos;
+    @FXML
+    private TableColumn<Producto, String> ColumnaEntradaUnicos;
+    @FXML
+    private TableColumn<Producto, String> ColumnaIngresoUnicos;
+    @FXML
+    private TableColumn<Producto, String> ColumnaUbicacionUnicos;
     
     public ProductosController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -188,6 +199,7 @@ public class ProductosController extends Controller {
         
         categorias.clear();  
         precios.clear();
+        productosUnicos.clear();
     }          
     
     @FXML
@@ -245,9 +257,16 @@ public class ProductosController extends Controller {
             peso_producto.setText(producto_seleccionado.getString("peso"));
             unidades_peso_producto.getSelectionModel().select(Unidad.findFirst("unidad_id = ?", producto_seleccionado.get("unidad_peso_id")).getString("nombre"));
             unidades_medida_producto.getSelectionModel().select(Unidad.findFirst("unidad_id = ?", producto_seleccionado.get("unidad_tamano_id")).getString("nombre"));
-            descripcion_producto.setText(producto_seleccionado.getString("descripcion"));   
+            descripcion_producto.setText(producto_seleccionado.getString("descripcion"));  
+            
+            Stock productoStock = Stock.findByCompositeKeys(producto_seleccionado.getId(),producto_seleccionado.get("tipo_cod"));
+            
+            VerStockLogico.setText(String.valueOf(productoStock.getInteger("stock_logico")));
+            VerStockFisico.setText(String.valueOf(productoStock.getInteger("stock_real")));
             
             categorias.clear();
+            precios.clear();
+            productosUnicos.clear();
             
             List<CategoriaProducto> categoriasProducto = producto_seleccionado.getAll(CategoriaProducto.class);
             for(CategoriaProducto categoria:categoriasProducto)
@@ -259,6 +278,12 @@ public class ProductosController extends Controller {
             for(Precio precio:preciosProducto)
             {
                 precios.add(precio);
+            }
+            
+            List<Producto> unicosProducto = Producto.where("tipo_id = ?",producto_seleccionado.getId());
+            for(Producto unicoProducto:unicosProducto)
+            {
+                productosUnicos.add(unicoProducto);                
             }
             
         } catch (Exception e) {
@@ -619,6 +644,13 @@ public class ProductosController extends Controller {
             ColumnaPrecioFechaInicial.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_inicio")));
             ColumnaPrecioFechaFinal.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_fin")));
             // ToDo hace ver el default            
+            
+            ColumnaCodigoUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")));
+            ColumnaEntradaUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_entrada_cod")));
+            ColumnaIngresoUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_entrada")));
+            ColumnaUbicacionUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> 
+                    new ReadOnlyObjectWrapper((p.getValue().get("ubicado").equals("S")) ? p.getValue().get("ubicacion") : "No Ubicado"));
+            
 
             ObservableList<String> estados = FXCollections.observableArrayList();                           
             ObservableList<String> monedas = FXCollections.observableArrayList();            
@@ -645,6 +677,7 @@ public class ProductosController extends Controller {
             tablaProductos.setItems(productos);
             TablaCategorias.setItems(categorias);
             TablaPrecios.setItems(precios);
+            TablaProductosUnicos.setItems(productosUnicos);
             //codigo_producto.setEditable(false);
             
         } catch (Exception e) {

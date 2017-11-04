@@ -15,12 +15,17 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -331,6 +336,52 @@ public class UsuariosController extends Controller{
            crearNuevo = false; 
         }        
     }    
+    
+    @Override
+    public void cargar(){
+        if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n codigo_usuario,nombre,apellido,telefono,mail,rol,", "¿Desea continuar?")) return;
+        String filename = "data_usuarios.csv";
+        File file = new File(filename);
+        Boolean primera_fila = true;
+        try {
+            Scanner inputStream = new Scanner(file);
+            while (inputStream.hasNext()){
+                String data = inputStream.nextLine();
+                //manejo de la data aquí:
+                String [] values = data.split(",");
+                if (primera_fila) {
+                    primera_fila = false;
+                    if (values.length != 6) {
+                        infoController.show("El archivo .csv no tiene el formato adecuado. Verifique que sea\ncodigo_usuario,nombre,apellido,telefono,mail,rol,"); 
+                        return;
+                    }
+                    continue; //nos saltamos el encabezado
+                }
+                Base.openTransaction();
+                Usuario nuevo_usuario = new Usuario();
+                nuevo_usuario.set("usuario_cod",values[0]);        
+                nuevo_usuario.set("nombre",values[1]);
+                nuevo_usuario.set("apellido", values[2]);
+                nuevo_usuario.set("telefono", values[3]);
+                nuevo_usuario.set("email", values[4]);       
+                Rol usuarioRol = Rol.findFirst("rol_cod = ?", values[5]);
+                nuevo_usuario.set("rol_id",usuarioRol.getId());
+                nuevo_usuario.set("rol_cod",values[5]);        
+                nuevo_usuario.set("contrasena_encriptada","");  
+                nuevo_usuario.set("estado",Usuario.ESTADO.ACTIVO.name());
+                nuevo_usuario.set("last_user_change",usuarioActual.get("usuario_cod"));
+                nuevo_usuario.saveIt();
+                Base.commitTransaction();
+                System.out.println("CORRECTO");
+            }
+            infoController.show("¡Carga masiva de datos de usuarios exitosa!");
+            inputStream.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("INCORRECTO");
+            Base.rollbackTransaction();
+            Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     private void RefrescarTabla(List<Usuario> usuariosRefresh)
     {        
