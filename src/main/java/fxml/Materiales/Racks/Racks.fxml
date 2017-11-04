@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -19,7 +13,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.RacksController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales.RacksController">
    <children>
       <Pane prefHeight="50.0" prefWidth="243.0">
          <children>
@@ -45,21 +39,21 @@
                   <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
                </children>
             </Pane>
-            <AnchorPane layoutY="50.0" prefHeight="521.0" prefWidth="750.0">
+            <AnchorPane fx:id="rack_form_container" disable="true" layoutY="50.0" prefHeight="521.0" prefWidth="750.0">
                <children>
                   <Label layoutX="49.0" layoutY="200.0" text="Productos">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TableView layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="472.0">
+                  <TableView fx:id="rack_form_tabla" layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="472.0">
                     <columns>
-                      <TableColumn prefWidth="50.0" text="Código" />
-                        <TableColumn prefWidth="68.0" text="Almacen" />
-                        <TableColumn prefWidth="70.0" text="Alto" />
-                        <TableColumn prefWidth="70.0" text="Ancho" />
-                        <TableColumn prefWidth="70.0" text="Largo" />
-                        <TableColumn prefWidth="143.0" text="Cantidad de productos" />
+                      <TableColumn fx:id="rack_form_cod_column" prefWidth="50.0" text="Código" />
+                        <TableColumn fx:id="rack_form_alm_column" prefWidth="68.0" text="Almacen" />
+                        <TableColumn fx:id="rack_form_alto_column" prefWidth="70.0" text="Alto" />
+                        <TableColumn fx:id="rack_form_ancho_column" prefWidth="70.0" text="Ancho" />
+                        <TableColumn fx:id="rack_form_largo_column" prefWidth="70.0" text="Largo" />
+                        <TableColumn fx:id="rack_form_cant_prod_column" prefWidth="143.0" text="Cantidad de productos" />
                     </columns>
                   </TableView>
                   <TitledPane animated="false" collapsible="false" layoutX="530.0" layoutY="229.0" prefHeight="273.0" prefWidth="177.0" text="Acciones">
@@ -84,12 +78,12 @@
                               <Label layoutX="383.0" layoutY="57.0" text="Ancho" />
                               <Label layoutX="383.0" layoutY="94.0" text="Largo" />
                               <Label layoutX="26.0" layoutY="94.0" text="Cantidad de productos" />
-                              <TextField layoutX="185.0" layoutY="18.0" />
-                              <TextField layoutX="185.0" layoutY="53.0" />
-                              <TextField layoutX="185.0" layoutY="90.0" />
-                              <TextField layoutX="480.0" layoutY="18.0" />
-                              <TextField layoutX="480.0" layoutY="53.0" />
-                              <TextField layoutX="480.0" layoutY="90.0" />
+                              <TextField fx:id="rack_form_cod_field" layoutX="185.0" layoutY="18.0" />
+                              <TextField fx:id="rack_form_almacen_nombre_field" layoutX="185.0" layoutY="53.0" />
+                              <TextField fx:id="rack_form_cantidad_productos_field" layoutX="185.0" layoutY="90.0" />
+                              <TextField fx:id="rack_form_alto_field" layoutX="480.0" layoutY="18.0" />
+                              <TextField fx:id="rack_form_ancho_field" layoutX="480.0" layoutY="53.0" />
+                              <TextField fx:id="rack_form_largo_field" layoutX="480.0" layoutY="90.0" />
                            </children>
                         </AnchorPane>
                     </content>
@@ -111,7 +105,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField layoutX="129.0" layoutY="60.0" prefHeight="21.0" prefWidth="114.0" />
+            <TextField fx:id="buscar_rack_cod" layoutX="129.0" layoutY="60.0" prefHeight="21.0" prefWidth="114.0" />
             <Label layoutX="14.0" layoutY="97.0" prefHeight="21.0" prefWidth="114.0" text="Alto máximo:">
                <font>
                   <Font size="14.0" />
@@ -127,22 +121,21 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField layoutX="129.0" layoutY="95.0" prefHeight="21.0" prefWidth="114.0" />
-            <TextField layoutX="129.0" layoutY="129.0" prefHeight="21.0" prefWidth="114.0" />
-            <TextField layoutX="129.0" layoutY="165.0" prefHeight="21.0" prefWidth="114.0" />
+            <TextField fx:id="buscar_rack_altura" layoutX="129.0" layoutY="95.0" prefHeight="21.0" prefWidth="114.0" />
+            <TextField fx:id="buscar_rack_ancho" layoutX="129.0" layoutY="129.0" prefHeight="21.0" prefWidth="114.0" />
+            <TextField fx:id="buscar_rack_largo" layoutX="129.0" layoutY="165.0" prefHeight="21.0" prefWidth="114.0" />
             <Label layoutX="13.0" layoutY="206.0" text="Nombre Producto:">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField layoutX="130.0" layoutY="204.0" prefHeight="21.0" prefWidth="114.0" />
-            <TableView layoutX="14.0" layoutY="275.0" prefHeight="202.0" prefWidth="224.0">
+            <TextField fx:id="buscar_rack_producto" layoutX="130.0" layoutY="204.0" prefHeight="21.0" prefWidth="114.0" />
+            <TableView fx:id="buscar_rack_tabla" layoutX="13.0" layoutY="261.0" prefHeight="202.0" prefWidth="224.0">
                <columns>
-                  <TableColumn prefWidth="65.0" text="Código" />
-                  <TableColumn prefWidth="158.0" text="Almacen" />
+                  <TableColumn fx:id="buscar_columna_codigo_rack" prefWidth="223.0" text="Código" />
                </columns>
             </TableView>
-            <Button layoutX="144.0" layoutY="485.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <Button layoutX="144.0" layoutY="485.0" mnemonicParsing="false" onAction="#visualizarRack" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
          </children>
       </AnchorPane>
    </children>

@@ -27,6 +27,7 @@ insert into menus values (default,'Unidades');
 insert into menus values (default,'Monedas');
 insert into menus values (default,'Guia de Remision');
 insert into menus values (default,'Cuenta');
+insert into menus values (default,'Envios');
 
 select * from menus;
 

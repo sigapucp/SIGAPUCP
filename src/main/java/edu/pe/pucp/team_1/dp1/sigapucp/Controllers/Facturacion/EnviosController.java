@@ -9,6 +9,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -21,6 +22,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -88,7 +91,8 @@ public class EnviosController extends Controller{
         //--------------------------------------------------//
     
     private InformationAlertController infoController;    
-    private final ObservableList<Envio> envios = FXCollections.observableArrayList();
+    private final ObservableList<Envio> masterData = FXCollections.observableArrayList();
+    private List<Envio> envios;
     private Boolean crearNuevo = false;    
     private Cliente cliente_seleccionado = null;
 
@@ -97,8 +101,7 @@ public class EnviosController extends Controller{
 
     private List<Cliente> auto_completado_list_cliente;
     ArrayList<String> posibles_clientes = new ArrayList<>();
-    AutoCompletionBinding<String> autoCompletionBinding;    
-    private List<Cliente> autoCompletadoList;    
+    AutoCompletionBinding<String> autoCompletionBinding;   
     
     //MODALES FLUJO
         //--------------------------------------------------//
@@ -110,11 +113,12 @@ public class EnviosController extends Controller{
  
     //----------------------------------------------------------------------------//
 
-    private void eliinar_producto_de_lista_enviar(){
+    private void eliminar_producto_de_lista_enviar(){
     //SI SE ELIMINA
         //suma existencis
         //elimina en lista enviar
     }
+    
     private void agregar_producto_a_lista_enviar(ActionEvent event){
         try{
             for(OrdenCompraxProducto producto_disponible : productos_disponibles){
@@ -133,8 +137,6 @@ public class EnviosController extends Controller{
         }catch(Exception e){
             infoController.show("Error " + e.getMessage());
         }
-
-
     }
     
     private void setAgregarProductos() throws Exception
@@ -150,7 +152,7 @@ public class EnviosController extends Controller{
                 producto_devuelto = args.orden_compra_producto;
             });   
         }catch(Exception e){
-            System.out.println(e);
+            infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
     }
     
@@ -165,7 +167,6 @@ public class EnviosController extends Controller{
           productos_disponibles.add(producto);
         }
     }
-    
 
     @FXML
     private void handleAgregarProducto(ActionEvent event) throws IOException{
@@ -174,7 +175,7 @@ public class EnviosController extends Controller{
     
     public void cliente_to_string() throws Exception{
         ArrayList<String> words = new ArrayList<>();
-        for (Cliente cliente : autoCompletadoList){
+        for (Cliente cliente : auto_completado_list_cliente){
             words.add(cliente.getString("nombre"));
         }
         posibles_clientes = words;        
@@ -196,16 +197,21 @@ public class EnviosController extends Controller{
         }          
     }
 
-    public void llenar_ordenes_compra_cliente(){
+    public void llenar_ordenes_compra_cliente(){        
         ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
+        System.out.println(ordenes_compra==null);
         ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_id")).collect(Collectors.toList()) );
-        ordenes_compra_combobox.setItems(ordenes_compra);
+        System.out.println(ordenes_compra==null);
+        System.out.println("Size: "+ordenes_compra.size());
+        if (ordenes_compra.size()>0)
+            ordenes_compra_combobox.setItems(ordenes_compra);
+        else
+            infoController.show("El cliente no cuenta con pedidos pendientes : ");
     }
     
     private void handleAutoCompletar() {
-        
         int i = 0;
-        for (Cliente cliente : autoCompletadoList){
+        for (Cliente cliente : auto_completado_list_cliente){
             if (cliente.getString("nombre").equals(nombre_cliente.getText())){
                 cliente_seleccionado = cliente;                               
                 mostrar_informacion_cliente(cliente);
@@ -242,23 +248,64 @@ public class EnviosController extends Controller{
         cliente_seleccionado = null;
     }    
     
+    public void limpiar_tabla_index(){
+        tabla_envios.getItems().clear();
+    }
+    
     public void llenar_tabla_envios(){
-        List<Envio> temp_envios = Envio.findAll();
-        envios.clear();
+        limpiar_tabla_index();
+        for( Envio envio : envios){
+            masterData.add(envio);
+        }
         columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
         columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
-        envios.addAll(temp_envios);
-        tabla_envios.setItems(envios);   
-    }    
+        tabla_envios.setItems(masterData);   
+    }
     
-    public void initialize(URL location, ResourceBundle resources) {
+    public boolean cumple_condicion_busqueda(Envio envio, String codigo, String cliente, String codPedido){
+        boolean match = true;        
+        if ( codigo.equals("") && cliente.equals("") && codPedido.equals("")){
+            match = true;
+        }else {
+            match = (!codigo.equals("")) ? (match && (envio.get("promocion_cod")).equals(codigo)) : match;
+            Integer idCliente = (cliente_seleccionado!=null) ? (Integer)cliente_seleccionado.getId():0;
+            match = (!cliente.equals("")) ? (match && (envio.get("cliente_id")==idCliente)) : match;
+            match = (!codPedido.equals("")) ? (match && (envio.get("orden_compra_cod")).equals(codPedido)) : match;
+        }
+        return match;
+    }
+
+    @FXML
+    public void buscar_envio(ActionEvent event) throws IOException{
+        envios = Envio.findAll();
+        masterData.clear();
         try{
+            for(Envio envio : envios){
+                if (cumple_condicion_busqueda(envio, envio_buscar.getText(), cliente_buscar.getText(), pedido_buscar.getText())){
+                    masterData.add(envio);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("No se pudo buscar el envio : " + e.getMessage());
+        }
+    }
+    
+    public void initialize(URL location, ResourceBundle resources) {  
+        try {
             if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+            envios = Envio.findAll();
             llenar_tabla_envios();
+            llenar_autocompletado();
             inhabilitar_formulario();
-        }catch(Exception e)    {
-            infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
+        } catch (Exception ex) {
+            infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
         }
     }    
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Envios;
+    }
 }

@@ -46,7 +46,9 @@ public class Menu extends Model{
         Unidades,
         Monedas,
         GuiaDeRemision,
-        Cuenta;
+        Cuenta,
+        Envios;
+        
         public static int getId(MENU menu)
         {
             return menu.ordinal() + 1;
