@@ -16,5 +16,11 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("ordenescompraxproductosxenvio")
 //@IdName("client_id")
 public class OrdenesCompraxProductosxenvio extends Model{
-    
+    public void asignar_atributos(OrdenCompraxProducto producto){
+        this.set("orden_compra_cod", producto.getString("orden_compra_cod"));
+        this.set("orden_compra_id", producto.getInteger("orden_compra_id"));
+        this.set("client_id", producto.getInteger("client_id"));
+        this.set("tipo_cod", producto.getString("tipo_cod"));
+        this.set("tipo_id", producto.getInteger("tipo_id"));
+    }
 }

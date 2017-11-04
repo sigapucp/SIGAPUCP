@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
    <children>
       <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
          <children>
@@ -162,7 +162,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox layoutX="156.0" layoutY="85.0" prefWidth="150.0" />
+                              <ComboBox fx:id="ordenes_compra_combobox" layoutX="156.0" layoutY="85.0" prefWidth="150.0" />
                            </children>
                         </AnchorPane>
                      </children>

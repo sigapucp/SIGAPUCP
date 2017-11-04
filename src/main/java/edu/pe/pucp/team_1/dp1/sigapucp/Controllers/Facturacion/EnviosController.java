@@ -20,6 +20,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -65,7 +66,7 @@ public class EnviosController extends Controller{
     @FXML
     private TextField ruc_cliente;
     @FXML
-    private ComboBox<String> ordenes_compra_combobox;
+    private ComboBox ordenes_compra_combobox;
     @FXML
     private Spinner<Integer> cantidad_producto;
     
@@ -113,23 +114,69 @@ public class EnviosController extends Controller{
  
     //----------------------------------------------------------------------------//
 
-    private void eliminar_producto_de_lista_enviar(){
-    //SI SE ELIMINA
-        //suma existencis
-        //elimina en lista enviar
+    private void insertar_ordencompraxproductoxenvios(){
+        for(OrdenCompraxProducto producto : productos_a_agregar){
+            OrdenesCompraxProductosxenvio envio = new OrdenesCompraxProductosxenvio();
+            envio.asignar_atributos(producto);
+            envio.saveIt();
+        }
     }
     
-    private void agregar_producto_a_lista_enviar(ActionEvent event){
+    public void actualizar_ordencompraxproductos(){
+        for(OrdenCompraxProducto producto : productos_disponibles){
+            producto.saveIt();
+        }
+    }
+    private void crear_envio(){
+        actualizar_ordencompraxproductos();
+        insertar_ordencompraxproductoxenvios();
+    }
+    
+    @Override
+    public void guardar(){
+        if (crearNuevo){
+            crear_envio();
+        } else {
+            /*
+            if ( == null){ 
+                infoController.show("No ha seleccionado ninguna Orden de Compra");            
+                return;
+            }
+            editarPedido(pedidoSeleccionado);
+            */
+        }
+        crearNuevo = false;
+        envios = Envio.findAll();
+        llenar_tabla_envios();
+    }
+    
+    public void llenar_tabla_productos_a_enviar(){
+        
+    }
+    private void actualizar_lista_producto_a_enviar(OrdenCompraxProducto producto_disponible){
+        if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
+            productos_a_agregar.add(producto_disponible);
+        }
+    }
+    
+    @FXML
+    private void agregar_producto(ActionEvent event){
+        if(producto_devuelto == null)
+        {
+            infoController.show("No ha seleccionado ningun producto"); 
+           return;
+        }        
         try{
             for(OrdenCompraxProducto producto_disponible : productos_disponibles){
-                if (producto_disponible.getId() == producto_devuelto.getId()){
-                    Integer cantidad = producto_disponible.getInteger("cantidad") - cantidad_producto.getValue();
+                if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
+                    Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - cantidad_producto.getValue();
                     if (cantidad > 0){
-                        producto_disponible.setInteger("cantidad", cantidad);
-                        productos_a_agregar.add(producto_disponible);
+                        producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                        actualizar_lista_producto_a_enviar(producto_disponible);
+                        llenar_tabla_productos_a_enviar();
                     }
                     else{
-                        //mensaje de error
+                        infoController.show("Error: no es posible seleccionar esa cantidad, no existen existencias suficientes ");
                     }
                     break;
                 }
@@ -138,39 +185,49 @@ public class EnviosController extends Controller{
             infoController.show("Error " + e.getMessage());
         }
     }
-    
+     
     private void setAgregarProductos() throws Exception
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
-            obtener_productos_disponibles_orden_compra();
             AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_disponibles);
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);       
             controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
                 producto_devuelto = args.orden_compra_producto;
-            });   
+            });                 
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
     }
     
     private void obtener_productos_disponibles_orden_compra(){
-        //falta setear la orden de compra
         List<OrdenCompraxProducto> productos_en_orden_compra = OrdenCompraxProducto.where("orden_compra_id = ?", orden_compra_seleccionada.getId());
         productos_disponibles.clear();
-        for(OrdenCompraxProducto producto : productos_en_orden_compra){
-          OrdenesCompraxProductosxenvio producto_seleccionado = OrdenesCompraxProductosxenvio.findFirst("orden_compra_id = ? and tipo_id = ?", orden_compra_seleccionada.getId(), producto.getId());
-          Integer cantidad = producto.getInteger("cantidad") - producto_seleccionado.getInteger("cantidad");
-          producto.set("cantidad", cantidad);
-          productos_disponibles.add(producto);
-        }
+        productos_a_agregar.clear();
+        //no se pueden combinar envios de diferentes ordenes de compra
+        productos_disponibles.addAll(productos_en_orden_compra);
     }
 
+    
     @FXML
     private void handleAgregarProducto(ActionEvent event) throws IOException{
-        modal_stage.showAndWait();
+        try{
+            //hasta que se tengan los datos reales
+            /*String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
+            if (orden_compra_seleccionada.equals(null) || !orden_compra_seleccionada.getString("orden_compra_cod").equals(temp_orden_compra)){
+                orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod", temp_orden_compra);
+                obtener_productos_disponibles_orden_compra();
+                productos_a_agregar.clear();
+            }
+            */
+            modal_stage.showAndWait();
+            setAgregarProductos();
+        }catch(Exception e){
+            infoController.show("Necesita seleccionar una orden de compra");
+        }
+
     }    
     
     public void cliente_to_string() throws Exception{
@@ -198,15 +255,21 @@ public class EnviosController extends Controller{
     }
 
     public void llenar_ordenes_compra_cliente(){        
-        ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
-        System.out.println(ordenes_compra==null);
-        ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_id")).collect(Collectors.toList()) );
-        System.out.println(ordenes_compra==null);
-        System.out.println("Size: "+ordenes_compra.size());
-        if (ordenes_compra.size()>0)
-            ordenes_compra_combobox.setItems(ordenes_compra);
-        else
-            infoController.show("El cliente no cuenta con pedidos pendientes : ");
+        try{
+            ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
+            ordenes_compra.clear();
+            ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_id")).collect(Collectors.toList()) );
+            if (ordenes_compra.isEmpty()){
+                infoController.show("El cliente no cuenta con pedidos pendientes : ");
+                limpiar_formulario();
+            }
+            else{
+                ordenes_compra_combobox.setItems(ordenes_compra);            
+            }
+        }catch(Exception e){
+            infoController.show("Ha ocurrido un problema durante la seleccion de orden de compra : " + e.getMessage());
+        }
+
     }
     
     private void handleAutoCompletar() {
@@ -228,6 +291,12 @@ public class EnviosController extends Controller{
         });        
     }
     
+    public void limpiar_formulario(){
+        nombre_cliente.clear();
+        dni_cliente.clear();
+        ruc_cliente.clear();
+    }
+    
     public void inhabilitar_formulario(){
         envio_formulario.setDisable(true);
     }
@@ -242,12 +311,7 @@ public class EnviosController extends Controller{
        habilitar_formulario();
     }
     
-    public void EnviosController(){
-        infoController = new InformationAlertController();
-        crearNuevo = false;
-        cliente_seleccionado = null;
-    }    
-    
+
     public void limpiar_tabla_index(){
         tabla_envios.getItems().clear();
     }
@@ -290,10 +354,17 @@ public class EnviosController extends Controller{
             infoController.show("No se pudo buscar el envio : " + e.getMessage());
         }
     }
-    
+
+    public EnviosController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        infoController = new InformationAlertController();
+        crearNuevo = false;
+        cliente_seleccionado = null;
+        ordenes_compra_combobox = new ComboBox();
+    }    
+        
     public void initialize(URL location, ResourceBundle resources) {  
         try {
-            if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
             envios = Envio.findAll();
             llenar_tabla_envios();
             llenar_autocompletado();
