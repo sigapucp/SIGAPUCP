@@ -50,8 +50,8 @@ public class AgregarProductosEnviosController implements Initializable {
     private TextField BuscarCodigo;
     @FXML
     private TextField BuscarNombre;
-    @FXML
-    private ComboBox<String> BuscarCategoria;
+    //@FXML
+    //private ComboBox<String> BuscarCategoria;
     @FXML
     private TableColumn<OrdenCompraxProducto, String> columna_codigo;
     @FXML
@@ -74,6 +74,7 @@ public class AgregarProductosEnviosController implements Initializable {
     
     
     public void llenar_productos_tabla(){
+        tabla_productos.getItems().clear();
         productos.clear();
         productos.addAll(productos_orden_de_compra_a_enviar);
         columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
@@ -84,18 +85,22 @@ public class AgregarProductosEnviosController implements Initializable {
         tabla_productos.setItems(productos);
     }
     
-    public boolean cumple_condicion_busqueda(OrdenCompraxProducto producto, String codigo, String nombre, String categoria){
+    public boolean cumple_condicion_busqueda(OrdenCompraxProducto producto, String codigo, String nombre
+    //        , String categoria
+    ){
         boolean match = true;        
-        if ( codigo.equals("") && nombre.equals("") && (categoria==null || categoria.equals(""))){
+        if ( codigo.equals("") && nombre.equals("") 
+                //&& categoria.equals("")
+                ){
             match = true;
         }else {
             match = (!codigo.equals("")) ? (match && (producto.get("tipo_cod")).equals(codigo)) : match;
             match = (!nombre.equals("")) ? (match && (TipoProducto.findById(producto.get("tipo_id")).getString("nombre").equals(nombre))) : match;
             CategoriaxTipo cruce = null;
-            if (!(categoria==null || categoria.equals(""))){
-                cruce = CategoriaxTipo.findFirst("tipo_id = ? AND tipo_cod = ? AND categoria_code = ? AND categoria_id = ?", producto.get("tipo_id"),producto.get("tipo_cod"),CategoriaProducto.findFirst("nombre",nombre).get("categoria_id"),CategoriaProducto.findFirst("nombre",nombre).get("categoria_code"));
+            /*if (!categoria.equals("")){
+               cruce = CategoriaxTipo.findFirst("tipo_id = ? AND tipo_cod = ? AND categoria_code = ? AND categoria_id = ?", (Integer)producto.get("tipo_id"),producto.get("tipo_cod"),(Integer)CategoriaProducto.findFirst("nombre = ?",categoria).get("categoria_id"),CategoriaProducto.findFirst("nombre = ?",categoria).get("categoria_code"));
                 match = (!(cruce==null)) ? true : false;
-            }
+            }*/
         }
         return match;
     }
@@ -103,10 +108,12 @@ public class AgregarProductosEnviosController implements Initializable {
     @FXML
     public void buscar_producto(ActionEvent event) throws IOException{
         productos.clear();
-        productos.addAll(productos_orden_de_compra_a_enviar);
+        //String categoria = (BuscarCategoria.getSelectionModel().getSelectedItem()==null) ? "" : BuscarCategoria.getSelectionModel().getSelectedItem().toString();
         try{
-            for(OrdenCompraxProducto producto : productos){
-                if (cumple_condicion_busqueda(producto, BuscarCodigo.getText(), BuscarNombre.getText(), BuscarCategoria.getSelectionModel().getSelectedItem())){
+            for(OrdenCompraxProducto producto : productos_orden_de_compra_a_enviar){
+                if (cumple_condicion_busqueda(producto, BuscarCodigo.getText(), BuscarNombre.getText()
+                //        ,categoria 
+                )){
                     productos.add(producto);
                 }
             }
@@ -137,28 +144,21 @@ public class AgregarProductosEnviosController implements Initializable {
         productos_orden_de_compra_a_enviar = productos_enviar;
     }
     
-    private void llenar_comboBox_categoria(){
-        List<CategoriaProducto> auxCategorias = CategoriaProducto.findAll();
+    /*private void llenar_comboBox_categoria(){
+        List<CategoriaProducto> categorias = CategoriaProducto.findAll();
         BuscarCategoria.getItems().add("");
-        CategoriaxTipo cruce = null;
-        for (OrdenCompraxProducto producto: productos_orden_de_compra_a_enviar){
-            for (CategoriaProducto categoria: auxCategorias){
-                cruce = CategoriaxTipo.findFirst("tipo_id = ? AND tipo_cod = ? AND categoria_code = ? AND categoria_id = ?", producto.get("tipo_id"),producto.get("tipo_cod"),categoria.get("categoria_id"),categoria.get("categoria_code"));
-                if (cruce!=null){
-                    categorias.add(categoria);
-                    BuscarCategoria.getItems().add(categoria.getString("nombre"));
-                }
-            }
-        }
-    }
+        for (CategoriaProducto categoria : categorias){
+            BuscarCategoria.getItems().add(categoria.getString("nombre"));
+        }        
+    }*/
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {  
+        try { 
             llenar_productos_tabla();
-            llenar_comboBox_categoria();
+            //llenar_comboBox_categoria();
         } catch (Exception e) {
-            infoController.show("Problemas en la inicializaciond de busqueda de Producto");
+            infoController.show("Problemas en la inicialización de búsqueda de los Productos");
         }       
     }       
     public Event<agregarOrdenCompraProductoArgs> devolverProductoEvent = new Event<>();                   

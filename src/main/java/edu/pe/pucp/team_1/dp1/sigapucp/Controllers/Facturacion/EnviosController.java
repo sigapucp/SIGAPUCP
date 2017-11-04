@@ -195,6 +195,7 @@ public class EnviosController extends Controller{
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);       
+            if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL); 
             controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
                 producto_devuelto = args.orden_compra_producto;
             });                 
@@ -204,27 +205,28 @@ public class EnviosController extends Controller{
     }
     
     private void obtener_productos_disponibles_orden_compra(){
-        List<OrdenCompraxProducto> productos_en_orden_compra = OrdenCompraxProducto.where("orden_compra_id = ?", orden_compra_seleccionada.getId());
-        productos_disponibles.clear();
-        productos_a_agregar.clear();
+        productos_disponibles = OrdenCompraxProducto.where("orden_compra_id = ?", orden_compra_seleccionada.getId());
         //no se pueden combinar envios de diferentes ordenes de compra
-        productos_disponibles.addAll(productos_en_orden_compra);
+        //for (OrdenCompraxProducto producto : productos_en_orden_compra){
+        //    productos_disponibles.add(producto);
+        //}
+        //productos_disponibles.addAll(productos_en_orden_compra);
     }
 
-    
     @FXML
     private void handleAgregarProducto(ActionEvent event) throws IOException{
         try{
             //hasta que se tengan los datos reales
-            /*String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
-            if (orden_compra_seleccionada.equals(null) || !orden_compra_seleccionada.getString("orden_compra_cod").equals(temp_orden_compra)){
-                orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod", temp_orden_compra);
+            ///*
+            String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
+            if (!temp_orden_compra.equals(null)){
+                orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod = ?", temp_orden_compra);
                 obtener_productos_disponibles_orden_compra();
-                productos_a_agregar.clear();
+                //productos_a_agregar.clear();
             }
-            */
-            modal_stage.showAndWait();
+            //*/
             setAgregarProductos();
+            modal_stage.showAndWait();            
         }catch(Exception e){
             infoController.show("Necesita seleccionar una orden de compra");
         }
@@ -259,7 +261,7 @@ public class EnviosController extends Controller{
         try{
             ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
             ordenes_compra.clear();
-            ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_id")).collect(Collectors.toList()) );
+            ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_cod")).collect(Collectors.toList()) );
             if (ordenes_compra.isEmpty()){
                 infoController.show("El cliente no cuenta con pedidos pendientes : ");
                 limpiar_formulario();
@@ -367,6 +369,8 @@ public class EnviosController extends Controller{
     public void initialize(URL location, ResourceBundle resources) {  
         try {
             envios = Envio.findAll();
+            //productos_a_agregar = null;
+            //productos_disponibles = null;
             llenar_tabla_envios();
             llenar_autocompletado();
             inhabilitar_formulario();
