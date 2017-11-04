@@ -14,28 +14,30 @@ import javafx.beans.property.SimpleStringProperty;
  * @author Hugo
  */
 public class Auditoria {
-    private final StringProperty Hora;
+    //private final StringProperty Hora;
     private final StringProperty Fecha;
+    private final StringProperty Hora;
     private final StringProperty Empleado;
     private final StringProperty Accion;
     private final StringProperty Modulo;
     private final StringProperty Descripcion;
+    private final StringProperty Rol;
     
-    public Auditoria( String Hora, String Fecha, String Empleado, String Accion, String Modulo, String Descripcion) {
-        this.Hora = new SimpleStringProperty(Hora);
+    public Auditoria( String Fecha,String Hora, String Empleado, String Accion, String Modulo, String Descripcion, String Rol) {
+        //this.Hora = new SimpleStringProperty(Hora);
         this.Fecha = new SimpleStringProperty(Fecha);
         this.Empleado = new SimpleStringProperty(Empleado);
         this.Accion = new SimpleStringProperty(Accion);
         this.Modulo = new SimpleStringProperty(Modulo);
         this.Descripcion = new SimpleStringProperty(Descripcion);
+        this.Rol = new SimpleStringProperty(Rol);
+        this.Hora = new SimpleStringProperty(Hora);
     }
 
     /**
      * @return the Hora
      */
-    public String getHora() {
-        return Hora.get();
-    }
+    
 
     /**
      * @return the Fecha
@@ -47,8 +49,8 @@ public class Auditoria {
     /**
      * @return the Empleado
      */
-    public String getEmpleado() {
-        return Empleado.get();
+    public final String getEmpleado() {
+        return this.EmpleadoProperty().get();
     }
 
     /**
@@ -68,16 +70,13 @@ public class Auditoria {
     /**
      * @return the Descripcion
      */
-    public String getDescripcion() {
-        return Descripcion.get();
+    public final String getDescripcion() {
+        return this.DescripcionProperty().get();
     }
 
     /**
      * @param Hora the Hora to set
      */
-    public void setHora(String Hora) {
-        this.Hora.set(Hora);
-    }
 
     /**
      * @param Fecha the Fecha to set
@@ -120,9 +119,7 @@ public class Auditoria {
     public StringProperty ModuloProperty() {
 		return Modulo;
 	}
-    public StringProperty HoraProperty() {
-		return Hora;
-	}
+
     public StringProperty FechaProperty() {
 		return Fecha;
 	}
@@ -132,4 +129,12 @@ public class Auditoria {
     public StringProperty DescripcionProperty() {
 		return Descripcion;
 	}
+    
+    public StringProperty RolProperty(){
+        return Rol;
+    }
+    
+    public StringProperty HoraProperty(){
+        return Hora;
+    }
 }
