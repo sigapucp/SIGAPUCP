@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
@@ -24,36 +25,40 @@
             </Label>
             <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="17.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
             <Line endX="100.0" layoutX="125.0" layoutY="47.0" startX="-100.0" />
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="43.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../Imagenes/search_icon.png" />
+               </image>
+            </ImageView>
          </children>
       </Pane>
       <AnchorPane layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
          <children>
             <Pane prefHeight="50.0" prefWidth="750.0">
                <children>
-                  <Label layoutX="133.0" layoutY="10.0" text="Detalle del Rack">
+                  <Label layoutX="72.0" layoutY="12.0" text="Detalle del Rack">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="33.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Imagenes/rack_icon.png" />
+                     </image></ImageView>
                   <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
                </children>
             </Pane>
             <AnchorPane fx:id="rack_form_container" disable="true" layoutY="50.0" prefHeight="521.0" prefWidth="750.0">
                <children>
-                  <Label layoutX="49.0" layoutY="200.0" text="Productos">
+                  <Label layoutX="49.0" layoutY="188.0" text="Productos">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TableView fx:id="rack_form_tabla" layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="472.0">
+                  <TableView fx:id="rack_form_producto_tabla" layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="472.0">
                     <columns>
-                      <TableColumn fx:id="rack_form_cod_column" prefWidth="50.0" text="Código" />
-                        <TableColumn fx:id="rack_form_alm_column" prefWidth="68.0" text="Almacen" />
-                        <TableColumn fx:id="rack_form_alto_column" prefWidth="70.0" text="Alto" />
-                        <TableColumn fx:id="rack_form_ancho_column" prefWidth="70.0" text="Ancho" />
-                        <TableColumn fx:id="rack_form_largo_column" prefWidth="70.0" text="Largo" />
-                        <TableColumn fx:id="rack_form_cant_prod_column" prefWidth="143.0" text="Cantidad de productos" />
+                      <TableColumn fx:id="rack_form_producto_cod_column" prefWidth="117.0" text="Código" />
+                        <TableColumn fx:id="rack_form_cant_prod_column" prefWidth="110.0" text="Existencias" />
                     </columns>
                   </TableView>
                   <TitledPane animated="false" collapsible="false" layoutX="530.0" layoutY="229.0" prefHeight="273.0" prefWidth="177.0" text="Acciones">
@@ -68,7 +73,7 @@
                         </AnchorPane>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" collapsible="false" layoutX="51.0" layoutY="33.0" prefHeight="160.0" prefWidth="656.0" text="Información General">
+                  <TitledPane animated="false" collapsible="false" layoutX="47.0" layoutY="14.0" prefHeight="160.0" prefWidth="656.0" text="Información General">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -78,12 +83,12 @@
                               <Label layoutX="383.0" layoutY="57.0" text="Ancho" />
                               <Label layoutX="383.0" layoutY="94.0" text="Largo" />
                               <Label layoutX="26.0" layoutY="94.0" text="Cantidad de productos" />
-                              <TextField fx:id="rack_form_cod_field" layoutX="185.0" layoutY="18.0" />
-                              <TextField fx:id="rack_form_almacen_nombre_field" layoutX="185.0" layoutY="53.0" />
-                              <TextField fx:id="rack_form_cantidad_productos_field" layoutX="185.0" layoutY="90.0" />
+                              <TextField fx:id="rack_form_cod_field" editable="false" layoutX="185.0" layoutY="18.0" />
+                              <TextField fx:id="rack_form_almacen_nombre_field" editable="false" layoutX="185.0" layoutY="53.0" />
+                              <TextField fx:id="rack_form_cantidad_productos_field" editable="false" layoutX="185.0" layoutY="90.0" />
                               <TextField fx:id="rack_form_alto_field" layoutX="480.0" layoutY="18.0" />
-                              <TextField fx:id="rack_form_ancho_field" layoutX="480.0" layoutY="53.0" />
-                              <TextField fx:id="rack_form_largo_field" layoutX="480.0" layoutY="90.0" />
+                              <TextField fx:id="rack_form_ancho_field" editable="false" layoutX="480.0" layoutY="53.0" />
+                              <TextField fx:id="rack_form_largo_field" editable="false" layoutX="480.0" layoutY="90.0" />
                            </children>
                         </AnchorPane>
                     </content>

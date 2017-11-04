@@ -168,6 +168,7 @@ public class AlmacenesController extends Controller{
         });
 
         linearBehavior.getCreateRackEvent().addHandler((sender, args) -> {
+            args.setLongitud(args.getLongitud()*grid.getTileSize());
             setTempRack((createRackArgs) args);
         });
 
