@@ -22,6 +22,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -99,8 +101,7 @@ public class EnviosController extends Controller{
 
     private List<Cliente> auto_completado_list_cliente;
     ArrayList<String> posibles_clientes = new ArrayList<>();
-    AutoCompletionBinding<String> autoCompletionBinding;    
-    private List<Cliente> autoCompletadoList;    
+    AutoCompletionBinding<String> autoCompletionBinding;   
     
     //MODALES FLUJO
         //--------------------------------------------------//
@@ -174,7 +175,7 @@ public class EnviosController extends Controller{
     
     public void cliente_to_string() throws Exception{
         ArrayList<String> words = new ArrayList<>();
-        for (Cliente cliente : autoCompletadoList){
+        for (Cliente cliente : auto_completado_list_cliente){
             words.add(cliente.getString("nombre"));
         }
         posibles_clientes = words;        
@@ -196,16 +197,21 @@ public class EnviosController extends Controller{
         }          
     }
 
-    public void llenar_ordenes_compra_cliente(){
+    public void llenar_ordenes_compra_cliente(){        
         ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
+        System.out.println(ordenes_compra==null);
         ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_id")).collect(Collectors.toList()) );
-        ordenes_compra_combobox.setItems(ordenes_compra);
+        System.out.println(ordenes_compra==null);
+        System.out.println("Size: "+ordenes_compra.size());
+        if (ordenes_compra.size()>0)
+            ordenes_compra_combobox.setItems(ordenes_compra);
+        else
+            infoController.show("El cliente no cuenta con pedidos pendientes : ");
     }
     
     private void handleAutoCompletar() {
-        
         int i = 0;
-        for (Cliente cliente : autoCompletadoList){
+        for (Cliente cliente : auto_completado_list_cliente){
             if (cliente.getString("nombre").equals(nombre_cliente.getText())){
                 cliente_seleccionado = cliente;                               
                 mostrar_informacion_cliente(cliente);
@@ -263,7 +269,7 @@ public class EnviosController extends Controller{
             match = true;
         }else {
             match = (!codigo.equals("")) ? (match && (envio.get("promocion_cod")).equals(codigo)) : match;
-            Integer idCliente = (Integer) cliente_seleccionado.getId();
+            Integer idCliente = (cliente_seleccionado!=null) ? (Integer)cliente_seleccionado.getId():0;
             match = (!cliente.equals("")) ? (match && (envio.get("cliente_id")==idCliente)) : match;
             match = (!codPedido.equals("")) ? (match && (envio.get("orden_compra_cod")).equals(codPedido)) : match;
         }
@@ -285,16 +291,21 @@ public class EnviosController extends Controller{
         }
     }
     
-    public void initialize(URL location, ResourceBundle resources) {        
-        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-        envios = Envio.findAll();
-        llenar_tabla_envios();
-        inhabilitar_formulario();
+    public void initialize(URL location, ResourceBundle resources) {  
+        try {
+            if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+            envios = Envio.findAll();
+            llenar_tabla_envios();
+            llenar_autocompletado();
+            inhabilitar_formulario();
+        } catch (Exception ex) {
+            infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
+        }
     }    
     
-    /*@Override
+    @Override
     public Menu.MENU getMenu()
     {
         return Menu.MENU.Envios;
-    }*/
+    }
 }
