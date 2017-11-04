@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.util.stream.Collectors;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
@@ -124,22 +125,24 @@ public class ProveedoresController extends Controller{
     @Override
     public void guardar() {
         if (crear_nuevo){
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proveedores, Accion.ACCION.CRE)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crear_nuevo = false;
                 return;
             }
             crear_proveedor();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Proveedores ,this.usuarioActual);
         }else{
             if (proveedor_seleccionado == null){
                 infoController.show("No ha seleccionado un cliente");
                 return;
             }
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proveedores, Accion.ACCION.MOD)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editar_proveedor(proveedor_seleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Proveedores ,this.usuarioActual);
         }
         proveedores = Proveedor.findAll();
         cargar_tabla_index();        

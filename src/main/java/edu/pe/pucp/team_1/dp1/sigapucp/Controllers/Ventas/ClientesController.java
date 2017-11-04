@@ -12,6 +12,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -201,24 +202,25 @@ public class ClientesController extends Controller{
     @Override
     public void guardar() {
         if (crear_nuevo){            
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Clientes, Accion.ACCION.CRE)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crear_nuevo = false;
                 return;
             }
             crear_cliente();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Clientes ,this.usuarioActual);
             limpiar_formulario();
-        }else{
-            System.out.println("editando");
+        }else{            
             if (cliente_seleccioando == null) {
                 infoController.show("No ha seleccionado un cliente");            
                 return;
             }
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Clientes, Accion.ACCION.MOD)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editar_cliente(cliente_seleccioando);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Clientes ,this.usuarioActual);
         }
         clientes = Cliente.findAll();
         cargar_tabla_index();

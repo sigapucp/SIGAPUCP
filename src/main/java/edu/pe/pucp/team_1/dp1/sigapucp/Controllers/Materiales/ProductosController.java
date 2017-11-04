@@ -538,7 +538,7 @@ public class ProductosController extends Controller {
     @Override
     public void guardar(){
         if (crear_nuevo){
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Productos, Accion.ACCION.CRE)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crear_nuevo = false;
                 return;
@@ -553,7 +553,7 @@ public class ProductosController extends Controller {
                 infoController.show("No ha seleccionado un tipo de producto");            
                 return;
             }
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Productos, Accion.ACCION.MOD)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }

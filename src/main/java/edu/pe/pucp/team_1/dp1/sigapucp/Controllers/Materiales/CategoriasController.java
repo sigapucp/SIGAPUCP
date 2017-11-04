@@ -157,7 +157,7 @@ public class CategoriasController extends Controller{
     @Override
     public void guardar(){
         if (crear_nuevo){
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Categorias, Accion.ACCION.CRE)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crear_nuevo = false;
                 return;
@@ -170,7 +170,7 @@ public class CategoriasController extends Controller{
                 infoController.show("No he seleccionado un categoria");
                 return;
             }
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Categorias, Accion.ACCION.MOD)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }

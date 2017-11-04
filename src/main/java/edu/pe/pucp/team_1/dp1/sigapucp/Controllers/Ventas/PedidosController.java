@@ -12,6 +12,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
@@ -302,22 +303,24 @@ public class PedidosController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Pedidos, Accion.ACCION.CRE)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crearNuevo = false;
                 return;
             }
             crearPedido();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Pedidos ,this.usuarioActual);
         } else {
             if (pedidoSeleccionado == null){
                 infoController.show("No ha seleccionado un cliente");
                 return;
             }
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Pedidos, Accion.ACCION.MOD)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editarPedido(pedidoSeleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Pedidos ,this.usuarioActual);
         }
         crearNuevo = false;
         RefrescarTabla(OrdenCompra.findAll());

@@ -49,8 +49,8 @@ public class Auditoria {
     /**
      * @return the Empleado
      */
-    public String getEmpleado() {
-        return Empleado.get();
+    public final String getEmpleado() {
+        return this.EmpleadoProperty().get();
     }
 
     /**
@@ -70,8 +70,8 @@ public class Auditoria {
     /**
      * @return the Descripcion
      */
-    public String getDescripcion() {
-        return Descripcion.get();
+    public final String getDescripcion() {
+        return this.DescripcionProperty().get();
     }
 
     /**

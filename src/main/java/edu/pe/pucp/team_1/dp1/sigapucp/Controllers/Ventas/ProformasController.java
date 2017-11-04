@@ -17,6 +17,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.Promociones;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
@@ -276,23 +277,25 @@ public class ProformasController extends Controller {
     public void guardar() {        
         if(crearNuevo)
         {
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proformas, Accion.ACCION.CRE)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crearNuevo = false;
                 return;
             }
-            crearProforma();            
+            crearProforma();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Proformas ,this.usuarioActual);
         }else
         {
             if(proformaSelecionado == null){
                 infoController.show("No ha seleccionado un cliente");
                 return;
             }
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proformas, Accion.ACCION.MOD)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editarProforma(proformaSelecionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Proformas ,this.usuarioActual);
         }        
         RefrescarTabla(Cotizacion.findAll());
     }

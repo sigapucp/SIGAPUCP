@@ -12,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.CompositePK;
@@ -27,7 +29,7 @@ public class AccionLog extends Model{
     
     public void asignar_atributos(String accion_code,int accion_id, int menu_id, String rol_cod, int rol_id, String usuario_code,int usuario_id) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        this.set("tiempo",timestamp);
+        this.setTimestamp("tiempo", timestamp);
         this.set("accion_cod",accion_code);
         this.set("accion_id",accion_id);
         this.set("menu_id", menu_id);

@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -237,7 +238,8 @@ public class UsuariosController extends Controller{
                 crearNuevo = false;
                 return;
             }
-            crearUsuario();   
+            crearUsuario();  
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Usuarios ,this.usuarioActual);
             limpiarVerUsuario();
         }else
         {
@@ -251,6 +253,7 @@ public class UsuariosController extends Controller{
                 return;
             }
             editarUsuario(usuarioSelecionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Usuarios ,this.usuarioActual);
         }                
         RefrescarTabla(Usuario.findAll());
     }
