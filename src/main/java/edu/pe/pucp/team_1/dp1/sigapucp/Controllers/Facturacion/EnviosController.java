@@ -128,6 +128,7 @@ public class EnviosController extends Controller{
         }
     }
     private void crear_envio(){
+        //falta crear el objeto envio como tal para crear las cruzadas
         actualizar_ordencompraxproductos();
         insertar_ordencompraxproductoxenvios();
     }
