@@ -40,9 +40,6 @@ public class Rack extends Model{
         set("y_ancla2", rackYAncla2);
         set("estado", rackEstado);
         
-        // Hardcoded
-        set("capacidad", 100);
-        
         if(rackXAncla1==rackXAncla2)
         {
             set("tipo",TIPO.VERTICAL.name());
