@@ -10,11 +10,14 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEvent;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import static edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu.MENU.Promociones;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
@@ -285,15 +288,25 @@ public class ProformasController extends Controller {
     public void guardar() {        
         if(crearNuevo)
         {
-            crearProforma();            
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proformas, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
+            crearProforma();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Proformas ,this.usuarioActual);
         }else
         {
-            if(proformaSelecionado == null)
-            {
-                infoController.show("No ha seleccionado ninguna Proforma");
-                 return;
+            if(proformaSelecionado == null){
+                infoController.show("No ha seleccionado un cliente");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proformas, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
             }
             editarProforma(proformaSelecionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Proformas ,this.usuarioActual);
         }        
         RefrescarTabla(Cotizacion.findAll());
     }
@@ -994,7 +1007,6 @@ public class ProformasController extends Controller {
         }
     }
 
-    
     private void setInformacionCliente(Cliente cliente)
     {
         telfSh.setText(cliente.getString("telef_contacto")); 

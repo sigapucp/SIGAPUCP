@@ -13,7 +13,7 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("Acciones")
+@Table("acciones")
 @IdName("accion_id")
 public class Accion extends Model{    
     public enum ACCION

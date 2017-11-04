@@ -50,6 +50,11 @@ public class Controller implements Initializable {
         System.out.println("Desactivar");
     }
     
+    public void cambiarEstado()
+    {
+        System.out.println("Cambiar estado");
+    }
+    
     public void cargar(){
         System.out.println("Se hará la carga masiva de datos");
     }
@@ -73,6 +78,10 @@ public class Controller implements Initializable {
     public Menu.MENU getMenu()
     {
         return Menu.MENU.NullMenu;
+    }
+    
+    public boolean isNumeric(String str) {
+        return str.matches("[-+]?\\d*\\.?\\d+");
     }
     
    public Event<cambiarMenuArgs> cambiarMenuEvent = new Event<>();
