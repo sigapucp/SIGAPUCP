@@ -87,6 +87,7 @@ public class AlmacenesController extends Controller{
     @FXML private TitledPane create_racks_container;
     @FXML private TitledPane create_almacen_logico_container;
     @FXML private TextField rack_altura_field;
+    @FXML private TextField rack_capacidad_field;
     @FXML private TitledPane contenedor_grilla;
     @FXML private AnchorPane pane_grilla;
     @FXML private TabPane almacen_form_pane;
@@ -144,6 +145,7 @@ public class AlmacenesController extends Controller{
     
     private void afterCreateOrCancelRack() {
         rack_altura_field.clear();
+        rack_capacidad_field.clear();
         create_racks_container.setDisable(true);
         contenedor_grilla.setDisable(false);
     }
@@ -171,6 +173,7 @@ public class AlmacenesController extends Controller{
         });
 
         linearBehavior.getCreateRackEvent().addHandler((sender, args) -> {
+            args.setLongitud(args.getLongitud()*grid.getTileSize());
             setTempRack((createRackArgs) args);
         });
 
@@ -376,15 +379,22 @@ public class AlmacenesController extends Controller{
     @FXML
     public void crearRack(ActionEvent event) {
         String rackAlturaStr = rack_altura_field.getText();
-        if (!rackAlturaStr.equals("") && rackAlturaStr.matches("[-+]?\\d*\\.?\\d+") ) {
-            int altura = Integer.parseInt(rackAlturaStr);
-            temp_rack = new Rack();
-            temp_rack.set("altura", altura);
-            grid.clearAndSaveTempTiles();
-            infoController.show("Se agrego el rack correctamente");
-            afterCreateOrCancelRack();
-        } else {
-            warningController.show("Error de Creacion de Rack", "Se debe ingresar una altura valida");
+        String rackCapacidadStr = rack_capacidad_field.getText();
+        try {
+            if (!rackAlturaStr.equals("") && !rackCapacidadStr.equals("") && isNumeric(rackAlturaStr) && isNumeric(rackCapacidadStr) ) {
+                int altura = Integer.parseInt(rackAlturaStr);
+                double capacidad = Double.valueOf(rackCapacidadStr);
+                temp_rack = new Rack();
+                temp_rack.set("altura", altura);
+                temp_rack.set("capacidad", capacidad);
+                grid.clearAndSaveTempTiles();
+                infoController.show("Se agrego el rack correctamente");
+                afterCreateOrCancelRack();
+            } else {
+                warningController.show("Error de Creacion de Rack", "Se debe ingresar una altura o una capacidad valida");
+            }
+        } catch(Exception e) {
+            System.out.println(e);
         }
         
     }
@@ -501,6 +511,7 @@ public class AlmacenesController extends Controller{
                         infoController.show("El almacen Central y los almacenes logicos se crearon satisfactoriamente");
                         actualizarTablaBusqueda();
                     } catch(Exception e) {
+                        Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
                         infoController.show("El almacen contiene errores : " + e);        
                         Base.rollbackTransaction();
                     }
@@ -508,6 +519,7 @@ public class AlmacenesController extends Controller{
                 } else {
                     try {
 //                        System.out.println(almacen);
+                        System.out.println(racks);
                         Base.openTransaction();
                         almacen.updateAtributosAlmacenLogico(almacenNombre,
                                 almacenLargo,
@@ -516,13 +528,14 @@ public class AlmacenesController extends Controller{
                                 almacenEsCentral,
                                 usuarioActual,
                                 racks);                                                    
-                        almacen.saveIt();                        
-                        crearPosicionesXY(racks);                        
+                        almacen.saveIt();
+                        crearPosicionesXY(racks);
                         Base.commitTransaction();
                         clearAlmacenForm();
                         
                         infoController.show("El almacen Logico y los racks se crearon satisfactoriamente");
                     } catch(Exception e) {
+                        Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
                         infoController.show("El almacen contiene errores : " + e);
                         Base.rollbackTransaction();
                     }
@@ -545,72 +558,69 @@ public class AlmacenesController extends Controller{
         }        
     }
     
-    public void crearPosicionesXY(List<Rack> racks) throws Exception
-    {
-        for(Rack rack:racks)
-        {      
+    public void crearPosicionesXY(ObservableList<Rack> racks) throws Exception {
+        for(Rack rack:racks) {
             Integer anchorX1 = rack.getInteger("x_ancla1");
             Integer anchorX2 = rack.getInteger("x_ancla2");
             Integer anchorY1 = rack.getInteger("y_ancla1");
             Integer anchorY2 = rack.getInteger("y_ancla2");
+            String rackCode = rack.getString("rack_cod");
+            LazyList<AlmacenAreaXY> registrosExistentes = AlmacenAreaXY.find("rack_cod = ?", rackCode);
             
-            Integer start = 0;
-            Integer finish = 0 ;
-            Integer constant = 0;
-            String increment = "x";
-            String other = "y";
-            
-            if(rack.getString("tipo").equals(Rack.TIPO.HORIZONTAL.name()))
-            {
-                start = Integer.min(anchorX1, anchorX2);
-                finish = Integer.max(anchorX1, anchorX2); 
-                constant = anchorY1;
-                increment = "x";
-                other = "y";                                               
-            }else
-            {                
-                start = Integer.min(anchorY1, anchorY2);
-                finish = Integer.max(anchorY1, anchorY2);
-                constant = anchorX1;
-            }     
-            
-             for(;start<finish;start++)
-                {                  
+            if(registrosExistentes.size() < 1) {
+                Integer start = 0;
+                Integer finish = 0 ;
+                Integer constant = 0;
+                String increment = "x";
+                String other = "y";
+                if(rack.getString("tipo").equals(Rack.TIPO.HORIZONTAL.name())) {
+                    start = Integer.min(anchorX1, anchorX2);
+                    finish = Integer.max(anchorX1, anchorX2); 
+                    constant = anchorY1;
+                    increment = "x";
+                    other = "y";                                               
+                } else {                
+                    start = Integer.min(anchorY1, anchorY2);
+                    finish = Integer.max(anchorY1, anchorY2);
+                    constant = anchorX1;
+                }
+
+                 for(;start<finish;start++) {                  
                     AlmacenAreaXY areaXY = new AlmacenAreaXY();
-                                        
+
                     areaXY.set("x",start);
                     areaXY.set("y",constant);    
-                    
+
                     areaXY.set("rack_id",rack.getId());
                     areaXY.set("rack_cod",rack.get("rack_cod"));
-                    
+
                     areaXY.set("almacen_id",rack.get("almacen_id"));
                     areaXY.set("almacen_cod",rack.get("almacen_cod"));
                     // Libre
                     areaXY.set("estado","L"); 
                     areaXY.set("tipo",AlmacenAreaXY.TIPO.RACK.name()); 
-                    
+
                     Integer altura = rack.getInteger("altura");
                     areaXY.set("alto",altura); 
-                    
+
                     areaXY.saveIt();
-                    
-                    for(int i = 0;i<altura;i++)
-                    {
+
+                    for(int i = 0;i<altura;i++) {
                         AlmanceAreaZ areaZ = new AlmanceAreaZ();
-                        
+
                         areaZ.set("almacen_xy_id",areaXY.getId());
                         areaZ.set("level",i);
                         // Libre
                         areaZ.set("state","L");
-                        
+
                         //HARCODED
                         areaZ.set("capacity",1000);
-                        
+
                         areaZ.saveIt();
                     }                                        
                     // Los que falta.
-                }
+                }                
+            }
         }        
     }
 }
