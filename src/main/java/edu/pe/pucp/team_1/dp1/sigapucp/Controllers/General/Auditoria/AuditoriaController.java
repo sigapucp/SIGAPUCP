@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -130,8 +132,12 @@ public class AuditoriaController extends Controller {
         }     
     }    
     
-    public AuditoriaController(){
-        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+    public void limpiar_tabla_index(){
+        TablaAuditoria.getItems().clear();
+    }
+    
+    public void cargar_tabla_index(){
+        limpiar_tabla_index();
         acciones = AccionLog.findAll();
         for (AccionLog accion : acciones){
             Timestamp tiempo = accion.getTimestamp("tiempo");
@@ -149,12 +155,6 @@ public class AuditoriaController extends Controller {
             masterData.add(new Auditoria(fecha,hora,empleado,nombreAccion,menus,Descripcion,roles));
             
         }
-        
-    }
-    
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        //TODO
         ColumnaEmpleado.setCellValueFactory(cellData -> cellData.getValue().EmpleadoProperty());
         ColumnaHora.setCellValueFactory(cellData -> cellData.getValue().HoraProperty());
         ColumnaFecha.setCellValueFactory(cellData -> cellData.getValue().FechaProperty());
@@ -163,77 +163,83 @@ public class AuditoriaController extends Controller {
         ColumnaDescripcion.setCellValueFactory(cellData -> cellData.getValue().DescripcionProperty());
         ColumnaRol.setCellValueFactory(cellData -> cellData.getValue().RolProperty());
         FilteredList<Auditoria> filteredData = new FilteredList<>(masterData, p -> true);
-        
-        /*ObjectProperty<Predicate<Auditoria>> empleadoFilter = new SimpleObjectProperty<>();
-        ObjectProperty<Predicate<Auditoria>> descripcionFilter = new SimpleObjectProperty<>();
-        
-        empleadoFilter.bind(Bindings.createObjectBinding(() ->
-                auditoria -> auditoria.getEmpleado().toLowerCase().contains(EmpleadoAuditoria.getText().toLowerCase()),
-                EmpleadoAuditoria.textProperty()));
-        
-        descripcionFilter.bind(Bindings.createObjectBinding(() ->
-                auditoria -> auditoria.getDescripcion().toLowerCase().contains(DescripcionAuditoria.getText().toLowerCase()),
-                DescripcionAuditoria.textProperty()));*/
-        
         TablaAuditoria.setItems(filteredData);
+    }
+    
+    public AuditoriaController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+
         
-        //filteredData.predicateProperty().bind(Bindings.createObjectBinding(
-        //() -> empleadoFilter.get().and(descripcionFilter.get()),empleadoFilter,descripcionFilter));
-        
+    }
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //TODO
+        cargar_tabla_index();
+        Modulo.getItems().add(null);
+        Modulo.getItems().addAll("Proveedores","Clientes","Categorias","Pedidos");
+        AccionC.getItems().add(null);
+        AccionC.getItems().addAll("Crear","Modificar");
         
                
     }
     
     
-        /*public boolean cumple_condicion_busqueda(Auditoria registro_auditoria, String empleado, String descripcion){//, String accion, String modulo, LocalDate fecha1, LocalDate fecha2, String hora1, String hora2){
+        public boolean cumple_condicion_busqueda(Auditoria registro_auditoria, String empleado, String descripcion, String accion, String modulo, LocalDate fecha1, LocalDate fecha2, String hora1, String hora2) throws ParseException {//, LocalDate fecha1, LocalDate fecha2, String hora1, String hora2){
         boolean match = true;        
-        if ( empleado.equals("") && descripcion.equals("")){ //&& accion==null && modulo==null && fecha1==null && fecha2==null && hora1==null && hora2==null){
+        if ( empleado.equals("") && descripcion.equals("")&& accion==null && modulo==null && fecha1==null && fecha2==null && hora1==null && hora2==null){
             match = true;
         }else {
-            /*Date fechaDate1 = new Date();
+            match = (!empleado.equals("")) ? (match && (registro_auditoria.getEmpleado()).equals(empleado)) : match;
+            match = (!descripcion.equals("")) ? (match && (registro_auditoria.getDescripcion()).equals(descripcion)) : match;
+            match = (!(accion==null)) ? (match && (registro_auditoria.getAccion()).equals(accion)) : match;
+            match = (!(modulo==null)) ? (match && (registro_auditoria.getModulo()).equals(modulo)) : match;
+            Date fechaDate1 = new Date();
             Date fechaDate2 = new Date();
-            if (!(fecha1==null)){
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date fecha = format.parse(registro_auditoria.getFecha());
+            if (!(fecha1==null) && (fecha2==null)){
+                fechaDate1 = Date.from(fecha1.atStartOfDay(ZoneId.systemDefault()).toInstant());                
+                match = (!(fecha==null)) ? (match && fechaDate1.equals(fecha)) : match;
+            }
+            if (!(fecha1==null) && !(fecha2==null)){
                 fechaDate1 = Date.from(fecha1.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 fechaDate2 = Date.from(fecha2.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            }*/
-            //match = (!empleado.equals("")) ? (match && (registro_auditoria.getEmpleado()).equals(empleado)) : match;
-            //match = (!descripcion.equals("")) ? (match && (registro_auditoria.getDescripcion()).equals(descripcion)) : match;
-            /*match = (!(tipo==null)) ? (match && (promocion.get("tipo")).equals(tipo)) : match;
-            Date fechaIni = promocion.getDate("fecha_inicio");            
-            Date fechaFin = promocion.getDate("fecha_fin");            
-            match = (!(fecha==null)) ? (match && fechaIni.before(fechaDate) && fechaFin.after(fechaDate)) : match;*/
-        //}
-        //return match;
-    //}
-    //@FXML
-/*    public void buscar_auditoria(ActionEvent event) throws IOException{
+                match = (!(fecha==null)) ? (match && fechaDate1.before(fecha) && fechaDate2.after(fecha)) : match;
+            }
+            
+            
+        }
+        return match;
+    }
+    @FXML
+    public void buscar_auditoria(ActionEvent event) throws IOException, ParseException{
         
         LocalDate fecha1 = AuditoriaFechaUno.getValue();
         LocalDate fecha2 = AuditoriaFechaDos.getValue();
         String hora1 = HoraUno.getText();
         String hora2 = HoraDos.getText();
-        ObservableList<Auditoria> masterDataAux = masterData;
+        ObservableList<Auditoria> masterDataAux = FXCollections.observableArrayList();
         int aux = 0;
         System.out.println(masterData.size());
-        try{
-            for (int i = 0; i < masterData.size(); i++){
-                
-                if (cumple_condicion_busqueda(masterData.get(i),EmpleadoAuditoria.getText(),DescripcionAuditoria.getText())) {//,AccionC.getSelectionModel().getSelectedItem(),Modulo.getSelectionModel().getSelectedItem(),fecha1,fecha2,hora1,hora2)){
-                    System.out.println("cumplio condicion");
-                    masterDataAux.add(masterData.get(i));
-                    aux++;
-                }else {
-                    System.out.println("no cumplio condicion");
-                }
-                if (aux>0){
-                    masterData = masterDataAux;
-                }
-                
-            }
-        }catch(Exception e){
-            System.out.println(e);
+        
+        int cant_elementos = masterData.size();
+        
+        for (int i = 0; i < cant_elementos; i++){
+            System.out.println("entro al loop");
+            if (cumple_condicion_busqueda(masterData.get(i),EmpleadoAuditoria.getText(),DescripcionAuditoria.getText(),AccionC.getSelectionModel().getSelectedItem(),Modulo.getSelectionModel().getSelectedItem(),fecha1,fecha2,hora1,hora2)){//,fecha1,fecha2,hora1,hora2)){
+                System.out.println("cumplio condicion");
+                masterDataAux.add(masterData.get(i));
+                aux++;
+            }else{
+                System.out.println("no cumplio condicion");
+            }                                 
         }
-    }*/
+
+        FilteredList<Auditoria> filteredData = new FilteredList<>(masterDataAux, p -> true);
+        TablaAuditoria.setItems(filteredData);
+    }
+    
     @Override
     public Menu.MENU getMenu(){
         return Menu.MENU.Auditoria;
