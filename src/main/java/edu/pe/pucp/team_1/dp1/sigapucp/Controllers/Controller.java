@@ -80,5 +80,9 @@ public class Controller implements Initializable {
         return Menu.MENU.NullMenu;
     }
     
+    public boolean isNumeric(String str) {
+        return str.matches("[-+]?\\d*\\.?\\d+");
+    }
+    
    public Event<cambiarMenuArgs> cambiarMenuEvent = new Event<>();
 }
