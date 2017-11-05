@@ -92,6 +92,19 @@ public class EnviosController extends Controller{
     private TableColumn<Envio, String> columna_envio;
     @FXML
     private TableColumn<Envio, String> columna_pedido;
+        //PRODUCTOS ENVIAR
+        //--------------------------------------------------//
+    @FXML
+    private TableView<OrdenCompraxProducto> tabla_productos;
+    @FXML
+    private TableColumn<OrdenCompraxProducto, String> columna_prod_cod;
+    @FXML
+    private TableColumn<OrdenCompraxProducto, String> columna_prod_nombre;
+    @FXML
+    private TableColumn<OrdenCompraxProducto, String> columna_prod_desc;
+    @FXML
+    private TableColumn<OrdenCompraxProducto, String> columna_prod_cant;
+        
     
     //LOGICA
         //--------------------------------------------------//
@@ -119,10 +132,12 @@ public class EnviosController extends Controller{
  
     //----------------------------------------------------------------------------//
 
-    private void insertar_ordencompraxproductoxenvios(){
+    private void insertar_ordencompraxproductoxenvios(Envio envio_padre){
         for(OrdenCompraxProducto producto : productos_a_agregar){
             OrdenesCompraxProductosxenvio envio = new OrdenesCompraxProductosxenvio();
             envio.asignar_atributos(producto);
+            envio.set("envio_cod", envio_padre.getString("envio_cod"));
+            envio.set("envio_id", envio_padre.getInteger("envio_id"));
             envio.saveIt();
         }
     }
@@ -133,9 +148,18 @@ public class EnviosController extends Controller{
         }
     }
     private void crear_envio(){
-        //falta crear el objeto envio como tal para crear las cruzadas
+        Base.openTransaction();  
+        Envio envio = new Envio();
+        envio.set("orden_compra_cod", orden_compra_seleccionada.get("orden_compra_cod"));
+        envio.set("orden_compra_id", orden_compra_seleccionada.getInteger("orden_compra_id"));
+        envio.set("client_id", cliente_seleccionado.getInteger("client_id"));
+        envio.set("last_user_change", usuarioActual.getString("usuario_cod"));
+        String envio_cod = "ENV" + orden_compra_seleccionada.getString("orden_compra_cod");
+        envio.set("envio_cod", envio_cod);
+        envio.saveIt();
         actualizar_ordencompraxproductos();
-        insertar_ordencompraxproductoxenvios();
+        insertar_ordencompraxproductoxenvios(envio);
+        Base.commitTransaction();
     }
     
     @Override
@@ -155,9 +179,26 @@ public class EnviosController extends Controller{
         envios = Envio.findAll();
         llenar_tabla_envios();
     }
-    
+    public void limpiar_tabla_productos(){
+        tabla_productos.getItems().clear();
+    }
     public void llenar_tabla_productos_a_enviar(){
-    
+        try{
+            limpiar_tabla_productos();
+            ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
+            productos.clear();
+            productos.addAll(productos_a_agregar);
+            System.out.println(productos.size());
+            //columna_prod_cod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+            //columna_prod_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+            //columna_prod_desc.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+            //columna_prod_cant.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            tabla_productos.setItems(productos);
+        }catch(Exception e){
+            System.out.println("---------------------------");
+            System.out.println(e);
+        }
+
     }
     private void actualizar_lista_producto_a_enviar(OrdenCompraxProducto producto_disponible){
         if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
