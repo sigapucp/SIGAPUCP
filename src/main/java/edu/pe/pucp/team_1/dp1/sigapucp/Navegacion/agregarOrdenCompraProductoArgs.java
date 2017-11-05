@@ -15,7 +15,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 public class agregarOrdenCompraProductoArgs extends EventArgs {
     public OrdenCompraxProducto orden_compra_producto;
     
-    public  agregarOrdenCompraProductoArgs(OrdenCompraxProducto orden_compra_producto){
-        orden_compra_producto = orden_compra_producto;
+    public  agregarOrdenCompraProductoArgs(OrdenCompraxProducto producto){
+        orden_compra_producto = producto;
     }
 }

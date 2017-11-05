@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
    <children>
       <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
          <children>
@@ -97,7 +97,7 @@
                            </font>
                         </Label>
                         <TextField fx:id="VerProducto" layoutX="267.0" layoutY="5.0" prefHeight="25.0" prefWidth="240.0" />
-                        <Button fx:id="buscarProducto" layoutX="516.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleAgregarProducto" prefHeight="20.0" prefWidth="20.0" text="+">
+                        <Button fx:id="buscarProducto" layoutX="516.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleModalProducto" prefHeight="20.0" prefWidth="20.0" text="+">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -123,7 +123,7 @@
                      <content>
                         <AnchorPane prefHeight="226.0" prefWidth="175.0">
                            <children>
-                              <Button layoutX="71.0" layoutY="31.799999999999997" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="31.799999999999997" />
+                              <Button layoutX="71.0" layoutY="31.799999999999997" mnemonicParsing="false" onAction="#agregar_producto" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="31.799999999999997" />
                               <Button layoutX="71.0" layoutY="155.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
                               <Label layoutX="42.0" layoutY="100.0" text="Agregar Producto" />
                               <Label layoutX="43.0" layoutY="195.0" text="Eliminar Producto" />

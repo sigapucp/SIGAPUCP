@@ -35,13 +35,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -68,7 +71,9 @@ public class EnviosController extends Controller{
     @FXML
     private ComboBox ordenes_compra_combobox;
     @FXML
-    private Spinner<Integer> cantidad_producto;
+    private Spinner<?> cantidad_producto;
+    @FXML
+    private TextField VerProducto;
     
     //BUSQUEDA
     //-----------------------------------------------------//
@@ -170,7 +175,7 @@ public class EnviosController extends Controller{
         try{
             for(OrdenCompraxProducto producto_disponible : productos_disponibles){
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
-                    Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - cantidad_producto.getValue();
+                    Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
                     if (cantidad > 0){
                         producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
                         actualizar_lista_producto_a_enviar(producto_disponible);
@@ -187,7 +192,7 @@ public class EnviosController extends Controller{
         }
     }
      
-    private void setAgregarProductos() throws Exception
+    private void abrirModalProductos() throws Exception
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
@@ -199,6 +204,7 @@ public class EnviosController extends Controller{
             controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenCompraProductoArgs args) -> {
                 producto_devuelto = args.orden_compra_producto;
             });                 
+            modal_stage.showAndWait();
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
@@ -214,19 +220,16 @@ public class EnviosController extends Controller{
     }
 
     @FXML
-    private void handleAgregarProducto(ActionEvent event) throws IOException{
+    private void handleModalProducto() throws IOException{
         try{
-            //hasta que se tengan los datos reales
-            ///*
             String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
             if (!temp_orden_compra.equals(null)){
                 orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod = ?", temp_orden_compra);
                 obtener_productos_disponibles_orden_compra();
-                //productos_a_agregar.clear();
             }
-            //*/
-            setAgregarProductos();
-            modal_stage.showAndWait();            
+            abrirModalProductos();
+            if(producto_devuelto==null) return; 
+            VerProducto.setText(TipoProducto.findFirst("tipo_cod = ? AND tipo_id = ?", producto_devuelto.get("tipo_cod"), producto_devuelto.get("tipo_id")).getString("nombre"));
         }catch(Exception e){
             infoController.show("Necesita seleccionar una orden de compra");
         }
@@ -272,7 +275,6 @@ public class EnviosController extends Controller{
         }catch(Exception e){
             infoController.show("Ha ocurrido un problema durante la seleccion de orden de compra : " + e.getMessage());
         }
-
     }
     
     private void handleAutoCompletar() {
@@ -312,8 +314,9 @@ public class EnviosController extends Controller{
     public void nuevo(){
        crearNuevo = true;
        habilitar_formulario();
+       SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
+       cantidad_producto.setValueFactory(cantidad_productoValues);
     }
-    
 
     public void limpiar_tabla_index(){
         tabla_envios.getItems().clear();
@@ -364,16 +367,16 @@ public class EnviosController extends Controller{
         crearNuevo = false;
         cliente_seleccionado = null;
         ordenes_compra_combobox = new ComboBox();
+        
     }    
         
+    @Override
     public void initialize(URL location, ResourceBundle resources) {  
         try {
             envios = Envio.findAll();
-            //productos_a_agregar = null;
-            //productos_disponibles = null;
             llenar_tabla_envios();
             llenar_autocompletado();
-            inhabilitar_formulario();
+            inhabilitar_formulario();            
         } catch (Exception ex) {
             infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
         }
