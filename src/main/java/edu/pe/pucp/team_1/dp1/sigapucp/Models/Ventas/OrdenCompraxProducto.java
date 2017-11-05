@@ -14,6 +14,6 @@ import org.javalite.activejdbc.annotations.Table;
  * @author Jauma
  */
 @Table("OrdenesCompraxProductos")
-@CompositePK({ "tipo_id", "tipo_cod", "orden_compra_id","orden_compra_cod","cllient_id" })
+@CompositePK({ "tipo_id", "tipo_cod", "orden_compra_id","orden_compra_cod","client_id" })
 public class OrdenCompraxProducto extends Model{    
 }
