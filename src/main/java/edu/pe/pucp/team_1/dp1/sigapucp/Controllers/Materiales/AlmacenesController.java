@@ -382,7 +382,7 @@ public class AlmacenesController extends Controller{
         String rackAlturaStr = rack_altura_field.getText();
         String rackCapacidadStr = rack_capacidad_field.getText();
         try {
-            if (!rackAlturaStr.equals("") && !rackCapacidadStr.equals("") && isNumeric(rackAlturaStr) && isNumeric(rackCapacidadStr) ) {
+            if (!rackAlturaStr.equals("") && !rackCapacidadStr.equals("") && validator.isNumeric(rackAlturaStr) && validator.isNumeric(rackCapacidadStr) ) {
                 int altura = Integer.parseInt(rackAlturaStr);
                 double capacidad = Double.valueOf(rackCapacidadStr);
                 temp_rack = new Rack();
@@ -428,7 +428,7 @@ public class AlmacenesController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Creacion de almacen logico, tabla de Racks creados hasta el momento
-        rack_column_codigo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod") ));
+        rack_column_codigo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")) );
         rack_column_largo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("longitud") ));
         rack_column_altura.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("altura") ));
         // Almacen Tabla de Busqueda
@@ -512,7 +512,7 @@ public class AlmacenesController extends Controller{
                         actualizarTablaBusqueda();
                     } catch(Exception e) {
                         Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
-                        infoController.show("El almacen contiene errores : " + e);        
+                        infoController.show("El almacen contiene errores : " + e);
                         Base.rollbackTransaction();
                     }
                     
@@ -527,7 +527,7 @@ public class AlmacenesController extends Controller{
                                 almacenLongitudArea,
                                 almacenEsCentral,
                                 usuarioActual,
-                                racks);                                                    
+                                racks);
                         almacen.saveIt();
                         crearPosicionesXY(racks);
                         Base.commitTransaction();
@@ -546,7 +546,7 @@ public class AlmacenesController extends Controller{
                     try {
                         LazyList<TipoError> errorList = TipoError.find("error_cod = ?", "VAL400");
                         TipoError error = errorList.get(0);
-                        
+
                         warningController.show(error.getString("descripcion"), errores);    
                     } catch(Exception e) {
                         Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
@@ -555,7 +555,7 @@ public class AlmacenesController extends Controller{
             }
         } else {
             warningController.show("Error al crear Almacen", "Es necesario que seleccione el tipo de Almacen");
-        }        
+        }
     }
     
     public void crearPosicionesXY(ObservableList<Rack> racks) throws Exception {
@@ -567,7 +567,7 @@ public class AlmacenesController extends Controller{
             Double rackCapacidad = rack.getDouble("capacidad");
             String rackCode = rack.getString("rack_cod");
             LazyList<AlmacenAreaXY> registrosExistentes = AlmacenAreaXY.find("rack_cod = ?", rackCode);
-            
+
             if(registrosExistentes.size() < 1) {
                 Integer start = 0;
                 Integer finish = 0 ;
@@ -579,18 +579,18 @@ public class AlmacenesController extends Controller{
                     finish = Integer.max(anchorX1, anchorX2); 
                     constant = anchorY1;
                     increment = "x";
-                    other = "y";                                               
-                } else {                
+                    other = "y";
+                } else {
                     start = Integer.min(anchorY1, anchorY2);
                     finish = Integer.max(anchorY1, anchorY2);
                     constant = anchorX1;
                 }
 
-                 for(;start<finish;start++) {                  
+                 for(;start<finish;start++) {
                     AlmacenAreaXY areaXY = new AlmacenAreaXY();
 
                     areaXY.set("x", start);
-                    areaXY.set("y", constant);    
+                    areaXY.set("y", constant);
 
                     areaXY.set("rack_id", rack.getId());
                     areaXY.set("rack_cod", rack.get("rack_cod"));
@@ -611,15 +611,11 @@ public class AlmacenesController extends Controller{
 
                         areaZ.set("almacen_xy_id", areaXY.getId());
                         areaZ.set("level", i);
-                        // Libre
-                        areaZ.set("state", "L");
-
-                        //HARCODED
+                        areaZ.set("state", "L"); // L -> Libre
                         areaZ.set("capacity", rackCapacidad);
 
                         areaZ.saveIt();
-                    }                                        
-                    // Los que falta.
+                    }
                 }                
             }
         }        

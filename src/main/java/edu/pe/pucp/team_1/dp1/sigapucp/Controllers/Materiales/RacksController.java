@@ -8,6 +8,8 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
@@ -46,9 +48,7 @@ public class RacksController extends Controller{
     @FXML private TableView<Producto> rack_form_producto_tabla;
     @FXML private TableColumn<Producto, String> rack_form_producto_cod_column;
     @FXML private TableColumn<Producto, String> rack_form_cant_prod_column;
-//    @FXML private TableColumn<Producto, String> rack_form_ancho_column;
-//    @FXML private TableColumn<Producto, String> rack_form_largo_column;
-//    @FXML private TableColumn<Producto, String> rack_form_cant_prod_column;
+    @FXML private TableColumn<Producto, String> rack_form_producto_nombre_column;
     @FXML private TextField rack_form_cod_field;
     @FXML private TextField rack_form_almacen_nombre_field;
     @FXML private TextField rack_form_cantidad_productos_field;
@@ -77,9 +77,7 @@ public class RacksController extends Controller{
         try {
             LazyList<Rack> rackActuales = Rack.findAll();
 
-            rackActuales.forEach((rack) -> {
-                racks_busqueda.add(rack);
-            });
+            rackActuales.forEach(racks_busqueda::add);
 
             buscar_rack_tabla.setItems(racks_busqueda);    
         } catch(Exception e) {
@@ -116,12 +114,21 @@ public class RacksController extends Controller{
         // Tabla de Busqueda
         buscar_columna_codigo_rack.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod") ));
         // Tabla de Formulario ; Nota camibar UI
-        rack_form_producto_cod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")) );
-        rack_form_cant_prod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")) );
+        rack_form_producto_cod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")) );
+        rack_form_cant_prod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) ->
+            new ReadOnlyObjectWrapper(
+                Stock.findByCompositeKeys(p.getValue().getId(), p.getValue().get("tipo_cod")).getInteger("stock_fisico")
+            )
+        );
+        rack_form_producto_nombre_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) ->
+            new ReadOnlyObjectWrapper(
+                TipoProducto.findById(p.getValue().getId()).getString("nombre")
+            )
+        );
 
         actualizarTablaBusqueda();
     }
-    
+
     @FXML
     void visualizarRack(ActionEvent event) {
         rack_seleccionado = buscar_rack_tabla.getSelectionModel().getSelectedItem();
