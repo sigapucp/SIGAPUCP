@@ -220,7 +220,7 @@ public class EnviosController extends Controller{
     }
 
     @FXML
-    private void handleModalProducto() throws IOException{
+    private void handleModalProducto(ActionEvent event) throws IOException{
         try{
             String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
             if (!temp_orden_compra.equals(null)){
