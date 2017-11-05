@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -107,6 +108,8 @@ public class AuditoriaController extends Controller {
     
     private List<AccionLog> acciones;
     
+    //private List<String> modulos;
+    
     private List<Auditoria> auditorias;
     
     private ObservableList<Auditoria> masterData = FXCollections.observableArrayList();
@@ -177,9 +180,23 @@ public class AuditoriaController extends Controller {
         //TODO
         cargar_tabla_index();
         Modulo.getItems().add(null);
-        Modulo.getItems().addAll("Proveedores","Clientes","Categorias","Pedidos");
+        List<Menu> modulos = Menu.findAll();
+        List<String> listaModulos = new ArrayList<String>();
+        for (int i=0; i< modulos.size(); i++){
+            listaModulos.add(modulos.get(i).getString("nombre"));                      
+        }
+        ObservableList<String> listamoduloscombo = FXCollections.observableArrayList(listaModulos);
+        Modulo.getItems().addAll(listamoduloscombo);
+        
         AccionC.getItems().add(null);
-        AccionC.getItems().addAll("Crear","Modificar");
+        List<Accion> accionesFiltro = Accion.findAll();
+        List<String> listaAcciones = new ArrayList<String>();
+        for (int i=0; i < accionesFiltro.size(); i++){
+            listaAcciones.add(accionesFiltro.get(i).getString("nombre"));
+            
+        }
+        ObservableList<String> listaaccionescombo = FXCollections.observableArrayList(listaAcciones);
+        AccionC.getItems().addAll(listaaccionescombo);
         
                
     }
