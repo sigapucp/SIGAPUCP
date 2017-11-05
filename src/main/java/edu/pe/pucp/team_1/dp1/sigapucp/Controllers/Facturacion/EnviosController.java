@@ -157,7 +157,7 @@ public class EnviosController extends Controller{
     }
     
     public void llenar_tabla_productos_a_enviar(){
-        
+    
     }
     private void actualizar_lista_producto_a_enviar(OrdenCompraxProducto producto_disponible){
         if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
@@ -177,9 +177,14 @@ public class EnviosController extends Controller{
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
                     if (cantidad > 0){
-                        producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
-                        actualizar_lista_producto_a_enviar(producto_disponible);
-                        llenar_tabla_productos_a_enviar();
+                        if ((Integer)cantidad_producto.getValue() != 0){
+                            producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                            actualizar_lista_producto_a_enviar(producto_disponible);
+                            llenar_tabla_productos_a_enviar();                            
+                        }else{
+                            infoController.show("Error: Debe seleccionar una cantidad mayor a 0 ");
+                        }
+
                     }
                     else{
                         infoController.show("Error: no es posible seleccionar esa cantidad, no existen existencias suficientes ");
@@ -367,6 +372,7 @@ public class EnviosController extends Controller{
         crearNuevo = false;
         cliente_seleccionado = null;
         ordenes_compra_combobox = new ComboBox();
+        productos_a_agregar = new ArrayList<OrdenCompraxProducto>();
         
     }    
         
