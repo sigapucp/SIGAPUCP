@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.CompositePK;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
@@ -14,6 +15,7 @@ import org.javalite.activejdbc.annotations.Table;
  * @author alulab14
  */
 @Table("ordenescompraxproductosxenvio")
+@CompositePK({ "orden_compra_cod", "client_id", "orden_compra_id", "tipo_id", "tipo_cod", "envio_id", "envio_cod"})
 //@IdName("client_id")
 public class OrdenesCompraxProductosxenvio extends Model{
     public void asignar_atributos(OrdenCompraxProducto producto){
