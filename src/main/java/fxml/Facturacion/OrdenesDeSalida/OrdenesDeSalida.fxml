@@ -81,12 +81,12 @@
             </AnchorPane>
             <AnchorPane fx:id="pedidoTable" layoutY="263.0" maxHeight="317.0" maxWidth="750.0" prefHeight="301.0" prefWidth="750.0">
                <children>
-                  <TableView fx:id="TablaProductos" layoutX="15.0" layoutY="50.0" prefHeight="246.0" prefWidth="540.0">
+                  <TableView fx:id="tabla_envios_salida" layoutX="15.0" layoutY="50.0" prefHeight="246.0" prefWidth="540.0">
                      <columns>
-                        <TableColumn fx:id="codProdColumn" prefWidth="75.0" text="Código" />
-                        <TableColumn fx:id="nombreProdColumn" prefWidth="132.0" text="Nombre" />
-                        <TableColumn fx:id="subTotalProdColumna" prefWidth="95.0" text="Descripcion" />
-                        <TableColumn fx:id="cantProdColumn" prefWidth="51.0" text="Cantidad" />
+                        <TableColumn fx:id="columna_envio_cod_salida" prefWidth="149.0" text="Código" />
+                        <TableColumn fx:id="columna_envio_cliente_salida" prefWidth="123.0" text="Cliente" />
+                        <TableColumn fx:id="columna_envio_pedido_salida" prefWidth="131.0" text="Pedido" />
+                        <TableColumn fx:id="columna_envio_estado_salida" prefWidth="136.0" text="Estado" />
                      </columns>
                      <columnResizePolicy>
                      </columnResizePolicy>
@@ -95,7 +95,7 @@
                      <content>
                         <AnchorPane prefHeight="251.0" prefWidth="158.0">
                            <children>
-                              <Button layoutX="61.0" layoutY="39.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="39.0" />
+                              <Button layoutX="61.0" layoutY="39.0" mnemonicParsing="false" onAction="#agregar_envio" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="39.0" />
                               <Button layoutX="61.0" layoutY="140.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
                               <Label layoutX="42.0" layoutY="100.0" text="Agregar Envio" />
                               <Label layoutX="46.0" layoutY="194.0" text="Eliminar Envio" />
@@ -109,12 +109,11 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="735.0">
                      <children>
-                        <TableView layoutX="14.0" layoutY="65.0" prefHeight="147.0" prefWidth="539.0">
+                        <TableView fx:id="tabla_productos" layoutX="14.0" layoutY="65.0" prefHeight="147.0" prefWidth="539.0">
                           <columns>
                             <TableColumn fx:id="envio_cod_producto" prefWidth="132.0" text="Código" />
                             <TableColumn fx:id="envio_nombre_producto" minWidth="0.0" prefWidth="135.0" text="Nombre" />
                               <TableColumn fx:id="envio_desc_producto" minWidth="0.0" prefWidth="136.0" text="Descripcion" />
-                              <TableColumn fx:id="envio_cant_producto" prefWidth="135.0" text="Cantidad" />
                           </columns>
                         </TableView>
                         <Label layoutX="14.0" layoutY="37.0" text="Productos">
@@ -122,21 +121,15 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TitledPane animated="false" collapsible="false" layoutX="564.0" layoutY="68.0" prefHeight="145.0" prefWidth="163.0" text="Acciones">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <Button layoutX="62.0" layoutY="23.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="V" />
-                                    <Label layoutX="23.0" layoutY="78.0" text="Visualizar Productos" />
-                                 </children>
-                              </AnchorPane>
-                          </content>
-                        </TitledPane>
-                        <Button fx:id="buscar_envio_button" layoutX="406.0" layoutY="17.0" mnemonicParsing="false" onAction="#handleAgregarEnvio" prefHeight="25.0" prefWidth="145.0" text="Buscar envio">
+                        <Button fx:id="buscar_envio_button" layoutX="577.0" layoutY="22.0" mnemonicParsing="false" onAction="#handle_buscar_pedido" prefHeight="25.0" prefWidth="145.0" text="Buscar envio">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
+                        <Label layoutX="578.0" layoutY="71.0" text="Código Envio" />
+                        <Label layoutX="578.0" layoutY="149.0" text="Código Pedido" />
+                        <TextField fx:id="envio_buscar" layoutX="575.0" layoutY="100.0" />
+                        <TextField fx:id="pedido_buscar" layoutX="575.0" layoutY="173.0" />
                      </children>
                   </AnchorPane>
                </content>
