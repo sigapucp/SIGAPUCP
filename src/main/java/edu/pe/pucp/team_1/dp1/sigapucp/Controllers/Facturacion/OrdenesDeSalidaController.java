@@ -9,11 +9,13 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenSalida;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarEnviosArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenCompraProductoArgs;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -74,12 +76,22 @@ public class OrdenesDeSalidaController  extends Controller{
         //--------------------------------------------------//
     Stage modal_stage = new Stage();    
 
-    private void crear_envio(){
-        //crear orden de salida
-        //recorre lista envios_disponibles
-        //crear ordensalidaxenvio por cada envio
-        
+    private void insertar_orden_salida_envio(OrdenSalida salida){
+        for(Envio envio : envios_disponibles){
+            
+        }
     }
+    private void crear_envio(){
+        Base.openTransaction();  
+        OrdenSalida orden_salida = new OrdenSalida();
+        orden_salida.set("last_user_change", usuarioActual.getString("usuario_cod"));
+        //orden_salida.set("tipo",);
+        //orden_salida.set("descripcion");
+        //orden_salida.saveIt();
+        insertar_orden_salida_envio(orden_salida);
+        Base.commitTransaction();
+    }
+    
     
     @Override
     public void guardar(){
@@ -195,6 +207,7 @@ public class OrdenesDeSalidaController  extends Controller{
     public OrdenesDeSalidaController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         infoController = new InformationAlertController();
+        envios_disponibles = new ArrayList<Envio>();
     }    
         
     public void initialize(DocFlavor.URL location, ResourceBundle resources) {  
