@@ -156,9 +156,10 @@ public class EnviosController extends Controller{
         envio.set("last_user_change", usuarioActual.getString("usuario_cod"));
         String envio_cod = "ENV" + orden_compra_seleccionada.getString("orden_compra_cod");
         envio.set("envio_cod", envio_cod);
+        envio.set("estado", "activo");
         envio.saveIt();
         actualizar_ordencompraxproductos();
-        insertar_ordencompraxproductoxenvios(envio);
+        //insertar_ordencompraxproductoxenvios(envio);
         Base.commitTransaction();
     }
     

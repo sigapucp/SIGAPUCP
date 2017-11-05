@@ -10,6 +10,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenSalida;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarEnviosArgs;
@@ -78,7 +79,15 @@ public class OrdenesDeSalidaController  extends Controller{
 
     private void insertar_orden_salida_envio(OrdenSalida salida){
         for(Envio envio : envios_disponibles){
-            
+            OrdenesSalidaxEnvio salida_envio = new OrdenesSalidaxEnvio();
+            salida_envio.set("orden_compra_cod", envio.getString("orden_compra_cod"));
+            salida_envio.set("client_id", envio.getInteger("client_id"));
+            salida_envio.set("orden_compra_id", envio.getInteger("orden_compra_id"));
+            salida_envio.set("salida_cod", salida.getString("salida_cod"));
+            salida_envio.set("salida_id", salida.getInteger("salida_id"));
+            salida_envio.set("envio_id", envio.getInteger("envio_id"));
+            salida_envio.set("envio_cod", envio.getString("envio_cod"));
+            salida_envio.saveIt();
         }
     }
     private void crear_envio(){
