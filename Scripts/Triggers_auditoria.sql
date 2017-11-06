@@ -17,6 +17,36 @@ $T_Usuarios_BIU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_Usuarios_BIU BEFORE INSERT OR UPDATE ON Usuarios
 FOR EACH ROW EXECUTE PROCEDURE Usuarios_audit();
 
+CREATE FUNCTION Stock_entry() RETURNS trigger AS $T_Stock_AU$
+BEGIN
+  IF (NEW.ingresado = 'S') THEN
+    UPDATE Stocks
+    SET stock_real = stock_real + NEW.cantidad, stock_logico = stock_logico + NEW.cantidad
+    WHERE tipo_id = NEW.tipo_id;
+    RETURN NEW;
+  END IF;
+  RETURN NULL;
+END;
+$T_Stock_AU$ LANGUAGE plpgsql;
+
+CREATE TRIGGER T_Stock_AU AFTER UPDATE ON OrdenesEntradaxProductos
+FOR EACH ROW EXECUTE PROCEDURE Stock_entry();
+
+CREATE FUNCTION Stock_reserved() RETURNS trigger AS $T_Stock_reserved_AU$
+BEGIN
+  IF (NEW.reservado = 'S') THEN
+    UPDATE Stocks
+    SET stock_real = stock_real + NEW.cantidad, stock_logico = stock_logico + NEW.cantidad
+    WHERE tipo_id = NEW.tipo_id;
+    RETURN NEW;
+  END IF;
+  RETURN NULL;
+END;
+$T_Stock_reserved_AU$ LANGUAGE plpgsql;
+
+CREATE TRIGGER T_Stock_reserved_AU AFTER UPDATE ON OrdenesCompraxProductos
+FOR EACH ROW EXECUTE PROCEDURE Stock_reserved();
+
 --Roles
 
 CREATE FUNCTION Roles_audit() RETURNS trigger AS $T_Roles_BIU$

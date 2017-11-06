@@ -7,12 +7,15 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionBonificacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.PromocionCantidad;
@@ -417,10 +420,24 @@ public class PromocionesController extends Controller{
     @Override
     public void guardar() {
         if (crear_nuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Promociones, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crear_nuevo = false;
+                return;
+            }
             crear_promocion();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Promociones ,this.usuarioActual);
         }else{
-            if (promocion_seleccionada == null) return;
+            if(promocion_seleccionada == null){
+                infoController.show("No ha seleccionado un cliente");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Promociones, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_promocion(promocion_seleccionada);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Promociones ,this.usuarioActual);
         }
         promociones = Promocion.findAll();
         cargar_tabla_index();

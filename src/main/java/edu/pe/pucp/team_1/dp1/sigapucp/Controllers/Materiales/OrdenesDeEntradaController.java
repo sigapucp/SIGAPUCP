@@ -12,11 +12,16 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertCo
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEventHandler;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Lote;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
@@ -24,6 +29,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,7 +190,7 @@ public class OrdenesDeEntradaController extends Controller {
             String tipo = entradaSelecionada.getString("tipo");
             if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
             {
-                ProveedorBuscar.setText(Proveedor.findFirst("proveedor_id = ?", entradaSelecionada.get("proveedor_id")).getString("nombre"));
+                ProveedorBuscar.setText(Proveedor.findFirst("proveedor_id = ?", entradaSelecionada.get("proveedor_id")).getString("name"));
             }
             
             if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
@@ -253,7 +259,8 @@ public class OrdenesDeEntradaController extends Controller {
         ordenxproducto.set("tipo_id",productoDevuelto.getId());
         ordenxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));
         ordenxproducto.set("estado",productoDevuelto.get("estado"));
-        ordenxproducto.set("cantidad",verCantidad.getValue());                        
+        ordenxproducto.set("cantidad",verCantidad.getValue());
+        ordenxproducto.set("ingresado","N");
         productos.add(ordenxproducto);
     }
 
@@ -312,15 +319,21 @@ public class OrdenesDeEntradaController extends Controller {
             orden.set("tipo",tipo);
             orden.setDate("fecha_emision",fecha);
             orden.set("descripcion",descripcion);
-            String codInicial = "DEF";
+            orden.set("client_id",null);
+            orden.set("proveedor_id",null);
+            orden.set("provuder_ruc",null);
+            String codInicial = "DEF";                        
             
             if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
             {
                 codInicial = "CPR";
+                orden.set("proveedor_id",proveedorDevuelto.getId());
+                orden.set("provuder_ruc",proveedorDevuelto.get("provuder_ruc"));
             }            
             if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
             {
                 codInicial = "DEV";
+                orden.set("client_id",clienteDevuelto.getId());
             }            
             if(tipo.equals(OrdenEntrada.TIPO.Encuentro.name()))
             {
@@ -416,7 +429,7 @@ public class OrdenesDeEntradaController extends Controller {
             if(ordenxproducto.isNew())
             {
                 ordenxproducto.set("orden_entrada_id",orden.getId());
-                ordenxproducto.set("orden_entrada_cod",orden.get("orden_entrada_cod"));
+                ordenxproducto.set("orden_entrada_cod",orden.get("orden_entrada_cod"));               
             }
             ordenxproducto.saveIt();
         }                  
@@ -442,7 +455,13 @@ public class OrdenesDeEntradaController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
-            crear_orden();         
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.OrdendeEntrada, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
+            crear_orden();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.OrdendeEntrada ,this.usuarioActual);
         }
         else {
             if(entradaSelecionada==null) 
@@ -450,10 +469,113 @@ public class OrdenesDeEntradaController extends Controller {
                 infoController.show("No ha seleccionado una Orden de Entrada");            
                 return;
             }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.OrdendeEntrada, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_orden(entradaSelecionada);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.OrdendeEntrada ,this.usuarioActual);
         }    
         crearNuevo = false;
         RefrescarTabla(OrdenEntrada.findAll());
+    }
+    
+    @Override
+    public void cambiarEstado()
+    {
+        if(entradaSelecionada == null)
+        {
+            infoController.show("No ha seleccionado ninguna Orden de Entrada");
+            return;
+        }
+        
+        if(entradaSelecionada.getString("estado").equals(OrdenEntrada.ESTADO.Completa.name()))
+        {
+            infoController.show("La orden ya ha sido completada");
+            return;
+        }                
+        
+        try {
+            Base.openTransaction();
+            
+            String estadoAnterior = entradaSelecionada.getString("estado");
+            
+            OrdenEntrada.ESTADO siguienteEstado = OrdenEntrada.ESTADO.valueOf(estadoAnterior).next();
+            
+            if(!confirmationController.show("Esta accion cambiara la Orden del estado " + estadoAnterior + " a " + siguienteEstado.name(), "¿Desea continuar?")) return;
+            
+            entradaSelecionada.set("estado",siguienteEstado.name());                       
+            entradaSelecionada.saveIt();            
+                                    
+            Lote nuevoLote = null;
+            if(estadoAnterior.equals(OrdenEntrada.ESTADO.Parcial.name())) 
+            {
+                infoController.show("La Orden de entrada fue actualizada correctamente. Los productos han sido ingresados");
+                Base.commitTransaction();
+            
+                TablaOrdenes.getColumns().get(0).setVisible(false);
+                TablaOrdenes.getColumns().get(0).setVisible(true); 
+                
+                return;
+            }
+            
+            if(entradaSelecionada.getString("tipo").equals(OrdenEntrada.TIPO.Compra.name()))
+            {
+                nuevoLote = new Lote();
+                nuevoLote.set("fecha_entrada",Date.valueOf(LocalDate.now()));
+                nuevoLote.set("proveedor_id",entradaSelecionada.get("proveedor_id"));
+                nuevoLote.set("proveedor_ruc",entradaSelecionada.get("provuder_ruc"));
+                String cod = "LOT" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from lotes_lote_id_seq")))) + 1);
+                nuevoLote.set("lote_cod", cod);
+                nuevoLote.saveIt();
+            }
+                        
+            for(OrdenEntradaxProducto producto:productos)
+            {
+                Integer cantidadProductos = producto.getInteger("cantidad");
+                for(int i = 0;i<cantidadProductos;i++)
+                {
+                    Producto nuevoProducto = new Producto();                
+                    nuevoProducto.set("tipo_id",producto.get("tipo_id"));
+                    nuevoProducto.set("tipo_cod",producto.get("tipo_cod"));
+                    
+                    nuevoProducto.set("orden_entrada_id",producto.get("orden_entrada_id"));
+                    nuevoProducto.set("orden_entrada_cod",producto.get("orden_entrada_cod"));
+                    
+                    nuevoProducto.set("fecha_adquirida",entradaSelecionada.getDate("fecha_emision"));
+                    nuevoProducto.set("fecha_entrada",Date.valueOf(LocalDate.now()));
+                    
+                    nuevoProducto.set("almacen_xy_id",null);
+                    nuevoProducto.set("almacen_z_id",null);
+                    nuevoProducto.set("rack_id",null);
+                    nuevoProducto.set("almacen_id",null);
+                    
+                    nuevoProducto.set("ubicado","N");
+                    nuevoProducto.set("estado",Producto.ESTADO.INGRESADO.name());
+                    
+                    // Manejar Lotes?
+                    if(nuevoLote != null)
+                    {
+                        nuevoProducto.set("lote_id",nuevoLote.getId());
+                        nuevoProducto.set("lote_cod",nuevoLote.get("lote_cod"));
+                    }
+                    
+                    String cod = producto.get("tipo_cod") + "_" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from productos_producto_id_seq")))) + 1);
+                    
+                    nuevoProducto.set("producto_cod",cod);                                                                    
+                    nuevoProducto.saveIt();
+                }                
+                producto.set("ingresado","S");
+                producto.saveIt();
+            }                        
+            Base.commitTransaction();            
+            TablaOrdenes.getColumns().get(0).setVisible(false);
+            TablaOrdenes.getColumns().get(0).setVisible(true);            
+            infoController.show("La Orden de entrada fue actualizada correctamente. Los productos han sido ingresados");
+        } catch (Exception e) {
+            Base.rollbackTransaction();
+            infoController.show("No se ha podido modificar el estado de la orden");
+        }
     }
     
     private void limpiar_formulario()
@@ -489,7 +611,9 @@ public class OrdenesDeEntradaController extends Controller {
     private void handleAutoCompletarCliente() {
         int i = 0;
         for (Cliente cliente : autoCompletadoClienteList){
-            if (cliente.getString("nombre").equals(ClienteBuscar.getText())){           
+            String nombre = cliente.getString("nombre");
+            if(nombre == null) return;
+            if (nombre.equals(ClienteBuscar.getText())){           
                   clienteDevuelto = cliente;
             }
         }
@@ -498,7 +622,9 @@ public class OrdenesDeEntradaController extends Controller {
     private void handleAutoCompletarProveedor() {
         int i = 0;
         for (Proveedor proveedor : autoCompletadoProveedorList){
-            if (proveedor.getString("nombre").equals(ProveedorBuscar.getText())){           
+            String nombre = proveedor.getString("name");
+            if(nombre == null) return;
+            if (nombre.equals(ProveedorBuscar.getText())){           
                proveedorDevuelto = proveedor;
             }
         }
@@ -507,7 +633,9 @@ public class OrdenesDeEntradaController extends Controller {
     private void handleAutoCompletarProducto() {
         int i = 0;
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
-            if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
+            String nombre = tipoProducto.getString("nombre");
+            if(nombre == null) return;
+            if (nombre.equals(VerProducto.getText())){           
                 productoDevuelto = tipoProducto;             
             }
         }
@@ -648,5 +776,7 @@ public class OrdenesDeEntradaController extends Controller {
         } catch (Exception e) {
             infoController.show("La orden de entradada contiene errores : " + e);    
         }
-    }         
+    }
+    
+
 }
