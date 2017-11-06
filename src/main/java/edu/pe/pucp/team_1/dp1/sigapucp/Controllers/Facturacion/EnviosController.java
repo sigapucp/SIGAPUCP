@@ -167,9 +167,7 @@ public class EnviosController extends Controller{
             envio.set("last_user_change", usuarioActual.getString("usuario_cod"));
             envio.set("estado", Envio.ESTADO.PENDIENTE.name());
             envio.saveIt();
-            System.out.println("---------------------------");
-            System.out.println(envio);
-            //actualizar_ordencompraxproductos();
+            actualizar_ordencompraxproductos();
             insertar_ordencompraxproductoxenvios(envio);
             Base.commitTransaction();
         } catch (Exception e){
