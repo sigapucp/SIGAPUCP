@@ -53,7 +53,7 @@
                   </ImageView>
                </children>
             </Pane>
-            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" onAction="#visualizar_orden_salida" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
             <TextField fx:id="pedido_buscar" layoutX="119.0" layoutY="137.0" prefHeight="27.0" prefWidth="114.0" />
             <Label layoutX="20.0" layoutY="141.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Pedido">
                <font>

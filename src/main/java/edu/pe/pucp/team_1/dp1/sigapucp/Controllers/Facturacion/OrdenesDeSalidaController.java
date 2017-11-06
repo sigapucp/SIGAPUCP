@@ -111,10 +111,48 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<OrdenesCompraxProductosxenvio> masterDataProductoEnvio = FXCollections.observableArrayList();
     private final ObservableList<OrdenSalida> masterDataSalidas = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
+    private OrdenSalida salida_seleccionada;
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage = new Stage();    
 
+    private void limpia_formulario(){
+        
+    }
+    private void setear_datos_salida(){
+        llenar_combo_box_tipo();
+        tipos.setValue(salida_seleccionada.getString("tipo"));
+        codigo_salida.setText(salida_seleccionada.getString("salida_cod"));
+        descripcion_envio.setText(salida_seleccionada.getString("descripcion"));
+    }
+    
+    private void setear_envios_salida(){
+        List<OrdenesSalidaxEnvio> salida_envios = OrdenesSalidaxEnvio.where("salida_cod = ?", salida_seleccionada.getString("salida_cod"));
+        List<Envio> envios_temp = new ArrayList<Envio>();
+        for(OrdenesSalidaxEnvio salida_envio : salida_envios){
+            Envio envio_temp = Envio.findById(salida_envio.getInteger("envio_id"));
+            envios_temp.add(envio_temp);
+        }
+        envios_disponibles = envios_temp;
+        actualizar_lista_envios_tabla();
+    }
+    
+    @FXML
+    private void visualizar_orden_salida(ActionEvent event) throws  IOException{
+        salida_seleccionada = tabla_salidas.getSelectionModel().getSelectedItem();
+        if (salida_seleccionada == null){
+            infoController.show("Salida no seleccionada");  
+            return;            
+        }
+        try{
+            habilitar_formulario();
+            limpia_formulario();
+            setear_datos_salida();
+            setear_envios_salida();
+        }catch (Exception e){
+            
+        }
+    }
     public boolean cumple_condicion_busqueda(OrdenSalida salida, String codigo, String cliente, String codPedido){
         boolean match = true;        
         if ( codigo.equals("") && cliente.equals("") && codPedido.equals("")){
