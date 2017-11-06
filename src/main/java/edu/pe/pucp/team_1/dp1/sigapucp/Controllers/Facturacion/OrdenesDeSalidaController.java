@@ -54,6 +54,10 @@ public class OrdenesDeSalidaController  extends Controller{
     private TextField pedido_dato;
     @FXML
     private ComboBox<String> tipos;
+    @FXML
+    private TextField descripcion_envio;
+    @FXML
+    private TextField codigo_salida;
     
     //TABLA ENVIOS AGREGAR
         //--------------------------------------------------//
@@ -107,14 +111,27 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     private void crear_envio(){
-        Base.openTransaction();  
-        OrdenSalida orden_salida = new OrdenSalida();
-        orden_salida.set("last_user_change", usuarioActual.getString("usuario_cod"));
-        //orden_salida.set("tipo",);
-        //orden_salida.set("descripcion");
-        //orden_salida.saveIt();
-        insertar_orden_salida_envio(orden_salida);
-        Base.commitTransaction();
+        try{
+            Base.openTransaction();  
+            OrdenSalida orden_salida = new OrdenSalida();
+            orden_salida.set("last_user_change", usuarioActual.getString("usuario_cod"));
+            orden_salida.set("tipo",tipos.getSelectionModel().getSelectedItem());
+            orden_salida.set("descripcion", descripcion_envio.getText());
+            orden_salida.set("salida_cod", codigo_salida.getText());
+            orden_salida.set("estado", OrdenSalida.ESTADO.PENDIENTE.name());
+            if (envios_disponibles.isEmpty()){
+                infoController.show("No se pudo crear la orden de salida sin ningun envio"); 
+            }
+            else{
+                orden_salida.saveIt();
+                insertar_orden_salida_envio(orden_salida);                
+            }
+
+            Base.commitTransaction();            
+        }catch (Exception e){
+            infoController.show("No se pudo crear la orden de salida : " + e.getMessage()); 
+        }
+
     }
     
     

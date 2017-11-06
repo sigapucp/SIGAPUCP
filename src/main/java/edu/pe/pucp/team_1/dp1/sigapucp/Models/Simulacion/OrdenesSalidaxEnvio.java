@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.CompositePK;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
@@ -13,6 +14,8 @@ import org.javalite.activejdbc.annotations.Table;
  * @author Gustavo
  */
 @Table("ordenessalidaxenvio")
+@CompositePK({"orden_compra_id","orden_compra_cod","client_id", "salida_cod", "salida_id", "envio_id", "envio_cod"})
+
 public class OrdenesSalidaxEnvio extends Model{
     
 }

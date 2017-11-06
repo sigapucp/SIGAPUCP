@@ -23,4 +23,11 @@ public class OrdenSalida extends Model{
         Encuentro,
         Otras
     }
+    
+    public enum ESTADO
+    {
+        PENDIENTE,
+        ENPROCESO,
+        COMPLETA
+    }    
 }
