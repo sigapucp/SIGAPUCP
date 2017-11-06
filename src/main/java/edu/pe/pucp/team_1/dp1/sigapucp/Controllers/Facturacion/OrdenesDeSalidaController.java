@@ -68,6 +68,14 @@ public class OrdenesDeSalidaController  extends Controller{
     private TableColumn<OrdenSalida, String> columna_cod_salida;
     @FXML
     private TableColumn<OrdenSalida, String> columna_pedido_salida;
+        //BUSCAR
+        //--------------------------------------------------//    
+    @FXML
+    private TextField salida_buscar;
+    @FXML
+    private TextField cliente_buscar;
+    @FXML
+    private TextField pedido_buscar;
     //TABLA ENVIOS AGREGAR
         //--------------------------------------------------//
     @FXML
@@ -102,10 +110,39 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<Envio> masterDataEnvio = FXCollections.observableArrayList();
     private final ObservableList<OrdenesCompraxProductosxenvio> masterDataProductoEnvio = FXCollections.observableArrayList();
     private final ObservableList<OrdenSalida> masterDataSalidas = FXCollections.observableArrayList();
+    private List<OrdenSalida> salidas_temp;
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage = new Stage();    
 
+    public boolean cumple_condicion_busqueda(OrdenSalida salida, String codigo, String cliente, String codPedido){
+        boolean match = true;        
+        if ( codigo.equals("") && cliente.equals("") && codPedido.equals("")){
+            match = true;
+        }else {
+            OrdenesSalidaxEnvio salida_envio = OrdenesSalidaxEnvio.first("salida_cod = ?", salida.get("salida_cod"));
+            match = (!codigo.equals("")) ? (match && (salida.get("salida_cod")).equals(codigo)) : match;
+            String nombre_cliente = Cliente.findById(salida_envio.get("client_id")).getString("nombre");
+            match = (!cliente.equals("")) ? (match && (nombre_cliente == cliente)) : match;
+            match = (!codPedido.equals("")) ? (match && (salida_envio.get("orden_compra_cod")).equals(codPedido)) : match;
+        }
+        return match;
+    }    
+    private void buscar_salida(ActionEvent event) throws IOException{
+        salidas_temp = OrdenSalida.findAll();
+        masterDataSalidas.clear();
+        try{
+            for(OrdenSalida salida : salidas_temp){
+                if (cumple_condicion_busqueda(salida, salida_buscar.getText(), cliente_buscar.getText(), pedido_buscar.getText())){
+                    masterDataSalidas.add(salida);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("No se pudo buscar el envio : " + e.getMessage());
+        }        
+        llenar_orden_salida_tabla();        
+    }
+    
     private void insertar_orden_salida_envio(OrdenSalida salida){
         for(Envio envio : envios_disponibles){
             OrdenesSalidaxEnvio salida_envio = new OrdenesSalidaxEnvio();
@@ -280,11 +317,7 @@ public class OrdenesDeSalidaController  extends Controller{
     
     public void llenar_orden_salida_tabla(){
         limpiar_tabla_envio();
-        masterDataSalidas.clear();
-        List<OrdenSalida> salidas = OrdenSalida.findAll();
-        for(OrdenSalida salida : salidas){
-            masterDataSalidas.add(salida);
-        }
+        
         columna_cliente_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(OrdenesSalidaxEnvio.first("salida_cod = ?", p.getValue().get("salida_cod")).get("client_id")).get("nombre")));
         columna_cod_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("salida_cod")));
         columna_pedido_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(OrdenesSalidaxEnvio.first("salida_cod = ?", p.getValue().get("salida_cod")).get("orden_compra_cod")));
@@ -312,6 +345,11 @@ public class OrdenesDeSalidaController  extends Controller{
     @Override
     public void initialize(URL location, ResourceBundle resources) {  
         try {
+            masterDataSalidas.clear();
+            List<OrdenSalida> salidas = OrdenSalida.findAll();
+            for(OrdenSalida salida : salidas){
+                masterDataSalidas.add(salida);
+            }            
             llenar_orden_salida_tabla();
             inhabilitar_formulario();
             llenar_combo_box_tipo();
