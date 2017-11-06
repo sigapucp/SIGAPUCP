@@ -124,7 +124,7 @@
                         <AnchorPane prefHeight="226.0" prefWidth="175.0">
                            <children>
                               <Button layoutX="71.0" layoutY="31.799999999999997" mnemonicParsing="false" onAction="#agregar_producto" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="31.799999999999997" />
-                              <Button layoutX="71.0" layoutY="155.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Button layoutX="71.0" layoutY="155.0" mnemonicParsing="false" onAction="#eliminar_producto" prefHeight="40.0" prefWidth="40.0" text="X" />
                               <Label layoutX="42.0" layoutY="100.0" text="Agregar Producto" />
                               <Label layoutX="43.0" layoutY="195.0" text="Eliminar Producto" />
                            </children>

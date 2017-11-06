@@ -135,6 +135,32 @@ public class EnviosController extends Controller{
     
     //----------------------------------------------------------------------------//
 
+    private void eliminar_de_lista_productos(){
+        OrdenCompraxProducto producto_eliminar = tabla_productos.getSelectionModel().getSelectedItem();
+        if (producto_eliminar == null){
+            infoController.show("No ha seleccionado algun producto");
+            return;            
+        }else {
+           productos_a_agregar.remove(producto_eliminar);
+        }
+    }
+    
+    @FXML
+    private void eliminar_producto(ActionEvent event) throws IOException{
+        try{
+            eliminar_de_lista_productos();
+            ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
+            productos.addAll(productos_a_agregar);
+            columna_prod_cod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+            columna_prod_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+            columna_prod_desc.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+            columna_prod_cant.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            tabla_productos.setItems(productos);            
+        }catch (Exception e){
+            infoController.show("Ocurrio un error durante la eliminacion del envio : " + e.getMessage());
+        }
+    }
+    
     public void setear_datos_envio(){
         Cliente cliente_temp = Cliente.findById(envio_seleccionado.getInteger("client_id"));
         String tipo_cliente = cliente_temp.getString("tipo_cliente");
@@ -163,7 +189,8 @@ public class EnviosController extends Controller{
             ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
             productos.clear();
             List<OrdenCompraxProducto> productos_agregados = OrdenCompraxProducto.where("orden_compra_cod = ?", envio_seleccionado.get("orden_compra_cod"));
-            productos.addAll(productos_agregados);
+            productos_a_agregar = productos_agregados;
+            productos.addAll(productos_a_agregar);
             columna_prod_cod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             columna_prod_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
             columna_prod_desc.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
