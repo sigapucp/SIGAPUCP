@@ -3,14 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
-
-import org.javalite.activejdbc.annotations.Table;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
 /**
  *
  * @author Jauma
  */
-@Table("OrdenesSalidaxGuiaRemision")
-public class OrdenSalidaxGuiaRemision {   
+public class Celda {   
+    
+    public enum TIPO
+    {
+        LIBRE,
+        OCUPADA,
+        RACK,
+        VISITADA
+    }
 }
