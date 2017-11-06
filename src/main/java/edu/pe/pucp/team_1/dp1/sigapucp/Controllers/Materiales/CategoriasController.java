@@ -181,22 +181,41 @@ public class CategoriasController extends Controller{
         cargar_tabla_index();
     }
     
-    /*public void desactivar(){
+    @Override
+    public void desactivar(){
         if (categoria_seleccionada==null){
             infoController.show("No se selecciono una categoria");
+            return;
         }
         try{
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Categorias, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara la categoria con código: " + codigo_categoria.getText(), "¿Desea continuar?")) return;
             Base.openTransaction();
-            categoria_seleccionada.set("estado",CategoriaProducto.ESTADO.);
+            categoria_seleccionada.set("estado",CategoriaProducto.ESTADO.INACTIVO.name());
+            categoria_seleccionada.saveIt();
+            Base.commitTransaction();
+            infoController.show("La categoria ha sido deshabilitada");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Categorias ,this.usuarioActual);
+            limpiar_formulario();
+            cargar_tabla_index();
+        }catch(Exception e){
+            infoController.show("El producto contiene errores: " + e);
+            Base.rollbackTransaction();
         }
-    }*/
+    }
     
     
     public void cargar_tabla_index(){
         tablaCategorias.getItems().clear();
         masterData.clear();
         for (CategoriaProducto categoria : categorias){
-            masterData.add(categoria);
+            if (categoria.getString("estado").equals("activo")){
+                masterData.add(categoria);
+            }
+            
         }
         tablaCategorias.setEditable(false);
         ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
