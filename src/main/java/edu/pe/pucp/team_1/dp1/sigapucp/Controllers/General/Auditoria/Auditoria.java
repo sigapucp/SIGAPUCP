@@ -37,7 +37,9 @@ public class Auditoria {
     /**
      * @return the Hora
      */
-    
+    public String getHora(){
+        return Hora.get();
+    }
 
     /**
      * @return the Fecha
@@ -77,6 +79,9 @@ public class Auditoria {
     /**
      * @param Hora the Hora to set
      */
+    public void setHora(String Hora){
+        this.Hora.set(Hora);
+    }
 
     /**
      * @param Fecha the Fecha to set

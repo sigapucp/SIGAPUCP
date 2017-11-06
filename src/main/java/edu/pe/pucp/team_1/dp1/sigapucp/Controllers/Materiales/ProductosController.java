@@ -167,7 +167,10 @@ public class ProductosController extends Controller {
         
         List<TipoProducto> tempProductos = TipoProducto.findAll();        
         for (TipoProducto producto : tempProductos) {
-            productos.add(producto);
+            if (producto.getString("estado").equals("ACTIVO")){
+                productos.add(producto);
+            }
+            
         }                    
         
         infoController = new InformationAlertController();
@@ -209,7 +212,7 @@ public class ProductosController extends Controller {
         String categoria = categoriaBuscar.getSelectionModel().getSelectedItem();
         String estado = estadoBuscar.getSelectionModel().getSelectedItem();        
         
-        List<TipoProducto> tempProductos = TipoProducto.findAll();
+        List<TipoProducto> tempProductos = TipoProducto.where("estado = 'ACTIVO'");
         try{
             
             if(nombre!=null&&!nombre.isEmpty())
@@ -585,7 +588,7 @@ public class ProductosController extends Controller {
             editar_producto(producto_seleccionado);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Productos ,this.usuarioActual);
         }    
-        RefrescarTabla(TipoProducto.findAll());
+        RefrescarTabla(TipoProducto.where("estado = 'ACTIVO'"));
     }
     
     @Override
@@ -594,11 +597,18 @@ public class ProductosController extends Controller {
             infoController.show("No se ha seleccionado producto");
             return;
         }
+        if(!confirmationController.show("Esta accion desactivara este producto.", "¿Esta seguro que desea continuar?")) return;
         try{
+            if(!confirmationController.show("Se deshabilitara la categoria con código: " + codigo_producto.getText(), "¿Desea continuar?")) return;
             Base.openTransaction();
             producto_seleccionado.set("estado",TipoProducto.ESTADO.INACTIVO.name());
-            producto_seleccionado.saveIt();
+            producto_seleccionado.saveIt();            
             Base.commitTransaction();
+            infoController.show("El producto se ha desactivado satisfactoriamente");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Productos ,this.usuarioActual);
+            limpiar_formulario();
+            //List<TipoProducto> productos = TipoProducto.findAll();
+            RefrescarTabla(TipoProducto.where("estado = 'ACTIVO'"));
         }catch(Exception e){
             infoController.show("El producto contiene errores: " + e);
             Base.rollbackTransaction();

@@ -76,6 +76,7 @@ public class ContenidoPrincipalController extends Controller {
             if(!Usuario.tienePermiso(permisosActual, activeController.getMenu(), Accion.ACCION.VIW))
             {
                 warningController.show("Permisos insuficientes", "El rol con codigo: " + usuarioActual.getString("rol_cod") + " no tiene permisos suficientes para realizar esta accion");
+                return;
             }
 
             System.out.println(contenido);

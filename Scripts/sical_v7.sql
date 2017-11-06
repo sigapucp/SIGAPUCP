@@ -1139,6 +1139,7 @@ CREATE TABLE Productos
  ubicado           CHAR(1) NOT NULL ,
  tipo_posicion     VARCHAR(50) NOT NULL ,
  almacen_xy_id     INT NOT NULL ,
+ estado            VARCHAR(50) NULL ,
 
  CONSTRAINT pk_221 PRIMARY KEY  (producto_cod , producto_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id ),
  CONSTRAINT fk_265 FOREIGN KEY (rack_cod, rack_id, almacen_cod, almacen_id)
