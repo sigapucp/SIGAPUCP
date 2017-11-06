@@ -16,5 +16,11 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("OrdenesSalida")
 @IdName("salida_id")
 public class OrdenSalida extends Model{
-    
+    public enum TIPO
+    {
+        Compra,
+        Devolucion,
+        Encuentro,
+        Otras
+    }
 }
