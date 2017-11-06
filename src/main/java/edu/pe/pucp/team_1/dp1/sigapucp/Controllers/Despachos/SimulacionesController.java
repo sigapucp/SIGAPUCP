@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Despachos;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.TestRouting;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -37,5 +38,9 @@ public class SimulacionesController extends Controller{
             Logger.getLogger(SimulacionesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }    
-    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Simulaciones;
+    }
 }
