@@ -97,7 +97,7 @@
                         <AnchorPane prefHeight="251.0" prefWidth="158.0">
                            <children>
                               <Button layoutX="61.0" layoutY="39.0" mnemonicParsing="false" onAction="#agregar_envio" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="39.0" />
-                              <Button layoutX="61.0" layoutY="140.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Button layoutX="61.0" layoutY="140.0" mnemonicParsing="false" onAction="#eliminar_envio" prefHeight="40.0" prefWidth="40.0" text="X" />
                               <Label layoutX="42.0" layoutY="100.0" text="Agregar Envio" />
                               <Label layoutX="46.0" layoutY="194.0" text="Eliminar Envio" />
                            </children>
@@ -109,13 +109,19 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox layoutX="90.0" layoutY="8.0" prefWidth="150.0" />
-                  <Label layoutX="268.0" layoutY="13.0" text="Descripción">
+                  <ComboBox fx:id="tipos" layoutX="90.0" layoutY="8.0" prefWidth="150.0" />
+                  <Label layoutX="407.0" layoutY="11.0" text="Descripción">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="pedido_buscar1" layoutX="348.0" layoutY="7.0" prefHeight="25.0" prefWidth="380.0" />
+                  <TextField fx:id="descripcion_envio" layoutX="491.0" layoutY="7.0" prefHeight="25.0" prefWidth="237.0" />
+                  <Label layoutX="252.0" layoutY="12.0" text="Código">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="codigo_salida" layoutX="305.0" layoutY="10.0" prefHeight="25.0" prefWidth="87.0" />
                </children>
             </AnchorPane>
             <TitledPane animated="false" collapsible="false" layoutX="1.0" layoutY="61.0" prefHeight="192.0" prefWidth="737.0" text="Informacion del envio">
@@ -141,8 +147,8 @@
                         </Button>
                         <Label layoutX="571.0" layoutY="45.0" text="Código Envio" />
                         <Label layoutX="567.0" layoutY="100.0" text="Código Pedido" />
-                        <TextField fx:id="envio_buscar" layoutX="569.0" layoutY="69.0" />
-                        <TextField fx:id="pedido_buscar" layoutX="568.0" layoutY="125.0" />
+                        <TextField fx:id="envio_dato" layoutX="569.0" layoutY="69.0" />
+                        <TextField fx:id="pedido_dato" layoutX="568.0" layoutY="125.0" />
                      </children>
                   </AnchorPane>
                </content>
