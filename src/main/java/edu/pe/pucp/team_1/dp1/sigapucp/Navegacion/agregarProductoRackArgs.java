@@ -6,12 +6,13 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Navegacion;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.EventArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaXY;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaZ;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 
 public class agregarProductoRackArgs extends EventArgs{
     private Producto producto_seleccionado;
-    private int cantidad_ingresada;
-    private String tipo_ingreso;
+    private AlmacenAreaZ almacenZ;
 
     public void setProducto(Producto producto) {
         producto_seleccionado = producto;
@@ -21,19 +22,11 @@ public class agregarProductoRackArgs extends EventArgs{
         return producto_seleccionado;
     }
 
-    public void setCantidadIngresada(int cantidad) {
-        cantidad_ingresada = cantidad;
+    public void setAlmacenZ(AlmacenAreaZ almacen_z) {
+        almacenZ = almacen_z;
     }
 
-    public int getCantidadIngresada() {
-        return cantidad_ingresada;
-    }
-
-    public void setTipoIngreso(String tipo) {
-        tipo_ingreso = tipo;
-    }
-
-    public String getTipoIngreso() {
-        return tipo_ingreso;
+    public AlmacenAreaZ getAlmacenZ() {
+        return almacenZ;
     }
 }

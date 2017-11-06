@@ -15,6 +15,6 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("AlmacenAreaZs")
 @CompositePK({ "almacen_z_id", "almacen_xy_id" })
-public class AlmanceAreaZ extends Model{
+public class AlmacenAreaZ extends Model{
     
 }

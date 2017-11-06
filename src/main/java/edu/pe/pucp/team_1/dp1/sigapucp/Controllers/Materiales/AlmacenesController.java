@@ -16,7 +16,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.LinearDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaXY;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmanceAreaZ;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaZ;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.TipoError;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
@@ -607,13 +607,13 @@ public class AlmacenesController extends Controller{
                     areaXY.saveIt();
 
                     for(int i = 0;i<altura;i++) {
-                        AlmanceAreaZ areaZ = new AlmanceAreaZ();
+                        AlmacenAreaZ areaZ = new AlmacenAreaZ();
 
                         areaZ.set("almacen_xy_id", areaXY.getId());
                         areaZ.set("level", i);
                         areaZ.set("state", "L"); // L -> Libre
                         areaZ.set("capacity", rackCapacidad);
-
+                        areaZ.set("capacidadRestante", rackCapacidad);
                         areaZ.saveIt();
                     }
                 }                

@@ -57,16 +57,16 @@
                   </Label>
                   <TableView fx:id="rack_form_producto_tabla" layoutX="49.0" layoutY="229.0" prefHeight="273.0" prefWidth="472.0">
                     <columns>
-                      <TableColumn fx:id="rack_form_producto_cod_column" prefWidth="117.0" text="Código" />
-                        <TableColumn fx:id="rack_form_producto_nombre_column" prefWidth="138.0" text="Nombre" />
-                        <TableColumn fx:id="rack_form_cant_prod_column" prefWidth="99.0" text="Existencias" />
+                      <TableColumn fx:id="rack_form_producto_cod_column" prefWidth="142.0" text="Código" />
+                        <TableColumn fx:id="rack_form_producto_nombre_column" prefWidth="130.0" text="Nombre" />
+                        <TableColumn fx:id="rack_form_producto_fecha_venc_column" prefWidth="137.0" text="Fecha Vencimineto" />
                     </columns>
                   </TableView>
                   <TitledPane animated="false" collapsible="false" layoutX="530.0" layoutY="229.0" prefHeight="273.0" prefWidth="177.0" text="Acciones">
                      <content>
                         <AnchorPane prefHeight="235.0" prefWidth="175.0">
                            <children>
-                              <Button contentDisplay="TOP" layoutX="43.0" layoutY="27.0" mnemonicParsing="false" prefHeight="71.0" prefWidth="90.0" text="Ingresar" AnchorPane.topAnchor="27.0">
+                              <Button contentDisplay="TOP" layoutX="43.0" layoutY="27.0" mnemonicParsing="false" onAction="#abrirModalAgregarProducto" prefHeight="71.0" prefWidth="90.0" text="Ingresar" AnchorPane.topAnchor="27.0">
                                  <graphic>
                                     <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -96,12 +96,12 @@
                               <Label layoutX="383.0" layoutY="57.0" text="Ancho" />
                               <Label layoutX="383.0" layoutY="94.0" text="Largo" />
                               <Label layoutX="26.0" layoutY="94.0" text="Cantidad de productos" />
-                              <TextField fx:id="rack_form_cod_field" editable="false" layoutX="185.0" layoutY="18.0" />
-                              <TextField fx:id="rack_form_almacen_nombre_field" editable="false" layoutX="185.0" layoutY="53.0" />
-                              <TextField fx:id="rack_form_cantidad_productos_field" editable="false" layoutX="185.0" layoutY="90.0" />
-                              <TextField fx:id="rack_form_alto_field" layoutX="480.0" layoutY="18.0" />
-                              <TextField fx:id="rack_form_ancho_field" editable="false" layoutX="480.0" layoutY="53.0" />
-                              <TextField fx:id="rack_form_largo_field" editable="false" layoutX="480.0" layoutY="90.0" />
+                              <TextField id="rack_cod_form_field" fx:id="rack_form_cod_field" editable="false" layoutX="185.0" layoutY="18.0" />
+                              <TextField id="rack_form_almacen_nombre_field" fx:id="rack_form_almacen_nombre_field" editable="false" layoutX="184.0" layoutY="53.0" />
+                              <TextField id="rack_form_cantidad_productos_field" fx:id="rack_form_cantidad_productos_field" editable="false" layoutX="184.0" layoutY="90.0" />
+                              <TextField id="rack_form_alto_field" fx:id="rack_form_alto_field" editable="false" layoutX="479.0" layoutY="18.0" />
+                              <TextField id="rack_form_ancho_field" fx:id="rack_form_ancho_field" editable="false" layoutX="479.0" layoutY="53.0" />
+                              <TextField id="rack_form_largo_field" fx:id="rack_form_largo_field" editable="false" layoutX="480.0" layoutY="90.0" />
                            </children>
                         </AnchorPane>
                     </content>
