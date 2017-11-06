@@ -119,5 +119,5 @@ public class Almacen extends Model{
                 add(rack);
             });
         }
-    }
+    }          
 }

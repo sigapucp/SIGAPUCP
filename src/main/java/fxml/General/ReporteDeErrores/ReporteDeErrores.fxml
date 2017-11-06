@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="575.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.ReporteDeErrores.ReporteDeErroresController">
+<AnchorPane prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.ReporteDeErrores.ReporteDeErroresController">
    <children>
-      <AnchorPane prefHeight="575.0" prefWidth="250.0">
+      <AnchorPane prefHeight="572.0" prefWidth="250.0">
          <children>
             <Pane prefHeight="50.0" prefWidth="250.0">
                <children>
@@ -45,7 +48,7 @@
             </TableView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="DetalleErrorPane" layoutX="250.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
+      <AnchorPane fx:id="DetalleErrorPane" layoutX="250.0" prefHeight="572.0" prefWidth="750.0">
          <children>
             <Pane prefHeight="50.0" prefWidth="750.0">
                <children>

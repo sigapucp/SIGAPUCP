@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Dashboard;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,4 +22,8 @@ public class DashboardController extends Controller{
             //TODO
     }
     
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Dashboard;
+    }
 }
