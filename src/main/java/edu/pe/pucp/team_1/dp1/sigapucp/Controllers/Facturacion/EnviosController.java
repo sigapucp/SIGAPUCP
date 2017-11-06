@@ -131,9 +131,65 @@ public class EnviosController extends Controller{
     private List<OrdenCompraxProducto> productos_disponibles;
     private OrdenCompraxProducto producto_devuelto;
     private OrdenCompra orden_compra_seleccionada;
- 
+    private Envio envio_seleccionado;
+    
     //----------------------------------------------------------------------------//
 
+    public void setear_datos_envio(){
+        Cliente cliente_temp = Cliente.findById(envio_seleccionado.getInteger("client_id"));
+        String tipo_cliente = cliente_temp.getString("tipo_cliente");
+        String dni = cliente_temp.getString("dni");
+        String ruc = cliente_temp.getString("ruc");
+   
+        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
+        {
+            dni_cliente.setText(dni);
+            ruc_cliente.setDisable(true);
+        }else
+        {
+            ruc_cliente.setText(ruc);
+            dni_cliente.setDisable(true);
+        }
+        nombre_cliente.setText(cliente_temp.getString("nombre"));
+        ordenes_compra_combobox.setValue(envio_seleccionado.getString("orden_compra_cod"));
+        nombre_cliente.setEditable(false);
+        dni_cliente.setEditable(false);
+        ruc_cliente.setEditable(false);
+        ordenes_compra_combobox.setEditable(false);
+    }
+    
+    public void setear_productos_envio(){
+        try{
+            ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
+            productos.clear();
+            List<OrdenCompraxProducto> productos_agregados = OrdenCompraxProducto.where("orden_compra_cod = ?", envio_seleccionado.get("orden_compra_cod"));
+            productos.addAll(productos_agregados);
+            columna_prod_cod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+            columna_prod_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+            columna_prod_desc.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+            columna_prod_cant.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            tabla_productos.setItems(productos);
+        }catch(Exception e){
+            System.out.println(e);
+        }        
+    }
+    
+    @FXML
+    private void visualizar_orden_envio(ActionEvent event) throws  IOException{
+        envio_seleccionado = tabla_envios.getSelectionModel().getSelectedItem();
+        if (envio_seleccionado == null){
+            infoController.show("Salida no seleccionada");  
+            return;            
+        }
+        try{
+            habilitar_formulario();
+            limpiar_formulario();
+            setear_datos_envio();
+            setear_productos_envio();
+        }catch (Exception e){
+            
+        }
+    }    
     private void insertar_ordencompraxproductoxenvios(Envio envio_padre){
         for(OrdenCompraxProducto producto : productos_a_agregar){
             OrdenesCompraxProductosxenvio envio = new OrdenesCompraxProductosxenvio();
@@ -204,7 +260,6 @@ public class EnviosController extends Controller{
             columna_prod_cant.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
             tabla_productos.setItems(productos);
         }catch(Exception e){
-            System.out.println("---------------------------");
             System.out.println(e);
         }
 
