@@ -33,8 +33,7 @@ public class DocumentosDeVentaController extends Controller{
     }
     
     @Override
-    public Menu.MENU getMenu()
-    {
+    public Menu.MENU getMenu(){
         return Menu.MENU.DocumentosdeVenta;
     }
-}    
+}

@@ -124,11 +124,11 @@
                   </AnchorPane>
                </content>
             </TitledPane>
-            <TitledPane prefWidth="200.0" text="Simulacion">
+            <TitledPane prefWidth="200.0" text="Despachos">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Despachos">
+                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Simulaciones">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -137,7 +137,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Ordenes de Salida">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Envios">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -146,11 +146,20 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Guias de Remision">
+                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Envios">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
                                     <Image url="@Imagenes/fork_lift_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="206.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Ordenes de Salida">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/salida_icon.png" />
                                  </image>
                               </ImageView>
                            </graphic>

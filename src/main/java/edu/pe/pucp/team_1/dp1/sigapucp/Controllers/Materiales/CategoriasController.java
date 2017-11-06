@@ -9,6 +9,9 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.io.IOException;
 import java.net.URL;
@@ -91,8 +94,6 @@ public class CategoriasController extends Controller{
     
     @FXML
     public void buscar_categoria(ActionEvent event) throws IOException{
-        //System.out.println("============================================");
-        //categorias = null;
         categorias = CategoriaProducto.findAll();
         masterData.clear();
         
@@ -156,13 +157,54 @@ public class CategoriasController extends Controller{
     @Override
     public void guardar(){
         if (crear_nuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Categorias, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crear_nuevo = false;
+                return;
+            }
             crear_categoria();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Categorias ,this.usuarioActual);
+            limpiar_formulario();
         }else{
-            if (categoria_seleccionada == null) return;
+            if (categoria_seleccionada == null){
+                infoController.show("No he seleccionado un categoria");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Categorias, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_categoria(categoria_seleccionada);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Categorias ,this.usuarioActual);
         }
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
+    }
+    
+    @Override
+    public void desactivar(){
+        if (categoria_seleccionada==null){
+            infoController.show("No se selecciono una categoria");
+            return;
+        }
+        try{
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Categorias, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara la categoria con código: " + codigo_categoria.getText(), "¿Desea continuar?")) return;
+            Base.openTransaction();
+            categoria_seleccionada.set("estado",CategoriaProducto.ESTADO.INACTIVO.name());
+            categoria_seleccionada.saveIt();
+            Base.commitTransaction();
+            infoController.show("La categoria ha sido deshabilitada");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Categorias ,this.usuarioActual);
+            limpiar_formulario();
+            cargar_tabla_index();
+        }catch(Exception e){
+            infoController.show("El producto contiene errores: " + e);
+            Base.rollbackTransaction();
+        }
     }
     
     
@@ -170,7 +212,10 @@ public class CategoriasController extends Controller{
         tablaCategorias.getItems().clear();
         masterData.clear();
         for (CategoriaProducto categoria : categorias){
-            masterData.add(categoria);
+            if (categoria.getString("estado").equals("activo")){
+                masterData.add(categoria);
+            }
+            
         }
         tablaCategorias.setEditable(false);
         ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
@@ -214,12 +259,10 @@ public class CategoriasController extends Controller{
                 tablaCategorias.getSelectionModel().clearSelection();        
             }
         });
-       
-    } 
+    }
     
     @Override
-    public Menu.MENU getMenu()
-    {
+    public Menu.MENU getMenu(){
         return Menu.MENU.Categorias;
     }
 }

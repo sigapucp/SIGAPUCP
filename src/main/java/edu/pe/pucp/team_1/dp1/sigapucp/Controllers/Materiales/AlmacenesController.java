@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.WarningAlertController;
@@ -13,12 +14,16 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.SelectableGrid;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.LinearDrawing;
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.NullDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaXY;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaZ;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.TipoError;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -29,6 +34,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -59,6 +65,7 @@ public class AlmacenesController extends Controller{
     private Almacen temp_almacen;
     private Almacen almacen_seleccionado;
     private AtomicBoolean skipValidationOnTabChange;
+    private Boolean visualizar_racks = false;
     @FXML private AnchorPane AnchorPane;
     @FXML private TableView<Almacen> tabla_almacenes;
     @FXML private TableColumn<Almacen, String> almacen_nombre;
@@ -84,6 +91,7 @@ public class AlmacenesController extends Controller{
     @FXML private TitledPane create_racks_container;
     @FXML private TitledPane create_almacen_logico_container;
     @FXML private TextField rack_altura_field;
+    @FXML private TextField rack_capacidad_field;
     @FXML private TitledPane contenedor_grilla;
     @FXML private AnchorPane pane_grilla;
     @FXML private TabPane almacen_form_pane;
@@ -92,6 +100,16 @@ public class AlmacenesController extends Controller{
     @FXML private Tab almacen_draw_tab;
     @FXML private Tab list_racks_tab;
     @FXML private Tab list_almacenes_tab;
+    @FXML
+    private Button desactivar_rack_btn;
+    @FXML
+    private Button buscar_rack_btn;
+    @FXML
+    private Button desactivar_almacen_btn;
+    @FXML
+    private Button buscar_almacen_btn;
+    @FXML
+    private Button VerRacks;
     
     public AlmacenesController() {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
@@ -141,6 +159,7 @@ public class AlmacenesController extends Controller{
     
     private void afterCreateOrCancelRack() {
         rack_altura_field.clear();
+        rack_capacidad_field.clear();
         create_racks_container.setDisable(true);
         contenedor_grilla.setDisable(false);
     }
@@ -160,7 +179,9 @@ public class AlmacenesController extends Controller{
     
     private void createNewLinearSelectableGrid(int width, int height, int size) {
         LinearDrawing linearBehavior = new LinearDrawing();
-        grid = new SelectableGrid(width, height, size, linearBehavior);
+        Double realWidth = pane_grilla.getWidth();
+        Double realHeight = pane_grilla.getHeight();
+        grid = new SelectableGrid(width, height, size, linearBehavior,realWidth.intValue(),realHeight.intValue());
         
         linearBehavior.getDisableGridEvent().addHandler((sender, args) -> {
             create_racks_container.setDisable(false);
@@ -168,6 +189,7 @@ public class AlmacenesController extends Controller{
         });
 
         linearBehavior.getCreateRackEvent().addHandler((sender, args) -> {
+            args.setLongitud(args.getLongitud()*grid.getTileSize());
             setTempRack((createRackArgs) args);
         });
 
@@ -176,7 +198,9 @@ public class AlmacenesController extends Controller{
     
     private void createNewRectangularSelectableGrid(int width, int height, int size) {
         RectangularDrawing rectangularBehavior = new RectangularDrawing();
-        grid = new SelectableGrid(width, height, size, rectangularBehavior);
+        Double realWidth = pane_grilla.getWidth();
+        Double realHeight = pane_grilla.getHeight();
+        grid = new SelectableGrid(width, height, size, rectangularBehavior,realWidth.intValue(),realHeight.intValue());
         
         rectangularBehavior.getDisableGridEvent().addHandler((sender, args) -> {
             create_almacen_logico_container.setDisable(false);
@@ -192,6 +216,16 @@ public class AlmacenesController extends Controller{
         });
         
         if(pane_grilla != null) pane_grilla.getChildren().setAll(grid);
+    }
+    
+    private void createNoBehaviourSelectableGrid(int width, int height, int size)
+    {
+        NullDrawing nullBehaviour = new NullDrawing();
+        Double realWidth = pane_grilla.getWidth();
+        Double realHeight = pane_grilla.getHeight();
+        grid = new SelectableGrid(width, height, size, nullBehaviour,realWidth.intValue(),realHeight.intValue());            
+        
+        if(pane_grilla != null) pane_grilla.getChildren().setAll(grid);        
     }
     
     private void setTypeOfShow(boolean success) {
@@ -340,6 +374,7 @@ public class AlmacenesController extends Controller{
                 tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
                 radio_btn_almacen_logico.setDisable(true);
                 list_objects_pane.getSelectionModel().select(list_almacenes_tab);
+                VerRacks.setVisible(true);
 
                 LazyList<Almacen> almacenesLogicos = Almacen.find("es_central = ?", 'F');
                 almacenes_logicos.clear();
@@ -348,12 +383,14 @@ public class AlmacenesController extends Controller{
 
                 list_racks_tab.setDisable(true);
                 list_almacenes_tab.setDisable(false);
-                createNewRectangularSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);
+                createNewRectangularSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);                
                 grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);
+                visualizar_racks = true;
             } else {
                 tipoAlmacen.selectToggle(radio_btn_almacen_logico);
                 radio_btn_almacen_fisico.setDisable(true);
                 list_objects_pane.getSelectionModel().select(list_racks_tab);
+                VerRacks.setVisible(false);
                 
                 LazyList<Rack> racks_temporales = almacen_seleccionado.getAll(Rack.class);
                 racks.clear();
@@ -373,15 +410,22 @@ public class AlmacenesController extends Controller{
     @FXML
     public void crearRack(ActionEvent event) {
         String rackAlturaStr = rack_altura_field.getText();
-        if (!rackAlturaStr.equals("") && rackAlturaStr.matches("[-+]?\\d*\\.?\\d+") ) {
-            int altura = Integer.parseInt(rackAlturaStr);
-            temp_rack = new Rack();
-            temp_rack.set("altura", altura);
-            grid.clearAndSaveTempTiles();
-            infoController.show("Se agrego el rack correctamente");
-            afterCreateOrCancelRack();
-        } else {
-            warningController.show("Error de Creacion de Rack", "Se debe ingresar una altura valida");
+        String rackCapacidadStr = rack_capacidad_field.getText();
+        try {
+            if (!rackAlturaStr.equals("") && !rackCapacidadStr.equals("") && validator.isNumeric(rackAlturaStr) && validator.isNumeric(rackCapacidadStr) ) {
+                int altura = Integer.parseInt(rackAlturaStr);
+                double capacidad = Double.valueOf(rackCapacidadStr);
+                temp_rack = new Rack();
+                temp_rack.set("altura", altura);
+                temp_rack.set("capacidad", capacidad);
+                grid.clearAndSaveTempTiles();
+                infoController.show("Se agrego el rack correctamente");
+                afterCreateOrCancelRack();
+            } else {
+                warningController.show("Error de Creacion de Rack", "Se debe ingresar una altura o una capacidad valida");
+            }
+        } catch(Exception e) {
+            System.out.println(e);
         }
         
     }
@@ -414,7 +458,7 @@ public class AlmacenesController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Creacion de almacen logico, tabla de Racks creados hasta el momento
-        rack_column_codigo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod") ));
+        rack_column_codigo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")) );
         rack_column_largo.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("longitud") ));
         rack_column_altura.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("altura") ));
         // Almacen Tabla de Busqueda
@@ -453,8 +497,7 @@ public class AlmacenesController extends Controller{
     }    
     
     @Override
-    public Menu.MENU getMenu()
-    {
+    public Menu.MENU getMenu(){
         return Menu.MENU.Almacenes;
     }
     
@@ -498,13 +541,15 @@ public class AlmacenesController extends Controller{
                         infoController.show("El almacen Central y los almacenes logicos se crearon satisfactoriamente");
                         actualizarTablaBusqueda();
                     } catch(Exception e) {
-                        infoController.show("El almacen contiene errores : " + e);        
+                        Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
+                        infoController.show("El almacen contiene errores : " + e);
                         Base.rollbackTransaction();
                     }
                     
                 } else {
                     try {
 //                        System.out.println(almacen);
+                        System.out.println(racks);
                         Base.openTransaction();
                         almacen.updateAtributosAlmacenLogico(almacenNombre,
                                 almacenLargo,
@@ -512,13 +557,15 @@ public class AlmacenesController extends Controller{
                                 almacenLongitudArea,
                                 almacenEsCentral,
                                 usuarioActual,
-                                racks);                        
+                                racks);
                         almacen.saveIt();
+                        crearPosicionesXY(racks);
                         Base.commitTransaction();
                         clearAlmacenForm();
                         
                         infoController.show("El almacen Logico y los racks se crearon satisfactoriamente");
                     } catch(Exception e) {
+                        Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
                         infoController.show("El almacen contiene errores : " + e);
                         Base.rollbackTransaction();
                     }
@@ -529,7 +576,7 @@ public class AlmacenesController extends Controller{
                     try {
                         LazyList<TipoError> errorList = TipoError.find("error_cod = ?", "VAL400");
                         TipoError error = errorList.get(0);
-                        
+
                         warningController.show(error.getString("descripcion"), errores);    
                     } catch(Exception e) {
                         Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
@@ -539,6 +586,89 @@ public class AlmacenesController extends Controller{
         } else {
             warningController.show("Error al crear Almacen", "Es necesario que seleccione el tipo de Almacen");
         }
-        
+    }
+    
+    public void crearPosicionesXY(ObservableList<Rack> racks) throws Exception {
+        for(Rack rack:racks) {
+            Integer anchorX1 = rack.getInteger("x_ancla1");
+            Integer anchorX2 = rack.getInteger("x_ancla2");
+            Integer anchorY1 = rack.getInteger("y_ancla1");
+            Integer anchorY2 = rack.getInteger("y_ancla2");
+            Double rackCapacidad = rack.getDouble("capacidad");
+            String rackCode = rack.getString("rack_cod");
+            LazyList<AlmacenAreaXY> registrosExistentes = AlmacenAreaXY.find("rack_cod = ?", rackCode);
+
+            if(registrosExistentes.size() < 1) {
+                Integer start = 0;
+                Integer finish = 0 ;
+                Integer constant = 0;
+                String increment = "x";
+                String other = "y";
+                if(rack.getString("tipo").equals(Rack.TIPO.HORIZONTAL.name())) {
+                    start = Integer.min(anchorX1, anchorX2);
+                    finish = Integer.max(anchorX1, anchorX2); 
+                    constant = anchorY1;
+                    increment = "x";
+                    other = "y";
+                } else {
+                    start = Integer.min(anchorY1, anchorY2);
+                    finish = Integer.max(anchorY1, anchorY2);
+                    constant = anchorX1;
+                }
+
+                 for(;start<finish;start++) {
+                    AlmacenAreaXY areaXY = new AlmacenAreaXY();
+
+                    areaXY.set("x", start);
+                    areaXY.set("y", constant);
+
+                    areaXY.set("rack_id", rack.getId());
+                    areaXY.set("rack_cod", rack.get("rack_cod"));
+
+                    areaXY.set("almacen_id", rack.get("almacen_id"));
+                    areaXY.set("almacen_cod", rack.get("almacen_cod"));
+                    // Libre
+                    areaXY.set("estado", "L"); 
+                    areaXY.set("tipo",AlmacenAreaXY.TIPO.RACK.name()); 
+
+                    Integer altura = rack.getInteger("altura");
+                    areaXY.set("alto", altura); 
+
+                    areaXY.saveIt();
+
+                    for(int i = 0;i<altura;i++) {
+                        AlmacenAreaZ areaZ = new AlmacenAreaZ();
+
+                        areaZ.set("almacen_xy_id", areaXY.getId());
+                        areaZ.set("level", i);
+                        areaZ.set("state", "L"); // L -> Libre
+                        areaZ.set("capacity", rackCapacidad);
+                        areaZ.set("capacidadRestante", rackCapacidad);
+                        areaZ.saveIt();
+                    }
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void visualizar_racks(ActionEvent event) {        
+        LazyList<Almacen> almacenesLogicos = Almacen.find("es_central = ?", 'F');
+        String ladoGrillaAlmacenStr = String.valueOf(almacen_seleccionado.get("longitud_area"));
+        int ladoGrillaAlmacen = Double.valueOf(ladoGrillaAlmacenStr).intValue();
+        String largoAlmacenStr = String.valueOf(almacen_seleccionado.get("largo"));
+        String anchoAlmacenStr = String.valueOf(almacen_seleccionado.get("ancho"));
+        if(visualizar_racks)
+        {
+            VerRacks.setText("Visualizar Almacenes");
+            createNoBehaviourSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);         
+            grid.drawAlmacenesRacks(almacenesLogicos, ladoGrillaAlmacen,Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr));                        
+        }else
+        {
+            VerRacks.setText("Visualizar Racks");            
+            createNewRectangularSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);         
+            grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);            
+        }
+        visualizar_racks = !visualizar_racks;                
     }
 }

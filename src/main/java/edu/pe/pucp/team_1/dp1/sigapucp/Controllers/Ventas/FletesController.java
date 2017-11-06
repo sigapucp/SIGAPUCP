@@ -113,6 +113,7 @@ public class FletesController extends Controller {
     @FXML
     private Label MonedaLabel;
 
+
     
     
     public FletesController(){
@@ -237,13 +238,6 @@ public class FletesController extends Controller {
         } catch (Exception e) {
             infoController.show("El Flete contiene errores : " + e);      
         }                                  
-    }
-
-    
-    @Override
-    public Menu.MENU getMenu()
-    {
-        return Menu.MENU.Fletes;
     }
 
     @FXML
@@ -454,5 +448,10 @@ public class FletesController extends Controller {
             flete.set("tipo_cod",productoDevuelto.get("tipo_cod"));
             flete.set("tipo_id",productoDevuelto.getId());
         }                
-    }       
+    }
+    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Fletes;
+    }
 }

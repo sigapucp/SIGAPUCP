@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.PrivilegioEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -200,13 +201,21 @@ public class RolesController extends Controller{
         
         limpiarVerRol();
     }
+
+
     
     @Override 
     public void guardar()
     {        
         if(crearNuevo)
         {
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Roles, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crearRol();            
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Roles ,this.usuarioActual);
         }else
         {
             if(rolSelecionado==null) 
@@ -214,7 +223,12 @@ public class RolesController extends Controller{
                 infoController.show("No ha seleccionado un rol");
                 return;
             }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Roles, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editarRol(rolSelecionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Roles ,this.usuarioActual);
         }                
         RefrescarTabla(Rol.findAll());
     }

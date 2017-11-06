@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Rol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -236,8 +237,14 @@ public class UsuariosController extends Controller{
     public void guardar()
     {        
         if(crearNuevo)
-        {           
-            crearUsuario();   
+        {
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
+            crearUsuario();  
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Usuarios ,this.usuarioActual);
             limpiarVerUsuario();
         }else
         {
@@ -245,8 +252,13 @@ public class UsuariosController extends Controller{
             {
                 infoController.show("No ha seleccionado un usuario");            
                 return;
-            }           
+            }
+             if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editarUsuario(usuarioSelecionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Usuarios ,this.usuarioActual);
         }                
         RefrescarTabla(Usuario.findAll());
     }
@@ -323,7 +335,7 @@ public class UsuariosController extends Controller{
         }finally{
            crearNuevo = false; 
         }        
-    }    
+    }
     
     @Override
     public void cargar(){

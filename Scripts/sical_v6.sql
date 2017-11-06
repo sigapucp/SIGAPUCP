@@ -286,8 +286,8 @@ CREATE TABLE OrdenesEntrada
  descripcion         VARCHAR(200) NOT NULL ,
  tipo                VARCHAR(30) NOT NULL ,
  provuder_ruc        VARCHAR(20) NOT NULL ,
- proveedor_id        SERIAL NOT NULL ,
- client_id           SERIAL NOT NULL ,
+ proveedor_id        INT NOT NULL ,
+ client_id           INT NOT NULL ,
 
  CONSTRAINT pk_767 PRIMARY KEY  (orden_entrada_cod , orden_entrada_id ),
  CONSTRAINT fk_1790 FOREIGN KEY (provuder_ruc, proveedor_id)
@@ -664,6 +664,7 @@ CREATE TABLE OrdenesEntradaxProductos
  tipo_id           SERIAL NOT NULL ,
  estado            VARCHAR(20) NOT NULL ,
  cantidad          INT NOT NULL ,
+ ingresado         CHAR(1),
 
  CONSTRAINT pk_778 PRIMARY KEY  (orden_entrada_id , orden_entrada_cod , tipo_cod , tipo_id ),
  CONSTRAINT fk_783 FOREIGN KEY (orden_entrada_cod, orden_entrada_id)
@@ -964,7 +965,7 @@ CREATE TABLE ErrorLog
  rol_cod       VARCHAR(30) NOT NULL ,
  rol_id        SERIAL NOT NULL ,
  accion_id     SERIAL NOT NULL ,
- tiempo        TIME NOT NULL ,
+ tiempo        TIMESTAMP NOT NULL ,
 
  CONSTRAINT pk_1079 PRIMARY KEY  (error_cod , error_type_id , error_id , error_log_id ),
  CONSTRAINT fk_1076 FOREIGN KEY (error_cod, error_type_id)
@@ -989,7 +990,7 @@ CREATE TABLE ErrorLog
 CREATE TABLE AccionLog
 (
  accion_log_id SERIAL NOT NULL ,
- tiempo        TIME NOT NULL ,
+ tiempo        TIMESTAMP NOT NULL ,
  usuario_cod   VARCHAR(20) NOT NULL ,
  usuario_id    SERIAL NOT NULL ,
  menu_id       SERIAL NOT NULL ,
@@ -1139,6 +1140,7 @@ CREATE TABLE Productos
  lote_id           SERIAL NOT NULL ,
  almacen_cod       VARCHAR(50) NOT NULL ,
  almacen_id        SERIAL NOT NULL ,
+ ubicado           CHAR(1) NOT NULL,
 
  CONSTRAINT pk_221 PRIMARY KEY  (producto_cod , producto_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id ),
  CONSTRAINT fk_265 FOREIGN KEY (rack_cod, rack_id, almacen_cod, almacen_id)
