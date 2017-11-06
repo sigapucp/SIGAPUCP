@@ -93,10 +93,10 @@ public class RacksController extends Controller{
     private void actualizarTablaBusqueda() {
         try {
             LazyList<Rack> rackActuales = Rack.findAll();
-
+            
+            racks_busqueda.clear();
             rackActuales.forEach(racks_busqueda::add);
-
-            buscar_rack_tabla.setItems(racks_busqueda);    
+            buscar_rack_tabla.setItems(racks_busqueda);
         } catch(Exception e) {
             Logger.getLogger(RacksController.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -193,6 +193,7 @@ public class RacksController extends Controller{
         rack_form_cod_field.setText(rackCodigo);
         rack_form_almacen_nombre_field.setText(rackAlmacen);
         rack_form_cantidad_productos_field.setText(String.valueOf(productos_rack.size()));
+        rack_form_producto_tabla.setItems(productos_rack);
         rack_form_alto_field.setText(rackAlto);
         rack_form_largo_field.setText(rackLargo);
         rack_form_ancho_field.setText(rackAncho);
