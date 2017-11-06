@@ -47,7 +47,8 @@ public class Menu extends Model{
         Monedas,
         GuiaDeRemision,
         Cuenta,
-        Envios;
+        Envios,
+        Simulaciones;
         
         public static int getId(MENU menu)
         {

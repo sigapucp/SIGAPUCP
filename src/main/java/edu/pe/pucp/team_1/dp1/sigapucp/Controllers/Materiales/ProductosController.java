@@ -597,12 +597,14 @@ public class ProductosController extends Controller {
             infoController.show("No se ha seleccionado producto");
             return;
         }
+        if(!confirmationController.show("Esta accion desactivara este producto.", "¿Esta seguro que desea continuar?")) return;
         try{
             if(!confirmationController.show("Se deshabilitara la categoria con código: " + codigo_producto.getText(), "¿Desea continuar?")) return;
             Base.openTransaction();
             producto_seleccionado.set("estado",TipoProducto.ESTADO.INACTIVO.name());
-            producto_seleccionado.saveIt();
+            producto_seleccionado.saveIt();            
             Base.commitTransaction();
+            infoController.show("El producto se ha desactivado satisfactoriamente");
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Productos ,this.usuarioActual);
             limpiar_formulario();
             //List<TipoProducto> productos = TipoProducto.findAll();

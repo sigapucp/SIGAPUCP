@@ -30,9 +30,9 @@ public class SelectableGrid extends AnchorPane  {
     
     // Largo -> Width
     // Ancho -> Height
-    public SelectableGrid(int width, int heigth, int grid_size, Behavior external_behavior) {
-        grid_width = width > 400 ? 400 : width;
-        grid_heigth = heigth > 400 ? 400 : heigth;
+    public SelectableGrid(int width, int heigth, int grid_size, Behavior external_behavior,int uiGridWidth,int uiGridHeight) {
+        grid_width = uiGridWidth;
+        grid_heigth = uiGridHeight;
         tile_size = grid_size;
         num_columns = width/grid_size;
         num_rows = heigth/grid_size;
@@ -46,6 +46,8 @@ public class SelectableGrid extends AnchorPane  {
     private void initializeTiles() {
         int aspect_ratio_heigth = grid_heigth/num_rows;
         int aspect_ratio_width = grid_width/num_columns;
+        aspect_ratio_heigth = Integer.min(aspect_ratio_heigth, aspect_ratio_width);
+        aspect_ratio_width = Integer.min(aspect_ratio_heigth, aspect_ratio_width);
         // X-> j && Y -> i
         for(int i = 0; i < num_rows; i++)
             for(int j = 0; j < num_columns; j++) {
@@ -129,6 +131,56 @@ public class SelectableGrid extends AnchorPane  {
             }
         }
     }
+    
+    public void drawAlmacenesRacks(LazyList<Almacen> almacenes,int anchoCentral,int altoCentral, int tileSize)
+    {
+         if(almacenes.size() <= 0) return;
+         try {
+              AtomicInteger tileSizeAtomic = new AtomicInteger(tileSize);
+                almacenes.forEach((almacen) -> {                    
+                    int x_relativo = Integer.valueOf(String.valueOf(almacen.get("x_relativo_central")));
+                    int y_relativo = Integer.valueOf(String.valueOf(almacen.get("y_relativo_central")));
+                    int numRow = anchoCentral/tileSizeAtomic.get();
+                    int numColumn = altoCentral/tileSizeAtomic.get();
+
+                    List<Rack> racks = Rack.where("almacen_id = ?",almacen.getId());
+                    for(Rack rack:racks)
+                    {
+                        int anchorX1 = rack.getInteger("x_ancla1");
+                        int anchorY1 = rack.getInteger("y_ancla1");
+
+                        int anchorX2 = rack.getInteger("x_ancla2");                
+                        int anchorY2 = rack.getInteger("y_ancla2");
+
+                        if(rack.getString("tipo").equals(Rack.TIPO.HORIZONTAL.name()))
+                        {
+                            int start = Integer.min(anchorX1, anchorX2) + x_relativo;
+                            int finish = Integer.max(anchorX1, anchorX2) + x_relativo;
+
+                            for(;start<finish;start++)
+                            {
+                                tiles.get(anchorY2 + y_relativo).get(start).activeTile(false);
+                                behavior.addToSavedTiles(anchorY2 + y_relativo, start);
+                            }
+
+                        }else
+                        {
+                            int start = Integer.min(anchorY1, anchorY2) + y_relativo;
+                            int finish = Integer.max(anchorY1, anchorY2) + y_relativo;
+
+                            for(;start<finish;start++)
+                            {
+                                tiles.get(start).get(anchorX1 + x_relativo).activeTile(false);
+                                behavior.addToSavedTiles(start, anchorX1 + x_relativo);
+                            }
+                        }
+                    }                               
+                });                    
+        } catch (Exception e) {
+             Logger.getLogger(SelectableGrid.class.getName()).log(Level.SEVERE, null, e);
+        }        
+    }    
+    
     
     public void drawRacks(LazyList<Rack> racks, int tileSize) {
         if(racks.size() > 0) {
