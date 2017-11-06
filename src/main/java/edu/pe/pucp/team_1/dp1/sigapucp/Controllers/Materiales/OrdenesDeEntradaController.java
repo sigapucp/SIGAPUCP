@@ -514,7 +514,9 @@ public class OrdenesDeEntradaController extends Controller {
                 Base.commitTransaction();
             
                 TablaOrdenes.getColumns().get(0).setVisible(false);
-                TablaOrdenes.getColumns().get(0).setVisible(true);            
+                TablaOrdenes.getColumns().get(0).setVisible(true); 
+                
+                return;
             }
             
             if(entradaSelecionada.getString("tipo").equals(OrdenEntrada.TIPO.Compra.name()))
@@ -549,6 +551,7 @@ public class OrdenesDeEntradaController extends Controller {
                     nuevoProducto.set("almacen_id",null);
                     
                     nuevoProducto.set("ubicado","N");
+                    nuevoProducto.set("estado",Producto.ESTADO.INGRESADO.name());
                     
                     // Manejar Lotes?
                     if(nuevoLote != null)

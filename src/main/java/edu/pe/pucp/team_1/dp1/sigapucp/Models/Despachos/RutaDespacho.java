@@ -3,17 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
+package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
 import org.javalite.activejdbc.Model;
-import org.javalite.activejdbc.annotations.CompositePK;
+import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
  * @author Jauma
  */
-@Table("OrdenesCompraxProductos")
-@CompositePK({ "tipo_id", "tipo_cod", "orden_compra_id","orden_compra_cod","client_id" })
-public class OrdenCompraxProducto extends Model{    
+
+@Table("RutasDespacho")
+@IdName("ruta_despacho_id")
+public class RutaDespacho extends Model{
+    
 }

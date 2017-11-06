@@ -28,6 +28,7 @@ insert into menus values (default,'Monedas');
 insert into menus values (default,'Guia de Remision');
 insert into menus values (default,'Cuenta');
 insert into menus values (default,'Envios');
+insert into menus values (default,'Simulaciones');
 
 select * from menus;
 
