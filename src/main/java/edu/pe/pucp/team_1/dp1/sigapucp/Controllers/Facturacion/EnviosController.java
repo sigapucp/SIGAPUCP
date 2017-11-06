@@ -137,7 +137,11 @@ public class EnviosController extends Controller{
     private void insertar_ordencompraxproductoxenvios(Envio envio_padre){
         for(OrdenCompraxProducto producto : productos_a_agregar){
             OrdenesCompraxProductosxenvio envio = new OrdenesCompraxProductosxenvio();
-            envio.asignar_atributos(producto);
+            envio.set("orden_compra_cod", orden_compra_seleccionada.getString("orden_compra_cod"));
+            envio.set("orden_compra_id", orden_compra_seleccionada.getInteger("orden_compra_id"));
+            envio.set("client_id", cliente_seleccionado.getInteger("client_id"));
+            envio.set("tipo_cod", producto.getString("tipo_cod"));
+            envio.set("tipo_id", producto.getInteger("tipo_id"));            
             envio.set("envio_cod", envio_padre.getString("envio_cod"));
             envio.set("envio_id", envio_padre.getInteger("envio_id"));
             envio.saveIt();
@@ -163,7 +167,9 @@ public class EnviosController extends Controller{
             envio.set("last_user_change", usuarioActual.getString("usuario_cod"));
             envio.set("estado", Envio.ESTADO.PENDIENTE.name());
             envio.saveIt();
-            actualizar_ordencompraxproductos();
+            System.out.println("---------------------------");
+            System.out.println(envio);
+            //actualizar_ordencompraxproductos();
             insertar_ordencompraxproductoxenvios(envio);
             Base.commitTransaction();
         } catch (Exception e){
