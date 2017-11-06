@@ -28,6 +28,7 @@ public class Controller implements Initializable {
     public Usuario usuarioActual = null;
     public List<AccionxRol> permisosActual = null;
     public String fxmlPath;
+    public Validator validator = new Validator();
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -79,10 +80,14 @@ public class Controller implements Initializable {
     {
         return Menu.MENU.NullMenu;
     }
-    
-    public boolean isNumeric(String str) {
-        return str.matches("[-+]?\\d*\\.?\\d+");
+
+    public String generarQueryBusqueda(String... params) {
+        String query = "";
+        for(String param : params) {
+            query = query + (param.equals("") ? "" : "" );
+        }
+        return query;
     }
-    
+
    public Event<cambiarMenuArgs> cambiarMenuEvent = new Event<>();
 }

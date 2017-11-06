@@ -266,13 +266,13 @@ public class PedidosController extends Controller {
         productoToString();
         autoCompletionBindingProducto = TextFields.bindAutoCompletion(VerProducto, possiblewordsProducto);
         autoCompletionBindingProducto.addEventHandler(EventType.ROOT, (event) -> {
-        handleAutoCompletarProducto();
+            handleAutoCompletarProducto();
         });        
         
         usuarioToString();
         autoCompletionBindingUsuario = TextFields.bindAutoCompletion(VerVendedor, possiblewordsUsuario);
         autoCompletionBindingUsuario.addEventHandler(EventType.ROOT, (event) -> {
-        handleAutoCompletarUsuario();
+            handleAutoCompletarUsuario();
         });        
     }
       
