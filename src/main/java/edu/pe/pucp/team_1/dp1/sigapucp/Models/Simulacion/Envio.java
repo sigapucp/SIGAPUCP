@@ -19,4 +19,10 @@ import org.javalite.activejdbc.annotations.Table;
 @CompositePK({ "envio_id", "envio_cod", "orden_compra_cod", "client_id", "orden_compra_id"})
 public class Envio extends Model{
     
+    public enum ESTADO
+    {
+        PENDIENTE,
+        ENPROCESO,
+        COMPLETA
+    }
 }

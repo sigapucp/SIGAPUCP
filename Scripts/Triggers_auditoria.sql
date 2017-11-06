@@ -283,3 +283,21 @@ $T_Monedas_BIU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_Monedas_BIU BEFORE INSERT OR UPDATE ON Monedas
 FOR EACH ROW EXECUTE PROCEDURE Monedas_audit();
 
+--Envios
+
+CREATE FUNCTION Envios_audit() RETURNS trigger AS $T_Envios_BIU$
+BEGIN
+  NEW.date_last_change = now();
+  IF (TG_OP = 'INSERT') THEN
+      NEW.flag_last_operation = '1';
+      RETURN NEW;
+  ELSIF (TG_OP = 'UPDATE') THEN
+      NEW.flag_last_operation = '2';
+      RETURN NEW;
+  END IF;
+  RETURN NULL;
+END;
+$T_Envios_BIU$ LANGUAGE plpgsql;
+
+CREATE TRIGGER T_Envios_BIU BEFORE INSERT OR UPDATE ON Envios
+FOR EACH ROW EXECUTE PROCEDURE Envios_audit();
