@@ -71,8 +71,8 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button layoutX="29.0" layoutY="206.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Buscar" />
-            <ComboBox fx:id="Accion" layoutX="311.0" layoutY="132.0" prefWidth="150.0" />
+            <Button layoutX="29.0" layoutY="206.0" mnemonicParsing="false" onAction="#buscar_auditoria" prefHeight="27.0" prefWidth="96.0" text="Buscar" />
+            <ComboBox fx:id="AccionC" layoutX="311.0" layoutY="132.0" prefWidth="150.0" />
             <ComboBox fx:id="Modulo" layoutX="567.0" layoutY="132.0" prefWidth="150.0" />
             <Label layoutX="487.0" layoutY="134.0" text="Módulo:">
                <font>
