@@ -594,11 +594,15 @@ public class ProductosController extends Controller {
             infoController.show("No se ha seleccionado producto");
             return;
         }
+        if(!confirmationController.show("Esta accion desactivara este producto.", "¿Esta seguro que desea continuar?")) return;
         try{
             Base.openTransaction();
             producto_seleccionado.set("estado",TipoProducto.ESTADO.INACTIVO.name());
-            producto_seleccionado.saveIt();
+            producto_seleccionado.saveIt();            
             Base.commitTransaction();
+            infoController.show("El producto se ha desactivado satisfactoriamente");
+            tablaProductos.getColumns().get(0).setVisible(false);
+            tablaProductos.getColumns().get(0).setVisible(true);
         }catch(Exception e){
             infoController.show("El producto contiene errores: " + e);
             Base.rollbackTransaction();
