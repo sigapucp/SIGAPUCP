@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
    <children>
       <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
          <children>
@@ -54,7 +54,7 @@
                   </ImageView>
                </children>
             </Pane>
-            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" onAction="#visualizar_orden_envio" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
             <TextField fx:id="pedido_buscar" layoutX="119.0" layoutY="137.0" prefHeight="27.0" prefWidth="114.0" />
             <Label layoutX="20.0" layoutY="141.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Pedido">
                <font>
@@ -124,7 +124,7 @@
                         <AnchorPane prefHeight="226.0" prefWidth="175.0">
                            <children>
                               <Button layoutX="71.0" layoutY="31.799999999999997" mnemonicParsing="false" onAction="#agregar_producto" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="31.799999999999997" />
-                              <Button layoutX="71.0" layoutY="155.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Button layoutX="71.0" layoutY="155.0" mnemonicParsing="false" onAction="#eliminar_producto" prefHeight="40.0" prefWidth="40.0" text="X" />
                               <Label layoutX="42.0" layoutY="100.0" text="Agregar Producto" />
                               <Label layoutX="43.0" layoutY="195.0" text="Eliminar Producto" />
                            </children>
