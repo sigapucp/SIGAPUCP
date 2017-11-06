@@ -7,11 +7,17 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
+
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
@@ -69,6 +75,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.Model;
 
 /**
  * FXML Controller class
@@ -171,6 +178,8 @@ public class PedidosController extends Controller {
             
     private InformationAlertController infoController;
     
+    private ConfirmationAlertController confirmationController;
+    
     private OrdenCompra pedidoSeleccionado;
     
     private Cliente clienteSeleccionado;
@@ -199,6 +208,7 @@ public class PedidosController extends Controller {
             pedidos.add(pedido);
         }
         infoController = new InformationAlertController();
+        confirmationController = new ConfirmationAlertController();
         pedidoSeleccionado = null;
         vendedorSelecionado = null;
         productoDevuelto = null;
@@ -318,17 +328,108 @@ public class PedidosController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Pedidos, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
             crearPedido();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Pedidos ,this.usuarioActual);
         } else {
-            if (pedidoSeleccionado == null){ 
-                infoController.show("No ha seleccionado ninguna Orden de Compra");            
+            if (pedidoSeleccionado == null){
+                infoController.show("No ha seleccionado un cliente");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Pedidos, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editarPedido(pedidoSeleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Pedidos ,this.usuarioActual);
         }
         crearNuevo = false;
         RefrescarTabla(OrdenCompra.findAll());
     }
+    
+    @Override
+    public void cambiarEstado()
+    {
+        if(pedidoSeleccionado == null)
+        {
+            infoController.show("No ha seleccionado ninguna Pedido");
+            return;
+        }
+        
+        if(pedidoSeleccionado.getString("estado").equals(OrdenCompra.ESTADO.COMPLETA.name()))
+        {
+            infoController.show("La orden ya ha sido completada");
+            return;
+        }                
+        
+        try {
+            Base.openTransaction();
+            
+            String estadoAnterior = pedidoSeleccionado.getString("estado");
+            
+            OrdenCompra.ESTADO siguienteEstado = OrdenCompra.ESTADO.valueOf(estadoAnterior).next();
+            
+            if(!confirmationController.show("Esta accion cambiara la Orden del estado " + estadoAnterior + " a " + siguienteEstado.name(), "¿Desea continuar?")) return;
+            
+            pedidoSeleccionado.set("estado",siguienteEstado.name());                       
+            pedidoSeleccionado.saveIt();            
+                                    
+            
+            if(estadoAnterior.equals(OrdenCompra.ESTADO.ENDESPACHO.name())) 
+            {
+                infoController.show("El Pedido fue actualizada correctamente. Todos productos han sido despachados");
+                Base.commitTransaction();
+            
+                TablaPedido.getColumns().get(0).setVisible(false);
+                TablaPedido.getColumns().get(0).setVisible(true);           
+                            
+                return;
+            }  
+            
+             
+            Boolean stockError = false;
+            String messageStock = "El pedido contiene entradas que superan el stock disponible actual. "                    
+                    + "Los productos con error son:\n\nCodigo           Faltante\n";
+            for(OrdenCompraxProducto pedidoxproducto:productos)
+            {                
+                Stock productoStock = Stock.first("tipo_id = ?", pedidoxproducto.get("tipo_id"));            
+                Integer cantidadLlevada = pedidoxproducto.getInteger("cantidad");
+                Integer stockLogico = productoStock.getInteger("stock_logico");
+
+                if(cantidadLlevada > stockLogico)
+                {
+                    String cod = pedidoxproducto.getString("tipo_cod");
+                    messageStock += cod + ":            " + String.valueOf(cantidadLlevada-stockLogico) + "\n";
+                    stockError = true;
+                }
+            }             
+
+            if(stockError)
+            {
+                infoController.show(messageStock);
+                return;
+            }
+                        
+            for(OrdenCompraxProducto producto:productos)
+            {                
+                producto.set("reservado","S");                
+                producto.saveIt();
+            }                        
+            Base.commitTransaction();            
+            TablaPedido.getColumns().get(0).setVisible(false);
+            TablaPedido.getColumns().get(0).setVisible(true);            
+            infoController.show("El pedido fue actualizada correctamente. Los productos han sido reservados");
+        } catch (Exception e) {
+            Base.rollbackTransaction();
+            infoController.show("No se ha podido modificar el estado del Pedido");
+        }
+    }
+    
+    
     
     @FXML
     void buscarPedido(ActionEvent event) {        
@@ -572,9 +673,14 @@ public class PedidosController extends Controller {
         pedido.set("departamento",departamento);                
     } 
      
-    private void setProductos(OrdenCompra pedido)
+    private void setProductos(OrdenCompra pedido) throws Exception
     {        
         List<OrdenCompraxProducto> pedidosGuardados = OrdenCompraxProducto.where("orden_compra_id = ?", pedido.getId());
+        
+        Boolean stockError = false;
+        String messageStock = "El pedido contiene entradas que superan el stock disponible actual. "
+                + "La orden se guardará pero no podrá ser completado por el momento.\n"
+                + "Los productos con error son:\n\nCodigo           Faltante\n";
         for(OrdenCompraxProducto pedidoxproducto:productos)
         {
             if(pedidoxproducto.isNew())
@@ -582,9 +688,24 @@ public class PedidosController extends Controller {
                 pedidoxproducto.set("orden_compra_id",pedido.getId());
                 pedidoxproducto.set("client_id",pedido.get("client_id"));
                 pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
+                pedidoxproducto.saveIt();
             }
-            pedidoxproducto.saveIt();
+            Stock productoStock = Stock.first("tipo_id = ?", pedidoxproducto.get("tipo_id"));            
+            Integer cantidadLlevada = pedidoxproducto.getInteger("cantidad");
+            Integer stockLogico = productoStock.getInteger("stock_logico");
+            
+            if(cantidadLlevada > stockLogico)
+            {
+                String cod = pedidoxproducto.getString("tipo_cod");
+                messageStock += cod + ":            " + String.valueOf(cantidadLlevada-stockLogico) + "\n";
+                stockError = true;
+            }
         }             
+        
+        if(stockError)
+        {
+            infoController.show(messageStock);
+        }
         
         if(pedidosGuardados == null) return;
         List<OrdenCompraxProducto> pedidosProductosDelete = pedidosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
@@ -621,7 +742,7 @@ public class PedidosController extends Controller {
             {
                 OrdenCompra pedido = OrdenCompra.findById(pedidoxProducto.get("orden_compra_id"));
                 String estado = pedido.getString("estado");
-                if(estado.equals(OrdenCompra.ESTADO.ENPROCESO.name())||estado.equals(OrdenCompra.ESTADO.COMPLETA.name()))
+                if(estado.equals(OrdenCompra.ESTADO.ENDESPACHO.name())||estado.equals(OrdenCompra.ESTADO.COMPLETA.name()))
                 {
                     infoController.show("No puede eliminar producto ya que este ya se encuentra con Envio");
                     return;                
@@ -681,6 +802,7 @@ public class PedidosController extends Controller {
                     pedidoxproducto.set("subtotal_previo",cantidad*precio); 
                     pedidoxproducto.set("descuento",0);
                     pedidoxproducto.set("flete",0);                    
+                    pedidoxproducto.set("reservado","N");
                     pedidoxproducto.set("subtotal_final",cantidad*precio);    
                     productos.add(pedidoxproducto);
                     isNew = true;                    

@@ -8,6 +8,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenSalida;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
@@ -158,7 +159,7 @@ public class OrdenesDeSalidaController  extends Controller{
     }
     
     public void mostrar_productos_envio(){
-        limpiar_tabla_productos_envio();
+        //limpiar_tabla_productos_envio();
         masterDataProductoEnvio.clear();
         List<OrdenesCompraxProductosxenvio> productos_envio = OrdenesCompraxProductosxenvio.where("envio_id = ?",envio_devuelto.getId() );
         for( OrdenesCompraxProductosxenvio producto_envio : productos_envio){
@@ -183,7 +184,7 @@ public class OrdenesDeSalidaController  extends Controller{
             controller.devolverEnvioEvent.addHandler((Object sender, agregarEnviosArgs args) -> {
                 envio_devuelto = args.envio;
             });
-            mostrar_productos_envio();
+            modal_stage.showAndWait();
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
@@ -191,10 +192,10 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private void handle_buscar_pedido(ActionEvent event) throws IOException{
         try{
-            modal_stage.showAndWait();
-            seleccionar_envio();            
+            seleccionar_envio(); 
+            mostrar_productos_envio();
         }catch(Exception e){
-            infoController.show("No se pudo agregar los envios : " + e.getMessage());
+            infoController.show("No se pudo encontrar ordenes de salida : " + e.getMessage());
         }
     }    
 
@@ -224,9 +225,13 @@ public class OrdenesDeSalidaController  extends Controller{
             llenar_orden_salida_tabla();
             inhabilitar_formulario();
         } catch (Exception ex) {
-            infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
+            infoController.show("No se pudo cargar la ventana ordenes de salida : " + ex.getMessage());
         }
     }    
         
-    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.OrdendeSalida;
+    }
 }
