@@ -37,7 +37,8 @@ public class RutaDetallada {
     private List<Estado> poblacion;
     private double alfa = 0.33;
     private int DIVFACTOR = 2;
-    
+    Integer a;  
+    Integer c;         
     public Estado obtenerRutaOptima(Celda.TIPO[][] mapa,int altura,int ancho,Punto puntoInicial,Punto puntoFinal)
     {        
         Boolean solucionLista = false;
@@ -55,22 +56,30 @@ public class RutaDetallada {
             
             Punto pIni = null;
             Punto pFin = null;
-            
+                    
+            try {
+                
             if(estadoInicial!=null)
             {
-                pIni = estadoInicial.get((new Random()).nextInt((estadoInicial.getCost()+1)/DIVFACTOR));
+                a = (new Random()).nextInt((estadoInicial.getCost()+1)/DIVFACTOR);
+                pIni = estadoInicial.get(a);
             }else
             {
                 pIni = puntoInicial;               
             }
-            
+                 
             if(estadoFinal!=null)
             {
-                pFin = estadoFinal.get(estadoFinal.getCost() - (new Random()).nextInt((estadoFinal.getCost()+1)/DIVFACTOR));
+                c = (new Random()).nextInt((estadoFinal.getCost()+1)/DIVFACTOR);
+                pFin = estadoFinal.get(estadoFinal.getCost() - c - 1);
             }else
             {
                 pFin = puntoFinal;
+            }                
+            } catch (Exception e) {
+                int b = 4;
             }
+            
            
             Estado nuevaSolucion = generarRutaGreedy(nuevoMapa,altura,ancho,pIni,pFin);                   
             nuevaSolucion = juntarEstado(estadoInicial,nuevaSolucion,estadoFinal,pIni,pFin);          
@@ -340,8 +349,7 @@ public class RutaDetallada {
     }
     
     private Estado getEstadoNuevo(List<Estado> fronteraObs)
-    {    
-        
+    {            
         Integer fronteraSize = fronteraObs.size();
         Estado estadoObtener = fronteraObs.get(0);     
         if(fronteraObs.size() < 3) return estadoObtener;
@@ -356,8 +364,7 @@ public class RutaDetallada {
                  return ruta;
             }
             i++;
-        }
-        
+        }        
         return estadoObtener;        
     }                   
 }
