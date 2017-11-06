@@ -501,6 +501,7 @@ public class AlmacenesController extends Controller{
                         almacen.saveIt();
                         
                         almacenes_logicos.forEach((almacenLogico) -> {
+                            //if (validator.isEmpty(almacenLogico.getString("almacen_cod")))
                             String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
                             almacenLogico.set("almacen_cod", almacenLogCod);
                             almacenLogico.saveIt();
