@@ -1234,7 +1234,9 @@ public class PedidosController extends Controller {
     
     private void handleAutoCompletarProducto() {      
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
-            if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
+             String nombre = tipoProducto.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(VerProducto.getText())){           
                 productoDevuelto = tipoProducto;             
             }
         }
@@ -1250,7 +1252,9 @@ public class PedidosController extends Controller {
     
     private void handleAutoCompletarUsuario() {      
         for (Usuario usuario : autoCompletadoUsuarioList){
-            if (usuario.getString("nombre").equals(VerVendedor.getText())){           
+            String nombre = usuario.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(VerVendedor.getText())){           
                 vendedorSelecionado = usuario;             
             }
         }

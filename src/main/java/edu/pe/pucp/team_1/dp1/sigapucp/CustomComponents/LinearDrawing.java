@@ -176,4 +176,12 @@ public class LinearDrawing implements Behavior{
     public IEvent<EventArgs> getDisableGridEvent() {
         return disableGridEvent;
     }
+
+    @Override
+    public void startDrag(int i_index, int j_index) {        
+    }
+
+    @Override
+    public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles, int i_index, int j_index) {        
+    }
 }
