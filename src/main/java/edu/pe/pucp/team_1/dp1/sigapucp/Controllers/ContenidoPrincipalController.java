@@ -72,12 +72,13 @@ public class ContenidoPrincipalController extends Controller {
             FXMLLoader loaderContenido = new FXMLLoader(getClass().getResource(fxmlPath));
             AnchorPane contenido = (AnchorPane) loaderContenido.load();
             activeController = loaderContenido.<Controller>getController();            
-            
+            /*
             if(!Usuario.tienePermiso(permisosActual, activeController.getMenu(), Accion.ACCION.VIW))
             {
                 warningController.show("Permisos insuficientes", "El rol con codigo: " + usuarioActual.getString("rol_cod") + " no tiene permisos suficientes para realizar esta accion");
+                return;
             }
-
+*/
             System.out.println(contenido);
             System.out.println(loaderContenido);                   
             activeController.setUsuarioActual(usuarioActual,permisosActual);

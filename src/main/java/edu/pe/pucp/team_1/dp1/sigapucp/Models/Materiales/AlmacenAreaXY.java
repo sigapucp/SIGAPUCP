@@ -22,7 +22,7 @@ public class AlmacenAreaXY extends Model{
         ADELANTE,
         ATRAS,
         IZQUIERDA,
-        DERECHA        
+        DERECHA
     }
     
     public enum TIPO

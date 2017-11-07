@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="369.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView fx:id="tabla_envios" layoutX="24.0" layoutY="167.0" prefHeight="183.0" prefWidth="496.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="167.0">
+         <columns>
+            <TableColumn fx:id="columna_cod_envio" prefWidth="57.0" text="Código" />
+            <TableColumn fx:id="columna_cliente_envio" prefWidth="98.0" text="Cliente" />
+            <TableColumn fx:id="columna_pedido_envio" prefWidth="133.0" text="Pedido" />
+            <TableColumn fx:id="columna_estado_envio" prefWidth="128.0" text="Estado" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <AnchorPane layoutX="24.0" layoutY="12.0" prefHeight="99.0" prefWidth="502.0" AnchorPane.bottomAnchor="289.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="12.0">
+         <children>
+            <Label layoutX="14.0" layoutY="42.0" text="Cliente">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="69.0" text="Cod.Envio">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="222.0" layoutY="42.0" text="Cod. Pedido">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="7.0" layoutY="-1.0" text="Envios">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextField fx:id="buscar_cliente" layoutX="100.0" layoutY="40.0" prefHeight="20.0" prefWidth="111.0" />
+            <TextField fx:id="buscar_nombre" layoutX="100.0" layoutY="67.0" prefHeight="20.0" prefWidth="111.0" />
+            <Line endX="400.0" layoutX="100.0" layoutY="29.0" startX="-100.0" />
+            <TextField fx:id="buscar_pedido" layoutX="350.0" layoutY="40.0" prefHeight="20.0" prefWidth="111.0" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="buscarProductoButtom" layoutX="458.0" layoutY="130.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+      <Button fx:id="agregarProductoButtom" layoutX="458.0" layoutY="360.0" mnemonicParsing="false" onAction="#agregar_envio" prefHeight="25.0" prefWidth="60.0" text="Agregar" />
+   </children>
+</AnchorPane>

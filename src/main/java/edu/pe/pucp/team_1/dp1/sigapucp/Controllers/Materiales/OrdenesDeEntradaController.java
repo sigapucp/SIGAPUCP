@@ -514,7 +514,9 @@ public class OrdenesDeEntradaController extends Controller {
                 Base.commitTransaction();
             
                 TablaOrdenes.getColumns().get(0).setVisible(false);
-                TablaOrdenes.getColumns().get(0).setVisible(true);            
+                TablaOrdenes.getColumns().get(0).setVisible(true); 
+                
+                return;
             }
             
             if(entradaSelecionada.getString("tipo").equals(OrdenEntrada.TIPO.Compra.name()))
@@ -549,6 +551,7 @@ public class OrdenesDeEntradaController extends Controller {
                     nuevoProducto.set("almacen_id",null);
                     
                     nuevoProducto.set("ubicado","N");
+                    nuevoProducto.set("estado",Producto.ESTADO.INGRESADO.name());
                     
                     // Manejar Lotes?
                     if(nuevoLote != null)
@@ -684,7 +687,7 @@ public class OrdenesDeEntradaController extends Controller {
             estados.addAll(Arrays.asList(OrdenEntrada.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));  
             
             tipos.add("");
-            tipos.addAll(Arrays.asList(OrdenEntrada.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList()));  
+            tipos.addAll( Arrays.asList(OrdenEntrada.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList()) );
             
             tiposNoPad.addAll(Arrays.asList(OrdenEntrada.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList())); 
             

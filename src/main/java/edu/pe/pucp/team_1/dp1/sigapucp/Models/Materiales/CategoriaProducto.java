@@ -27,5 +27,10 @@ public class CategoriaProducto extends Model{
         this.set("estado","activo");
         
     }
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
+    }
     
 }

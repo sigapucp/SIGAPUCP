@@ -18,4 +18,11 @@ import org.javalite.activejdbc.annotations.Table;
 @CompositePK({ "producto_id", "orden_entrada_id", "tipo_id","producto_cod","orden_entrada_cod","tipo_cod" })
 public class Producto extends Model{
     
+    public enum ESTADO
+    {
+        INGRESADO,        
+        RESERVADO,
+        DESPACHADO
+    }
+    
 }
