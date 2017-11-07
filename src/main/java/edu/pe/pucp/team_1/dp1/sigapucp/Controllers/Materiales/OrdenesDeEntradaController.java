@@ -687,7 +687,7 @@ public class OrdenesDeEntradaController extends Controller {
             estados.addAll(Arrays.asList(OrdenEntrada.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));  
             
             tipos.add("");
-            tipos.addAll(Arrays.asList(OrdenEntrada.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList()));  
+            tipos.addAll( Arrays.asList(OrdenEntrada.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList()) );
             
             tiposNoPad.addAll(Arrays.asList(OrdenEntrada.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList())); 
             

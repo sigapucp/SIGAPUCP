@@ -30,4 +30,8 @@ public class ModalController extends Controller {
     public Stage getCurrentStage() {
         return current_stage;
     }
+
+    public Event getCloseModalEvent() {
+        return null;
+    }
 }
