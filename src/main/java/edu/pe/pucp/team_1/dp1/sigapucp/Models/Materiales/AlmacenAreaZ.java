@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales;
 
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.CompositePK;
+
 import org.javalite.activejdbc.annotations.Table;
 
 /**
@@ -15,6 +16,5 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("AlmacenAreaZs")
 @CompositePK({ "almacen_z_id", "almacen_xy_id" })
-public class AlmacenAreaZ extends Model{
-    
+public class AlmacenAreaZ extends Model{    
 }

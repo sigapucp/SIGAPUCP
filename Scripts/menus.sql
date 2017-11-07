@@ -29,6 +29,7 @@ insert into menus values (default,'Guia de Remision');
 insert into menus values (default,'Cuenta');
 insert into menus values (default,'Envios');
 insert into menus values (default,'Simulaciones');
+insert into menus values (default,'Kardex');
 
 select * from menus;
 

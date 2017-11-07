@@ -893,26 +893,33 @@ public class PedidosController extends Controller {
         java.sql.Date today = java.sql.Date.valueOf(LocalDate.now());        
         List<Promocion> promocionesActual = promociones.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
         
+        List<Promocion> promocionesCantidad = promocionesActual.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
+        List<Promocion> promocionesProcentaje = promocionesActual.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());                        
+        List<Promocion> promocionesBonificacion = promocionesActual.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
+        
+        if(promocionesProcentaje.isEmpty()) prioridadPorcentaje +=3;
+        if(promocionesCantidad.isEmpty()) prioridadCantidad +=3;
+        if(promocionesBonificacion.isEmpty()) prioridadPorcentaje +=3;
+        
         if(prioridadPorcentaje<prioridadCantidad&&prioridadPorcentaje<prioridadBonficacion)
         {
-            return aplicarPromocionPorcentaje(promocionesActual, producto);
+            return aplicarPromocionPorcentaje(promocionesProcentaje, producto);
         }
         
         if(prioridadCantidad<prioridadPorcentaje&&prioridadCantidad<prioridadBonficacion)
         {
-            return aplicarPromocionCantidad(promocionesActual, producto);            
+            return aplicarPromocionCantidad(promocionesCantidad, producto);            
         }
         
         if(prioridadBonficacion<prioridadCantidad&&prioridadBonficacion<prioridadPorcentaje)
         {
-            return aplicarPromocionBonificacion(promocionesActual, producto);
+            return aplicarPromocionBonificacion(promocionesBonificacion, producto);
         }        
         return 0.0;        
     }
      
-     private Double aplicarPromocionBonificacion(List<Promocion> promociones,OrdenCompraxProducto producto) throws Exception
-    {               
-        List<Promocion> promocionesBonificacion = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
+     private Double aplicarPromocionBonificacion(List<Promocion> promocionesBonificacion,OrdenCompraxProducto producto) throws Exception
+    {                       
         if(promocionesBonificacion.isEmpty()) return 0.0;                       
         promocionesBonificacion.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
@@ -981,9 +988,8 @@ public class PedidosController extends Controller {
         return valorPromocion;
     }
     
-    private Double aplicarPromocionCantidad(List<Promocion> promociones,OrdenCompraxProducto producto) throws Exception
-    {
-        List<Promocion> promocionesCantidad = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
+    private Double aplicarPromocionCantidad(List<Promocion> promocionesCantidad,OrdenCompraxProducto producto) throws Exception
+    {        
         if(promocionesCantidad.isEmpty()) return 0.0;                       
         promocionesCantidad.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
@@ -1043,9 +1049,8 @@ public class PedidosController extends Controller {
         return  valorDescuento;                
     }
     
-    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,OrdenCompraxProducto producto)
-    {
-        List<Promocion> promocionesProcentaje = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());
+    public Double aplicarPromocionPorcentaje(List<Promocion> promocionesProcentaje,OrdenCompraxProducto producto)
+    {        
         if(promocionesProcentaje.isEmpty()) return 0.0;                       
         
         Double valorPromocion = 0.0;
@@ -1229,7 +1234,9 @@ public class PedidosController extends Controller {
     
     private void handleAutoCompletarProducto() {      
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
-            if (tipoProducto.getString("nombre").equals(VerProducto.getText())){           
+             String nombre = tipoProducto.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(VerProducto.getText())){           
                 productoDevuelto = tipoProducto;             
             }
         }
@@ -1245,7 +1252,9 @@ public class PedidosController extends Controller {
     
     private void handleAutoCompletarUsuario() {      
         for (Usuario usuario : autoCompletadoUsuarioList){
-            if (usuario.getString("nombre").equals(VerVendedor.getText())){           
+            String nombre = usuario.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(VerVendedor.getText())){           
                 vendedorSelecionado = usuario;             
             }
         }

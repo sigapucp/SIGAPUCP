@@ -370,11 +370,20 @@ public class FletesController extends Controller {
     private void crear_flete()
     {
         try {           
-             Base.openTransaction();
+            Base.openTransaction();
             String tipo = VerTipo.getSelectionModel().getSelectedItem();
             Date fechaInicial = Date.valueOf(VerFechaInicial.getValue());
             Date fechaFinal = Date.valueOf(VerFechaFinal.getValue());
-            Integer moneda_id = Moneda.findFirst("nombre = ?", VerMoneda.getSelectionModel().getSelectedItem()).getInteger("moneda_id");            
+            
+            Integer moneda_id = null;
+            if(tipo.equals(Flete.TIPO.PORCENTAJE.name()))
+            {
+                
+            }else
+            {
+                moneda_id = Moneda.findFirst("nombre = ?", VerMoneda.getSelectionModel().getSelectedItem()).getInteger("moneda_id");                            
+            }
+            
             Double valor = Double.valueOf(VerValor.getText());
             
             Flete flete = new Flete();

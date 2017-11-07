@@ -458,6 +458,7 @@ public class ProformasController extends Controller {
             if (proformaSelecionado == null) 
             {
                 infoController.show("No ha seleccionado ninguna proforma");
+                return;
             }
           setProformaVisible(proformaSelecionado);                            
         } catch (Exception e) {
@@ -613,8 +614,7 @@ public class ProformasController extends Controller {
             {
                 extraCant += cantProd.getValue();
             }
-
-            Double subtotal_anterior = productoCot.getDouble("subtotal_final");            
+       
             Double precioUnitario = productoCot.getDouble("precio_unitario");  
             Integer cantidad = productoCot.getInteger("cantidad") + extraCant;
             productoCot.set("cantidad",cantidad);
@@ -681,8 +681,9 @@ public class ProformasController extends Controller {
         Double prioridadPorcentaje =  Double.valueOf(ParametroSistema.findById(3).getInteger("valor")) - 0.5;
         
         TipoProducto productoReferenciado = TipoProducto.findById(producto.get("tipo_id"));
-        List<Promocion> promociones = Promocion.where("tipo_id = ?",producto.get("tipo_id"));        
-        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class);
+        List<Promocion> promociones = Promocion.where("tipo_id = ? AND estado = ?",producto.get("tipo_id"),Promocion.ESTADO.ACTIVO.name());        
+        List<CategoriaProducto> categorias = productoReferenciado.getAll(CategoriaProducto.class).stream().filter(x -> 
+                x.getString("estado").equals(CategoriaProducto.ESTADO.ACTIVO.name())).collect(Collectors.toList());
         
         for(CategoriaProducto categoria:categorias)
         {
@@ -692,26 +693,34 @@ public class ProformasController extends Controller {
         Date today = Date.valueOf(LocalDate.now());        
         List<Promocion> promocionesActual = promociones.stream().filter(x -> today.after(x.getDate("fecha_inicio"))&& today.before(x.getDate("fecha_fin"))).collect(Collectors.toList());
         
-        if(prioridadPorcentaje<prioridadCantidad&&prioridadPorcentaje<prioridadBonficacion)
+        List<Promocion> promocionesCantidad = promocionesActual.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
+        List<Promocion> promocionesProcentaje = promocionesActual.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());                        
+        List<Promocion> promocionesBonificacion = promocionesActual.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
+        
+        if(promocionesProcentaje.isEmpty()) prioridadPorcentaje +=3;
+        if(promocionesCantidad.isEmpty()) prioridadCantidad +=3;
+        if(promocionesBonificacion.isEmpty()) prioridadPorcentaje +=3;
+        
+        if(!promocionesProcentaje.isEmpty()&&prioridadPorcentaje<prioridadCantidad&&prioridadPorcentaje<prioridadBonficacion)
         {
-            return aplicarPromocionPorcentaje(promocionesActual, producto);
+            return aplicarPromocionPorcentaje(promocionesProcentaje, producto);
         }
         
-        if(prioridadCantidad<prioridadPorcentaje&&prioridadCantidad<prioridadBonficacion)
+        if(!promocionesCantidad.isEmpty()&&prioridadCantidad<prioridadPorcentaje&&prioridadCantidad<prioridadBonficacion)
         {
-            return aplicarPromocionCantidad(promocionesActual, producto);            
+            return aplicarPromocionCantidad(promocionesCantidad, producto);            
         }
         
-        if(prioridadBonficacion<prioridadCantidad&&prioridadBonficacion<prioridadPorcentaje)
+        if(!promocionesBonificacion.isEmpty()&&prioridadBonficacion<prioridadCantidad&&prioridadBonficacion<prioridadPorcentaje)
         {
-            return aplicarPromocionBonificacion(promocionesActual, producto);
+            
+            return aplicarPromocionBonificacion(promocionesBonificacion, producto);
         }        
         return 0.0;        
     }
     
-    private Double aplicarPromocionBonificacion(List<Promocion> promociones,CotizacionxProducto producto) throws Exception
-    {               
-        List<Promocion> promocionesBonificacion = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.BONIFICACIÓN.name())).collect(Collectors.toList());
+    private Double aplicarPromocionBonificacion(List<Promocion> promocionesBonificacion,CotizacionxProducto producto) throws Exception
+    {                       
         if(promocionesBonificacion.isEmpty()) return 0.0;                       
         promocionesBonificacion.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
@@ -781,9 +790,8 @@ public class ProformasController extends Controller {
         return valorPromocion;
     }
     
-    private Double aplicarPromocionCantidad(List<Promocion> promociones,CotizacionxProducto producto) throws Exception
-    {
-        List<Promocion> promocionesCantidad = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.CANTIDAD.name())).collect(Collectors.toList());
+    private Double aplicarPromocionCantidad(List<Promocion> promocionesCantidad,CotizacionxProducto producto) throws Exception
+    {        
         if(promocionesCantidad.isEmpty()) return 0.0;                       
         promocionesCantidad.sort((Promocion o1, Promocion o2) -> o1.getInteger("prioridad") - o2.getInteger("prioridad"));
         
@@ -843,9 +851,8 @@ public class ProformasController extends Controller {
         return  valorDescuento;                
     }
     
-    public Double aplicarPromocionPorcentaje(List<Promocion> promociones,CotizacionxProducto producto)
-    {
-        List<Promocion> promocionesProcentaje = promociones.stream().filter(x -> x.getString("tipo").equals(Promocion.TIPO.PORCENTAJE.name())).collect(Collectors.toList());
+    public Double aplicarPromocionPorcentaje(List<Promocion> promocionesProcentaje,CotizacionxProducto producto)
+    {        
         if(promocionesProcentaje.isEmpty()) return 0.0;                       
         
         Double valorPromocion = 0.0;

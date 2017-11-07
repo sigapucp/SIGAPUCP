@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarClientesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
@@ -16,6 +17,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarClienteArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenCompraProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
@@ -39,6 +41,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
@@ -72,7 +75,7 @@ public class EnviosController extends Controller{
     @FXML
     private ComboBox ordenes_compra_combobox;
     @FXML
-    private Spinner<?> cantidad_producto;
+    private Spinner<Integer> cantidad_producto;
     @FXML
     private TextField VerProducto;
     
@@ -132,6 +135,20 @@ public class EnviosController extends Controller{
     private OrdenCompraxProducto producto_devuelto;
     private OrdenCompra orden_compra_seleccionada;
     private Envio envio_seleccionado;
+    @FXML
+    private Label LabelPedido;
+    @FXML
+    private AnchorPane pedidoTable;
+    @FXML
+    private Button buscarProducto;
+    @FXML
+    private AnchorPane pedidoForm;
+    @FXML
+    private Label VerDocumentoLabel;
+    @FXML
+    private Label VerDocumentoLabel1;
+    @FXML
+    private Label VerDocumentoLabel2;
     
     //----------------------------------------------------------------------------//
 
@@ -140,9 +157,20 @@ public class EnviosController extends Controller{
         if (producto_eliminar == null){
             infoController.show("No ha seleccionado algun producto");
             return;            
-        }else {
-           productos_a_agregar.remove(producto_eliminar);
         }
+        try{
+            for(OrdenCompraxProducto producto_disponible : productos_disponibles){
+                if (producto_disponible.getInteger("tipo_id") == producto_eliminar.getInteger("tipo_id")){
+                    Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") + producto_eliminar.getInteger("cantidad");
+                    producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                    producto_disponible.saveIt();
+                    break;
+                }
+            }            
+        }catch(Exception e){
+            infoController.show("Error " + e.getMessage());
+        }
+        productos_a_agregar.remove(producto_eliminar);
     }
     
     @FXML
@@ -203,6 +231,7 @@ public class EnviosController extends Controller{
     
     @FXML
     private void visualizar_orden_envio(ActionEvent event) throws  IOException{
+        crearNuevo = false;
         envio_seleccionado = tabla_envios.getSelectionModel().getSelectedItem();
         if (envio_seleccionado == null){
             infoController.show("Salida no seleccionada");  
@@ -227,6 +256,7 @@ public class EnviosController extends Controller{
             envio.set("tipo_id", producto.getInteger("tipo_id"));            
             envio.set("envio_cod", envio_padre.getString("envio_cod"));
             envio.set("envio_id", envio_padre.getInteger("envio_id"));
+            envio.set("cantidad", producto.getInteger("cantidad"));
             envio.saveIt();
         }
     }
@@ -258,18 +288,30 @@ public class EnviosController extends Controller{
         }
     }
     
+    public void eliminar_ordencompraxproductoxenvio(){
+        OrdenesCompraxProductosxenvio.delete("envio_id = ?", envio_seleccionado.getId());
+    }
+    
+    public void editar_envio(){
+        try{
+            eliminar_ordencompraxproductoxenvio();
+            insertar_ordencompraxproductoxenvios(envio_seleccionado);            
+        }catch(Exception e){
+            infoController.show("No ha ocurrido un error durante la edicion");
+        }
+
+    }
+    
     @Override
     public void guardar(){
         if (crearNuevo){
             crear_envio();
         } else {
-            /*
-            if ( == null){ 
-                infoController.show("No ha seleccionado ninguna Orden de Compra");            
+            if ( envio_seleccionado == null){ 
+                infoController.show("No ha seleccionado ningun envio");
                 return;
             }
-            editarPedido(pedidoSeleccionado);
-            */
+            editar_envio();
         }
         crearNuevo = false;
         envios = Envio.findAll();
@@ -291,19 +333,40 @@ public class EnviosController extends Controller{
         }
 
     }
+    
+    private void RecalcularTabla(Boolean isNew) throws Exception
+    {
+        for(OrdenCompraxProducto productoxenvio:productos_a_agregar)
+        {
+            Integer extraCant = 0;
+            if(!isNew && productoxenvio.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
+            {
+                extraCant += cantidad_producto.getValue();
+            }
+            productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
+        }    
+    }
+    
     private void actualizar_lista_producto_a_agregar(OrdenCompraxProducto producto_disponible){
-        if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
-            OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
-            productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
-            productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
-            productoxenvio.set("cantidad", (Integer)cantidad_producto.getValue());       
-            productoxenvio.set("precio_unitario",producto_disponible.get("precio_unitario"));    
-            productoxenvio.set("subtotal_previo",producto_disponible.get("subtotal_previo")); 
-            productoxenvio.set("descuento",0);
-            productoxenvio.set("flete",0);                    
-            productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
-            productos_a_agregar.add(productoxenvio);
-        }
+        Boolean isNew = false; 
+        try{
+            if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
+                OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
+                productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
+                productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
+                productoxenvio.set("cantidad", cantidad_producto.getValue());       
+                productoxenvio.set("precio_unitario",producto_disponible.get("precio_unitario"));    
+                productoxenvio.set("subtotal_previo",producto_disponible.get("subtotal_previo")); 
+                productoxenvio.set("descuento",0);
+                productoxenvio.set("flete",0);                    
+                productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
+                productos_a_agregar.add(productoxenvio);
+                isNew = true;
+            }
+            RecalcularTabla(isNew);
+        } catch (Exception e) {
+            infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
+        } 
     }
     
     @FXML
@@ -318,14 +381,14 @@ public class EnviosController extends Controller{
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
                     if (cantidad > 0){
-                        if ((Integer)cantidad_producto.getValue() != 0){
+                        if (cantidad_producto.getValue() != 0){
                             producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                            producto_disponible.saveIt();
                             actualizar_lista_producto_a_agregar(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
                             infoController.show("Error: Debe seleccionar una cantidad mayor a 0 ");
                         }
-
                     }
                     else{
                         infoController.show("Error: no es posible seleccionar esa cantidad, no existen existencias suficientes ");
@@ -351,6 +414,8 @@ public class EnviosController extends Controller{
                 producto_devuelto = args.orden_compra_producto;
             });                 
             modal_stage.showAndWait();
+            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, producto_devuelto.getInteger("cantidad_descuento_disponible"), 0);
+            cantidad_producto.setValueFactory(cantidad_productoValues);
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
@@ -455,8 +520,7 @@ public class EnviosController extends Controller{
     public void nuevo(){
        crearNuevo = true;
        habilitar_formulario();
-       SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
-       cantidad_producto.setValueFactory(cantidad_productoValues);
+       
     }
     
     public void llenar_tabla_envios(){
@@ -497,6 +561,20 @@ public class EnviosController extends Controller{
             infoController.show("No se pudo buscar el envio : " + e.getMessage());
         }
     }
+    
+      public void setAgregarClientes() throws Exception
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarClientes.fxml"));
+        AgregarClientesController controller = new AgregarClientesController();
+        loader.setController(controller);                      
+        Scene modal_content_scene = new Scene((Parent)loader.load());
+        modal_stage.setScene(modal_content_scene);
+        if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
+
+        controller.devolverClienteEvent.addHandler((Object sender, agregarClienteArgs args) -> {
+            cliente_seleccionado = args.cliente;
+        });
+    }
 
     public EnviosController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -516,6 +594,7 @@ public class EnviosController extends Controller{
             llenar_tabla_envios();
             llenar_autocompletado();
             inhabilitar_formulario();            
+            setAgregarClientes();
         } catch (Exception ex) {
             infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
         }
@@ -525,5 +604,14 @@ public class EnviosController extends Controller{
     public Menu.MENU getMenu()
     {
         return Menu.MENU.Envios;
+    }
+
+    @FXML
+    private void agregarCliente(ActionEvent event) {
+        modal_stage.showAndWait();
+        if(cliente_seleccionado==null) return;        
+        mostrar_informacion_cliente(cliente_seleccionado);
+        nombre_cliente.setText(cliente_seleccionado.getString("nombre"));
+        llenar_ordenes_compra_cliente();        
     }
 }

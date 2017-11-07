@@ -34,7 +34,7 @@ public class Cliente extends Model{
         this.set("tipo_cliente", tipo_cliente);
         this.set("direccion_despacho", direccion_despacho);
         this.set("direccion_facturacion", direccion_facturacion);
-        this.set("estado", "activo");
+        this.set("estado", Cliente.ESTADO.ACTIVO.name());
         this.set("last_user_change","user");
     }
     
