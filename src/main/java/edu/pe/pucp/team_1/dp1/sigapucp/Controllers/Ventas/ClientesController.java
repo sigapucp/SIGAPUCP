@@ -196,7 +196,9 @@ public class ClientesController extends Controller{
                 System.out.println("CORRECTO");
             }
             infoController.show("¡Carga masiva de datos de clientes exitosa!");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Clientes, this.usuarioActual);
             inputStream.close();
+            cargar_tabla_index();
         } catch (FileNotFoundException ex) {
             System.out.println("INCORRECTO");
             Base.rollbackTransaction();

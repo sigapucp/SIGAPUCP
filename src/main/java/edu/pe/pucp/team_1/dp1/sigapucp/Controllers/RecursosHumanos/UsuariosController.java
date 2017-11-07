@@ -270,7 +270,7 @@ public class UsuariosController extends Controller{
             editarUsuario(usuarioSelecionado);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Usuarios ,this.usuarioActual);
         }                
-        RefrescarTabla(Usuario.findAll());
+        RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
     }
         
     private void editarUsuario(Usuario usuario)
@@ -385,7 +385,9 @@ public class UsuariosController extends Controller{
                 System.out.println("CORRECTO");
             }
             infoController.show("¡Carga masiva de datos de usuarios exitosa!");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Usuarios, this.usuarioActual);
             inputStream.close();
+            RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
         } catch (FileNotFoundException ex) {
             System.out.println("INCORRECTO");
             Base.rollbackTransaction();
