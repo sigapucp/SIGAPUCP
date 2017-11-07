@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -79,6 +80,8 @@ public class GuiasRemisionController extends Controller{
     private TextField placa_vehiculo_remision;
     @FXML
     private TextField licencia_remision;
+    @FXML
+    private TextField codigo_remision;
         //Producto
     @FXML
     private TableView<OrdenCompraxProducto> tabla_productos;
@@ -105,39 +108,40 @@ public class GuiasRemisionController extends Controller{
     private Cliente cliente_seleccionado;
     
     public void crear_remision(){
-        String punto_partida = partida_remision.getText();
-        String punto_llegada = llegada_remision.getText();
-        String marca_vehiculo = marca_vehiculo_remision.getText();
-        String placa_vehiculo = placa_vehiculo_remision.getText();
-        String licencia = licencia_remision.getText();
-        
-        GuiaRemision guia_remision = new GuiaRemision();
-        guia_remision.set("punto_partida", punto_partida);
-        guia_remision.set("punto_llegada", punto_llegada);
-        guia_remision.set("marca_vehiculo", marca_vehiculo);
-        guia_remision.set("placa_vehiculo", placa_vehiculo);
-        guia_remision.set("client_id", cliente_seleccionado.getId());
-        guia_remision.set("envio_id", envio_seleccionado.getInteger("envio_id"));
-        guia_remision.set("envio_cod", envio_seleccionado.getString("envio_cod"));
-        guia_remision.set("orden_compra_cod", this);
-        guia_remision.set("orden_compra_id", this);
-        
+        try{
+            String punto_partida = partida_remision.getText();
+            String punto_llegada = llegada_remision.getText();
+            String marca_vehiculo = marca_vehiculo_remision.getText();
+            String placa_vehiculo = placa_vehiculo_remision.getText();
+            String licencia = licencia_remision.getText();
+            LocalDate fechaLocal = fecha_remision.getValue();
+            GuiaRemision guia_remision = new GuiaRemision();
+
+            Base.openTransaction();
+            guia_remision.set("guia_cod", codigo_remision.getText());
+            guia_remision.set("punto_partida", punto_partida);
+            guia_remision.set("punto_llegada", punto_llegada);
+            guia_remision.set("marca_vehiculo", marca_vehiculo);
+            guia_remision.set("placa_vehiculo", placa_vehiculo);
+            guia_remision.set("client_id", cliente_seleccionado.getId());
+            guia_remision.set("envio_id", envio_seleccionado.getInteger("envio_id"));
+            guia_remision.set("envio_cod", envio_seleccionado.getString("envio_cod"));
+            guia_remision.set("orden_compra_cod", envio_seleccionado.getString("orden_compra_cod"));
+            guia_remision.set("orden_compra_id", envio_seleccionado.getInteger("orden_compra_id"));
+            guia_remision.set("estado", GuiaRemision.ESTADO.PENDIENTE.name());
+            java.sql.Date fecha = java.sql.Date.valueOf(fechaLocal);        
+            guia_remision.setDate("fecha_inicio_traslado", fecha);
+            guia_remision.saveIt();
+            Base.commitTransaction();            
+        }catch(Exception e){
+            infoController.show("Ocurrio un error durante la creacion de una guia de remision : " + e.getMessage());
+        }
+
     }
     
     @Override
     public void guardar(){
-        if (crearNuevo){
-            crear_remision();
-        } else {
-            /*
-            if ( == null){ 
-                infoController.show("No ha seleccionado ninguna Orden de Compra");            
-                return;
-            }
-            editarPedido(pedidoSeleccionado);
-            */
-        }
-        crearNuevo = false;
+        crear_remision();
     }
     
     public void inhabilitar_formulario(){
@@ -211,7 +215,7 @@ public class GuiasRemisionController extends Controller{
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         infoController = new InformationAlertController();
         pedidoSeleccionado = null;
-        crearNuevo = false;
+        crearNuevo = true;
     }
 
     public void initialize(URL location, ResourceBundle resources) {

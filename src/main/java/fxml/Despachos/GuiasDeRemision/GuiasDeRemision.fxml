@@ -128,6 +128,12 @@
                                              </font>
                                           </Label>
                                           <TextField fx:id="llegada_remision" layoutX="491.0" layoutY="60.0" prefHeight="25.0" prefWidth="163.0" />
+                                          <Label layoutX="366.0" layoutY="27.0" prefHeight="20.0" prefWidth="114.0" text="Código de guia">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="codigo_remision" layoutX="491.0" layoutY="25.0" prefHeight="25.0" prefWidth="163.0" />
                                        </children>
                                     </AnchorPane>
                                  </content>
