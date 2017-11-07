@@ -90,31 +90,6 @@ public class GuiasRemisionController extends Controller{
         pedido_form.setDisable(true);
     }
     
-    public void completar_productos(){
-        
-    }
-    public void completar_cliente(Cliente cliente){
-        String tipo_cliente = cliente.getString("tipo_cliente");
-        String dni = cliente.getString("dni");
-        String ruc = cliente.getString("ruc");   
-        String nombre = cliente.getString("nombre");
-        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
-        {
-            dni_cliente.setText(dni);
-            ruc_cliente.setDisable(true);
-        }else
-        {
-            ruc_cliente.setText(ruc);
-            dni_cliente.setDisable(true);
-        }
-        nombre_cliente.setText(nombre);
-    }
-    
-    public void mostrar_pedido(OrdenCompra pedido_seleccionado){
-        //completar_cliente(cliente);
-        //completar_productos();
-    }
-    
     public void setear_cliente(){
         Cliente cliente_temp = Cliente.findById(envio_seleccionado.getInteger("client_id"));
         String tipo_cliente = cliente_temp.getString("tipo_cliente");

@@ -21,13 +21,13 @@
       <AnchorPane layoutY="2.0" prefHeight="572.0" prefWidth="250.0">
          <children>
             <TextField fx:id="cod_pedido_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
-            <Button layoutX="136.0" layoutY="209.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+            <Button layoutX="136.0" layoutY="146.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
             <Line endX="100.0" layoutX="136.0" layoutY="50.0" startX="-100.0" />
-            <TableView fx:id="tabla_pedido" layoutX="13.0" layoutY="252.0" prefHeight="268.0" prefWidth="226.0">
+            <TableView fx:id="tabla_envios" layoutX="13.0" layoutY="192.0" prefHeight="328.0" prefWidth="226.0">
                <columns>
                   <TableColumn fx:id="columna_cliente" prefWidth="51.0" text="Cliente" />
-                  <TableColumn fx:id="columna_codigo_pedido" prefWidth="79.0" text="Cod.Pedido" />
-                  <TableColumn fx:id="columna_pedido_fecha" prefWidth="95.0" text="Fecha" />
+                  <TableColumn fx:id="columna_envio" prefWidth="79.0" text="Envio" />
+                  <TableColumn fx:id="columna_pedido" prefWidth="95.0" text="Pedido" />
                </columns>
             </TableView>
             <TextField fx:id="cliente_pedido_buscar" layoutX="119.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
@@ -55,19 +55,7 @@
                   </ImageView>
                </children>
             </Pane>
-            <DatePicker fx:id="fecha_inicio_buscar" layoutX="117.0" layoutY="137.0" prefHeight="25.0" prefWidth="114.0" />
-            <DatePicker fx:id="fecha_fin_buscar" layoutX="117.0" layoutY="175.0" prefHeight="25.0" prefWidth="114.0" />
-            <Label layoutX="20.0" layoutY="140.0" prefHeight="21.0" prefWidth="114.0" text="Fecha de inicio">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="20.0" layoutY="177.0" prefHeight="21.0" prefWidth="114.0" text="Fecha de fin">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" onAction="#visualizar_pedido" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" onAction="#visualizar_envio" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="pedido_form" layoutX="260.0" prefHeight="572.0" prefWidth="750.0">
