@@ -386,7 +386,7 @@ public class ClientesController extends Controller{
         limpiar_tabla_index();
         masterData.clear();
         for( Cliente cliente : clientes){
-            if (cliente.getString("estado").equals("activo")){
+            if (cliente.getString("estado").equals(Cliente.ESTADO.ACTIVO.name())){
                 masterData.add(cliente);
             }
             
