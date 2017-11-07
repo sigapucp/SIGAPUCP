@@ -164,7 +164,7 @@ public class ProveedoresController extends Controller{
         //validamos que los campos sean los correctos
         if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre,rep. legal,telefono,ruc proveedor,anotaciones,", "¿Desea continuar?")) return;
         //csv
-        String filename = "data_usuarios.csv";
+        String filename = "data_proveedores.csv";
         File file = new File(filename);
         Boolean primera_fila = true;
         try {
@@ -189,7 +189,10 @@ public class ProveedoresController extends Controller{
                 Base.commitTransaction();
                 System.out.println("CORRECTO");
             }
+            infoController.show("¡Carga masiva de datos de proveedores exitosa!");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Proveedores, this.usuarioActual);
             inputStream.close();
+            cargar_tabla_index();
         } catch (FileNotFoundException ex) {
             System.out.println("INCORRECTO");
             Base.rollbackTransaction();
