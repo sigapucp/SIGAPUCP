@@ -165,6 +165,12 @@ public class RacksController extends Controller{
     @FXML
     public void visualizarRack(ActionEvent event) {
         rack_seleccionado = buscar_rack_tabla.getSelectionModel().getSelectedItem();
+        if(rack_seleccionado == null)
+        {
+            infoController.show("No ha seleccionado ningun rack");
+            return;
+        }
+        productos_rack.clear();;
         almacen_relacionado = rack_seleccionado.parent(Almacen.class);
         int tileSize = almacen_relacionado.getInteger("longitud_area");
         int rackX1 = rack_seleccionado.getInteger("x_ancla1");
@@ -252,7 +258,6 @@ public class RacksController extends Controller{
                 TipoProducto.findById(p.getValue().getInteger("tipo_id")).getString("nombre")
             )
         );
-
         actualizarTablaBusqueda();
     }
 }
