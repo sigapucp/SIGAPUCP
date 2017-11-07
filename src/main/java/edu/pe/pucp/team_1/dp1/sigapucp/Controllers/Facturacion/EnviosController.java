@@ -75,7 +75,7 @@ public class EnviosController extends Controller{
     @FXML
     private ComboBox ordenes_compra_combobox;
     @FXML
-    private Spinner<?> cantidad_producto;
+    private Spinner<Integer> cantidad_producto;
     @FXML
     private TextField VerProducto;
     
@@ -157,9 +157,20 @@ public class EnviosController extends Controller{
         if (producto_eliminar == null){
             infoController.show("No ha seleccionado algun producto");
             return;            
-        }else {
-           productos_a_agregar.remove(producto_eliminar);
         }
+        try{
+            for(OrdenCompraxProducto producto_disponible : productos_disponibles){
+                if (producto_disponible.getInteger("tipo_id") == producto_eliminar.getInteger("tipo_id")){
+                    Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") + producto_eliminar.getInteger("cantidad");
+                    producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                    producto_disponible.saveIt();
+                    break;
+                }
+            }            
+        }catch(Exception e){
+            infoController.show("Error " + e.getMessage());
+        }
+        productos_a_agregar.remove(producto_eliminar);
     }
     
     @FXML
@@ -245,6 +256,7 @@ public class EnviosController extends Controller{
             envio.set("tipo_id", producto.getInteger("tipo_id"));            
             envio.set("envio_cod", envio_padre.getString("envio_cod"));
             envio.set("envio_id", envio_padre.getInteger("envio_id"));
+            envio.set("cantidad", producto.getInteger("cantidad"));
             envio.saveIt();
         }
     }
@@ -321,19 +333,40 @@ public class EnviosController extends Controller{
         }
 
     }
+    
+    private void RecalcularTabla(Boolean isNew) throws Exception
+    {
+        for(OrdenCompraxProducto productoxenvio:productos_a_agregar)
+        {
+            Integer extraCant = 0;
+            if(!isNew && productoxenvio.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
+            {
+                extraCant += cantidad_producto.getValue();
+            }
+            productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
+        }    
+    }
+    
     private void actualizar_lista_producto_a_agregar(OrdenCompraxProducto producto_disponible){
-        if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
-            OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
-            productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
-            productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
-            productoxenvio.set("cantidad", (Integer)cantidad_producto.getValue());       
-            productoxenvio.set("precio_unitario",producto_disponible.get("precio_unitario"));    
-            productoxenvio.set("subtotal_previo",producto_disponible.get("subtotal_previo")); 
-            productoxenvio.set("descuento",0);
-            productoxenvio.set("flete",0);                    
-            productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
-            productos_a_agregar.add(productoxenvio);
-        }
+        Boolean isNew = false; 
+        try{
+            if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
+                OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
+                productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
+                productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
+                productoxenvio.set("cantidad", cantidad_producto.getValue());       
+                productoxenvio.set("precio_unitario",producto_disponible.get("precio_unitario"));    
+                productoxenvio.set("subtotal_previo",producto_disponible.get("subtotal_previo")); 
+                productoxenvio.set("descuento",0);
+                productoxenvio.set("flete",0);                    
+                productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
+                productos_a_agregar.add(productoxenvio);
+                isNew = true;
+            }
+            RecalcularTabla(isNew);
+        } catch (Exception e) {
+            infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
+        } 
     }
     
     @FXML
@@ -348,14 +381,14 @@ public class EnviosController extends Controller{
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
                     if (cantidad > 0){
-                        if ((Integer)cantidad_producto.getValue() != 0){
+                        if (cantidad_producto.getValue() != 0){
                             producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                            producto_disponible.saveIt();
                             actualizar_lista_producto_a_agregar(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
                             infoController.show("Error: Debe seleccionar una cantidad mayor a 0 ");
                         }
-
                     }
                     else{
                         infoController.show("Error: no es posible seleccionar esa cantidad, no existen existencias suficientes ");
@@ -381,6 +414,8 @@ public class EnviosController extends Controller{
                 producto_devuelto = args.orden_compra_producto;
             });                 
             modal_stage.showAndWait();
+            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, producto_devuelto.getInteger("cantidad_descuento_disponible"), 0);
+            cantidad_producto.setValueFactory(cantidad_productoValues);
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
@@ -485,8 +520,7 @@ public class EnviosController extends Controller{
     public void nuevo(){
        crearNuevo = true;
        habilitar_formulario();
-       SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0,1);
-       cantidad_producto.setValueFactory(cantidad_productoValues);
+       
     }
     
     public void llenar_tabla_envios(){
