@@ -87,6 +87,9 @@ public class KardexController extends Controller {
     private final ObservableList<Kardex> masterDatakardex = FXCollections.observableArrayList();
     private List<OrdenEntradaxProducto> entradas;
     private List<OrdenSalida> salidas;
+    private Integer existencias_cantidad;
+    private Double existencias_precio;
+    
     
     public void inhabilitar_formulario(){
         kardexProducto.setDisable(true);
@@ -121,6 +124,16 @@ public class KardexController extends Controller {
         return precio;
     }
     
+    private void cargarStock(String detalle){        
+        Date auxfecha = producto_seleccionado.getDate("last_date_change");
+        
+        existencias_precio = obtenerPrecio(producto_seleccionado.get("tipo_id").toString(), producto_seleccionado.getString("tipo_cod"), auxfecha);
+        
+        Double costo = existencias_cantidad * existencias_precio;        
+        
+        masterDatakardex.add(new Kardex("", detalle, "", "", "", "", existencias_cantidad.toString(), costo.toString()));
+    }
+    
     private void cargarEntradas(){
         entradas = OrdenEntradaxProducto.where("tipo_id = ? AND tipo_cod = ?",producto_seleccionado.get("tipo_id"),producto_seleccionado.get("tipo_cod"));
         for (OrdenEntradaxProducto entrada_producto: entradas){
@@ -142,8 +155,13 @@ public class KardexController extends Controller {
             String sal_cant = "";
             String sal_costo = "";
             
-            String exi_cant = "" ; //Obtener de Stock
-            String exi_costo = ""; 
+            //Stock (Existencias)
+            existencias_cantidad += aux_ent_cant;
+            
+            String exi_cant = existencias_cantidad.toString() ;
+            
+            Double aux_exi_costo = existencias_cantidad * existencias_precio;
+            String exi_costo = aux_exi_costo.toString(); 
             
             masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
         }
@@ -185,8 +203,13 @@ public class KardexController extends Controller {
             Double aux_sal_costo = aux_sal_cant * precio;
             String sal_costo = aux_sal_costo.toString();
             
-            String exi_cant = "" ; //Obtener de Stock
-            String exi_costo = ""; 
+            //Stock (Existencias)
+            existencias_cantidad -= aux_sal_cant;
+            
+            String exi_cant = existencias_cantidad.toString() ;
+            
+            Double aux_exi_costo = existencias_cantidad * existencias_precio;
+            String exi_costo = aux_exi_costo.toString();
             
             masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
         }
@@ -194,8 +217,11 @@ public class KardexController extends Controller {
     
     private void mostrarEntradasYSalidas(){
         masterDatakardex.clear();
+        
+        cargarStock("Stock inicial");
         cargarEntradas();
         cargarSalidas();
+        cargarStock("Stock final");
         
         columna_fecha.setCellValueFactory(cellData -> cellData.getValue().getFecha());
         columna_detalle.setCellValueFactory(cellData -> cellData.getValue().getDetalle());
@@ -218,6 +244,8 @@ public class KardexController extends Controller {
         producto_nombre.setText(producto_seleccionado.getString("nombre"));
         producto_codigo.setText(producto_seleccionado.getString("tipo_cod"));
         //Cargar entradas y salidas
+        existencias_cantidad = 0;
+        existencias_precio = 0.0;
         mostrarEntradasYSalidas();
     }  
     
@@ -248,7 +276,7 @@ public class KardexController extends Controller {
     public KardexController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         producto_seleccionado = null;
-        infoController = new InformationAlertController();        
+        infoController = new InformationAlertController();   
     }
     
     @Override
