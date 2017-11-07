@@ -261,7 +261,13 @@ public class OrdenesDeSalidaController  extends Controller{
             editar_orden_salida();
         }
         crear_nuevo = false;
-        llenar_orden_salida_tabla();        
+        masterDataSalidas.clear();
+        List<OrdenSalida> salidas = OrdenSalida.findAll();
+        for(OrdenSalida salida : salidas){
+            masterDataSalidas.add(salida);
+        }                  
+        llenar_orden_salida_tabla();      
+        limpia_formulario();
     }
     
     public void limpiar_tabla_envio(){
@@ -291,8 +297,14 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private void agregar_envio(ActionEvent event) throws IOException{
         try {
-            agregar_a_lista_envios();
-            actualizar_lista_envios_tabla();
+            String codigo = codigo_salida.getText();
+            String tipo_seleccionado = tipos.getSelectionModel().getSelectedItem();
+            if ( (tipo_seleccionado == null ) || (codigo == null)){
+                infoController.show("Debe completar los datos del envio ");
+            }else{
+                agregar_a_lista_envios();
+                actualizar_lista_envios_tabla();                
+            }
         } catch (Exception e) {
             infoController.show("Ocurrio un error durante la seleccion del envio : " + e.getMessage());
         }
