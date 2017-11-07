@@ -87,7 +87,7 @@ public class GridTile extends StackPane {
             args.setX_cord(x_cord);
             args.setY_cord(y_cord);
 
-            activeTileEvent.fire(this, args);    
+            activeTileEvent.fire(this, args);
         }
         
         border.setFill(Color.RED);

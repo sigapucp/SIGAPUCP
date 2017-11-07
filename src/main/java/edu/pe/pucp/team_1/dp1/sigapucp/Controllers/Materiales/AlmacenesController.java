@@ -267,9 +267,8 @@ public class AlmacenesController extends Controller{
             list_objects_pane.getSelectionModel().select(list_almacenes_tab);
             infoController.show("Es necesario que se cree un almacen fisico primero");
         } else {
-            almacenActuales.forEach((almacen) -> {
-                almacenes.add(almacen);
-            });
+            almacenes.clear();
+            almacenActuales.forEach(almacenes::add);
             tabla_almacenes.setItems(almacenes);
         }
     }
@@ -531,9 +530,11 @@ public class AlmacenesController extends Controller{
                         almacen.saveIt();
                         
                         almacenes_logicos.forEach((almacenLogico) -> {
-                            String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
-                            almacenLogico.set("almacen_cod", almacenLogCod);
-                            almacenLogico.saveIt();
+                            if (validator.isEmptyString(almacenLogico.getString("almacen_cod"))) {
+                                String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
+                                almacenLogico.set("almacen_cod", almacenLogCod);
+                                almacenLogico.saveIt();
+                            }
                         });
                         Base.commitTransaction();
                         clearAlmacenForm();
