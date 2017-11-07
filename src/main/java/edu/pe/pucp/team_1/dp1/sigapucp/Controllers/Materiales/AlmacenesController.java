@@ -148,7 +148,6 @@ public class AlmacenesController extends Controller{
                 args.getY_relativo(), 
                 args.getLongitud_area(),
                 args.getNombre(),
-                "ALMLGT",
                 args.getEs_cental(),
                 usuarioActual,
                 racks);
@@ -530,7 +529,7 @@ public class AlmacenesController extends Controller{
                         almacen.saveIt();
                         
                         almacenes_logicos.forEach((almacenLogico) -> {
-                            if (validator.isEmptyString(almacenLogico.getString("almacen_cod"))) {
+                            if (almacenLogico.isNew()) {
                                 String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
                                 almacenLogico.set("almacen_cod", almacenLogCod);
                                 almacenLogico.saveIt();
