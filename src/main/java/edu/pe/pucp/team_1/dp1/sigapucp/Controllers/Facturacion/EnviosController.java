@@ -203,6 +203,7 @@ public class EnviosController extends Controller{
     
     @FXML
     private void visualizar_orden_envio(ActionEvent event) throws  IOException{
+        crearNuevo = false;
         envio_seleccionado = tabla_envios.getSelectionModel().getSelectedItem();
         if (envio_seleccionado == null){
             infoController.show("Salida no seleccionada");  
@@ -258,18 +259,30 @@ public class EnviosController extends Controller{
         }
     }
     
+    public void eliminar_ordencompraxproductoxenvio(){
+        OrdenesCompraxProductosxenvio.delete("envio_id = ?", envio_seleccionado.getId());
+    }
+    
+    public void editar_envio(){
+        try{
+            eliminar_ordencompraxproductoxenvio();
+            insertar_ordencompraxproductoxenvios(envio_seleccionado);            
+        }catch(Exception e){
+            infoController.show("No ha ocurrido un error durante la edicion");
+        }
+
+    }
+    
     @Override
     public void guardar(){
         if (crearNuevo){
             crear_envio();
         } else {
-            /*
-            if ( == null){ 
-                infoController.show("No ha seleccionado ninguna Orden de Compra");            
+            if ( envio_seleccionado == null){ 
+                infoController.show("No ha seleccionado ningun envio");
                 return;
             }
-            editarPedido(pedidoSeleccionado);
-            */
+            editar_envio();
         }
         crearNuevo = false;
         envios = Envio.findAll();
