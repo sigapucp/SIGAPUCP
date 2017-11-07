@@ -179,7 +179,7 @@ public class AuditoriaController extends Controller {
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
         cargar_tabla_index();
-        Modulo.getItems().add(null);
+        Modulo.getItems().add("");
         List<Menu> modulos = Menu.findAll();
         List<String> listaModulos = new ArrayList<String>();
         for (int i=0; i< modulos.size(); i++){
@@ -188,7 +188,7 @@ public class AuditoriaController extends Controller {
         ObservableList<String> listamoduloscombo = FXCollections.observableArrayList(listaModulos);
         Modulo.getItems().addAll(listamoduloscombo);
         
-        AccionC.getItems().add(null);
+        AccionC.getItems().add("");
         List<Accion> accionesFiltro = Accion.findAll();
         List<String> listaAcciones = new ArrayList<String>();
         for (int i=0; i < accionesFiltro.size(); i++){
