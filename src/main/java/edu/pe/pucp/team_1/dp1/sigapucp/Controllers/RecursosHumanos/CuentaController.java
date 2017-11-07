@@ -103,8 +103,8 @@ public class CuentaController extends Controller{
         revelarNueva = !revelarNueva;
     }
 
-    @FXML
-    private void guardarCuenta(ActionEvent event) {
+    @Override
+    public void guardar() {
         try {
             
             Base.openTransaction();
