@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Validator;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
@@ -267,9 +268,8 @@ public class AlmacenesController extends Controller{
             list_objects_pane.getSelectionModel().select(list_almacenes_tab);
             infoController.show("Es necesario que se cree un almacen fisico primero");
         } else {
-            almacenActuales.forEach((almacen) -> {
-                almacenes.add(almacen);
-            });
+            almacenes.clear();
+            almacenActuales.forEach(almacenes::add);
             tabla_almacenes.setItems(almacenes);
         }
     }
@@ -531,10 +531,11 @@ public class AlmacenesController extends Controller{
                         almacen.saveIt();
                         
                         almacenes_logicos.forEach((almacenLogico) -> {
-                            //if (validator.isEmpty(almacenLogico.getString("almacen_cod")))
-                            String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
-                            almacenLogico.set("almacen_cod", almacenLogCod);
-                            almacenLogico.saveIt();
+                            if (validator.isEmptyString(almacenLogico.getString("almacen_cod"))) {
+                                String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
+                                almacenLogico.set("almacen_cod", almacenLogCod);
+                                almacenLogico.saveIt();
+                            }
                         });
                         Base.commitTransaction();
                         clearAlmacenForm();
