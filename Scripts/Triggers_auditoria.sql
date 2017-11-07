@@ -203,7 +203,7 @@ FOR EACH ROW EXECUTE PROCEDURE OrdenesCompra_audit();
 
 CREATE FUNCTION OrdenesSalida_audit() RETURNS trigger AS $T_OrdenesSalida_BIU$
 BEGIN
-  NEW.last_date_change = now();
+  NEW.last_data_change = now();
   IF (TG_OP = 'INSERT') THEN
       NEW.flag_last_operation = '1';
       RETURN NEW;
