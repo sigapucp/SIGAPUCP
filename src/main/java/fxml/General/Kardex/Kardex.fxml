@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Kardex.KardexController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Kardex.KardexController">
    <children>
       <AnchorPane prefHeight="575.0" prefWidth="250.0">
          <children>
@@ -67,24 +67,24 @@
             </Pane>
             <TableView fx:id="tablaKardex" layoutX="27.0" layoutY="193.0" prefHeight="366.0" prefWidth="701.0">
               <columns>
-                <TableColumn prefWidth="75.0" text="Fecha" />
-                <TableColumn prefWidth="180.0" text="Detalle" />
+                <TableColumn fx:id="columna_fecha" prefWidth="75.0" text="Fecha" />
+                <TableColumn fx:id="columna_detalle" prefWidth="180.0" text="Detalle" />
                   <TableColumn prefWidth="143.0" text="Entrada">
                      <columns>
-                        <TableColumn editable="false" prefWidth="75.0" text="Cant." />
-                        <TableColumn prefWidth="75.0" text="Costo" />
+                        <TableColumn fx:id="columna_ent_cant" editable="false" prefWidth="75.0" text="Cant." />
+                        <TableColumn fx:id="columna_ent_costo" prefWidth="75.0" text="Costo" />
                      </columns>
                   </TableColumn>
                   <TableColumn prefWidth="75.0" text="Salidas">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Cant." />
-                        <TableColumn prefWidth="75.0" text="Costo" />
+                        <TableColumn fx:id="columna_sal_cant" prefWidth="75.0" text="Cant." />
+                        <TableColumn fx:id="columna_sal_costo" prefWidth="75.0" text="Costo" />
                      </columns>
                   </TableColumn>
                   <TableColumn prefWidth="75.0" text="Existencias">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Cant." />
-                        <TableColumn prefWidth="75.0" text="Costo" />
+                        <TableColumn fx:id="columna_exi_cant" prefWidth="75.0" text="Cant." />
+                        <TableColumn fx:id="columna_exi_costo" prefWidth="75.0" text="Costo" />
                      </columns>
                   </TableColumn>
               </columns>
@@ -105,16 +105,6 @@
                </font>
             </Label>
             <TextField fx:id="producto_codigo" layoutX="160.0" layoutY="109.0">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <Label layoutX="410.0" layoutY="114.0" text="Categoría producto">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="producto_categoria" layoutX="551.0" layoutY="108.0">
                <font>
                   <Font size="14.0" />
                </font>

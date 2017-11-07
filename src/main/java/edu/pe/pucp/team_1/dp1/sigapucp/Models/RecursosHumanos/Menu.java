@@ -48,7 +48,8 @@ public class Menu extends Model{
         GuiaDeRemision,
         Cuenta,
         Envios,
-        Simulaciones;
+        Simulaciones,
+        Kardex;
         
         public static int getId(MENU menu)
         {
