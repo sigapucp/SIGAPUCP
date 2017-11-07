@@ -1231,6 +1231,7 @@ CREATE TABLE OrdenesCompraxProductosxEnvio
  tipo_cod         VARCHAR(20) NOT NULL ,
  envio_id         INT NOT NULL ,
  envio_cod        VARCHAR(30) NOT NULL ,
+ cantidad         DECIMAL(10,2),
 
  CONSTRAINT pk_1700 PRIMARY KEY  (orden_compra_cod , client_id , orden_compra_id , tipo_id , tipo_cod , envio_id , envio_cod ),
  CONSTRAINT fk_1697 FOREIGN KEY (envio_id, envio_cod, orden_compra_cod, client_id, orden_compra_id)

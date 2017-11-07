@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarClientesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
@@ -16,6 +17,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarClienteArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenCompraProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
@@ -39,6 +41,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
@@ -132,6 +135,20 @@ public class EnviosController extends Controller{
     private OrdenCompraxProducto producto_devuelto;
     private OrdenCompra orden_compra_seleccionada;
     private Envio envio_seleccionado;
+    @FXML
+    private Label LabelPedido;
+    @FXML
+    private AnchorPane pedidoTable;
+    @FXML
+    private Button buscarProducto;
+    @FXML
+    private AnchorPane pedidoForm;
+    @FXML
+    private Label VerDocumentoLabel;
+    @FXML
+    private Label VerDocumentoLabel1;
+    @FXML
+    private Label VerDocumentoLabel2;
     
     //----------------------------------------------------------------------------//
 
@@ -497,6 +514,20 @@ public class EnviosController extends Controller{
             infoController.show("No se pudo buscar el envio : " + e.getMessage());
         }
     }
+    
+      public void setAgregarClientes() throws Exception
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarClientes.fxml"));
+        AgregarClientesController controller = new AgregarClientesController();
+        loader.setController(controller);                      
+        Scene modal_content_scene = new Scene((Parent)loader.load());
+        modal_stage.setScene(modal_content_scene);
+        if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
+
+        controller.devolverClienteEvent.addHandler((Object sender, agregarClienteArgs args) -> {
+            cliente_seleccionado = args.cliente;
+        });
+    }
 
     public EnviosController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -516,6 +547,7 @@ public class EnviosController extends Controller{
             llenar_tabla_envios();
             llenar_autocompletado();
             inhabilitar_formulario();            
+            setAgregarClientes();
         } catch (Exception ex) {
             infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
         }
@@ -525,5 +557,14 @@ public class EnviosController extends Controller{
     public Menu.MENU getMenu()
     {
         return Menu.MENU.Envios;
+    }
+
+    @FXML
+    private void agregarCliente(ActionEvent event) {
+        modal_stage.showAndWait();
+        if(cliente_seleccionado==null) return;        
+        mostrar_informacion_cliente(cliente_seleccionado);
+        nombre_cliente.setText(cliente_seleccionado.getString("nombre"));
+        llenar_ordenes_compra_cliente();        
     }
 }

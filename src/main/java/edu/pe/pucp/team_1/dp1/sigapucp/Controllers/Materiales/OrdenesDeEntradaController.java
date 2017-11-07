@@ -604,7 +604,7 @@ public class OrdenesDeEntradaController extends Controller {
             TablaOrdenes.getColumns().get(0).setVisible(false);
             TablaOrdenes.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
-            infoController.show("La orden de entradada contiene errores : " + e);      
+            infoController.show("La orden de entradada contiene errores : " + e.getMessage());      
         }                                  
     }
       

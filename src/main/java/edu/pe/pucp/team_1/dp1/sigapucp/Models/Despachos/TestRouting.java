@@ -84,7 +84,7 @@ public class TestRouting {
                     
                     for(;start<finish;start++)
                     {
-                        mapa[start][relative_x] = TIPO.RACK;                        
+                        mapa[start][anchorX1] = TIPO.RACK;                        
                     }
                 }
             }                        
@@ -105,10 +105,21 @@ public class TestRouting {
                 
                 List<Punto> puntosRack2 = rack2.getAnchorPoints(height, width,rack2Relativo.x,rack2Relativo.y);    
               
+                
                 for(Punto puntoRack1:puntosRack1)
                 {
                     for(Punto puntoRack2:puntosRack2)
                     {                                               
+                        
+                        if(mapa[puntoRack1.y][puntoRack1.x] != TIPO.LIBRE)
+                        {
+                            int a =  4;
+                        }
+                        
+                        if(mapa[puntoRack2.y][puntoRack2.x] != TIPO.LIBRE)
+                        {
+                            int a =  4;
+                        }
                         Estado solucion = rutaGenerator.generarRutaGreedy(copiarMapa(mapa,width,height), width, height, puntoRack1, puntoRack2); 
                         Celda.TIPO[][] mapaDibujo = copiarMapa(mapa, width, height);
                         for(Punto punto:solucion.ruta)

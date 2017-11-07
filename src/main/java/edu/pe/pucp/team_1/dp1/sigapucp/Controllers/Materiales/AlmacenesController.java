@@ -644,7 +644,7 @@ public class AlmacenesController extends Controller{
                         areaZ.set("level", i);
                         areaZ.set("state", "L"); // L -> Libre
                         areaZ.set("capacity", rackCapacidad);
-                        areaZ.set("capacidadRestante", rackCapacidad);
+                        areaZ.set("capacidad_restante", rackCapacidad);
                         areaZ.saveIt();
                     }
                 }
