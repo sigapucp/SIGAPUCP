@@ -126,7 +126,7 @@ public class ClientesController extends Controller{
             cliente_seleccioando = null;
             Base.openTransaction();  
             Cliente nuevo_cliente = new Cliente();
-            if(!confirmatonController.show("Se creará el cliente con código: " + clienteSh.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se creará el cliente con nombre: " + clienteSh.getText(), "¿Desea continuar?")) return;
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_cliente.set("departamento",VerDepartamento.getSelectionModel().getSelectedItem());
@@ -150,7 +150,7 @@ public class ClientesController extends Controller{
     public void editar_cliente(Cliente cliente){
         try{
             Base.openTransaction();  
-            if(!confirmatonController.show("Se editará el cliente con código: " + clienteSh.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se editará el cliente con nombre: " + clienteSh.getText(), "¿Desea continuar?")) return;
             cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             cliente.set("departamento",VerDepartamento.getSelectionModel().getSelectedItem());
@@ -238,7 +238,7 @@ public class ClientesController extends Controller{
        limpiar_formulario();
     }
     
-    /* @Override
+    @Override
      public void desactivar()
      {
         if(cliente_seleccioando==null) 
@@ -247,16 +247,25 @@ public class ClientesController extends Controller{
             return;
         }
         try {
-           Base.openTransaction();
+           if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Clientes, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara el cliente con nombre: " + clienteSh.getText(), "¿Desea continuar?")) return;
+            Base.openTransaction();
            
            cliente_seleccioando.set("estado",Cliente.ESTADO.INACTIVO.name());
            cliente_seleccioando.saveIt();
 
            Base.commitTransaction();
+           infoController.show("El cliente ha sido deshabilitado");
+           AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Clientes ,this.usuarioActual);
+           limpiar_formulario();
+           cargar_tabla_index();
         } catch (Exception e) {
            Base.rollbackTransaction();
         }
-     }*/
+     }
     
     public void limpiar_formulario(){
         clienteSh.clear();
@@ -377,7 +386,10 @@ public class ClientesController extends Controller{
         limpiar_tabla_index();
         masterData.clear();
         for( Cliente cliente : clientes){
-            masterData.add(cliente);
+            if (cliente.getString("estado").equals("activo")){
+                masterData.add(cliente);
+            }
+            
         }
         tabla_clientes.setEditable(false);
         columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("ruc")));

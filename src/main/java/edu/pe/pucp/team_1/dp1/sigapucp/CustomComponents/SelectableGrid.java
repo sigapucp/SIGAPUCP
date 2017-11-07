@@ -5,8 +5,10 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEventHandler;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.tileArgs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,8 @@ public class SelectableGrid extends AnchorPane  {
     private int grid_real_heigth;
     private TreeMap<Integer, List<GridTile>> tiles;
     private Behavior behavior;
+    private int current_x_tile;
+    private int current_y_tile;
     
     // Largo -> Width
     // Ancho -> Height
@@ -58,8 +62,16 @@ public class SelectableGrid extends AnchorPane  {
                     if (behavior.isNotTileSavedOrActive(args.getY_cord(), args.getX_cord())) behavior.addSelectedTile(args.getY_cord(), args.getX_cord());
                 });
                 tile.getReleaseEvent().addHandler((sender, args) -> {
+                    behavior.preSaveTransformation(tiles,current_x_tile,current_y_tile);
                     if (behavior.checkDrawRules()) behavior.saveActiveTiles(tiles);
                     else behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
+                });
+                tile.getPressedEvent().addHandler((Object sender, tileArgs args) -> {
+                    behavior.startDrag(args.getX_cord(),args.getY_cord());
+                });
+                tile.getDragEvent().addHandler((Object sender, tileArgs args) -> {
+                    current_x_tile = args.getX_cord() + 1;
+                    current_y_tile = args.getY_cord() + 1;
                 });
                 if(tiles.get(i) == null) {
                     List<GridTile> tmpList = new ArrayList<>();

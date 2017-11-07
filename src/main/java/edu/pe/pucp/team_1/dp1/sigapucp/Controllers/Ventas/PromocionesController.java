@@ -235,7 +235,10 @@ public class PromocionesController extends Controller{
     public void cargar_tabla_index(){
         limpiar_tabla_index();
         for( Promocion promocion : promociones){
-            masterData.add(promocion);
+            if (promocion.getString("estado").equals("ACTIVO")){
+                masterData.add(promocion);
+            }
+            
         }
         tabla_promociones.setEditable(false);
         columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<Promocion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("promocion_cod")));
@@ -834,6 +837,32 @@ public class PromocionesController extends Controller{
             deshabilitar_CantBoni();
             habilitar_radiobuttons();
             deshabilitarBotones();
+        }
+    }
+    
+    @Override
+    public void desactivar(){
+        if (promocion_seleccionada==null){
+            infoController.show("No se selecciono una promocion");
+            return;
+        }
+        try{
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Promociones, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara la promocion con código: " + txtFieCodigoPromo.getText(), "¿Desea continuar?")) return;
+            Base.openTransaction();
+            promocion_seleccionada.set("estado",Promocion.ESTADO.INACTIVO.name());
+            promocion_seleccionada.saveIt();
+            Base.commitTransaction();
+            infoController.show("La promocion ha sido deshabilitada");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Promociones ,this.usuarioActual);
+            limpiar_formulario();
+            cargar_tabla_index();
+        }catch(Exception e){
+            infoController.show("La promocion contiene errores: " + e);
+            Base.rollbackTransaction();
         }
     }
     

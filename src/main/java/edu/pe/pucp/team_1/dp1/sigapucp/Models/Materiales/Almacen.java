@@ -30,7 +30,6 @@ public class Almacen extends Model{
             int almacen_y, 
             int longitud_area, 
             String almacen_nombre,
-            String almacen_codigo,
             char almacen_central, 
             Usuario usuario_actual,
             ObservableList<Rack> racks)
@@ -39,7 +38,6 @@ public class Almacen extends Model{
         set("largo", almacen_largo);
         set("ancho", almacen_ancho);
         set("es_central", almacen_central);
-        set("almacen_cod", almacen_codigo);
         set("longitud_area", (double) longitud_area);
         set("x_relativo_central", almacen_x);
         set("y_relativo_central", almacen_y);
@@ -110,12 +108,14 @@ public class Almacen extends Model{
         
         if(racks.size() > 0) {
             racks.forEach((rack) -> {
-                int almacenId = Integer.valueOf(String.valueOf(get("almacen_id")));
-                String almacenCod = String.valueOf(get("almacen_cod"));
-                rack.set("rack_cod", rack.generarCodigoRack(almacenCod));
-                rack.set("almacen_id", almacenId);
-                rack.set("almacen_cod", almacenCod);
+                if(rack.isNew()) {
+                    int almacenId = Integer.valueOf(String.valueOf(get("almacen_id")));
+                    String almacenCod = String.valueOf(get("almacen_cod"));
 
+                    rack.set("rack_cod", rack.generarCodigoRack(almacenCod));
+                    rack.set("almacen_id", almacenId);
+                    rack.set("almacen_cod", almacenCod);
+                }
                 add(rack);
             });
         }

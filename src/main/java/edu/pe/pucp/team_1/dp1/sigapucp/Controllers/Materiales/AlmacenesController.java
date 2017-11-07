@@ -148,7 +148,6 @@ public class AlmacenesController extends Controller{
                 args.getY_relativo(), 
                 args.getLongitud_area(),
                 args.getNombre(),
-                "ALMLGT",
                 args.getEs_cental(),
                 usuarioActual,
                 racks);
@@ -267,9 +266,8 @@ public class AlmacenesController extends Controller{
             list_objects_pane.getSelectionModel().select(list_almacenes_tab);
             infoController.show("Es necesario que se cree un almacen fisico primero");
         } else {
-            almacenActuales.forEach((almacen) -> {
-                almacenes.add(almacen);
-            });
+            almacenes.clear();
+            almacenActuales.forEach(almacenes::add);
             tabla_almacenes.setItems(almacenes);
         }
     }
@@ -531,9 +529,11 @@ public class AlmacenesController extends Controller{
                         almacen.saveIt();
                         
                         almacenes_logicos.forEach((almacenLogico) -> {
-                            String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
-                            almacenLogico.set("almacen_cod", almacenLogCod);
-                            almacenLogico.saveIt();
+                            if (almacenLogico.isNew()) {
+                                String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
+                                almacenLogico.set("almacen_cod", almacenLogCod);
+                                almacenLogico.saveIt();
+                            }
                         });
                         Base.commitTransaction();
                         clearAlmacenForm();
@@ -643,7 +643,7 @@ public class AlmacenesController extends Controller{
                         areaZ.set("level", i);
                         areaZ.set("state", "L"); // L -> Libre
                         areaZ.set("capacity", rackCapacidad);
-                        areaZ.set("capacidadRestante", rackCapacidad);
+                        areaZ.set("capacidad_restante", rackCapacidad);
                         areaZ.saveIt();
                     }
                 }

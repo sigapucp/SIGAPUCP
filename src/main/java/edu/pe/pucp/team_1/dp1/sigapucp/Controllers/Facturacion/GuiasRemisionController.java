@@ -11,8 +11,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -62,6 +64,24 @@ public class GuiasRemisionController extends Controller{
     private TextField ruc_cliente;
     @FXML
     private TextField dni_cliente;
+    //--------------------------------------------------//
+        //DATOS A INGRESAR
+    @FXML
+    private TextField numero_remision;
+    @FXML
+    private TextField partida_remision;
+    @FXML
+    private TextField llegada_remision;
+    @FXML
+    private DatePicker fecha_remision;
+    @FXML
+    private TextField marca_vehiculo_remision;
+    @FXML
+    private TextField placa_vehiculo_remision;
+    @FXML
+    private TextField licencia_remision;
+    @FXML
+    private TextField codigo_remision;
         //Producto
     @FXML
     private TableView<OrdenCompraxProducto> tabla_productos;
@@ -85,7 +105,45 @@ public class GuiasRemisionController extends Controller{
     private Boolean crearNuevo = false;    
     private OrdenCompra pedidoSeleccionado;
     private Envio envio_seleccionado;
+    private Cliente cliente_seleccionado;
+    
+    public void crear_remision(){
+        try{
+            String punto_partida = partida_remision.getText();
+            String punto_llegada = llegada_remision.getText();
+            String marca_vehiculo = marca_vehiculo_remision.getText();
+            String placa_vehiculo = placa_vehiculo_remision.getText();
+            String licencia = licencia_remision.getText();
+            LocalDate fechaLocal = fecha_remision.getValue();
+            GuiaRemision guia_remision = new GuiaRemision();
 
+            Base.openTransaction();
+            guia_remision.set("guia_cod", codigo_remision.getText());
+            guia_remision.set("punto_partida", punto_partida);
+            guia_remision.set("punto_llegada", punto_llegada);
+            guia_remision.set("marca_vehiculo", marca_vehiculo);
+            guia_remision.set("placa_vehiculo", placa_vehiculo);
+            guia_remision.set("client_id", cliente_seleccionado.getId());
+            guia_remision.set("envio_id", envio_seleccionado.getInteger("envio_id"));
+            guia_remision.set("envio_cod", envio_seleccionado.getString("envio_cod"));
+            guia_remision.set("orden_compra_cod", envio_seleccionado.getString("orden_compra_cod"));
+            guia_remision.set("orden_compra_id", envio_seleccionado.getInteger("orden_compra_id"));
+            guia_remision.set("estado", GuiaRemision.ESTADO.PENDIENTE.name());
+            java.sql.Date fecha = java.sql.Date.valueOf(fechaLocal);        
+            guia_remision.setDate("fecha_inicio_traslado", fecha);
+            guia_remision.saveIt();
+            Base.commitTransaction();            
+        }catch(Exception e){
+            infoController.show("Ocurrio un error durante la creacion de una guia de remision : " + e.getMessage());
+        }
+
+    }
+    
+    @Override
+    public void guardar(){
+        crear_remision();
+    }
+    
     public void inhabilitar_formulario(){
         pedido_form.setDisable(true);
     }
@@ -95,7 +153,8 @@ public class GuiasRemisionController extends Controller{
         String tipo_cliente = cliente_temp.getString("tipo_cliente");
         String dni = cliente_temp.getString("dni");
         String ruc = cliente_temp.getString("ruc");
-   
+        cliente_seleccionado= cliente_temp;
+        
         if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
         {
             dni_cliente.setText(dni);
@@ -121,15 +180,17 @@ public class GuiasRemisionController extends Controller{
             columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
             columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
             columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            columna_peso.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            columna_unidad_medida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
             tabla_productos.setItems(productos);
         }catch(Exception e){
-            System.out.println(e);
+            infoController.show("Ocurrio un error durante la visualizacion de los productos del envio : " + e.getMessage());
         }           
     }
     
     @FXML
     public void visualizar_envio(ActionEvent event){
-      envio_seleccionado = tabla_envios.getSelectionModel().getSelectedItem();
+        envio_seleccionado = tabla_envios.getSelectionModel().getSelectedItem();
         if (envio_seleccionado == null){
             infoController.show("Salida no seleccionada");  
             return;            
@@ -154,7 +215,7 @@ public class GuiasRemisionController extends Controller{
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         infoController = new InformationAlertController();
         pedidoSeleccionado = null;
-        crearNuevo = false;
+        crearNuevo = true;
     }
 
     public void initialize(URL location, ResourceBundle resources) {

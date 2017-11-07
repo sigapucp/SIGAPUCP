@@ -604,7 +604,7 @@ public class OrdenesDeEntradaController extends Controller {
             TablaOrdenes.getColumns().get(0).setVisible(false);
             TablaOrdenes.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
-            infoController.show("La orden de entradada contiene errores : " + e);      
+            infoController.show("La orden de entradada contiene errores : " + e.getMessage());      
         }                                  
     }
       
@@ -612,7 +612,7 @@ public class OrdenesDeEntradaController extends Controller {
         int i = 0;
         for (Cliente cliente : autoCompletadoClienteList){
             String nombre = cliente.getString("nombre");
-            if(nombre == null) return;
+            if(nombre == null) continue;
             if (nombre.equals(ClienteBuscar.getText())){           
                   clienteDevuelto = cliente;
             }
@@ -623,7 +623,7 @@ public class OrdenesDeEntradaController extends Controller {
         int i = 0;
         for (Proveedor proveedor : autoCompletadoProveedorList){
             String nombre = proveedor.getString("name");
-            if(nombre == null) return;
+            if(nombre == null) continue;
             if (nombre.equals(ProveedorBuscar.getText())){           
                proveedorDevuelto = proveedor;
             }
@@ -634,7 +634,7 @@ public class OrdenesDeEntradaController extends Controller {
         int i = 0;
         for (TipoProducto tipoProducto : autoCompletadoProductoList){
             String nombre = tipoProducto.getString("nombre");
-            if(nombre == null) return;
+            if(nombre == null) continue;
             if (nombre.equals(VerProducto.getText())){           
                 productoDevuelto = tipoProducto;             
             }

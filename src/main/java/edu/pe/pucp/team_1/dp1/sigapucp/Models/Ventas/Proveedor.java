@@ -32,4 +32,9 @@ public class Proveedor extends Model{
         this.set("status", "activo");
         this.set("annotation", comentarios);
     }    
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
+    }  
 }

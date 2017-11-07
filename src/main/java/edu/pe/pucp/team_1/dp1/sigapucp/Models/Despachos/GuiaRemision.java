@@ -13,8 +13,14 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("GuiasRemision")
+@Table("guiasremision")
 @IdName("guia_id")
 public class GuiaRemision extends Model{
-    
+ 
+    public enum ESTADO
+    {
+        PENDIENTE,
+        ENPROCESO,
+        COMPLETA
+    }        
 }

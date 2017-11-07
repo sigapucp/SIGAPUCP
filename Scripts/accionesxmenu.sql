@@ -29,6 +29,7 @@ insert into accionesxmenus values (26,'VIW',3,'Se ingresa al menu de Guia de Rem
 insert into accionesxmenus values (27,'VIW',3,'Se ingresa al tu Cuenta');
 insert into accionesxmenus values (28,'VIW',3,'Se ingresa a menu de Envios');
 insert into accionesxmenus values (29,'VIW',3,'Se ingresa a menu de Simulaciones');
+insert into accionesxmenus values (30,'VIW',3,'Se ingresa a menu de Kardex');
 
 insert into accionesxmenus values (5,'CRE',4,'Se crea un nuevo almacen');
 insert into accionesxmenus values (6,'CRE',4,'Se crea una nueva categoria de producto');
