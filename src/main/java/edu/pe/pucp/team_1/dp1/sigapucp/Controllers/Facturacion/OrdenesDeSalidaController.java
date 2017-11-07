@@ -11,7 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenSalida;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalida;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
