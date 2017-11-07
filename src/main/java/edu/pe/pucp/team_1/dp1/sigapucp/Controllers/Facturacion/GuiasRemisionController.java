@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
+import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -84,23 +85,9 @@ public class GuiasRemisionController extends Controller{
     private OrdenCompra pedidoSeleccionado;
 
     
-    public GuiasRemisionController(){
-        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
-        infoController = new InformationAlertController();
-        pedidoSeleccionado = null;
-        crearNuevo = false;
-    }
+
     
-    public void llenar_tabla_envios(){
-        List<Envio> temp_envios = Envio.findAll();
-        envios.clear();
-        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
-        columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
-        columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
-        envios.addAll(temp_envios);
-        tabla_envios.setItems(envios);
-        
-    }
+
     public void inhabilitar_formulario(){
         pedido_form.setDisable(true);
     }
@@ -147,10 +134,26 @@ public class GuiasRemisionController extends Controller{
         } 
 */
     }
-    public void initialize(DocFlavor.URL location, ResourceBundle resources) {
+    public void llenar_tabla_envios(){
+        List<Envio> temp_envios = Envio.findAll();
+        envios.addAll(temp_envios);
+        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
+        columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
+        columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
+        tabla_envios.setItems(envios);
+    }
+
+    public GuiasRemisionController(){
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
+        infoController = new InformationAlertController();
+        pedidoSeleccionado = null;
+        crearNuevo = false;
+    }
+
+    public void initialize(URL location, ResourceBundle resources) {
         try{
             llenar_tabla_envios();
-            inhabilitar_formulario();
+            //inhabilitar_formulario();
         }catch(Exception e)    {
             infoController.show("No se pudo inicializar el menu de Ordenes de Compra: " + e.getMessage());
         }
