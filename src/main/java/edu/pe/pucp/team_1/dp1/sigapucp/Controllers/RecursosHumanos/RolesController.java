@@ -330,6 +330,7 @@ public class RolesController extends Controller{
         infoController.show("El Rol ha sido editado satisfactoriamente");        
         }
         catch(Exception e){
+            infoController.show("No se ha podido guardar el rol: " + e.getMessage());
            Base.rollbackTransaction();
         }                
     }

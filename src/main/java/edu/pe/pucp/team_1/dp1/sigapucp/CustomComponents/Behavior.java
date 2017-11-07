@@ -21,4 +21,6 @@ public interface Behavior {
     public void clearAndSaveTempTiles(TreeMap<Integer, List<GridTile>> tiles);
     public Boolean isNotTileSavedOrActive(int i_index, int j_index);
     public void addToSavedTiles(int i_index, int j_index);
+    public void startDrag(int i_index,int j_index);
+    public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles,int i_index,int j_index);
 }

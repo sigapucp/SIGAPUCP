@@ -53,5 +53,13 @@ public class NullDrawing implements Behavior{
     public void addToSavedTiles(int i_index, int j_index) {
         
     }
+
+    @Override
+    public void startDrag(int i_index, int j_index) {       
+    }
+
+    @Override
+    public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles,int i_index, int j_index) {        
+    }
     
 }

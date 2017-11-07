@@ -26,6 +26,8 @@ public class GridTile extends StackPane {
     Rectangle border;
     private Event<tileArgs> releaseTileEvent;
     private Event<tileArgs> activeTileEvent;
+    private Event<tileArgs> pressedTileEvent;
+    private Event<tileArgs> dragTileEvent;
     
     public GridTile(double width, double height,  int x, int y) {
         tile_width = width;
@@ -34,6 +36,8 @@ public class GridTile extends StackPane {
         y_cord = y;
         releaseTileEvent = new Event<>();
         activeTileEvent = new Event<>();
+        pressedTileEvent = new Event<>();
+        dragTileEvent = new Event<>(); 
         Text text = new Text();
         
         text.setFont(Font.font(14));
@@ -51,16 +55,27 @@ public class GridTile extends StackPane {
         // Se ejecuta cuando solo en el primer tile seleccionado
         setOnMousePressed((event) -> {
             activeTile(true);
+            tileArgs args = new tileArgs();
+            args.setX_cord(x_cord);
+            args.setY_cord(y_cord);
+           
+            pressedTileEvent.fire(this, args);
         });
         
         // Se ejecuta cuando solo en el primer tile seleccionado
         setOnDragDetected((event) -> {
             startFullDrag();
+            
         });
         
         // Se ejecuta cuando entra a un nuevo tile
         setOnMouseDragEntered((event) -> {
             activeTile(true);
+             tileArgs args = new tileArgs();
+            args.setX_cord(x_cord);
+            args.setY_cord(y_cord);
+           
+            dragTileEvent.fire(this, args);            
         });
         
         // Siempre se ejecuta desde el primer tile seleccionado
@@ -81,6 +96,16 @@ public class GridTile extends StackPane {
         return activeTileEvent;
     }
     
+    public Event<tileArgs> getPressedEvent() {
+        return pressedTileEvent;
+    }
+    
+     public Event<tileArgs> getDragEvent() {
+        return dragTileEvent;
+    }
+    
+    
+    
     public void activeTile(boolean fromEvent) {
         if(fromEvent) {
             tileArgs args = new tileArgs();
@@ -88,8 +113,7 @@ public class GridTile extends StackPane {
             args.setY_cord(y_cord);
 
             activeTileEvent.fire(this, args);
-        }
-        
+        }        
         border.setFill(Color.RED);
     }
     
