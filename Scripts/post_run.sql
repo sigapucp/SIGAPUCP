@@ -7,6 +7,7 @@ alter table ordenescompra alter column cotizacion_id drop not null;
 
 alter table fletes alter column tipo_id drop not null;
 alter table fletes alter column categoria_id drop not null;
+alter table fletes alter column moneda_id drop not null;
 
 alter table promociones alter column tipo_id drop not null;
 alter table promociones alter column categoria_id drop not null;
