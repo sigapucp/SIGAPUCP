@@ -47,7 +47,7 @@ public class Punto {
         y = gY;
         anchorPoint = gAnchor;
     }
-    
+      
     public Boolean esValido(int height,int width)
     {
         return (x>=0&&x<width)&&(y>=0&&y<height);
@@ -62,7 +62,8 @@ public class Punto {
     public Punto(Punto gPunto)
     {
         x = gPunto.x;
-        y = gPunto.y;               
+        y = gPunto.y;       
+        dir = gPunto.dir;
     }
     
     public Boolean isEqual(Punto p)

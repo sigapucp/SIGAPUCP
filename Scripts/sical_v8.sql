@@ -437,6 +437,7 @@ CREATE TABLE Racks
  y_ancla2    INT NOT NULL ,
  estado      VARCHAR(20) NOT NULL ,
  tipo        VARCHAR(50) NOT NULL ,
+ capacidad   DECIMAL(10,2),
 
  CONSTRAINT pk_249 PRIMARY KEY  (rack_cod , almacen_id , rack_id , almacen_cod ),
  CONSTRAINT fk_319 FOREIGN KEY (almacen_cod, almacen_id)
@@ -1084,6 +1085,7 @@ CREATE TABLE AlmacenAreaZs
  capacidad_restante DECIMAL(10,2) NOT NULL ,
  level              INT NOT NULL ,
  state              CHAR(1) NOT NULL ,
+ capacity           DECIMAL(10,2),
 
  CONSTRAINT pk_195 PRIMARY KEY  (almacen_z_id , almacen_xy_id ),
  CONSTRAINT fk_1906 FOREIGN KEY (almacen_xy_id)
