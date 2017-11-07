@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.OrdenesDeSalidaController">
+   <children>
+      <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
+         <children>
+            <TableView fx:id="tabla_salidas" layoutX="13.0" layoutY="219.0" prefHeight="301.0" prefWidth="226.0">
+               <columns>
+                  <TableColumn fx:id="columna_cliente_salida" prefWidth="65.0" text="Cliente" />
+                  <TableColumn fx:id="columna_cod_salida" prefWidth="93.0" text="Orden Salilda" />
+                  <TableColumn fx:id="columna_pedido_salida" prefWidth="67.0" text="Pedido" />
+               </columns>
+            </TableView>
+            <TextField fx:id="salida_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
+            <Button layoutX="136.0" layoutY="178.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
+            <Line endX="100.0" layoutX="136.0" layoutY="50.0" startX="-100.0" />
+            <TextField fx:id="cliente_buscar" layoutX="119.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
+            <Label layoutX="20.0" layoutY="104.0" prefHeight="21.0" prefWidth="114.0" text="Cliente">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="20.0" layoutY="70.0" prefHeight="21.0" prefWidth="125.0" text="Ordenes Salida">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Pane layoutX="6.0" prefHeight="50.0" prefWidth="250.0">
+               <children>
+                  <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="30.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Imagenes/search_icon.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" onAction="#visualizar_orden_salida" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+            <TextField fx:id="pedido_buscar" layoutX="119.0" layoutY="137.0" prefHeight="27.0" prefWidth="114.0" />
+            <Label layoutX="20.0" layoutY="141.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Pedido">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="envio_formulario" layoutX="260.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
+         <children>
+            <AnchorPane layoutX="1.0" prefHeight="51.0" prefWidth="750.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label fx:id="LabelPedido" layoutX="38.0" layoutY="11.0" text="Detalle Orden de salida:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Line endX="600.0" layoutX="133.0" layoutY="49.0" startX="-100.0" />
+                  <Label layoutX="117.0" layoutY="11.0">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="pedidoTable" layoutY="263.0" maxHeight="317.0" maxWidth="750.0" prefHeight="301.0" prefWidth="750.0">
+               <children>
+                  <TableView fx:id="tabla_envios_salida" layoutX="15.0" layoutY="50.0" prefHeight="246.0" prefWidth="540.0">
+                     <columns>
+                        <TableColumn fx:id="columna_envio_cod_salida" prefWidth="149.0" text="Código" />
+                        <TableColumn fx:id="columna_envio_cliente_salida" prefWidth="123.0" text="Cliente" />
+                        <TableColumn fx:id="columna_envio_pedido_salida" prefWidth="131.0" text="Pedido" />
+                        <TableColumn fx:id="columna_envio_estado_salida" prefWidth="136.0" text="Estado" />
+                     </columns>
+                     <columnResizePolicy>
+                     </columnResizePolicy>
+                  </TableView>
+                  <TitledPane animated="false" collapsible="false" layoutX="564.0" layoutY="50.0" minHeight="-Infinity" prefHeight="246.0" prefWidth="163.0" text="Acciones" AnchorPane.bottomAnchor="5.0">
+                     <content>
+                        <AnchorPane prefHeight="251.0" prefWidth="158.0">
+                           <children>
+                              <Button layoutX="61.0" layoutY="39.0" mnemonicParsing="false" onAction="#agregar_envio" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="39.0" />
+                              <Button layoutX="61.0" layoutY="140.0" mnemonicParsing="false" onAction="#eliminar_envio" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Label layoutX="42.0" layoutY="100.0" text="Agregar Envio" />
+                              <Label layoutX="46.0" layoutY="194.0" text="Eliminar Envio" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+                  <Label layoutX="12.0" layoutY="12.0" text="Tipo salida">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="tipos" layoutX="90.0" layoutY="8.0" prefWidth="150.0" />
+                  <Label layoutX="407.0" layoutY="11.0" text="Descripción">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="descripcion_envio" layoutX="491.0" layoutY="7.0" prefHeight="25.0" prefWidth="237.0" />
+                  <Label layoutX="252.0" layoutY="12.0" text="Código">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="codigo_salida" layoutX="305.0" layoutY="10.0" prefHeight="25.0" prefWidth="87.0" />
+               </children>
+            </AnchorPane>
+            <TitledPane animated="false" collapsible="false" layoutX="1.0" layoutY="61.0" prefHeight="192.0" prefWidth="737.0" text="Informacion del envio">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="185.0" prefWidth="735.0">
+                     <children>
+                        <TableView fx:id="tabla_productos" layoutX="14.0" layoutY="32.0" prefHeight="123.0" prefWidth="539.0">
+                          <columns>
+                            <TableColumn fx:id="envio_cod_producto" prefWidth="132.0" text="Código" />
+                            <TableColumn fx:id="envio_nombre_producto" minWidth="0.0" prefWidth="135.0" text="Nombre" />
+                              <TableColumn fx:id="envio_desc_producto" minWidth="0.0" prefWidth="136.0" text="Descripcion" />
+                          </columns>
+                        </TableView>
+                        <Label layoutX="15.0" text="Productos">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="buscar_envio_button" layoutX="570.0" layoutY="10.0" mnemonicParsing="false" onAction="#handle_buscar_pedido" prefHeight="25.0" prefWidth="145.0" text="Buscar envio">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="571.0" layoutY="45.0" text="Código Envio" />
+                        <Label layoutX="567.0" layoutY="100.0" text="Código Pedido" />
+                        <TextField fx:id="envio_dato" layoutX="569.0" layoutY="69.0" />
+                        <TextField fx:id="pedido_dato" layoutX="568.0" layoutY="125.0" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
