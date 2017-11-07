@@ -69,9 +69,8 @@ public class AgregarEnviosController implements  Initializable{
             return;            
         }
         devolverEnvioEvent.fire(this, new agregarEnviosArgs(envio_busqueda));
-        //AQUI HAY UN ERROR :S
-        //Stage stage = (Stage) boton_agregar_envio.getScene().getWindow();    
-        //stage.close();        
+        Stage stage = (Stage) boton_agregar_envio.getScene().getWindow();    
+        stage.close();        
     }
     
     public void limpiar_tabla_envios(){
