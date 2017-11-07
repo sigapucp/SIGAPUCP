@@ -109,16 +109,6 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Label layoutX="410.0" layoutY="114.0" text="Categoría producto">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="producto_categoria" layoutX="551.0" layoutY="108.0">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
          </children>
       </AnchorPane>
    </children>

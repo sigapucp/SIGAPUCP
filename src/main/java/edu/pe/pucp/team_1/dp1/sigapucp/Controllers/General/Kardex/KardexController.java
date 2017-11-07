@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Kardex;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalidaxProductoFinal;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalida;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
@@ -59,8 +60,6 @@ public class KardexController extends Controller {
     @FXML
     private TextField producto_codigo;
     @FXML
-    private TextField producto_categoria;
-    @FXML
     private TableView<Kardex> tablaKardex;
     @FXML
     private TableColumn<Kardex, String> columna_fecha;
@@ -87,7 +86,7 @@ public class KardexController extends Controller {
     private TipoProducto producto_seleccionado ;
     private final ObservableList<Kardex> masterDatakardex = FXCollections.observableArrayList();
     private List<OrdenEntradaxProducto> entradas;
-    private List<OrdenSalidaxProductoFinal> salidas;
+    private List<OrdenSalida> salidas;
     
     public void inhabilitar_formulario(){
         kardexProducto.setDisable(true);
@@ -109,27 +108,103 @@ public class KardexController extends Controller {
         tablaProductos.getItems().addAll(masterData);
     }
     
+    private Double obtenerPrecio(String id, String codigo, Date fecha){
+        Double precio = 0.0;
+        List<Precio> precios = Precio.findAll();
+        
+        for (Precio p : precios){
+            if ((p.get("tipo_id").toString().equals(id)) && (p.get("tipo_cod").toString().equals(codigo)) && (fecha.after(p.getDate("fecha_inicio")) && (fecha.before(p.getDate("fecha_fin"))))){
+                precio = p.getDouble("precio");
+                break;
+            }
+        }        
+        return precio;
+    }
+    
     private void cargarEntradas(){
         entradas = OrdenEntradaxProducto.where("tipo_id = ? AND tipo_cod = ?",producto_seleccionado.get("tipo_id"),producto_seleccionado.get("tipo_cod"));
         for (OrdenEntradaxProducto entrada_producto: entradas){
             OrdenEntrada entrada_padre = OrdenEntrada.findFirst("orden_entrada_id = ?", entrada_producto.get("orden_entrada_id"));
-            
+            //fecha
             Date auxfecha = entrada_padre.getDate("fecha_emision");
             String fecha = new SimpleDateFormat("yyyy-MM-dd").format(auxfecha);
+            //detalle
             String detalle = entrada_padre.getString("tipo");
-            //String ent_cant
+            //Cantidad 
+            Integer aux_ent_cant = entrada_producto.getInteger("cantidad");
+            String ent_cant = aux_ent_cant.toString();
             
-            //masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
+            Double precio = obtenerPrecio(entrada_producto.get("tipo_id").toString(), entrada_producto.getString("tipo_cod"), auxfecha);
+            //Costo
+            Double aux_ent_costo = aux_ent_cant * precio;
+            String ent_costo = aux_ent_costo.toString();
+            
+            String sal_cant = "";
+            String sal_costo = "";
+            
+            String exi_cant = "" ; //Obtener de Stock
+            String exi_costo = ""; 
+            
+            masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
         }
     }
     
     private void cargarSalidas(){
-        salidas = OrdenSalidaxProductoFinal.where("tipo_id = ? AND tipo_cod = ?",producto_seleccionado.get("tipo_id"),producto_seleccionado.get("tipo_cod"));
+        salidas = OrdenSalida.findAll();
+        for (OrdenSalida orden_salida: salidas){
+            
+            List<OrdenesSalidaxEnvio> ordenesXenvio = OrdenesSalidaxEnvio.where("salida_id = ?", orden_salida.getInteger("salida_id"));
+            Integer aux_sal_cant = 0;
+            
+            for (OrdenesSalidaxEnvio envio : ordenesXenvio){
+                Integer id = envio.getInteger("orden_compra_id");
+                Integer id_client = envio.getInteger("client_id");
+                String cod = envio.getString("orden_compra_cod");
+                
+                OrdenCompraxProducto producto = OrdenCompraxProducto.findFirst("client_id = ? AND orden_compra_id = ? AND orden_compra_cod = ? AND tipo_id = ? AND tipo_cod = ?",id_client,id,cod,producto_seleccionado.getInteger("tipo_id"),producto_seleccionado.getString("tipo_cod") );
+                
+                aux_sal_cant += producto.getInteger("cantidad");
+            }
+            
+            //fecha
+            Date auxfecha = orden_salida.getDate("last_data_change");
+            String fecha = new SimpleDateFormat("yyyy-MM-dd").format(auxfecha);
+            //detalle
+            String detalle = orden_salida.getString("tipo");
+             
+            String ent_cant = "";
+            String ent_costo = "";            
+            
+            //Cantidad
+            
+            String sal_cant = aux_sal_cant.toString();
+            
+            Double precio = obtenerPrecio(producto_seleccionado.get("tipo_id").toString(), producto_seleccionado.getString("tipo_cod"), auxfecha);
+            
+            //Costo
+            Double aux_sal_costo = aux_sal_cant * precio;
+            String sal_costo = aux_sal_costo.toString();
+            
+            String exi_cant = "" ; //Obtener de Stock
+            String exi_costo = ""; 
+            
+            masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
+        }
     }
     
     private void mostrarEntradasYSalidas(){
+        masterDatakardex.clear();
         cargarEntradas();
         cargarSalidas();
+        
+        columna_fecha.setCellValueFactory(cellData -> cellData.getValue().getFecha());
+        columna_detalle.setCellValueFactory(cellData -> cellData.getValue().getDetalle());
+        columna_ent_cant.setCellValueFactory(cellData -> cellData.getValue().getEnt_cant());
+        columna_ent_costo.setCellValueFactory(cellData -> cellData.getValue().getEnt_costo());
+        columna_sal_cant.setCellValueFactory(cellData -> cellData.getValue().getSal_cant());
+        columna_sal_costo.setCellValueFactory(cellData -> cellData.getValue().getSal_costo());
+        columna_exi_cant.setCellValueFactory(cellData -> cellData.getValue().getExi_cant());
+        columna_exi_costo.setCellValueFactory(cellData -> cellData.getValue().getExi_costo());
         
         FilteredList<Kardex> filteredData = new FilteredList<>(masterDatakardex, p -> true);
         tablaKardex.setItems(filteredData);
@@ -173,8 +248,7 @@ public class KardexController extends Controller {
     public KardexController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         producto_seleccionado = null;
-        infoController = new InformationAlertController();
-        
+        infoController = new InformationAlertController();        
     }
     
     @Override

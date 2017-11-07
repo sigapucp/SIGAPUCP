@@ -18,7 +18,7 @@ import org.javalite.activejdbc.annotations.Table;
 public class OrdenSalida extends Model{
     public enum TIPO
     {
-        Compra,
+        Venta,
         Devolucion,
         Encuentro,
         Otras
