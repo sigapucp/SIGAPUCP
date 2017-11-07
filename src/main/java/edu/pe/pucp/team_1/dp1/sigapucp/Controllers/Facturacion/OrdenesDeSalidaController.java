@@ -117,12 +117,20 @@ public class OrdenesDeSalidaController  extends Controller{
     Stage modal_stage = new Stage();    
 
     private void limpia_formulario(){
-        
+        try{
+            codigo_salida.clear();
+            descripcion_envio.clear();
+            masterDataEnvio.clear();            
+        }catch (Exception e){
+            infoController.show("Ha ocurrido un error : " + e.getMessage());  
+        }
+
     }
     private void setear_datos_salida(){
         llenar_combo_box_tipo();
         tipos.setValue(salida_seleccionada.getString("tipo"));
         codigo_salida.setText(salida_seleccionada.getString("salida_cod"));
+        codigo_salida.setEditable(false);
         descripcion_envio.setText(salida_seleccionada.getString("descripcion"));
     }
     
@@ -139,6 +147,7 @@ public class OrdenesDeSalidaController  extends Controller{
     
     @FXML
     private void visualizar_orden_salida(ActionEvent event) throws  IOException{
+        crear_nuevo = false;
         salida_seleccionada = tabla_salidas.getSelectionModel().getSelectedItem();
         if (salida_seleccionada == null){
             infoController.show("Salida no seleccionada");  
@@ -222,19 +231,34 @@ public class OrdenesDeSalidaController  extends Controller{
 
     }
     
+    public void eliminar_orden_salida_envio(){
+        OrdenesSalidaxEnvio.delete("salida_id = ?", salida_seleccionada.getId());
+    }
+    
+    public void editar_orden_salida(){
+        try{
+            Base.openTransaction();  
+            salida_seleccionada.set("descripcion", descripcion_envio.getText());
+            salida_seleccionada.set("tipo",tipos.getSelectionModel().getSelectedItem());
+            salida_seleccionada.saveIt();
+            eliminar_orden_salida_envio();
+            insertar_orden_salida_envio(salida_seleccionada);
+            Base.commitTransaction();                        
+        }catch (Exception e){
+            infoController.show("No se pudo editar la orden de salida : " + e.getMessage()); 
+        }
+    }
     
     @Override
     public void guardar(){
         if (crear_nuevo){
             crear_envio();
         } else {
-            /*
-            if ( == null){ 
-                infoController.show("No ha seleccionado ninguna Orden de Compra");            
+            if (salida_seleccionada == null){ 
+                infoController.show("No ha seleccionado ninguna Orden de Salida"); 
                 return;
             }
-            editarPedido(pedidoSeleccionado);
-            */
+            editar_orden_salida();
         }
         crear_nuevo = false;
         llenar_orden_salida_tabla();        
