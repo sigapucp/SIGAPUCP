@@ -173,6 +173,7 @@ public class KardexController extends Controller {
             
             List<OrdenesSalidaxEnvio> ordenesXenvio = OrdenesSalidaxEnvio.where("salida_id = ?", orden_salida.getInteger("salida_id"));
             Integer aux_sal_cant = 0;
+            Double aux_sal_costo = 0.0;
             
             for (OrdenesSalidaxEnvio envio : ordenesXenvio){
                 Integer id = envio.getInteger("orden_compra_id");
@@ -180,8 +181,10 @@ public class KardexController extends Controller {
                 String cod = envio.getString("orden_compra_cod");
                 
                 OrdenCompraxProducto producto = OrdenCompraxProducto.findFirst("client_id = ? AND orden_compra_id = ? AND orden_compra_cod = ? AND tipo_id = ? AND tipo_cod = ?",id_client,id,cod,producto_seleccionado.getInteger("tipo_id"),producto_seleccionado.getString("tipo_cod") );
-                
-                aux_sal_cant += producto.getInteger("cantidad");
+                if (!(producto==null)){
+                    aux_sal_cant += producto.getInteger("cantidad");
+                    aux_sal_costo += producto.getDouble("subtotal_final");
+                }
             }
             
             //fecha
@@ -196,11 +199,8 @@ public class KardexController extends Controller {
             //Cantidad
             
             String sal_cant = aux_sal_cant.toString();
-            
-            Double precio = obtenerPrecio(producto_seleccionado.get("tipo_id").toString(), producto_seleccionado.getString("tipo_cod"), auxfecha);
-            
+                        
             //Costo
-            Double aux_sal_costo = aux_sal_cant * precio;
             String sal_costo = aux_sal_costo.toString();
             
             //Stock (Existencias)
@@ -211,7 +211,8 @@ public class KardexController extends Controller {
             Double aux_exi_costo = existencias_cantidad * existencias_precio;
             String exi_costo = aux_exi_costo.toString();
             
-            masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
+            if (aux_sal_cant>0)
+                masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
         }
     }
     
