@@ -16,5 +16,11 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("GuiasRemision")
 @IdName("guia_id")
 public class GuiaRemision extends Model{
-    
+ 
+    public enum ESTADO
+    {
+        PENDIENTE,
+        ENPROCESO,
+        COMPLETA
+    }        
 }

@@ -62,7 +62,7 @@
          <children>
             <Pane prefHeight="50.0" prefWidth="740.0">
                <children>
-                  <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
+                  <Label layoutX="78.0" layoutY="12.0" text="Detalle">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -110,30 +110,24 @@
                                  <content>
                                     <AnchorPane prefHeight="100.0" prefWidth="677.0">
                                        <children>
-                                          <Label layoutX="317.0" layoutY="26.0" text="Fecha de inicio del traslado">
+                                          <Label layoutX="23.0" layoutY="26.0" text="Fecha de traslado">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <DatePicker layoutX="494.0" layoutY="23.0" prefHeight="25.0" prefWidth="160.0" />
-                                          <Label layoutX="23.0" layoutY="25.0" prefHeight="20.0" prefWidth="65.0" text="Número">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField layoutX="148.0" layoutY="23.0" prefHeight="25.0" prefWidth="163.0" />
+                                          <DatePicker fx:id="fecha_remision" layoutX="153.0" layoutY="24.0" prefHeight="25.0" prefWidth="160.0" />
                                           <Label layoutX="23.0" layoutY="62.0" prefHeight="20.0" prefWidth="114.0" text="Punto de partida">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField layoutX="148.0" layoutY="60.0" prefHeight="25.0" prefWidth="163.0" />
-                                          <Label layoutX="317.0" layoutY="62.0" prefHeight="20.0" prefWidth="114.0" text="Punto de llegada">
+                                          <TextField fx:id="partida_remision" layoutX="152.0" layoutY="60.0" prefHeight="25.0" prefWidth="163.0" />
+                                          <Label layoutX="366.0" layoutY="62.0" prefHeight="20.0" prefWidth="114.0" text="Punto de llegada">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField layoutX="491.0" layoutY="60.0" prefHeight="25.0" prefWidth="163.0" />
+                                          <TextField fx:id="llegada_remision" layoutX="491.0" layoutY="60.0" prefHeight="25.0" prefWidth="163.0" />
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -152,14 +146,14 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField layoutX="190.0" layoutY="19.0" prefHeight="25.0" prefWidth="138.0" />
-                                          <TextField layoutX="190.0" layoutY="59.0" prefHeight="25.0" prefWidth="459.0" />
+                                          <TextField fx:id="marca_vehiculo_remision" layoutX="190.0" layoutY="19.0" prefHeight="25.0" prefWidth="138.0" />
+                                          <TextField fx:id="licencia_remision" layoutX="190.0" layoutY="59.0" prefHeight="25.0" prefWidth="459.0" />
                                           <Label layoutX="378.0" layoutY="21.0" text="Placa del vehículo">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField layoutX="513.0" layoutY="19.0" prefHeight="25.0" prefWidth="138.0" />
+                                          <TextField fx:id="placa_vehiculo_remision" layoutX="513.0" layoutY="19.0" prefHeight="25.0" prefWidth="138.0" />
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -176,7 +170,7 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="338.0" prefWidth="670.0">
                                        <children>
-                                          <TableView fx:id="TablaProductos" layoutX="14.0" layoutY="29.0" prefHeight="303.0" prefWidth="675.0">
+                                          <TableView fx:id="tabla_productos" layoutX="14.0" layoutY="29.0" prefHeight="303.0" prefWidth="675.0">
                                              <columns>
                                                 <TableColumn fx:id="columna_codigo" prefWidth="89.0" resizable="false" text="Código" />
                                                 <TableColumn fx:id="columna_nombre" prefWidth="172.0" resizable="false" text="Nombre" />
