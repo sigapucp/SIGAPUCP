@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -83,10 +84,7 @@ public class GuiasRemisionController extends Controller{
     private final ObservableList<Envio> envios = FXCollections.observableArrayList();
     private Boolean crearNuevo = false;    
     private OrdenCompra pedidoSeleccionado;
-
-    
-
-    
+    private Envio envio_seleccionado;
 
     public void inhabilitar_formulario(){
         pedido_form.setDisable(true);
@@ -117,22 +115,56 @@ public class GuiasRemisionController extends Controller{
         //completar_productos();
     }
     
+    public void setear_cliente(){
+        Cliente cliente_temp = Cliente.findById(envio_seleccionado.getInteger("client_id"));
+        String tipo_cliente = cliente_temp.getString("tipo_cliente");
+        String dni = cliente_temp.getString("dni");
+        String ruc = cliente_temp.getString("ruc");
+   
+        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
+        {
+            dni_cliente.setText(dni);
+            ruc_cliente.setDisable(true);
+        }else
+        {
+            ruc_cliente.setText(ruc);
+            dni_cliente.setDisable(true);
+        }
+        nombre_cliente.setText(cliente_temp.getString("nombre"));
+        nombre_cliente.setEditable(false);
+        dni_cliente.setEditable(false);
+        ruc_cliente.setEditable(false);
+    }
+    
+    public void setear_productos(){
+        try{
+            ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
+            productos.clear();
+            List<OrdenCompraxProducto> productos_agregados = OrdenCompraxProducto.where("orden_compra_cod = ?", envio_seleccionado.get("orden_compra_cod"));
+            productos.addAll(productos_agregados);
+            columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+            columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+            columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+            columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            tabla_productos.setItems(productos);
+        }catch(Exception e){
+            System.out.println(e);
+        }           
+    }
+    
     @FXML
-    public void visualizar_pedido(ActionEvent event){
-        /*
-         crearNuevo = false;
-        try {
-            pedidoSeleccionado = tabla_pedido.getSelectionModel().getSelectedItem();
-            if (pedidoSeleccionado == null) 
-            {
-                infoController.show("No ha seleccionado ningun Pedido");
-            }
-
-          mostrar_pedido(pedidoSeleccionado);                            
-        } catch (Exception e) {
-            infoController.show("Error al mostrar el pedido: " + e.getMessage());
-        } 
-*/
+    public void visualizar_envio(ActionEvent event){
+      envio_seleccionado = tabla_envios.getSelectionModel().getSelectedItem();
+        if (envio_seleccionado == null){
+            infoController.show("Salida no seleccionada");  
+            return;            
+        }
+        try{
+            setear_cliente();
+            setear_productos();
+        }catch (Exception e){
+            infoController.show("Ocurrio un error durante la visualizacion del envio : " + e.getMessage());
+        }
     }
     public void llenar_tabla_envios(){
         List<Envio> temp_envios = Envio.findAll();
