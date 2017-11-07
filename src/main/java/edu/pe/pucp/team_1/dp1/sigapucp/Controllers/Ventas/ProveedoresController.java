@@ -242,7 +242,10 @@ public class ProveedoresController extends Controller{
     public void cargar_tabla_index(){
         masterData.clear();
         for( Proveedor cliente : proveedores){
-            masterData.add(cliente);
+            if (cliente.getString("status").equals("activo")){
+                masterData.add(cliente);
+            }
+            
         }
         tabla_proveedor.setEditable(false);
         columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("provuder_ruc")));
@@ -270,7 +273,31 @@ public class ProveedoresController extends Controller{
             System.out.println(e);
         }
     }  
-    
+    @Override
+    public void desactivar(){
+        if (proveedor_seleccionado==null){
+            infoController.show("No se selecciono un proveedor");
+            return;
+        }
+        try{
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proveedores, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara el proveedor con código: " + proveedor_nombre.getText(), "¿Desea continuar?")) return;
+            Base.openTransaction();
+            proveedor_seleccionado.set("status",Proveedor.ESTADO.INACTIVO.name());
+            proveedor_seleccionado.saveIt();
+            Base.commitTransaction();
+            infoController.show("El proveedor ha sido deshabilitado");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Proveedores ,this.usuarioActual);
+            limpiar_formulario();
+            cargar_tabla_index();
+        }catch(Exception e){
+            infoController.show("El proveedor contiene errores: " + e);
+            Base.rollbackTransaction();
+        }
+    }    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO      

@@ -212,12 +212,22 @@ public class UsuariosController extends Controller{
             return;
         }
         try {
+           if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            } 
+           if(!confirmatonController.show("Se deshabilitara la categoria con nombre: " + VerNombre.getText(), "¿Desea continuar?")) return;
            Base.openTransaction();
            
            usuarioSelecionado.set("estado",Usuario.ESTADO.INACTIVO.name());
            usuarioSelecionado.saveIt();
 
            Base.commitTransaction();
+           infoController.show("El usuario ha sido deshabilitado");
+           AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Usuarios ,this.usuarioActual);
+           limpiarVerUsuario();
+           RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
+           //cargar
         } catch (Exception e) {
            infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();

@@ -179,13 +179,23 @@ public class RolesController extends Controller{
             return;
         }
         try {
-           Base.openTransaction();
+           if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Roles, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara el rol con código: " + VerNombre.getText(), "¿Desea continuar?")) return;
+            Base.openTransaction();
            
            rolSelecionado.set("estado",Rol.ESTADO.INACTIVO.name());
            rolSelecionado.saveIt();
 
            Base.commitTransaction();
+           infoController.show("La categoria ha sido deshabilitada");
+           AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Categorias ,this.usuarioActual);
+           limpiarVerRol();
+           RefrescarTabla(Rol.where("estado='ACTIVO'"));
         } catch (Exception e) {
+            infoController.show("El rol contiene errores: " + e);
            Base.rollbackTransaction();
         }
      }
@@ -230,7 +240,7 @@ public class RolesController extends Controller{
             editarRol(rolSelecionado);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Roles ,this.usuarioActual);
         }                
-        RefrescarTabla(Rol.findAll());
+        RefrescarTabla(Rol.where("estado='ACTIVO'"));
     }
     
      private void crearRol()
