@@ -7,18 +7,24 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Kardex;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalidaxProductoFinal;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
 import java.net.URL;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -35,32 +41,53 @@ public class KardexController extends Controller {
     
     @FXML
     private AnchorPane kardexProducto;
-    
-    @FXML
-    private TableView<TipoProducto> tablaProductos; 
-    
-    @FXML
-    private TableColumn<TipoProducto,String> ColumnaCodigoProducto;
-
-    @FXML
-    private TableColumn<TipoProducto,String> ColumnaTipoProducto;
-     
+    //Búsqueda
     @FXML
     private TextField tipoProductoBuscar;  
     @FXML
-    private TextField codigoProductoBuscar;    
+    private TextField codigoProductoBuscar;  
+    @FXML
+    private TableView<TipoProducto> tablaProductos; 
+    @FXML
+    private TableColumn<TipoProducto,String> ColumnaCodigoProducto;
+    @FXML
+    private TableColumn<TipoProducto,String> ColumnaTipoProducto;
+    
+    //Formulario    
     @FXML
     private TextField producto_nombre;
     @FXML
     private TextField producto_codigo;
     @FXML
     private TextField producto_categoria;
+    @FXML
+    private TableView<Kardex> tablaKardex;
+    @FXML
+    private TableColumn<Kardex, String> columna_fecha;
+    @FXML
+    private TableColumn<Kardex, String> columna_detalle;
+    @FXML
+    private TableColumn<Kardex, String> columna_ent_cant;
+    @FXML
+    private TableColumn<Kardex, String> columna_ent_costo;
+    @FXML
+    private TableColumn<Kardex, String> columna_sal_cant;
+    @FXML
+    private TableColumn<Kardex, String> columna_sal_costo;
+    @FXML
+    private TableColumn<Kardex, String> columna_exi_cant;
+    @FXML
+    private TableColumn<Kardex, String> columna_exi_costo;
     
     
+    //Adicionales
     private List<TipoProducto> tipos;
     private final ObservableList<TipoProducto> masterData = FXCollections.observableArrayList();
     private InformationAlertController infoController;
     private TipoProducto producto_seleccionado ;
+    private final ObservableList<Kardex> masterDatakardex = FXCollections.observableArrayList();
+    private List<OrdenEntradaxProducto> entradas;
+    private List<OrdenSalidaxProductoFinal> salidas;
     
     public void inhabilitar_formulario(){
         kardexProducto.setDisable(true);
@@ -80,21 +107,43 @@ public class KardexController extends Controller {
         ColumnaTipoProducto.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         ColumnaCodigoProducto.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
         tablaProductos.getItems().addAll(masterData);
+    }
+    
+    private void cargarEntradas(){
+        entradas = OrdenEntradaxProducto.where("tipo_id = ? AND tipo_cod = ?",producto_seleccionado.get("tipo_id"),producto_seleccionado.get("tipo_cod"));
+        for (OrdenEntradaxProducto entrada_producto: entradas){
+            OrdenEntrada entrada_padre = OrdenEntrada.findFirst("orden_entrada_id = ?", entrada_producto.get("orden_entrada_id"));
+            
+            Date auxfecha = entrada_padre.getDate("fecha_emision");
+            String fecha = new SimpleDateFormat("yyyy-MM-dd").format(auxfecha);
+            String detalle = entrada_padre.getString("tipo");
+            //String ent_cant
+            
+            //masterDatakardex.add(new Kardex(fecha, detalle, ent_cant, ent_costo, sal_cant, sal_costo, exi_cant, exi_costo));
+        }
+    }
+    
+    private void cargarSalidas(){
+        salidas = OrdenSalidaxProductoFinal.where("tipo_id = ? AND tipo_cod = ?",producto_seleccionado.get("tipo_id"),producto_seleccionado.get("tipo_cod"));
+    }
+    
+    private void mostrarEntradasYSalidas(){
+        cargarEntradas();
+        cargarSalidas();
         
+        FilteredList<Kardex> filteredData = new FilteredList<>(masterDatakardex, p -> true);
+        tablaKardex.setItems(filteredData);
     }
     
     @FXML
     public void mostrar_detalle_tipo_producto(ActionEvent event) throws IOException{
-        try{
-            TipoProducto registro_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
-            kardexProducto.setDisable(false);
-            producto_nombre.setText(registro_seleccionado.getString("nombre"));
-            producto_codigo.setText(registro_seleccionado.getString("tipo_cod"));
-            //TODO
-        }
-        catch( Exception e){
-            System.out.println(e);
-        }        
+        producto_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
+        if(producto_seleccionado == null) return; 
+        habilitar_formulario();
+        producto_nombre.setText(producto_seleccionado.getString("nombre"));
+        producto_codigo.setText(producto_seleccionado.getString("tipo_cod"));
+        //Cargar entradas y salidas
+        mostrarEntradasYSalidas();
     }  
     
     @FXML
@@ -131,15 +180,20 @@ public class KardexController extends Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         inhabilitar_formulario();
-        tipos = null;
         tipos = TipoProducto.findAll();
         cargar_tabla_index();
+        /*
         tablaProductos.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
             if (newSelection != null){
                 producto_seleccionado = tablaProductos.getSelectionModel().getSelectedItem();                
                 tablaProductos.getSelectionModel().clearSelection();        
             }
         });        
+        */
     }
-
+    
+    @Override
+    public Menu.MENU getMenu(){
+        return Menu.MENU.Kardex;
+    }
 }
