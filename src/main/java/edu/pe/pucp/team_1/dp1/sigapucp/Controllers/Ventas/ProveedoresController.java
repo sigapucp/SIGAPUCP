@@ -34,6 +34,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -164,8 +166,12 @@ public class ProveedoresController extends Controller{
         //validamos que los campos sean los correctos
         if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre,rep. legal,telefono,ruc proveedor,anotaciones,", "¿Desea continuar?")) return;
         //csv
-        String filename = "data_proveedores.csv";
-        File file = new File(filename);
+        //csv
+        //pop up para seleccionar el archivo:
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Escoger CSV de Carga Masiva");
+        File file = fileChooser.showOpenDialog(stage);
         Boolean primera_fila = true;
         try {
             Scanner inputStream = new Scanner(file);

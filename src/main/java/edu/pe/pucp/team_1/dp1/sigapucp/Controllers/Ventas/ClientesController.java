@@ -42,6 +42,8 @@ import java.util.stream.Collectors;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -168,8 +170,11 @@ public class ClientesController extends Controller{
         //validamos que los campos sean los correctos
         if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre cliente,rep legal,telefono,ruc,dni,tipo cliente,dir. despacho, dir. facturacion, departamento,", "¿Desea continuar?")) return;
         //csv
-        String filename = "data_clientes.csv";
-        File file = new File(filename);
+        //pop up para seleccionar el archivo:
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Escoger CSV de Carga Masiva");
+        File file = fileChooser.showOpenDialog(stage);
         Boolean primera_fila = true;
         try {
             Scanner inputStream = new Scanner(file);
@@ -245,7 +250,7 @@ public class ClientesController extends Controller{
      {
         if(cliente_seleccioando==null) 
         {
-            infoController.show("No ha seleccionado un rol");            
+            infoController.show("No ha seleccionado un cliente");            
             return;
         }
         try {
