@@ -508,7 +508,7 @@ public class EnviosController extends Controller{
         try{
             ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
             ordenes_compra.clear();
-            ordenes_compra.addAll(OrdenCompra.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), OrdenCompra.ESTADO.PENDIENTE.name()).stream().map( x -> x.getString("orden_compra_cod")).collect(Collectors.toList()) );
+            ordenes_compra.addAll(OrdenCompra.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), OrdenCompra.ESTADO.ENDESPACHO.name()).stream().map( x -> x.getString("orden_compra_cod")).collect(Collectors.toList()) );
             if (ordenes_compra.isEmpty()){
                 infoController.show("El cliente no cuenta con pedidos pendientes : ");
                 limpiar_formulario();
