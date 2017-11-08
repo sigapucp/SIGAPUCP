@@ -29,7 +29,7 @@ public class Proveedor extends Model{
         int telef_contacto = (telf_contacto.equals("")) ? 0 : Integer.parseInt(telf_contacto);
         this.set("phone_number",  telef_contacto);
         this.set("provuder_ruc", ruc);
-        this.set("status", "activo");
+        this.set("status", ESTADO.ACTIVO.name());
         this.set("annotation", comentarios);
     }    
     public enum ESTADO

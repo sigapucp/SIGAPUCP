@@ -81,9 +81,9 @@ public class CategoriasController extends Controller{
     }
     
     public boolean cumple_condicion_busqueda(CategoriaProducto categoria, String codigo, String nombre){
-        boolean match = false;
+        boolean match = true;
         if ( codigo.equals("") && nombre.equals("")){
-            match = false;
+            match = true;
         }
         else {
             match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : true;
@@ -94,7 +94,7 @@ public class CategoriasController extends Controller{
     
     @FXML
     public void buscar_categoria(ActionEvent event) throws IOException{
-        categorias = CategoriaProducto.findAll();
+        categorias = CategoriaProducto.where("estado = ?", CategoriaProducto.ESTADO.ACTIVO.name());
         masterData.clear();
         
         try{
@@ -104,8 +104,9 @@ public class CategoriasController extends Controller{
                 }
             }
         }catch(Exception e){
-            System.out.println(e);
-        }                
+            infoController.show("La busqueda ha tiene errores: " + e);
+        }
+        
     }
        
     public void crear_categoria(){
@@ -121,9 +122,9 @@ public class CategoriasController extends Controller{
             deshabilitar_formulario();
             crear_nuevo = false;
         }
-        catch(Exception e){
-            System.out.println("La categoria contiene errores: "+e);    
+        catch(Exception e){    
             Base.rollbackTransaction();
+            infoController.show("El proveedor contiene errores" + e);
             crear_nuevo = true;
         }
     }
@@ -182,6 +183,7 @@ public class CategoriasController extends Controller{
     
     @Override
     public void desactivar(){
+        categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();
         if (categoria_seleccionada==null){
             infoController.show("No se selecciono una categoria");
             return;
@@ -191,7 +193,7 @@ public class CategoriasController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
-            if(!confirmatonController.show("Se deshabilitara la categoria con código: " + codigo_categoria.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se deshabilitara la categoria con código: " + categoria_seleccionada.getString("categoria_code"), "¿Desea continuar?")) return;
             Base.openTransaction();
             categoria_seleccionada.set("estado",CategoriaProducto.ESTADO.INACTIVO.name());
             categoria_seleccionada.saveIt();
@@ -211,7 +213,7 @@ public class CategoriasController extends Controller{
         tablaCategorias.getItems().clear();
         masterData.clear();
         for (CategoriaProducto categoria : categorias){
-            if (categoria.getString("estado").equals("activo")){
+            if (categoria.getString("estado").equals(CategoriaProducto.ESTADO.ACTIVO.name())){
                 masterData.add(categoria);
             }
             
@@ -224,12 +226,12 @@ public class CategoriasController extends Controller{
     @FXML
     public void mostrar_detalle_categoria(ActionEvent event) throws IOException{
         try{
-            CategoriaProducto registro_seleccionado = tablaCategorias.getSelectionModel().getSelectedItem();
+            categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();
             DetalleCategoria.setDisable(false);
-            CategoriaProducto cate = CategoriaProducto.findFirst("nombre = ?", registro_seleccionado.getString("nombre"));
-            nombre_categoria.setText(registro_seleccionado.getString("nombre"));
-            codigo_categoria.setText(registro_seleccionado.getString("categoria_code"));
-            descripcion_categoria.setText(registro_seleccionado.getString("descripcion"));
+            CategoriaProducto cate = CategoriaProducto.findFirst("nombre = ?", categoria_seleccionada.getString("nombre"));
+            nombre_categoria.setText(categoria_seleccionada.getString("nombre"));
+            codigo_categoria.setText(categoria_seleccionada.getString("categoria_code"));
+            descripcion_categoria.setText(categoria_seleccionada.getString("descripcion"));
             
         }
         catch( Exception e){
@@ -252,12 +254,6 @@ public class CategoriasController extends Controller{
         categorias = null;
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
-        tablaCategorias.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
-            if (newSelection != null){
-                categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();                
-                tablaCategorias.getSelectionModel().clearSelection();        
-            }
-        });
     }
     
     @Override

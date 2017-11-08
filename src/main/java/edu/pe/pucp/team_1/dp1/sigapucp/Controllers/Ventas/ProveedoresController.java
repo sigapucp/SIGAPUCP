@@ -105,9 +105,8 @@ public class ProveedoresController extends Controller{
             crear_nuevo = false;
         }
         catch(Exception e){
-            System.out.println(e);
             Base.rollbackTransaction();
-            infoController.show("El proveedor contiene errores"); 
+            infoController.show("El proveedor contiene errores" + e); 
             crear_nuevo = true;
         }   
         

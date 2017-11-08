@@ -842,6 +842,7 @@ public class PromocionesController extends Controller{
     
     @Override
     public void desactivar(){
+        promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
         if (promocion_seleccionada==null){
             infoController.show("No se selecciono una promocion");
             return;
