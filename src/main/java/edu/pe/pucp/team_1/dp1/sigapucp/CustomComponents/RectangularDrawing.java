@@ -33,11 +33,13 @@ public class RectangularDrawing implements Behavior {
     private int y_drag_start = 0;
     private IEvent<createAlmacenArgs> createLogicalWarehouse;
     private IEvent<EventArgs> disableGridEvent;
-    
+    private IEvent<EventArgs> drawingErrorEvent;
+
     public RectangularDrawing() {
         active_tiles = new TreeMap<>();
         temp_tiles = new TreeMap<>();
         saved_tiles = new TreeMap<>();
+        drawingErrorEvent = new Event<>();
         directionX = false;
         directionY = false;
         createLogicalWarehouse = new Event<>();
@@ -45,7 +47,7 @@ public class RectangularDrawing implements Behavior {
     }
     
     @Override
-    public Boolean checkDrawRules() {
+    public Boolean checkDrawRules(TreeMap<Integer, List<GridTile>> tiles) {
         AtomicInteger expectedNumberOfRows = new AtomicInteger(0);
         AtomicBoolean sameNumberOfRows = new AtomicBoolean(true);
                 
@@ -134,10 +136,10 @@ public class RectangularDrawing implements Behavior {
         return (active_tilesList == null || !active_tilesList.contains(j_index)) &&
                (saved_tilesList == null || !saved_tilesList.contains(j_index));
     }
-    
+
     @Override
-    public void addToSavedTiles(int i_index, int j_index) {                        
-        List<Integer> tmpList = saved_tiles.get(i_index);                
+    public void addToSavedTiles(int i_index, int j_index) {
+        List<Integer> tmpList = saved_tiles.get(i_index);
         
         if(tmpList == null) {
             tmpList = new ArrayList<>();
@@ -155,6 +157,10 @@ public class RectangularDrawing implements Behavior {
     
     public IEvent<EventArgs> getDisableGridEvent() {
         return disableGridEvent;
+    }
+
+    public IEvent<EventArgs> getDrawingErrorEvent() {
+        return drawingErrorEvent;
     }
 
     @Override
@@ -177,6 +183,11 @@ public class RectangularDrawing implements Behavior {
             {                
                 tiles.get(j).get(i).activeTile(true);
             }
-        }  
+        }
+    }
+
+    @Override
+    public void fireDrawingErrorEvent() {
+        getDrawingErrorEvent().fire(this, new EventArgs());
     }
 }
