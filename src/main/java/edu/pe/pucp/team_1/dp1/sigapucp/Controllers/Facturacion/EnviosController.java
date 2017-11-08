@@ -510,7 +510,7 @@ public class EnviosController extends Controller{
             ordenes_compra.clear();
             ordenes_compra.addAll(OrdenCompra.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), OrdenCompra.ESTADO.ENDESPACHO.name()).stream().map( x -> x.getString("orden_compra_cod")).collect(Collectors.toList()) );
             if (ordenes_compra.isEmpty()){
-                infoController.show("El cliente no cuenta con pedidos pendientes : ");
+                infoController.show("El cliente no cuenta con pedidos en despacho : ");
                 limpiar_formulario();
             }
             else{
