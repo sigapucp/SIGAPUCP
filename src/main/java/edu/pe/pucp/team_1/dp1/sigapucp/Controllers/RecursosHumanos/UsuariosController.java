@@ -44,6 +44,8 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -350,8 +352,12 @@ public class UsuariosController extends Controller{
     @Override
     public void cargar(){
         if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n codigo_usuario,nombre,apellido,telefono,mail,rol,", "¿Desea continuar?")) return;
-        String filename = "data_usuarios.csv";
-        File file = new File(filename);
+        //csv
+        //pop up para seleccionar el archivo:
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Escoger CSV de Carga Masiva");
+        File file = fileChooser.showOpenDialog(stage);
         Boolean primera_fila = true;
         try {
             Scanner inputStream = new Scanner(file);
