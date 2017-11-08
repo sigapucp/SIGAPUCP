@@ -368,13 +368,9 @@ public class EnviosController extends Controller{
             Integer extraCant = 0;
             if(!isNew && productoxenvio.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
             {
-                System.out.println("----------- hey me encontraste");
                 extraCant += cantidad_producto.getValue();
-                System.out.println(extraCant);
             }
             productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
-            System.out.println("----------------------------- hey me updeteaste");
-            System.out.println(productoxenvio);
             break;
         }    
     }
@@ -383,7 +379,6 @@ public class EnviosController extends Controller{
         Boolean isNew = false; 
         try{
             if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
-                System.out.println("-------- hey soy nuevo");
                 OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
                 productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
                 productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
@@ -397,10 +392,6 @@ public class EnviosController extends Controller{
                 isNew = true;
             }else{
                 RecalcularTabla(isNew);
-            }
-            System.out.println("--------------- te muestro todo :3");
-            for (OrdenCompraxProducto p : productos_a_agregar){
-                System.out.println(p);
             }
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
@@ -432,11 +423,7 @@ public class EnviosController extends Controller{
                     }
                     break;
                 }
-            }
-            System.out.println("--------------------------------------- agregar");
-            for(OrdenCompraxProducto p : productos_disponibles){
-                System.out.println(p);
-            }            
+            }   
         }catch(Exception e){
             infoController.show("Error " + e.getMessage());
         }
