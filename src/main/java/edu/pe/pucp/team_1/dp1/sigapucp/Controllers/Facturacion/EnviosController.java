@@ -349,6 +349,7 @@ public class EnviosController extends Controller{
             ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
             productos.clear();
             productos.addAll(productos_a_agregar);
+            limpiar_tabla_productos();
             columna_prod_cod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             columna_prod_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
             columna_prod_desc.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
@@ -362,14 +363,19 @@ public class EnviosController extends Controller{
     
     private void RecalcularTabla(Boolean isNew) throws Exception
     {
-        for(OrdenCompraxProducto productoxenvio:productos_a_agregar)
+        for(OrdenCompraxProducto productoxenvio : productos_a_agregar)
         {
             Integer extraCant = 0;
             if(!isNew && productoxenvio.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
             {
+                System.out.println("----------- hey me encontraste");
                 extraCant += cantidad_producto.getValue();
+                System.out.println(extraCant);
             }
             productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
+            System.out.println("----------------------------- hey me updeteaste");
+            System.out.println(productoxenvio);
+            break;
         }    
     }
     
@@ -377,6 +383,7 @@ public class EnviosController extends Controller{
         Boolean isNew = false; 
         try{
             if(!productos_a_agregar.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
+                System.out.println("-------- hey soy nuevo");
                 OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
                 productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
                 productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
@@ -388,8 +395,13 @@ public class EnviosController extends Controller{
                 productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
                 productos_a_agregar.add(productoxenvio);
                 isNew = true;
+            }else{
+                RecalcularTabla(isNew);
             }
-            RecalcularTabla(isNew);
+            System.out.println("--------------- te muestro todo :3");
+            for (OrdenCompraxProducto p : productos_a_agregar){
+                System.out.println(p);
+            }
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         } 
@@ -409,10 +421,7 @@ public class EnviosController extends Controller{
                     if (cantidad >= 0){
                         if (cantidad_producto.getValue() != 0){
                             producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
-                            //producto_disponible.saveIt();
                             actualizar_lista_producto_a_agregar(producto_disponible);
-                            System.out.println("-----------------------");
-                            System.out.println(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
                             infoController.show("Error: Debe seleccionar una cantidad mayor a 0 ");
