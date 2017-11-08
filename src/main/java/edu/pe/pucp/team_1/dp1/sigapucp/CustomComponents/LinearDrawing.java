@@ -92,19 +92,19 @@ public class LinearDrawing implements Behavior{
             }
         } else if (y == rows - 1) {
             condition = condition && !tiles.get(y-1).get(x).getTileState();
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
 
             if (x < columns - 1) {
-                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
                 condition = condition && !tiles.get(y).get(x+1).getTileState();
-                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
             }
         } else {
             condition = condition && !tiles.get(y-1).get(x).getTileState();
+            condition = condition && !tiles.get(y+1).get(x).getTileState();
 
             if(x < columns - 1) {
-                condition = condition && !tiles.get(y).get(x+1).getTileState();
                 condition = condition && !tiles.get(y-1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y).get(x+1).getTileState();
+                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
             }
         }
         return condition;
@@ -133,12 +133,14 @@ public class LinearDrawing implements Behavior{
 
         if(x < 1) {
             condition = condition && !tiles.get(y).get(x+1).getTileState();
+
             if(y >= 1) {
                 condition = condition && !tiles.get(y-1).get(x+1).getTileState();
                 condition = condition && !tiles.get(y-1).get(x).getTileState();
             }
         } else if (x == columns - 1) {
             condition = condition && !tiles.get(y).get(x-1).getTileState();
+
             if(y >= 1) {
                 condition = condition && !tiles.get(y-1).get(x-1).getTileState();
                 condition = condition && !tiles.get(y-1).get(x).getTileState();
@@ -146,6 +148,7 @@ public class LinearDrawing implements Behavior{
         } else {
             condition = condition && !tiles.get(y).get(x-1).getTileState();
             condition = condition && !tiles.get(y).get(x+1).getTileState();
+
             if (y>= 1) {
                 condition = condition && !tiles.get(y-1).get(x).getTileState();
                 condition = condition && !tiles.get(y-1).get(x+1).getTileState();
@@ -162,14 +165,16 @@ public class LinearDrawing implements Behavior{
         int columns = firstEntry.getValue().size();
         int rows = tiles.size();
 
-        if(x< 1) {
+        if(x < 1) {
             condition = condition && !tiles.get(y).get(x+1).getTileState();
+
             if (y < rows - 1) {
                 condition = condition && !tiles.get(y+1).get(x).getTileState();
                 condition = condition && !tiles.get(y+1).get(x+1).getTileState();
             }
         } else if (x == columns - 1) {
             condition = condition && !tiles.get(y).get(x-1).getTileState();
+
             if(y < rows - 1){
                 condition = condition && !tiles.get(y+1).get(x).getTileState();
                 condition = condition && !tiles.get(y+1).get(x-1).getTileState();
@@ -177,10 +182,11 @@ public class LinearDrawing implements Behavior{
         } else {
             condition = condition && !tiles.get(y).get(x-1).getTileState();
             condition = condition && !tiles.get(y).get(x+1).getTileState();
+
             if(y < rows - 1) {
-                condition = condition && !tiles.get(y-1).get(x).getTileState();
-                condition = condition && !tiles.get(y-1).get(x-1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y+1).get(x).getTileState();
+                condition = condition && !tiles.get(y+1).get(x-1).getTileState();
+                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
             }
         }
         return condition;
@@ -224,9 +230,11 @@ public class LinearDrawing implements Behavior{
                 Map.Entry<Integer, List<Integer>> entry = iterator.next();
                 int row = entry.getKey();
                 int column = entry.getValue().get(0);
+
                 if(index == 0) condition = condition && checkFirstTileColumn(column, row, tiles);
                 else if(index == active_tiles.size() - 1) condition = condition && checkLastTileColumn(column, row, tiles);
                 else condition = condition && checkRightAndLeft(column, row, tiles);
+
                 index++;
             }
         }
@@ -260,7 +268,14 @@ public class LinearDrawing implements Behavior{
         List<Integer> firstEntryList = firstEntry.getValue();
 
         if(active_tiles.size() < 2 && firstEntryList.size() > 1) { // Verifica el rack es Horizontal
+            Collections.sort(firstEntryList);
+            int currentColumn = firstEntryList.get(0);
             condition = true;
+
+            for(int i = 1 ; i < firstEntryList.size(); i++) {
+                condition = condition && currentColumn == firstEntryList.get(i) - 1;
+                currentColumn = firstEntryList.get(i);
+            }
         } else { // Verifca los racks verticales
             AtomicBoolean atomicCond = new AtomicBoolean(true);
             AtomicInteger atomicColumn = new AtomicInteger(firstEntryList.get(0));
