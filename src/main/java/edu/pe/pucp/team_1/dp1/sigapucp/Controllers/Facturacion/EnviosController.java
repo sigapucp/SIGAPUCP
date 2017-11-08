@@ -163,7 +163,7 @@ public class EnviosController extends Controller{
                 if (producto_disponible.getInteger("tipo_id") == producto_eliminar.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") + producto_eliminar.getInteger("cantidad");
                     producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
-                    producto_disponible.saveIt();
+                    //producto_disponible.saveIt();
                     break;
                 }
             }            
@@ -206,10 +206,12 @@ public class EnviosController extends Controller{
         }
         nombre_cliente.setText(cliente_temp.getString("nombre"));
         ordenes_compra_combobox.setValue(envio_seleccionado.getString("orden_compra_cod"));
+/*
         nombre_cliente.setEditable(false);
         dni_cliente.setEditable(false);
         ruc_cliente.setEditable(false);
         ordenes_compra_combobox.setEditable(false);
+*/
     }
     
     public void setear_productos_envio(){
@@ -380,10 +382,10 @@ public class EnviosController extends Controller{
             for(OrdenCompraxProducto producto_disponible : productos_disponibles){
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
-                    if (cantidad > 0){
+                    if (cantidad >= 0){
                         if (cantidad_producto.getValue() != 0){
                             producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
-                            producto_disponible.saveIt();
+                            //producto_disponible.saveIt();
                             actualizar_lista_producto_a_agregar(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
@@ -506,6 +508,8 @@ public class EnviosController extends Controller{
         nombre_cliente.clear();
         dni_cliente.clear();
         ruc_cliente.clear();
+        tabla_productos.getItems().clear();
+        ordenes_compra_combobox.getSelectionModel().clearSelection();
     }
     
     public void inhabilitar_formulario(){
@@ -520,6 +524,7 @@ public class EnviosController extends Controller{
     public void nuevo(){
        crearNuevo = true;
        habilitar_formulario();
+       limpiar_formulario();
        
     }
     

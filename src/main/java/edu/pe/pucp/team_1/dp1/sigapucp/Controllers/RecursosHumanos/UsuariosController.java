@@ -44,6 +44,8 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -212,12 +214,22 @@ public class UsuariosController extends Controller{
             return;
         }
         try {
+           if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Usuarios, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            } 
+           if(!confirmatonController.show("Se deshabilitara la categoria con nombre: " + VerNombre.getText(), "¿Desea continuar?")) return;
            Base.openTransaction();
            
            usuarioSelecionado.set("estado",Usuario.ESTADO.INACTIVO.name());
            usuarioSelecionado.saveIt();
 
            Base.commitTransaction();
+           infoController.show("El usuario ha sido deshabilitado");
+           AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Usuarios ,this.usuarioActual);
+           limpiarVerUsuario();
+           RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
+           //cargar
         } catch (Exception e) {
            infoController.show("El Usuario contiene errores : " + e);        
            Base.rollbackTransaction();
@@ -260,7 +272,7 @@ public class UsuariosController extends Controller{
             editarUsuario(usuarioSelecionado);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Usuarios ,this.usuarioActual);
         }                
-        RefrescarTabla(Usuario.findAll());
+        RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
     }
         
     private void editarUsuario(Usuario usuario)
@@ -340,8 +352,12 @@ public class UsuariosController extends Controller{
     @Override
     public void cargar(){
         if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n codigo_usuario,nombre,apellido,telefono,mail,rol,", "¿Desea continuar?")) return;
-        String filename = "data_usuarios.csv";
-        File file = new File(filename);
+        //csv
+        //pop up para seleccionar el archivo:
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Escoger CSV de Carga Masiva");
+        File file = fileChooser.showOpenDialog(stage);
         Boolean primera_fila = true;
         try {
             Scanner inputStream = new Scanner(file);
@@ -375,7 +391,9 @@ public class UsuariosController extends Controller{
                 System.out.println("CORRECTO");
             }
             infoController.show("¡Carga masiva de datos de usuarios exitosa!");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Usuarios, this.usuarioActual);
             inputStream.close();
+            RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
         } catch (FileNotFoundException ex) {
             System.out.println("INCORRECTO");
             Base.rollbackTransaction();

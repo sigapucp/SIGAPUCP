@@ -10,6 +10,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEventHandler;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Lote;
@@ -26,6 +27,8 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -130,7 +134,6 @@ public class OrdenesDeEntradaController extends Controller {
     @FXML 
     static Stage modal_stage = new Stage();
     
-    
     private final ObservableList<OrdenEntrada> entradas = FXCollections.observableArrayList();
     private final ObservableList<OrdenEntradaxProducto> productos = FXCollections.observableArrayList();   
        
@@ -151,6 +154,9 @@ public class OrdenesDeEntradaController extends Controller {
     TipoProducto productoDevuelto = null;
     Proveedor proveedorDevuelto = null;
     Cliente clienteDevuelto = null;
+    Cliente clienteBuscado;
+    Proveedor proveedorBuscado;
+    TipoProducto procutoBuscado;
     
     public OrdenesDeEntradaController()
     {
@@ -164,6 +170,9 @@ public class OrdenesDeEntradaController extends Controller {
         
         infoController = new InformationAlertController();
         confirmationController = new ConfirmationAlertController();
+        clienteBuscado = new Cliente();
+        proveedorBuscado = new Proveedor();
+        procutoBuscado = new TipoProducto();
         
         crearNuevo = false;
         entradaSelecionada = null;
@@ -447,10 +456,94 @@ public class OrdenesDeEntradaController extends Controller {
     }
     
     
+    @Override
     public void nuevo(){
         crearNuevo = true;
         limpiar_formulario(); 
     }
+    
+    @Override
+    public void cargar(){
+        //validamos que los campos sean los correctos
+        if(!confirmationController.show("Verifique que el formato del archivo .csv sea: \n Tipo de orden,fecha,descripcion,nombre cliente,nombre proveedor,ruc proveedor,", "¿Desea continuar?")) return;
+        //csv
+        String filename = "data_ordenes_entrada.csv";
+        File file = new File(filename);
+        Boolean primera_fila = true;
+        try {
+            Scanner inputStream = new Scanner(file);
+ 
+            while (inputStream.hasNext()){
+                String data = inputStream.nextLine();
+                //manejo de la data aquí:
+                String [] values = data.split(",");
+                if (primera_fila) {
+                    primera_fila = false;
+                    if (values.length != 6) {
+                        infoController.show("El archivo .csv no tiene el formato adecuado. Verifique que sea\nTipo de orden,fecha,descripcion,nombre cliente,nombre proveedor,ruc proveedor,"); 
+                        return;
+                    }                    
+                    continue; //nos saltamos el encabezado
+                }
+                String tipo = values[0];
+                Date fecha = Date.valueOf(values[1]);
+                String descripcion = values[2];
+                Base.openTransaction();
+                OrdenEntrada orden = new OrdenEntrada();
+                orden.set("tipo",tipo);
+                orden.setDate("fecha_emision",fecha);
+                orden.set("descripcion",descripcion);
+                buscar_proveedor(values[4]);
+                buscar_cliente(values[3]);
+                orden.set("client_id",null);
+                orden.set("proveedor_id",null);
+                orden.set("provuder_ruc",null);
+                String codInicial = "DEF";
+                if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
+                {
+                    codInicial = "CPR";
+                    orden.set("proveedor_id",proveedorBuscado.getId());
+                    orden.set("provuder_ruc",proveedorBuscado.get("provuder_ruc"));
+                }            
+                if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+                {
+                    codInicial = "DEV";
+                    orden.set("client_id",clienteBuscado.getId());
+                }            
+                if(tipo.equals(OrdenEntrada.TIPO.Encuentro.name()))
+                {
+                    codInicial = "ENC";
+
+                }            
+                if(tipo.equals(OrdenEntrada.TIPO.Otras.name()))
+                {
+                    codInicial = "OTR";                
+                }
+
+                String cod = (codInicial + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenesentrada_orden_entrada_id_seq")))) + 1));
+                orden.set("orden_entrada_cod",cod);
+                orden.set("estado",OrdenEntrada.ESTADO.Pendiente.name());
+                orden.set("last_user_change",usuarioActual.getString("usuario_cod"));            
+                //orden.saveIt();
+                try {
+                   // set_productos(orden);
+                } catch (Exception ex) {
+                    Logger.getLogger(OrdenesDeEntradaController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //infoController.show("La orden ha sido creada exitosamente");
+                //Base.commitTransaction();
+                System.out.println("CORRECTO");
+            }
+            infoController.show("¡Carga masiva de datos de ordenes de entrada exitosa!");
+            inputStream.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("INCORRECTO");
+            Base.rollbackTransaction();
+            Logger.getLogger(OrdenesDeEntradaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
     
     @Override
     public void guardar(){
@@ -618,6 +711,29 @@ public class OrdenesDeEntradaController extends Controller {
             }
         }
     }
+    
+    private void buscar_cliente(String nombre_cli){
+        int i = 0;
+        for (Cliente cliente : autoCompletadoClienteList){
+            String nombre = cliente.getString("nombre");
+            if(nombre == null) continue;
+            if (nombre.equals(nombre_cli)){           
+                  clienteBuscado = cliente;
+            }
+        }
+    }
+    
+    private void buscar_proveedor(String nombre_prov){
+        int i = 0;
+        for (Proveedor proveedor : autoCompletadoProveedorList){
+            String nombre = proveedor.getString("name");
+            if(nombre == null) continue;
+            if (nombre.equals(nombre_prov)){           
+               proveedorBuscado = proveedor;
+            }
+        }    
+    }
+    
     
     private void handleAutoCompletarProveedor() {
         int i = 0;

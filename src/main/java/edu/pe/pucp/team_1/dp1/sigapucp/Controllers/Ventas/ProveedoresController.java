@@ -34,6 +34,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -164,8 +166,12 @@ public class ProveedoresController extends Controller{
         //validamos que los campos sean los correctos
         if(!confirmatonController.show("Verifique que el formato del archivo .csv sea: \n nombre,rep. legal,telefono,ruc proveedor,anotaciones,", "¿Desea continuar?")) return;
         //csv
-        String filename = "data_usuarios.csv";
-        File file = new File(filename);
+        //csv
+        //pop up para seleccionar el archivo:
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Escoger CSV de Carga Masiva");
+        File file = fileChooser.showOpenDialog(stage);
         Boolean primera_fila = true;
         try {
             Scanner inputStream = new Scanner(file);
@@ -189,7 +195,10 @@ public class ProveedoresController extends Controller{
                 Base.commitTransaction();
                 System.out.println("CORRECTO");
             }
+            infoController.show("¡Carga masiva de datos de proveedores exitosa!");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Proveedores, this.usuarioActual);
             inputStream.close();
+            cargar_tabla_index();
         } catch (FileNotFoundException ex) {
             System.out.println("INCORRECTO");
             Base.rollbackTransaction();
@@ -242,7 +251,10 @@ public class ProveedoresController extends Controller{
     public void cargar_tabla_index(){
         masterData.clear();
         for( Proveedor cliente : proveedores){
-            masterData.add(cliente);
+            if (cliente.getString("status").equals("activo")){
+                masterData.add(cliente);
+            }
+            
         }
         tabla_proveedor.setEditable(false);
         columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("provuder_ruc")));
@@ -270,7 +282,31 @@ public class ProveedoresController extends Controller{
             System.out.println(e);
         }
     }  
-    
+    @Override
+    public void desactivar(){
+        if (proveedor_seleccionado==null){
+            infoController.show("No se selecciono un proveedor");
+            return;
+        }
+        try{
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proveedores, Accion.ACCION.DES)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
+            if(!confirmatonController.show("Se deshabilitara el proveedor con código: " + proveedor_nombre.getText(), "¿Desea continuar?")) return;
+            Base.openTransaction();
+            proveedor_seleccionado.set("status",Proveedor.ESTADO.INACTIVO.name());
+            proveedor_seleccionado.saveIt();
+            Base.commitTransaction();
+            infoController.show("El proveedor ha sido deshabilitado");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Proveedores ,this.usuarioActual);
+            limpiar_formulario();
+            cargar_tabla_index();
+        }catch(Exception e){
+            infoController.show("El proveedor contiene errores: " + e);
+            Base.rollbackTransaction();
+        }
+    }    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO      

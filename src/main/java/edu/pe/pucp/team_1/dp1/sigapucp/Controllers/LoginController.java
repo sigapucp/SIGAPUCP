@@ -6,9 +6,11 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.AccionxRol;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -42,6 +44,8 @@ public class LoginController implements Initializable{
         System.out.println("inicio");
         if ( login_exitoso = Usuario.autenticacion(usuario_login.getText(), usuario_contrasenha.getText()) ) {       
             Usuario usuarioActual = Usuario.findFirst("email = ? AND contrasena_encriptada = ?", usuario_login.getText(),usuario_contrasenha.getText());
+            System.out.println("usuario encontrado y loggeado");
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.LOG, Menu.MENU.Login ,usuarioActual);
             List<AccionxRol> permisos = AccionxRol.where("rol_id = ?", usuarioActual.getInteger("rol_id"));
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ContenidoPrincipal.fxml"));
             ContenidoPrincipalController mainController = new ContenidoPrincipalController();

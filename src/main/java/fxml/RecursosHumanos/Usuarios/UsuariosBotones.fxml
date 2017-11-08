@@ -35,7 +35,7 @@
          <graphic>
             <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../Imagenes/delete_icon.png" />
+                  <Image url="@../../Imagenes/weight-tool.png" />
                </image>
             </ImageView>
          </graphic>
