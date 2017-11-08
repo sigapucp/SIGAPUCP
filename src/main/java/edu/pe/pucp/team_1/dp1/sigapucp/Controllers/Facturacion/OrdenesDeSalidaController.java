@@ -35,6 +35,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -55,7 +56,7 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private ComboBox<String> tipos;
     @FXML
-    private TextField descripcion_envio;
+    private TextArea descripcion_envio;
     @FXML
     private TextField codigo_salida;
     //TABLA
