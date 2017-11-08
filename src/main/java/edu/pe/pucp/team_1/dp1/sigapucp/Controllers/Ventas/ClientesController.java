@@ -142,7 +142,7 @@ public class ClientesController extends Controller{
         }
         catch(Exception e){
             System.out.println(e);
-            infoController.show("El cliente contiene errores :"+ e); 
+            infoController.show("El cliente contiene errores"); 
             Base.rollbackTransaction();
         }finally{
             crear_nuevo = false;
@@ -203,9 +203,11 @@ public class ClientesController extends Controller{
             infoController.show("¡Carga masiva de datos de clientes exitosa!");
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Clientes, this.usuarioActual);
             inputStream.close();
+            clientes = Cliente.findAll();
             cargar_tabla_index();
         } catch (FileNotFoundException ex) {
-            System.out.println("INCORRECTO");
+            infoController.show("Error en la carga masiva");
+            System.out.println(ex);
             Base.rollbackTransaction();
             Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -267,9 +269,12 @@ public class ClientesController extends Controller{
            Base.commitTransaction();
            infoController.show("El cliente ha sido deshabilitado");
            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Clientes ,this.usuarioActual);
+           clientes = Cliente.findAll();
            limpiar_formulario();
            cargar_tabla_index();
         } catch (Exception e) {
+           infoController.show("Error al deshabilitar cliente");
+           System.out.println(e);
            Base.rollbackTransaction();
         }
      }
@@ -313,6 +318,7 @@ public class ClientesController extends Controller{
             
         }
         catch( Exception e){
+            infoController.show("Error al mostrar detalle");
             System.out.println(e);
         }
     }  
@@ -333,13 +339,13 @@ public class ClientesController extends Controller{
     public boolean cumple_condicion_busqueda(Cliente cliente, String ruc, String dni, String nombres, String estado){
         boolean match = true;
         if ( ruc.equals("") && dni.equals("") && nombres.equals("") && estado.equals("")){
-            match = false;
+            match = true;
         }
         else {
-            match = (!ruc.equals("")) ? (match && (cliente.get("ruc")).equals(ruc)) : true;
-            match = (!dni.equals("")) ? (match && (cliente.get("dni")).equals(dni)) : true;
-            match = (!nombres.equals("")) ? (match && (cliente.get("nombre")).equals(nombres)) : true;
-            match = (!estado.equals("")) ? (match && (cliente.get("tipo_cliente")).equals(estado)) : true;
+            match = (!ruc.equals("")) ? (match && (cliente.get("ruc")).equals(ruc)) : match;
+            match = (!dni.equals("")) ? (match && (cliente.get("dni")).equals(dni)) : match;
+            match = (!nombres.equals("")) ? (match && (cliente.get("nombre")).equals(nombres)) : match;
+            match = (!estado.equals("")) ? (match && (cliente.get("tipo_cliente")).equals(estado)) : match;
         }
         return match;
     }
@@ -350,7 +356,7 @@ public class ClientesController extends Controller{
         String dni = dniBusq.getText();
         String nombres = nombreBusq.getText();
         String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
-        System.out.println(estado);
+        //System.out.println(estado);
         List<Cliente> temp_clientes = Cliente.findAll();
         
         if(ruc!=null&&!ruc.isEmpty())
@@ -376,7 +382,8 @@ public class ClientesController extends Controller{
         cargar_tabla_index();
         try {                        
         } catch (Exception e) {
-            infoController.show("El Cliente contiene errores : " + e);                    
+            infoController.show("Error al filtrar clientes");
+            System.out.println(e);
         }
     }
     

@@ -201,9 +201,12 @@ public class ProveedoresController extends Controller{
             infoController.show("¡Carga masiva de datos de proveedores exitosa!");
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Proveedores, this.usuarioActual);
             inputStream.close();
+            proveedores = Proveedor.findAll();
             cargar_tabla_index();
+            
         } catch (FileNotFoundException ex) {
-            System.out.println("INCORRECTO");
+            infoController.show("Error en la carga masiva");
+            System.out.println(ex);
             Base.rollbackTransaction();
             Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -300,7 +303,7 @@ public class ProveedoresController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
-            if(!confirmatonController.show("Se deshabilitara el proveedor con nombre: " + proveedor_nombre.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se deshabilitara el proveedor con nombre: " + proveedor_seleccionado.getString("name"), "¿Desea continuar?")) return;
             Base.openTransaction();
             proveedor_seleccionado.set("status",Proveedor.ESTADO.INACTIVO.name());
             proveedor_seleccionado.saveIt();
