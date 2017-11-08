@@ -410,6 +410,8 @@ public class EnviosController extends Controller{
                             producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
                             //producto_disponible.saveIt();
                             actualizar_lista_producto_a_agregar(producto_disponible);
+                            System.out.println("-----------------------");
+                            System.out.println(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
                             infoController.show("Error: Debe seleccionar una cantidad mayor a 0 ");
@@ -420,6 +422,10 @@ public class EnviosController extends Controller{
                     }
                     break;
                 }
+            }
+            System.out.println("--------------------------------------- agregar");
+            for(OrdenCompraxProducto p : productos_disponibles){
+                System.out.println(p);
             }            
         }catch(Exception e){
             infoController.show("Error " + e.getMessage());
@@ -430,6 +436,10 @@ public class EnviosController extends Controller{
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
+            System.out.println("--------------------------------------- modal");
+            for(OrdenCompraxProducto p : productos_disponibles){
+                System.out.println(p);
+            }
             AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_disponibles);
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
@@ -454,7 +464,7 @@ public class EnviosController extends Controller{
     private void handleModalProducto(ActionEvent event) throws IOException{
         try{
             String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
-            if (!temp_orden_compra.equals(null)){
+            if (temp_orden_compra.equals(null)){
                 orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod = ?", temp_orden_compra);
                 obtener_productos_disponibles_orden_compra();
             }
