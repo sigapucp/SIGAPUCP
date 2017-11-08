@@ -134,6 +134,7 @@ public class EnviosController extends Controller{
     private List<OrdenCompraxProducto> productos_disponibles;
     private OrdenCompraxProducto producto_devuelto;
     private OrdenCompra orden_compra_seleccionada;
+    private Boolean orden_compra_nueva;
     private Envio envio_seleccionado;
     @FXML
     private Label LabelPedido;
@@ -152,6 +153,35 @@ public class EnviosController extends Controller{
     
     //----------------------------------------------------------------------------//
 
+    @Override
+    public void cambiarEstado(){
+        if(envio_seleccionado == null){
+            infoController.show("No ha seleccionado ningun Envio");
+            return;
+        }
+        if (envio_seleccionado.getString("estado").equals(Envio.ESTADO.COMPLETA.name())){
+            infoController.show("El envio ya ha sido completada");
+            return;            
+        }
+        try{
+            Base.openTransaction();
+            String estado_anterior = envio_seleccionado.getString("estado");
+            Envio.ESTADO siguiente_estado = Envio.ESTADO.valueOf(estado_anterior).next();
+            if(!confirmatonController.show("Esta accion cambiara el envio de estado " + estado_anterior + " a " + siguiente_estado.name(), "¿Desea continuar?")) return;
+            envio_seleccionado.set("estado", siguiente_estado.name());
+            envio_seleccionado.saveIt();
+            
+            if (estado_anterior.equals(Envio.ESTADO.ENPROCESO.name())){
+                infoController.show("El Envio fue actualizada correctamente. Todos productos han sido despachados");
+                Base.commitTransaction();
+                return;
+            }            
+        }catch (Exception e){
+            Base.rollbackTransaction();
+            infoController.show("No se ha podido modificar el estado del Envio");
+        }
+    }
+    
     private void eliminar_de_lista_productos(){
         OrdenCompraxProducto producto_eliminar = tabla_productos.getSelectionModel().getSelectedItem();
         if (producto_eliminar == null){
@@ -163,7 +193,7 @@ public class EnviosController extends Controller{
                 if (producto_disponible.getInteger("tipo_id") == producto_eliminar.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") + producto_eliminar.getInteger("cantidad");
                     producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
-                    producto_disponible.saveIt();
+                    //producto_disponible.saveIt();
                     break;
                 }
             }            
@@ -206,10 +236,6 @@ public class EnviosController extends Controller{
         }
         nombre_cliente.setText(cliente_temp.getString("nombre"));
         ordenes_compra_combobox.setValue(envio_seleccionado.getString("orden_compra_cod"));
-        nombre_cliente.setEditable(false);
-        dni_cliente.setEditable(false);
-        ruc_cliente.setEditable(false);
-        ordenes_compra_combobox.setEditable(false);
     }
     
     public void setear_productos_envio(){
@@ -323,6 +349,7 @@ public class EnviosController extends Controller{
             ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
             productos.clear();
             productos.addAll(productos_a_agregar);
+            limpiar_tabla_productos();
             columna_prod_cod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             columna_prod_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
             columna_prod_desc.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
@@ -336,7 +363,7 @@ public class EnviosController extends Controller{
     
     private void RecalcularTabla(Boolean isNew) throws Exception
     {
-        for(OrdenCompraxProducto productoxenvio:productos_a_agregar)
+        for(OrdenCompraxProducto productoxenvio : productos_a_agregar)
         {
             Integer extraCant = 0;
             if(!isNew && productoxenvio.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
@@ -344,6 +371,7 @@ public class EnviosController extends Controller{
                 extraCant += cantidad_producto.getValue();
             }
             productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
+            break;
         }    
     }
     
@@ -362,8 +390,9 @@ public class EnviosController extends Controller{
                 productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
                 productos_a_agregar.add(productoxenvio);
                 isNew = true;
+            }else{
+                RecalcularTabla(isNew);
             }
-            RecalcularTabla(isNew);
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         } 
@@ -380,10 +409,9 @@ public class EnviosController extends Controller{
             for(OrdenCompraxProducto producto_disponible : productos_disponibles){
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
                     Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
-                    if (cantidad > 0){
+                    if (cantidad >= 0){
                         if (cantidad_producto.getValue() != 0){
                             producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
-                            producto_disponible.saveIt();
                             actualizar_lista_producto_a_agregar(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
@@ -395,7 +423,7 @@ public class EnviosController extends Controller{
                     }
                     break;
                 }
-            }            
+            }   
         }catch(Exception e){
             infoController.show("Error " + e.getMessage());
         }
@@ -424,14 +452,24 @@ public class EnviosController extends Controller{
     private void obtener_productos_disponibles_orden_compra(){
         productos_disponibles = OrdenCompraxProducto.where("orden_compra_id = ?", orden_compra_seleccionada.getId());
     }
+    
+    public void limpiar_tabla_productos(){
+        tabla_productos.getItems().clear();
+    }
 
     @FXML
     private void handleModalProducto(ActionEvent event) throws IOException{
         try{
             String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
-            if (!temp_orden_compra.equals(null)){
+            if ( orden_compra_seleccionada != null){
+                String orden_compra_actual = orden_compra_seleccionada.getString("orden_compra_cod");
+                orden_compra_nueva = !temp_orden_compra.equals(orden_compra_actual);
+            }
+            if (orden_compra_nueva){
                 orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod = ?", temp_orden_compra);
                 obtener_productos_disponibles_orden_compra();
+                limpiar_tabla_productos();
+                orden_compra_nueva = false;
             }
             abrirModalProductos();
             if(producto_devuelto==null) return; 
@@ -470,9 +508,9 @@ public class EnviosController extends Controller{
         try{
             ObservableList<String> ordenes_compra = FXCollections.observableArrayList();
             ordenes_compra.clear();
-            ordenes_compra.addAll(OrdenCompra.where("client_id = ?", cliente_seleccionado.getId()).stream().map( x -> x.getString("orden_compra_cod")).collect(Collectors.toList()) );
+            ordenes_compra.addAll(OrdenCompra.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), OrdenCompra.ESTADO.ENDESPACHO.name()).stream().map( x -> x.getString("orden_compra_cod")).collect(Collectors.toList()) );
             if (ordenes_compra.isEmpty()){
-                infoController.show("El cliente no cuenta con pedidos pendientes : ");
+                infoController.show("El cliente no cuenta con pedidos en despacho : ");
                 limpiar_formulario();
             }
             else{
@@ -506,6 +544,8 @@ public class EnviosController extends Controller{
         nombre_cliente.clear();
         dni_cliente.clear();
         ruc_cliente.clear();
+        tabla_productos.getItems().clear();
+        ordenes_compra_combobox.getSelectionModel().clearSelection();
     }
     
     public void inhabilitar_formulario(){
@@ -520,7 +560,8 @@ public class EnviosController extends Controller{
     public void nuevo(){
        crearNuevo = true;
        habilitar_formulario();
-       
+       limpiar_formulario();
+       orden_compra_nueva = true;
     }
     
     public void llenar_tabla_envios(){

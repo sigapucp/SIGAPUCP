@@ -1,0 +1,3 @@
+tipo,fecha,descripcion,cliente,nombre_proveedor,ruc_proveedor,
+Compra,2017-11-07,Entrada masiva numero 1,NASA,Ripley,12345678912,
+Devolucion,2017-11-07,Entrada masiva numero 2,NASA,Ripley,12345678912,

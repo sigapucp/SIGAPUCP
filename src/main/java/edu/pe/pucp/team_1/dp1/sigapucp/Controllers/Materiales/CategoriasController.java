@@ -105,8 +105,7 @@ public class CategoriasController extends Controller{
             }
         }catch(Exception e){
             System.out.println(e);
-        }        
-        
+        }                
     }
        
     public void crear_categoria(){

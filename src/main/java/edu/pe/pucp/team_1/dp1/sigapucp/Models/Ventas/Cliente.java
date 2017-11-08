@@ -54,11 +54,11 @@ public class Cliente extends Model{
     {
         PersonaNatural,
         PersonaJuridica
-    }    
+    }
       
     public enum ESTADO
     {
         ACTIVO,
         INACTIVO
-    }
+    }      
 }
