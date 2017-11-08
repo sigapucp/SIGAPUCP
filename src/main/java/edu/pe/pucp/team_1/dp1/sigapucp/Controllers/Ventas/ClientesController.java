@@ -352,7 +352,7 @@ public class ClientesController extends Controller{
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
 
-        String ruc = rucBusq.getText();
+        /*String ruc = rucBusq.getText();
         String dni = dniBusq.getText();
         String nombres = nombreBusq.getText();
         String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
@@ -384,7 +384,32 @@ public class ClientesController extends Controller{
         } catch (Exception e) {
             infoController.show("Error al filtrar clientes");
             System.out.println(e);
+        }*/
+        clientes = Cliente.where("estado = ?", Cliente.ESTADO.ACTIVO.name());
+        masterData.clear();
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+        System.out.println(estado);
+        System.out.println("antes del loop");
+        try{
+            for (Cliente cliente : clientes){
+                System.out.println("Ingreso al loop");
+                if (cumple_condicion_busqueda(cliente, rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado)){
+                    
+                    System.out.println("cumplo condicion");
+                    masterData.add(cliente);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("Error al filtrar clientes");
+            System.out.println(e);
         }
+        tabla_clientes.getItems().clear();
+        tabla_clientes.setEditable(false);
+        columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("ruc")));
+        columna_dni.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("dni")));
+        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        tabla_clientes.getItems().addAll(masterData);
+        
     }
     
     public void llenar_estado_social_busqueda(){
