@@ -134,6 +134,7 @@ public class EnviosController extends Controller{
     private List<OrdenCompraxProducto> productos_disponibles;
     private OrdenCompraxProducto producto_devuelto;
     private OrdenCompra orden_compra_seleccionada;
+    private Boolean orden_compra_nueva;
     private Envio envio_seleccionado;
     @FXML
     private Label LabelPedido;
@@ -436,10 +437,6 @@ public class EnviosController extends Controller{
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
-            System.out.println("--------------------------------------- modal");
-            for(OrdenCompraxProducto p : productos_disponibles){
-                System.out.println(p);
-            }
             AgregarProductosEnviosController controller = new AgregarProductosEnviosController(productos_disponibles);
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
@@ -459,14 +456,24 @@ public class EnviosController extends Controller{
     private void obtener_productos_disponibles_orden_compra(){
         productos_disponibles = OrdenCompraxProducto.where("orden_compra_id = ?", orden_compra_seleccionada.getId());
     }
+    
+    public void limpiar_tabla_productos(){
+        tabla_productos.getItems().clear();
+    }
 
     @FXML
     private void handleModalProducto(ActionEvent event) throws IOException{
         try{
             String temp_orden_compra = ordenes_compra_combobox.getSelectionModel().getSelectedItem().toString();
-            if (temp_orden_compra.equals(null)){
+            if ( orden_compra_seleccionada != null){
+                String orden_compra_actual = orden_compra_seleccionada.getString("orden_compra_cod");
+                orden_compra_nueva = !temp_orden_compra.equals(orden_compra_actual);
+            }
+            if (orden_compra_nueva){
                 orden_compra_seleccionada = OrdenCompra.findFirst("orden_compra_cod = ?", temp_orden_compra);
                 obtener_productos_disponibles_orden_compra();
+                limpiar_tabla_productos();
+                orden_compra_nueva = false;
             }
             abrirModalProductos();
             if(producto_devuelto==null) return; 
@@ -558,7 +565,7 @@ public class EnviosController extends Controller{
        crearNuevo = true;
        habilitar_formulario();
        limpiar_formulario();
-       
+       orden_compra_nueva = true;
     }
     
     public void llenar_tabla_envios(){
