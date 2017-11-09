@@ -19,8 +19,7 @@ public class OrdenSalida extends Model{
     public enum TIPO
     {
         Venta,
-        Devolucion,
-        Encuentro,
+        Rotura,
         Otras
     }
     
