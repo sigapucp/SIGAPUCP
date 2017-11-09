@@ -27,6 +27,11 @@ public class OrdenSalida extends Model{
     {
         PENDIENTE,
         ENPROCESO,
-        COMPLETA
+        COMPLETA;
+        private static OrdenSalida.ESTADO[] vals = values();
+        public OrdenSalida.ESTADO next()
+        {
+            return vals[(this.ordinal()+1) % vals.length];
+        }
     }    
 }

@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
@@ -34,12 +35,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
@@ -93,6 +96,10 @@ public class OrdenesDeSalidaController  extends Controller{
     
     @FXML
     private Button boton_tipo;
+    @FXML
+    private Label lbl_cant_tipo;
+    @FXML
+    private Spinner<Integer> sp_cant_tipo;
 
     @FXML
     private Button boton_envio;    
@@ -136,6 +143,7 @@ public class OrdenesDeSalidaController  extends Controller{
     //LOGICA
         //--------------------------------------------------//
     private InformationAlertController infoController; 
+    private ConfirmationAlertController confirmatonController;
     private List<Envio> envios_disponibles;
     private boolean crear_nuevo;
     private Envio envio_devuelto;
@@ -145,6 +153,7 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<Producto> masterDataProducto = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
     private OrdenSalida salida_seleccionada;
+    private TipoProducto tipo_devuelto;
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage = new Stage();    
@@ -161,7 +170,6 @@ public class OrdenesDeSalidaController  extends Controller{
         }catch (Exception e){
             infoController.show("Ha ocurrido un error : " + e.getMessage());  
         }
-
     }
     
     private void setear_datos_salida(){
@@ -172,14 +180,19 @@ public class OrdenesDeSalidaController  extends Controller{
         descripcion_envio.setText(salida_seleccionada.getString("descripcion"));
     }
     
-    private void setear_envios_salida(){
-        List<OrdenesSalidaxEnvio> salida_envios = OrdenesSalidaxEnvio.where("salida_cod = ?", salida_seleccionada.getString("salida_cod"));
-        List<Envio> envios_temp = new ArrayList<Envio>();
-        for(OrdenesSalidaxEnvio salida_envio : salida_envios){
-            Envio envio_temp = Envio.findById(salida_envio.getInteger("envio_id"));
-            envios_temp.add(envio_temp);
+    private void setear_tipos_salida(){ // REVISAR
+        String tipo = obtenerTipo();
+        if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
+            List<OrdenesSalidaxEnvio> salida_envios = OrdenesSalidaxEnvio.where("salida_cod = ?", salida_seleccionada.getString("salida_cod"));
+            List<Envio> envios_temp = new ArrayList<Envio>();
+            for(OrdenesSalidaxEnvio salida_envio : salida_envios){
+                Envio envio_temp = Envio.findById(salida_envio.getInteger("envio_id"));
+                envios_temp.add(envio_temp);
+            }
+            envios_disponibles = envios_temp;
+        } else {
+            //usar Modelo ordenesSalidaxproductos
         }
-        envios_disponibles = envios_temp;
         actualizar_lista_salida_tabla();
     }
     
@@ -195,7 +208,7 @@ public class OrdenesDeSalidaController  extends Controller{
             habilitar_formulario();
             limpia_formulario();
             setear_datos_salida();
-            setear_envios_salida();
+            setear_tipos_salida();
         }catch (Exception e){
             
         }
@@ -230,7 +243,8 @@ public class OrdenesDeSalidaController  extends Controller{
         }               
     }
     
-    private void insertar_orden_salida_envio(OrdenSalida salida){
+    private void insertar_orden_salida_envio(OrdenSalida salida){ //CORREGIR
+        // IF TIPO....
         for(Envio envio : envios_disponibles){
             OrdenesSalidaxEnvio salida_envio = new OrdenesSalidaxEnvio();
             salida_envio.set("orden_compra_cod", envio.getString("orden_compra_cod"));
@@ -244,7 +258,7 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
-    private void crear_envio(){
+    private void crear_salida(){ //REVISAR
         try{
             Base.openTransaction();  
             OrdenSalida orden_salida = new OrdenSalida();
@@ -274,7 +288,7 @@ public class OrdenesDeSalidaController  extends Controller{
         OrdenesSalidaxEnvio.delete("salida_id = ?", salida_seleccionada.getId());
     }
     
-    private void editar_orden_salida(){
+    private void editar_orden_salida(){ //REVISAR
         try{
             Base.openTransaction();  
             salida_seleccionada.set("descripcion", descripcion_envio.getText());
@@ -291,7 +305,7 @@ public class OrdenesDeSalidaController  extends Controller{
     @Override
     public void guardar(){
         if (crear_nuevo){
-            crear_envio();
+            crear_salida();
         } else {
             if (salida_seleccionada == null){ 
                 infoController.show("No ha seleccionado ninguna Orden de Salida"); 
@@ -300,16 +314,17 @@ public class OrdenesDeSalidaController  extends Controller{
             editar_orden_salida();
         }
         crear_nuevo = false;
+        /* Creo que no es necesario
         masterDataSalidas.clear();
         List<OrdenSalida> salidas = OrdenSalida.findAll();
         for(OrdenSalida salida : salidas){
             masterDataSalidas.add(salida);
-        }                   
+        } */                  
         limpia_formulario();
         inhabilitar_formulario();
     }
     
-    private void actualizar_lista_salida_tabla(){
+    private void actualizar_lista_salida_tabla(){ ////////CORREGIR
         /*for(Envio envio : envios_disponibles){
             masterDataTipoSalida.add(envio);
         }*/
@@ -353,17 +368,22 @@ public class OrdenesDeSalidaController  extends Controller{
         if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
             List<OrdenesCompraxProductosxenvio> productos_envio = OrdenesCompraxProductosxenvio.where("envio_id = ?",envio_devuelto.getId() );
             for( OrdenesCompraxProductosxenvio producto_envio : productos_envio){
-                TipoProducto tipo_producto = new TipoProducto();
-                //tipo_producto.set("",producto_envio.get(""));
+                TipoProducto tipo_producto = TipoProducto.findFirst("tipo_cod = ? AND tipo_id = ?", producto_envio.getString("tipo_cod"),producto_envio.getInteger("tipo_id"));
+                
                 masterDataTipo.add(tipo_producto);
             }
+            //Aqui ya tiene la cantidad porque viene de un envio
+            columna_cant_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(OrdenesCompraxProductosxenvio.findFirst("envio_id = ? AND tipo_id = ?",envio_devuelto.getInteger("envio_id"),p.getValue().getInteger("tipo_id")).getString("cantidad")));
         } else{
-            //
+            masterDataTipo.add(tipo_devuelto);
+            //Se le seteará 0 para que se pueda elegir la cantidad con un spinner
+            columna_cant_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper("0"));
         }
+        
         columna_cod_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-        columna_nombre_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
-        //columna_cant_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(.findById(p.getValue().get("tipo_id")).getString("nombre"))));
-        columna_desc_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+        columna_nombre_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("nombre")));
+        
+        columna_desc_tipo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("descripcion")));
         
         tabla_tipos.setItems(masterDataTipo);
     }
@@ -375,7 +395,8 @@ public class OrdenesDeSalidaController  extends Controller{
             AgregarEnviosController controller = new AgregarEnviosController();
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
-            modal_stage.setScene(modal_content_scene);       
+            modal_stage.setScene(modal_content_scene); 
+            if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL); 
             controller.devolverEnvioEvent.addHandler((Object sender, agregarEnviosArgs args) -> {
                 envio_devuelto = args.envio;
             });
@@ -450,27 +471,62 @@ public class OrdenesDeSalidaController  extends Controller{
         String tipo = obtenerTipo();
         
         if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
-            boton_envio.setVisible(true);
             boton_tipo.setVisible(false);
+            lbl_cant_tipo.setVisible(false);
+            sp_cant_tipo.setVisible(false);
             
+            boton_envio.setVisible(true);
             lbl_codigo_envio.setVisible(true);
             envio_dato.setVisible(true);
             lbl_codigo_pedido.setVisible(true);
             pedido_dato.setVisible(true);
         } else{
-            boton_envio.setVisible(false);
-            boton_tipo.setVisible(true);
+            boton_tipo.setVisible(true); //Falta implementar este modal
+            lbl_cant_tipo.setVisible(true);
+            sp_cant_tipo.setVisible(true); //llenarlo con el stock lógico disponible
             
+            boton_envio.setVisible(false);
             lbl_codigo_envio.setVisible(false);
             envio_dato.setVisible(false);
             lbl_codigo_pedido.setVisible(false);
             pedido_dato.setVisible(false);
+        }
+    }    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    @Override
+    public void cambiarEstado(){
+        if(salida_seleccionada == null){
+            infoController.show("No ha seleccionado ningun Envio");
+            return;
+        }
+        if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.COMPLETA.name())){
+            infoController.show("El envio ya ha sido completada");
+            return;            
+        }
+        try{
+            Base.openTransaction();
+            String estado_anterior = salida_seleccionada.getString("estado");
+            OrdenSalida.ESTADO siguiente_estado = OrdenSalida.ESTADO.valueOf(estado_anterior).next();
+            if(!confirmatonController.show("Esta accion cambiara el envio de estado " + estado_anterior + " a " + siguiente_estado.name(), "¿Desea continuar?")) return;
+            salida_seleccionada.set("estado", siguiente_estado.name());
+            salida_seleccionada.saveIt();
+            
+            if (estado_anterior.equals(OrdenSalida.ESTADO.ENPROCESO.name())){
+                infoController.show("El Envio fue actualizada correctamente. Todos productos han sido despachados");
+                Base.commitTransaction();
+                return;
+            }            
+        }catch (Exception e){
+            Base.rollbackTransaction();
+            infoController.show("No se ha podido modificar el estado del Envio");
         }
     }
     
     public OrdenesDeSalidaController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
         infoController = new InformationAlertController();
+        confirmatonController = new ConfirmationAlertController();
         //igual se deben guardar los envios para poder llenar la tabla ordenesSalidaXenvio
         envios_disponibles = new ArrayList<Envio>();
     }    
