@@ -44,12 +44,14 @@ import java.util.stream.Collectors;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -150,6 +152,10 @@ public class SimulacionesController extends Controller{
     private List<ProductoSimulacion> productosSimulacion;
     private Boolean nextReset = false;
     private Punto acopioAnterior = null;
+    @FXML
+    private CheckBox recarcularRutasCheck;
+    @FXML
+    private TitledPane tittle_pane;
  
     
     public SimulacionesController()
@@ -269,6 +275,7 @@ public class SimulacionesController extends Controller{
     private void comenzarRuta(ActionEvent event) {
         grid.clearUserTiles();    
         simulacionActual.setNodoActual(0);
+        tittle_pane.setText("Inicio de Ruta");
     }
 
     @FXML
@@ -281,7 +288,14 @@ public class SimulacionesController extends Controller{
             return;            
         }
         ProductoNodo nodoActual = simulacionActual.getNodoActual();
-           
+        if(nodoActual.sig.EsDeposito())
+        {
+            tittle_pane.setText("Llendo al punto de acopio");
+        }else
+        {
+            tittle_pane.setText("Recogiendo Producto: " + productosSimulacion.get(nodoActual.sig.GetLlave()).getProducto().getString("producto_cod"));            
+        }
+        
         TupleProductos tupla = rutasProductos.stream().filter(x -> x.esPar(productosSimulacion.get(nodoActual.GetLlave()), productosSimulacion.get(nodoActual.sig.GetLlave()))).findFirst().get();           
         dibujarMapa(tupla.getEstado(),tupla.getColor());
         grid.pintarTile(tupla.getProductoUno().getPunto().x, tupla.getProductoUno().getPunto().y, tupla.getProductoUno().getColor());
@@ -319,7 +333,7 @@ public class SimulacionesController extends Controller{
         
         productos = Producto.where("ubicado = ?", "S");                                    
         
-        if(!distanciaCalculada) calcularDistancias(capacidadCarro, acopio);
+        if(!distanciaCalculada||recarcularRutasCheck.isSelected()) calcularDistancias(capacidadCarro, acopio);
         
         if(acopioAnterior != null && !acopioAnterior.isEqual(acopio))
         {
@@ -340,7 +354,7 @@ public class SimulacionesController extends Controller{
         rutaGeneral.CorrerAlgoritmo();               
         Simulacion nuevaSimulacion = new Simulacion(rutaGeneral, acopio, capacidadCarro);        
         simulacionActual = nuevaSimulacion;
-        simulaciones.add(nuevaSimulacion);        
+        
         
         impimirRuta(nuevaSimulacion.getRutaActual());        
         } catch (Exception ex) {
@@ -382,7 +396,7 @@ public class SimulacionesController extends Controller{
                 TupleProductos tupla = new TupleProductos(productosSimulacion.get(i), productosSimulacion.get(j));
                 rutasProductos.add(tupla);
                 Celda.TIPO[][] mapaActual = copiarMapa(mapa,height,width);                                           
-                Estado ruta = rutaDetallada.generarRutaGreedy(mapaActual, height, width, tupla.getProductoUno().getPunto(), tupla.getProductoDos().getPunto());               
+                Estado ruta = rutaDetallada.obtenerRutaOptima(mapaActual, height, width, tupla.getProductoUno().getPunto(), tupla.getProductoDos().getPunto());               
                 distancias[i][j] = ruta.getCost();
                 distancias[j][i] = ruta.getCost();
                 tupla.setRuta(ruta);                              
@@ -431,5 +445,9 @@ public class SimulacionesController extends Controller{
         }                
         return nuevoMapa;
     }           
+
+    @FXML
+    private void agregarSimulacion(ActionEvent event) {
+    }
 
 }

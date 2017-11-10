@@ -68,12 +68,7 @@ public class SelectableGrid extends AnchorPane  {
                 });
 
                 tile.getReleaseEvent().addHandler((sender, args) -> {
-                    behavior.preSaveTransformation(tiles,current_x_tile,current_y_tile);
-                    if (behavior.checkDrawRules()) behavior.saveActiveTiles(tiles);
-                    else 
-                    {
-                        behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
-                        behavior.clearUserTiles(userTiles);
+                    behavior.preSaveTransformation(tiles,current_x_tile,current_y_tile);                   
                     if (behavior.checkDrawRules(tiles)) behavior.saveActiveTiles(tiles);
                     else {
                         behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
