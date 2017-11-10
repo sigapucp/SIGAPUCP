@@ -133,7 +133,7 @@
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                     </TableView>
-                                    <Button fx:id="boton_tipo" layoutX="575.0" layoutY="40.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="145.0" text="Buscar Tipo" visible="false">
+                                    <Button fx:id="boton_tipo" layoutX="575.0" layoutY="40.0" mnemonicParsing="false" onAction="#handle_buscar_tipo" prefHeight="25.0" prefWidth="145.0" text="Buscar Tipo" visible="false">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
