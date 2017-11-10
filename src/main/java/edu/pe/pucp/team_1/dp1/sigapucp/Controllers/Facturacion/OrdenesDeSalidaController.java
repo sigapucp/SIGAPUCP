@@ -61,17 +61,13 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private TextField salida_buscar;
     @FXML
-    private TextField cliente_buscar;
-    @FXML
-    private TextField pedido_buscar;
+    private ComboBox<String> tipo_buscar;
     @FXML
     private TableView<OrdenSalida> tabla_salidas;
     @FXML
-    private TableColumn<OrdenSalida, String> columna_cliente_salida;
-    @FXML
     private TableColumn<OrdenSalida, String> columna_cod_salida;
     @FXML
-    private TableColumn<OrdenSalida, String> columna_pedido_salida;
+    private TableColumn<OrdenSalida, String> columna_tipo_salida;
     
     //FORMULARIO
         //--------------------------------------------------//    
@@ -86,6 +82,11 @@ public class OrdenesDeSalidaController  extends Controller{
     private TextArea descripcion_envio;    
     
     //TAB TIPOS
+    @FXML
+    private Tab tab_tipo;
+
+    @FXML
+    private AnchorPane pane_tipo;
         //TABLA TIPOS DE PRODUCTO
         //--------------------------------------------------//    
     @FXML
@@ -133,6 +134,11 @@ public class OrdenesDeSalidaController  extends Controller{
     
     
     //TAB PRODUCTOS
+    @FXML
+    private Tab tab_producto;
+
+    @FXML
+    private AnchorPane pane_producto;
         //TABLA PRODUCTOS
     @FXML
     private TableView<Producto> tabla_productos;
@@ -170,8 +176,18 @@ public class OrdenesDeSalidaController  extends Controller{
             descripcion_envio.clear();
             masterDataTipo.clear();
             masterDataTipoSalida.clear();
+            tipos.getItems().clear();
             llenar_combo_box_tipo();
             masterDataProducto.clear();
+            boton_tipo.setVisible(false); //Falta implementar este modal
+            lbl_cant_tipo.setVisible(false);
+            sp_cant_tipo.setVisible(false); //llenarlo con el stock lógico disponible
+            
+            boton_envio.setVisible(false);
+            lbl_codigo_envio.setVisible(false);
+            envio_dato.setVisible(false);
+            lbl_codigo_pedido.setVisible(false);
+            pedido_dato.setVisible(false);
         }catch (Exception e){
             infoController.show("Ha ocurrido un error : " + e.getMessage());  
         }
@@ -197,8 +213,10 @@ public class OrdenesDeSalidaController  extends Controller{
             envios_disponibles = envios_temp;
         } 
         
-        
-        actualizar_lista_salida_tabla();
+        List<OrdenSalidaxProducto> productos = OrdenSalidaxProducto.where("salida_id = ?",salida_seleccionada.getInteger("salida_id"));
+        for (OrdenSalidaxProducto tipoProd : productos)
+            masterDataTipoSalida.add(tipoProd);
+        llenar_tabla_salida();
     }
     
     @FXML
@@ -206,10 +224,20 @@ public class OrdenesDeSalidaController  extends Controller{
         crear_nuevo = false;
         salida_seleccionada = tabla_salidas.getSelectionModel().getSelectedItem();
         if (salida_seleccionada == null){
-            infoController.show("Salida no seleccionada");  
+            infoController.show("No ha seleccionado ninguna orden de salida");  
             return;            
         }
         try{
+            if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.ENPROCESO.name())){
+                tab_producto.setDisable(false);
+                tab_tipo.setDisable(true);
+            } else if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name())){
+                tab_producto.setDisable(true);
+                tab_tipo.setDisable(false);
+            } else{
+                tab_producto.setDisable(true);
+                tab_tipo.setDisable(true);
+            }
             habilitar_formulario();
             limpia_formulario();
             setear_datos_salida();
@@ -219,16 +247,14 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
-    private boolean cumple_condicion_busqueda(OrdenSalida salida, String codigo, String cliente, String codPedido){
+    private boolean cumple_condicion_busqueda(OrdenSalida salida, String codigo, String tipo){
         boolean match = true;        
-        if ( codigo.equals("") && cliente.equals("") && codPedido.equals("")){
+        if ( codigo.equals("") && tipo.equals("")){
             match = true;
         }else {
             OrdenesSalidaxEnvio salida_envio = OrdenesSalidaxEnvio.first("salida_cod = ?", salida.get("salida_cod"));
             match = (!codigo.equals("")) ? (match && (salida.get("salida_cod")).equals(codigo)) : match;
-            String nombre_cliente = Cliente.findById(salida_envio.get("client_id")).getString("nombre");
-            match = (!cliente.equals("")) ? (match && (nombre_cliente == cliente)) : match;
-            match = (!codPedido.equals("")) ? (match && (salida_envio.get("orden_compra_cod")).equals(codPedido)) : match;
+            match = (!tipo.equals("")) ? (match && (salida_envio.get("orden_compra_cod")).equals(tipo)) : match;
         }
         return match;
     }  
@@ -237,9 +263,10 @@ public class OrdenesDeSalidaController  extends Controller{
     private void buscar_salida(ActionEvent event) throws IOException{
         salidas_temp = OrdenSalida.findAll();
         masterDataSalidas.clear();
+        String tipo = (tipos.getSelectionModel().getSelectedItem().equals(null)) ? "":tipos.getSelectionModel().getSelectedItem();
         try{
             for(OrdenSalida salida : salidas_temp){
-                if (cumple_condicion_busqueda(salida, salida_buscar.getText(), cliente_buscar.getText(), pedido_buscar.getText())){
+                if (cumple_condicion_busqueda(salida, salida_buscar.getText(), tipo)){
                     masterDataSalidas.add(salida);
                 }
             }
@@ -248,8 +275,7 @@ public class OrdenesDeSalidaController  extends Controller{
         }               
     }
     
-    private void insertar_orden_salida_envio(OrdenSalida salida){ //CORREGIR
-        // IF TIPO....
+    private void insertar_orden_salida_envio(OrdenSalida salida){
         for(Envio envio : envios_disponibles){
             OrdenesSalidaxEnvio salida_envio = new OrdenesSalidaxEnvio();
             salida_envio.set("orden_compra_cod", envio.getString("orden_compra_cod"));
@@ -264,32 +290,33 @@ public class OrdenesDeSalidaController  extends Controller{
     }
     
     private void insertarDetalle(Integer idSalida, String codSalida){
-       /* for (TipoProducto tipo : masterDataTipoSalida){
-            OrdenSalidaxProducto tipoProducto = new OrdenSalidaxProducto();
-            tipoProducto.setInteger("salida_id",idSalida);
-            tipoProducto.set("salida_cod",codSalida);
-            tipoProducto.setInteger("cantidad",tipo.getInteger("cantidad"));
-            //falta
-        }*/
+        for (OrdenSalidaxProducto tipoProd : masterDataTipoSalida){
+            tipoProd.set("salida_id",idSalida);
+            tipoProd.set("salida_cod",codSalida);
+            tipoProd.set("despachado","N");
+            tipoProd.set("tipo_salida",tipos.getSelectionModel().getSelectedItem());
+            tipoProd.saveIt();
+        }
     }
     
     private void crear_salida(){ //REVISAR
         try{
+            String tipo = obtenerTipo();
             Base.openTransaction();  
             OrdenSalida orden_salida = new OrdenSalida();
             orden_salida.set("last_user_change", usuarioActual.getString("usuario_cod"));
-            orden_salida.set("tipo",tipos.getSelectionModel().getSelectedItem());
+            orden_salida.set("tipo",tipo);
             orden_salida.set("descripcion", descripcion_envio.getText());
             orden_salida.set("salida_cod", codigo_salida.getText());
             orden_salida.set("estado", OrdenSalida.ESTADO.PENDIENTE.name());
-            //revisar
+            //Se eliminarán estos campos
             //------------------------------------------------
             orden_salida.set("ruta_orden", "test");
             orden_salida.set("nr_asignados", 1);
             orden_salida.saveIt();
-            if (!envios_disponibles.isEmpty()){                
+            if (tipo.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())                
                 insertar_orden_salida_envio(orden_salida);                
-            }            
+                        
             insertarDetalle(orden_salida.getInteger("salida_id"),orden_salida.getString("salida_cod"));
             Base.commitTransaction();            
         }catch (Exception e){
@@ -297,18 +324,21 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
-    private void eliminar_orden_salida_envio(){
+    private void eliminar_orden_salida_envios(){
         OrdenesSalidaxEnvio.delete("salida_id = ?", salida_seleccionada.getId());
     }
     
     private void editar_orden_salida(){ //REVISAR
         try{
+            String tipo = obtenerTipo();
             Base.openTransaction();  
             salida_seleccionada.set("descripcion", descripcion_envio.getText());
             salida_seleccionada.set("tipo",tipos.getSelectionModel().getSelectedItem());
             salida_seleccionada.saveIt();
-            eliminar_orden_salida_envio();
-            insertar_orden_salida_envio(salida_seleccionada);
+            eliminar_orden_salida_envios();
+            if (tipo.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())  
+                insertar_orden_salida_envio(salida_seleccionada);
+            insertarDetalle(salida_seleccionada.getInteger("salida_id"),salida_seleccionada.getString("salida_cod"));
             Base.commitTransaction();                        
         }catch (Exception e){
             infoController.show("No se pudo editar la orden de salida : " + e.getMessage()); 
@@ -327,58 +357,44 @@ public class OrdenesDeSalidaController  extends Controller{
             editar_orden_salida();
         }
         crear_nuevo = false;
-        /* Creo que no es necesario
-        masterDataSalidas.clear();
-        List<OrdenSalida> salidas = OrdenSalida.findAll();
-        for(OrdenSalida salida : salidas){
-            masterDataSalidas.add(salida);
-        } */                  
         limpia_formulario();
         inhabilitar_formulario();
     }
     
     private void actualizar_lista_salida_tabla(){
-        for (OrdenSalidaxProducto tipo : masterDataTipo){
-            for (OrdenSalidaxProducto tipo_salida : masterDataTipoSalida){
-                if (tipo.get("tipo_id")==tipo_salida.get("tipo_id")){
-                    tipo_salida.set("cantidad",tipo_salida.getInteger("cantidad")+tipo.getInteger("cantidad"));
+        String tipo = obtenerTipo();
+        Integer cantidad = 0;
+        for (OrdenSalidaxProducto tipoProd : masterDataTipo){
+            if (!tipo.equals(OrdenSalida.TIPO.Venta.name()))
+                tipoProd.set("cantidad",sp_cant_tipo.getValue());
+            
+            if(masterDataTipoSalida.stream().anyMatch(x -> x.getInteger("tipo_id").equals(tipoProd.getInteger("tipo_id")))){
+                for (OrdenSalidaxProducto tipo_salida : masterDataTipoSalida){
+                    if (tipoProd.get("tipo_id")==tipo_salida.get("tipo_id")){
+                        cantidad = tipo_salida.getInteger("cantidad")+tipoProd.getInteger("cantidad");
+                        tipo_salida.set("cantidad",cantidad);
+                    }
                 }
+            } else {
+                masterDataTipoSalida.add(tipoProd);
             }
         }
-            Boolean isNew = false; 
-            try{
-                if(!masterDataTipoSalida.stream().anyMatch(x -> x.getInteger("tipo_id").equals(producto_disponible.getInteger("tipo_id")))){
-                    OrdenCompraxProducto productoxenvio = new OrdenCompraxProducto();
-                    productoxenvio.set("tipo_id",producto_disponible.get("tipo_id"));
-                    productoxenvio.set("tipo_cod",producto_disponible.get("tipo_cod"));  
-                    productoxenvio.set("cantidad", cantidad_producto.getValue());       
-                    productoxenvio.set("precio_unitario",producto_disponible.get("precio_unitario"));    
-                    productoxenvio.set("subtotal_previo",producto_disponible.get("subtotal_previo")); 
-                    productoxenvio.set("descuento",0);
-                    productoxenvio.set("flete",0);                    
-                    productoxenvio.set("subtotal_final",producto_disponible.get("subtotal_final"));             
-                    productos_a_agregar.add(productoxenvio);
-                    isNew = true;
-                }else{
-                    RecalcularTabla(isNew);
-                }
-            } catch (Exception e) {
-                infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
-            } 
-        
+        masterDataTipo.clear();
     }
     
     private void llenar_tabla_salida(){
-        for (OrdenSalidaxProducto tipoProd : masterDataTipo){
-            masterDataTipoSalida.add(tipoProd);
-        }
+        ObservableList<OrdenSalidaxProducto> productos = FXCollections.observableArrayList(); 
+        productos.clear();
+        productos.addAll(masterDataTipoSalida);
         
         columna_cod_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         columna_nombre_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("nombre")));
-        columna_cant_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getInteger("cantidad").toString()));
+        columna_cant_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getInteger("cantidad")));
         columna_desc_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("descripcion")));
 
         tabla_tipos_salida.setItems(masterDataTipoSalida);
+        tabla_tipos_salida.getColumns().get(0).setVisible(false);
+        tabla_tipos_salida.getColumns().get(0).setVisible(true); 
     }
     
     private void agregar_a_lista_envios(){
@@ -386,6 +402,16 @@ public class OrdenesDeSalidaController  extends Controller{
             envios_disponibles.add(envio_devuelto);
         }else{
             infoController.show("Ha seleccionado un envio ya agregado");
+        }
+    }
+    
+    @FXML
+    private void eliminar_tipos_salida(ActionEvent event) throws IOException{
+        try {
+            masterDataTipoSalida.clear();
+            llenar_tabla_salida();
+        } catch (Exception e) {
+            infoController.show("Ocurrio un error al eliminar los tipos de productos a la orden de salida : " + e.getMessage());
         }
     }
     
@@ -422,7 +448,7 @@ public class OrdenesDeSalidaController  extends Controller{
                 masterDataTipo.add(producto_salida);
             }            
         } else{
-            OrdenSalidaxProducto producto_salida = new OrdenSalidaxProducto();
+                OrdenSalidaxProducto producto_salida = new OrdenSalidaxProducto();
             producto_salida.set("tipo_id",tipo_devuelto.getInteger("tipo_id"));
             producto_salida.set("tipo_cod",tipo_devuelto.getString("tipo_cod"));
             producto_salida.setInteger("cantidad",0);
@@ -445,6 +471,7 @@ public class OrdenesDeSalidaController  extends Controller{
     public void nuevo(){
         crear_nuevo = true;
         habilitar_formulario();
+        limpia_formulario();
     }
     
     private void cargar_tabla_index(){
@@ -454,9 +481,8 @@ public class OrdenesDeSalidaController  extends Controller{
             masterDataSalidas.add(salida);
         }        
         
-        columna_cliente_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(OrdenesSalidaxEnvio.first("salida_cod = ?", p.getValue().get("salida_cod")).get("client_id")).get("nombre")));
         columna_cod_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("salida_cod")));
-        columna_pedido_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(OrdenesSalidaxEnvio.first("salida_cod = ?", p.getValue().get("salida_cod")).get("orden_compra_cod")));
+        columna_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
 
         tabla_salidas.setItems(masterDataSalidas);
     }
@@ -490,6 +516,7 @@ public class OrdenesDeSalidaController  extends Controller{
         String tipo = obtenerTipo();
         
         if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
+            envios_disponibles.clear();
             boton_tipo.setVisible(false);
             lbl_cant_tipo.setVisible(false);
             sp_cant_tipo.setVisible(false);
@@ -604,6 +631,10 @@ public class OrdenesDeSalidaController  extends Controller{
         try {                        
             cargar_tabla_index();
             inhabilitar_formulario();
+            tipo_buscar.getItems().add("");
+            ObservableList<String> tipos_enum = FXCollections.observableArrayList();   
+            tipos_enum.addAll(Arrays.asList(OrdenSalida.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList()));  
+            tipo_buscar.setItems(tipos_enum);
             llenar_combo_box_tipo();
             seleccionar_envio();
             setAgregarProductos();

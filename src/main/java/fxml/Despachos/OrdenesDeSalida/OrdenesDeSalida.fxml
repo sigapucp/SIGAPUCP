@@ -24,9 +24,8 @@
          <children>
             <TableView fx:id="tabla_salidas" layoutX="13.0" layoutY="219.0" prefHeight="301.0" prefWidth="226.0">
                <columns>
-                  <TableColumn fx:id="columna_cliente_salida" prefWidth="65.0" text="Cliente" />
-                  <TableColumn fx:id="columna_cod_salida" prefWidth="93.0" text="Orden Salilda" />
-                  <TableColumn fx:id="columna_pedido_salida" prefWidth="67.0" text="Pedido" />
+                  <TableColumn fx:id="columna_cod_salida" prefWidth="93.0" text="Código" />
+                  <TableColumn fx:id="columna_tipo_salida" prefWidth="67.0" text="Tipo" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -35,13 +34,13 @@
             <TextField fx:id="salida_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
             <Button layoutX="136.0" layoutY="178.0" mnemonicParsing="false" onAction="#buscar_salida" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
             <Line endX="100.0" layoutX="136.0" layoutY="50.0" startX="-100.0" />
-            <TextField fx:id="cliente_buscar" layoutX="119.0" layoutY="101.0" prefHeight="27.0" prefWidth="114.0" />
-            <Label layoutX="20.0" layoutY="104.0" prefHeight="21.0" prefWidth="114.0" text="Cliente">
+            <ComboBox fx:id="tipo_buscar" layoutX="119.0" layoutY="120.0" prefHeight="27.0" prefWidth="114.0" />
+            <Label layoutX="20.0" layoutY="124.0" prefHeight="21.0" prefWidth="96.0" text="Tipo :">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="20.0" layoutY="70.0" prefHeight="21.0" prefWidth="125.0" text="Ordenes Salida">
+            <Label layoutX="20.0" layoutY="70.0" prefHeight="21.0" prefWidth="96.0" text="Código :">
                <font>
                   <Font size="14.0" />
                </font>
@@ -61,12 +60,6 @@
                </children>
             </Pane>
             <Button layoutX="136.0" layoutY="533.0" mnemonicParsing="false" onAction="#visualizar_orden_salida" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
-            <TextField fx:id="pedido_buscar" layoutX="119.0" layoutY="137.0" prefHeight="27.0" prefWidth="114.0" />
-            <Label layoutX="20.0" layoutY="141.0" prefHeight="21.0" prefWidth="114.0" text="Cod. Pedido">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="salida_formulario" layoutX="260.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
@@ -111,11 +104,11 @@
             </AnchorPane>
             <TabPane layoutY="140.0" prefHeight="442.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
-                <Tab text="Tipos de productos">
+                <Tab fx:id="tab_tipo" text="Tipos de productos">
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <AnchorPane prefHeight="188.0" prefWidth="750.0">
+                              <AnchorPane fx:id="pane_tipo" prefHeight="188.0" prefWidth="750.0">
                                  <children>
                                     <Label layoutX="15.0" layoutY="10.0" text="Tipos de producto">
                                        <font>
@@ -172,7 +165,7 @@
                                     <AnchorPane>
                                        <children>
                                           <Button layoutX="22.0" layoutY="25.0" mnemonicParsing="false" onAction="#agregar_tipos_salida" prefHeight="40.0" prefWidth="125.0" text="Agregar" AnchorPane.topAnchor="25.0" />
-                                          <Button layoutX="22.0" layoutY="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="125.0" text="Eliminar" />
+                                          <Button layoutX="22.0" layoutY="100.0" mnemonicParsing="false" onAction="#eliminar_tipos_salida" prefHeight="40.0" prefWidth="125.0" text="Eliminar" />
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -181,9 +174,9 @@
                         </AnchorPane>
                      </content>
                   </Tab>
-                <Tab text="Productos específicos">
+                <Tab fx:id="tab_producto" disable="true" text="Productos específicos">
                      <content>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane fx:id="pane_producto" prefHeight="200.0" prefWidth="200.0">
                            <children>
                               <Button layoutX="450.0" layoutY="30.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="125.0" text="Agregar">
                                  <font>
