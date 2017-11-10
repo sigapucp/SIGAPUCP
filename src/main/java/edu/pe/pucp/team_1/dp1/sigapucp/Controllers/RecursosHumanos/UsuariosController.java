@@ -44,6 +44,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
@@ -84,6 +85,9 @@ public class UsuariosController extends Controller{
     private ComboBox<String> BusquedaRol;
         
     @FXML
+    private GridPane DetalleUsuario;    
+    
+    @FXML
     private TextField VerNombre;
     @FXML
     private TextField VerApellido;
@@ -111,9 +115,11 @@ public class UsuariosController extends Controller{
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         
-        List<Usuario> tempUsuarios = Usuario.findAll();               
+        List<Usuario> tempUsuarios = Usuario.where("estado = ?", Usuario.ESTADO.ACTIVO.name());;               
         for (Usuario usuario : tempUsuarios) {
-            usuarios.add(usuario);
+            if (usuario.getString("estado").equals(Usuario.ESTADO.ACTIVO.name())){
+                usuarios.add(usuario);
+            }          
         }                               
         
         infoController = new InformationAlertController();
@@ -140,7 +146,7 @@ public class UsuariosController extends Controller{
         String estado = BusquedaEstado.getValue();
         String rol = BusquedaRol.getValue();
         
-        List<Usuario> tempUsuarios = Usuario.findAll();
+        List<Usuario> tempUsuarios = Usuario.where("estado = ?", Usuario.ESTADO.ACTIVO.name());
         
         if(codigo!=null&&!codigo.isEmpty())
         {            
@@ -169,9 +175,18 @@ public class UsuariosController extends Controller{
         RefrescarTabla(tempUsuarios);
         try {                        
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);                    
+            infoController.show("Error al filtrar usuarios");
+            System.out.println(e);
         }
     }          
+    
+    public void habilitarDetalle(){
+        DetalleUsuario.setDisable(false);
+    }
+    
+    public void deshabilitarDetalle(){
+        DetalleUsuario.setDisable(true);
+    }
     
     private void setUsuarioVisible(Usuario usuario)
     {        
@@ -191,7 +206,8 @@ public class UsuariosController extends Controller{
             
             mostrarUsuarioPrivilegios(usuario);                                                   
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);
+            infoController.show("Error al mostrar los datos del usuario");
+            System.out.println(e);
         }                                
     }
     
@@ -208,6 +224,7 @@ public class UsuariosController extends Controller{
      @Override
      public void desactivar()
      {
+        usuarioSelecionado = TablaUsuarios.getSelectionModel().getSelectedItem();
         if(usuarioSelecionado==null) 
         {
             infoController.show("No ha seleccionado un usuario");            
@@ -303,13 +320,15 @@ public class UsuariosController extends Controller{
         infoController.show("El usuario ha sido editado satisfactoriamente");        
         }
         catch(Exception e){
-            infoController.show("El Usuario contiene errores : " + e);        
-           Base.rollbackTransaction();
+            infoController.show("Error al editar usuario");
+            System.out.println(e);
+            Base.rollbackTransaction();
         }                
     }
     
     private void crearUsuario()
     {
+        //habilitarDetalle();
         usuarioSelecionado = null;
         String nombre = VerNombre.getText();
         String apellido = VerApellido.getText();
@@ -339,10 +358,12 @@ public class UsuariosController extends Controller{
         usuario.set("last_user_change",usuarioActual.get("usuario_cod"));
         usuario.saveIt();        
         Base.commitTransaction();                
-        infoController.show("El usuario ha sido creado satisfactoriamente");        
+        infoController.show("El usuario ha sido creado satisfactoriamente");      
+        //deshabilitarDetalle();
         }
         catch(Exception e){
-           infoController.show("El Usuario contiene errores : " + e);        
+           infoController.show("Error al crear un usuario");
+           System.out.println(e);
            Base.rollbackTransaction();           
         }finally{
            crearNuevo = false; 
@@ -412,7 +433,8 @@ public class UsuariosController extends Controller{
             TablaUsuarios.getColumns().get(0).setVisible(false);
             TablaUsuarios.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);        
+            infoController.show("Error al refrescar tabla");
+            System.out.println(e);
         }                                  
     }
     
@@ -476,9 +498,11 @@ public class UsuariosController extends Controller{
             
             TablaUsuarios.setItems(usuarios);
             ArbolPrivilegiosTabla.setShowRoot(false);
+            //deshabilitarDetalle();
             
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);        
+            infoController.show("Error al inicializar usuarios");
+            System.out.println(e);
         }       
     } 
 
