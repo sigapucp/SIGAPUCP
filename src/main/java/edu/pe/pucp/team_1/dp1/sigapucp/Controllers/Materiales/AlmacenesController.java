@@ -192,6 +192,10 @@ public class AlmacenesController extends Controller{
             setTempRack((createRackArgs) args);
         });
 
+        linearBehavior.getDrawingErrorEvent().addHandler((sender, args) -> {
+            warningController.show("Error al dibujar", "Si dibuja racks, dibuje una columna o fila. Si dibuja almacenes, dibuje un rectangulo completo o una diagonal. Y no dibuje sobre los rectangulos ya activos.");
+        });
+
         if(pane_grilla != null) pane_grilla.getChildren().setAll(grid);
     }
     
@@ -205,7 +209,7 @@ public class AlmacenesController extends Controller{
             create_almacen_logico_container.setDisable(false);
             contenedor_grilla.setDisable(true);
         });
-        
+
         rectangularBehavior.getCreateLogicalWarehouseEvent().addHandler((sender, args) -> {
             args.setNombre(almacen_logico_nombre_field.getText());
             args.setLongitud_area(grid.getTileSize());
@@ -213,7 +217,11 @@ public class AlmacenesController extends Controller{
             args.setLargo((args.getLargo()*grid.getTileSize()));
             setTempAlmacen(args);
         });
-        
+
+        rectangularBehavior.getDrawingErrorEvent().addHandler((sender, args) -> {
+            warningController.show("Error al dibujar", "Si dibuja racks, dibuje una columna o fila. Si dibuja almacenes, dibuje un rectangulo completo o una diagonal. Y no dibuje sobre los rectangulos ya activos.");
+        });
+
         if(pane_grilla != null) pane_grilla.getChildren().setAll(grid);
     }
     
@@ -265,10 +273,12 @@ public class AlmacenesController extends Controller{
             list_almacenes_tab.setDisable(false);
             list_objects_pane.getSelectionModel().select(list_almacenes_tab);
             infoController.show("Es necesario que se cree un almacen fisico primero");
+            VerRacks.setDisable(true);
         } else {
             almacenes.clear();
             almacenActuales.forEach(almacenes::add);
             tabla_almacenes.setItems(almacenes);
+            VerRacks.setDisable(false);
         }
     }
     
@@ -652,7 +662,7 @@ public class AlmacenesController extends Controller{
     }
 
     @FXML
-    private void visualizar_racks(ActionEvent event) {        
+    private void visualizar_racks(ActionEvent event) {
         LazyList<Almacen> almacenesLogicos = Almacen.find("es_central = ?", 'F');
         String ladoGrillaAlmacenStr = String.valueOf(almacen_seleccionado.get("longitud_area"));
         int ladoGrillaAlmacen = Double.valueOf(ladoGrillaAlmacenStr).intValue();
@@ -661,14 +671,14 @@ public class AlmacenesController extends Controller{
         if(visualizar_racks)
         {
             VerRacks.setText("Visualizar Almacenes");
-            createNoBehaviourSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);         
-            grid.drawAlmacenesRacks(almacenesLogicos, ladoGrillaAlmacen,Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr));                        
+            createNoBehaviourSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);
+            grid.drawAlmacenesRacks(almacenesLogicos, ladoGrillaAlmacen,Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr));
         }else
         {
-            VerRacks.setText("Visualizar Racks");            
-            createNewRectangularSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);         
-            grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);            
+            VerRacks.setText("Visualizar Racks");
+            createNewRectangularSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);
+            grid.drawAlmacenes(almacenesLogicos, ladoGrillaAlmacen);
         }
-        visualizar_racks = !visualizar_racks;                
+        visualizar_racks = !visualizar_racks;
     }
 }
