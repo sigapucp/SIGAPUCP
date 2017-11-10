@@ -100,6 +100,15 @@ public class Punto {
         return new Punto(x+moveFactorX,y+moveFactorY);   
     }
         
+    public void print()
+    {
+        System.out.print(x + " " + y);
+    }
+    
+    public void println()
+    {
+        System.out.print(x + " " + y);
+    }
     
     public enum DIRECCION
     {

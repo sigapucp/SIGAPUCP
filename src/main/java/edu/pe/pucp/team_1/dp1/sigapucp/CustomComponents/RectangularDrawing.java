@@ -179,4 +179,9 @@ public class RectangularDrawing implements Behavior {
             }
         }  
     }
+
+    @Override
+    public void clearUserTiles(List<GridTile> tiles) {
+       
+    }
 }

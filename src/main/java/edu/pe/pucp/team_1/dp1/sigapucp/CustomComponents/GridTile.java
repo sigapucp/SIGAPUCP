@@ -24,6 +24,7 @@ public class GridTile extends StackPane {
     private int x_cord;
     private int y_cord;
     Rectangle border;
+    private Boolean is_active = false;
     private Event<tileArgs> releaseTileEvent;
     private Event<tileArgs> activeTileEvent;
     private Event<tileArgs> pressedTileEvent;
@@ -115,11 +116,31 @@ public class GridTile extends StackPane {
             activeTileEvent.fire(this, args);
         }        
         border.setFill(Color.RED);
+        is_active = true;
+    }
+    
+     public void activeTileColor(boolean fromEvent,Color color) {
+        if(fromEvent) {
+            tileArgs args = new tileArgs();
+            args.setX_cord(x_cord);
+            args.setY_cord(y_cord);
+
+            activeTileEvent.fire(this, args);
+        }        
+        border.setFill(color);
+        is_active = true;
     }
     
     
     public void clearTile() {
         border.setFill(null);
+        is_active = false;
+    }
+    
+    
+    public Boolean isActive()
+    {
+        return is_active;    
     }
     
     public int getXCord() {

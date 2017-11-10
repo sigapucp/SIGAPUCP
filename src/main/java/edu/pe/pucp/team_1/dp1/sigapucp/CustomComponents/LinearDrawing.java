@@ -179,9 +179,16 @@ public class LinearDrawing implements Behavior{
 
     @Override
     public void startDrag(int i_index, int j_index) {        
+    }  
+   
+
+    @Override
+    public void clearUserTiles(List<GridTile> tiles) {
+       
     }
 
     @Override
-    public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles, int i_index, int j_index) {        
+    public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles, int i_index, int j_index) {
+        
     }
 }

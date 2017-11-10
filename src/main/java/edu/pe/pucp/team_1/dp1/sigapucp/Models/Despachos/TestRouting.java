@@ -88,7 +88,9 @@ public class TestRouting {
                     }
                 }
             }                        
-        }                      
+        }          
+        
+        
         RutaDetallada rutaGenerator = new RutaDetallada();
         PrintWriter writer = new PrintWriter("rutaTest.txt", "UTF-8");
         int nrRacks = racksAll.size();        
@@ -135,7 +137,7 @@ public class TestRouting {
         writer.close();
     }       
     
-     private Celda.TIPO[][] copiarMapa(Celda.TIPO[][] mapa,int altura,int ancho)
+    private Celda.TIPO[][] copiarMapa(Celda.TIPO[][] mapa,int altura,int ancho)
     {
         Celda.TIPO[][] nuevoMapa = new Celda.TIPO[altura][ancho];
         

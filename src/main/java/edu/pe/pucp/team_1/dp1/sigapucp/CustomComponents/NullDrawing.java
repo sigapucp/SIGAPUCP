@@ -61,5 +61,12 @@ public class NullDrawing implements Behavior{
     @Override
     public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles,int i_index, int j_index) {        
     }
-    
+
+    @Override
+    public void clearUserTiles(List<GridTile> tiles) {
+        for(GridTile tile:tiles)
+        {
+            tile.clearTile();            
+        }       
+    }    
 }
