@@ -33,6 +33,14 @@ public class TupleProductos {
         color = Color.color(r, g, b);
     }
     
+    public TupleProductos(TupleProductos tuple)
+    {
+        productoUno = tuple.getProductoUno();
+        productoDos = tuple.getProductoDos();        
+        color = tuple.getColor();        
+        resultado = tuple.getEstado();
+    }
+    
     public void setRuta(Estado ruta)
     {
         resultado = ruta;

@@ -32,7 +32,7 @@ import javafx.collections.transformation.SortedList;
  */
 public class RutaDetallada {
     
-    private int NR_ITERACIONES = 10;
+    private int NR_ITERACIONES = 20;
     private Double alfa_corte_ruta = 0.4;
     private List<Estado> poblacion;
     private double alfa = 0.33;
@@ -77,14 +77,14 @@ public class RutaDetallada {
                 pFin = puntoFinal;
             }                            
                        
-            Estado nuevaSolucion = generarRutaGreedy(nuevoMapa,altura,ancho,pIni,pFin);                   
+            Estado nuevaSolucion = generarRutaGreedy(nuevoMapa,altura,ancho,pIni,pFin);       
+
+            if(nuevaSolucion.getCost() <=1) return nuevaSolucion;
             nuevaSolucion = juntarEstado(estadoInicial,nuevaSolucion,estadoFinal,pIni,pFin);          
             if(nuevaSolucion == null) 
             {
                 continue;       
-            }
-            
-            //if(nuevaSolucion.get)
+            }                    
             
             if(mejorSolucion == null || mejorSolucion.getCost() > nuevaSolucion.getCost())
             {
@@ -179,7 +179,7 @@ public class RutaDetallada {
         if(poblacion.isEmpty()) return null;
         if(poblacion.size() == 1) return poblacion.get(0);
         
-        //if(((double)nrIteracion/(double)NR_ITERACIONES) > Math.random()) return null;
+        if(((double)nrIteracion/(double)NR_ITERACIONES) > Math.random()) return null;
         poblacion.get((new Random()).nextInt((poblacion.size()+1)/DIVFACTOR));        
         return null;
     }    
@@ -188,7 +188,7 @@ public class RutaDetallada {
         if(poblacion.isEmpty()) return null;
         if(poblacion.size() == 1) return poblacion.get(0);
         
-        //if(((double)nrIteracion/(double)NR_ITERACIONES) > Math.random()) return null;
+        if(((double)nrIteracion/(double)NR_ITERACIONES) > Math.random()) return null;
         
         poblacion.get((new Random()).nextInt((poblacion.size()+1)/DIVFACTOR));        
         return null;
@@ -267,16 +267,13 @@ public class RutaDetallada {
             frontera.remove(estadoActual);
             if(esSolucion(estadoActual, puntoInicial, puntoFinal)) return estadoActual;            
             mapaProblema[estadoActual.puntoActual.y][estadoActual.puntoActual.x] = TIPO.VISITADA;
-                        
-            //dibujarRuta(llenarMapa(copiarMapa(mapa, altura, ancho),estadoActual), estadoActual, altura, ancho);
-            //System.out.println("");
+                                 
            List<DIRECCION> movs = movimientosPosibles(mapaProblema,estadoActual.puntoActual, altura, ancho);            
             for(DIRECCION dir:movs)
             {        
                 Estado nuevoEstado = new Estado(estadoActual);
                 Punto puntoNuevo = nuevoEstado.puntoActual.mover(dir);
-                nuevoEstado.add(puntoNuevo);
-                //costos.put(nuevoEstado,(new Random()).nextInt(distanciaManhattam(nuevoEstado.get(0), puntoFinal)));
+                nuevoEstado.add(puntoNuevo);                
                 Boolean estaEnExplorado = mapaProblema[puntoNuevo.y][puntoNuevo.x] != TIPO.VISITADA;
                 Estado estaEnFrontera = estadoEnFrontera(frontera, puntoNuevo);
                         
