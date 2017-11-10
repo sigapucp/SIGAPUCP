@@ -44,6 +44,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
+import javafx.scene.paint.Color;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 
@@ -134,7 +135,7 @@ public class AlmacenesController extends Controller{
                 args.getY_ancla1(),
                 args.getX_ancla2(),
                 args.getY_ancla2(),
-                "ACTIVO");
+                Rack.ESTADO.ACTIVO.name());
 
         racks.add(temp_rack);
         rack_table_view.setItems(racks);
@@ -408,7 +409,7 @@ public class AlmacenesController extends Controller{
                 list_racks_tab.setDisable(false);
                 list_almacenes_tab.setDisable(true);
                 createNewLinearSelectableGrid(Integer.valueOf(largoAlmacenStr), Integer.valueOf(anchoAlmacenStr), ladoGrillaAlmacen);
-                grid.drawRacks(racks_temporales, ladoGrillaAlmacen);
+                grid.drawRacks(racks_temporales, ladoGrillaAlmacen,Color.RED);
             }
         } catch (Exception e) {
             Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
@@ -624,13 +625,15 @@ public class AlmacenesController extends Controller{
                     start = Integer.min(anchorY1, anchorY2);
                     finish = Integer.max(anchorY1, anchorY2);
                     constant = anchorX1;
+                    increment = "y";
+                    other = "x";
                 }
 
-                 for(;start<finish;start++) {
+                 for(;start<=finish;start++) {
                     AlmacenAreaXY areaXY = new AlmacenAreaXY();
 
-                    areaXY.set("x", start);
-                    areaXY.set("y", constant);
+                    areaXY.set(increment, start);
+                    areaXY.set(other, constant);
 
                     areaXY.set("rack_id", rack.getId());
                     areaXY.set("rack_cod", rack.get("rack_cod"));

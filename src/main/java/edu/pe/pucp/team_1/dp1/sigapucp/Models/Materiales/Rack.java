@@ -135,5 +135,11 @@ public class Rack extends Model{
         NO,
         SE,
         SO
+    }        
+    
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
     }
 }

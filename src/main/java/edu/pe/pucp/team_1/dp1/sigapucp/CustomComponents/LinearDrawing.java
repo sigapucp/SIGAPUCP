@@ -410,11 +410,20 @@ public class LinearDrawing implements Behavior{
     }
 
     @Override
+    public void startDrag(int i_index, int j_index) {        
+    }  
+   
+
+    @Override
+    public void clearUserTiles(List<GridTile> tiles) {    
+    }
+
     public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles, int i_index, int j_index) {
     }
 
     @Override
     public void fireDrawingErrorEvent() {
         getDrawingErrorEvent().fire(this, new EventArgs());
+
     }
 }

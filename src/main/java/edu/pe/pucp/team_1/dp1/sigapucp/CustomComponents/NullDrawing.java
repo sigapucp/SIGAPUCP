@@ -63,6 +63,12 @@ public class NullDrawing implements Behavior{
     }
 
     @Override
+    public void clearUserTiles(List<GridTile> tiles) {
+        for(GridTile tile:tiles)
+        {
+            tile.clearTile();            
+        }       
+    }    
     public void fireDrawingErrorEvent() {
     }
     

@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import org.javalite.activejdbc.LazyList;
 
 public class SelectableGrid extends AnchorPane  {
@@ -28,6 +29,7 @@ public class SelectableGrid extends AnchorPane  {
     private int grid_real_width;
     private int grid_real_heigth;
     private TreeMap<Integer, List<GridTile>> tiles;
+    private List<GridTile> userTiles;    
     private Behavior behavior;
     private int current_x_tile;
     private int current_y_tile;
@@ -41,6 +43,7 @@ public class SelectableGrid extends AnchorPane  {
         num_columns = width/grid_size;
         num_rows = heigth/grid_size;
         tiles = new TreeMap<>();
+        userTiles = new ArrayList<>();
         grid_real_width = width;
         grid_real_heigth = heigth;
         behavior = external_behavior;
@@ -60,15 +63,22 @@ public class SelectableGrid extends AnchorPane  {
                 tile.setTranslateY(i * aspect_ratio_heigth);
 
                 tile.getActiveTileEvent().addHandler((sender, args) -> {
+                    if(!tile.isActive()) userTiles.add(tile);
                     if (behavior.isNotTileSavedOrActive(args.getY_cord(), args.getX_cord())) behavior.addSelectedTile(args.getY_cord(), args.getX_cord());
                 });
 
                 tile.getReleaseEvent().addHandler((sender, args) -> {
                     behavior.preSaveTransformation(tiles,current_x_tile,current_y_tile);
+                    if (behavior.checkDrawRules()) behavior.saveActiveTiles(tiles);
+                    else 
+                    {
+                        behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
+                        behavior.clearUserTiles(userTiles);
                     if (behavior.checkDrawRules(tiles)) behavior.saveActiveTiles(tiles);
                     else {
                         behavior.clearActiveTiles(tiles); // System.out.println("Borrando~");
-                        behavior.fireDrawingErrorEvent();
+                        behavior.clearUserTiles(userTiles);
+                        behavior.fireDrawingErrorEvent();                      
                     }
                 });
 
@@ -79,6 +89,7 @@ public class SelectableGrid extends AnchorPane  {
                 tile.getDragEvent().addHandler((Object sender, tileArgs args) -> {
                     current_x_tile = args.getX_cord() + 1;
                     current_y_tile = args.getY_cord() + 1;
+                    //userTiles.add(tiles.get(args.getY_cord()).get(args.getX_cord()));                    
                 });
 
                 if(tiles.get(i) == null) {
@@ -101,6 +112,14 @@ public class SelectableGrid extends AnchorPane  {
     
     public void clearAndSaveTempTiles() {
         behavior.clearAndSaveTempTiles(tiles);
+    }
+    
+    public void clearUserTiles()
+    {
+        for(GridTile tile:userTiles)
+        {
+            tile.clearTile();
+        }
     }
     
     public void setNumRow(int rows) {
@@ -193,11 +212,10 @@ public class SelectableGrid extends AnchorPane  {
                 });
         } catch (Exception e) {
              Logger.getLogger(SelectableGrid.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-    
-    
-    public void drawRacks(LazyList<Rack> racks, int tileSize) {
+        }        
+    }        
+        
+    public void drawRacks(LazyList<Rack> racks, int tileSize,Color color) {
         if(racks.size() > 0) {
             try {
                 racks.forEach((rack) -> {
@@ -208,7 +226,7 @@ public class SelectableGrid extends AnchorPane  {
                     System.out.println(String.format("Rack: (X1, Y1) -> (%d, %d) - (X2, Y2) -> (%d, %d)", rack_x1, rack_y1, rack_x2, rack_y2));
                     if(rack_x1 == rack_x2) {
                         for(int i = rack_y1; i <= rack_y2; i++) {
-                            tiles.get(i).get(rack_x1).activeTile(false);
+                            tiles.get(i).get(rack_x1).activeTileColor(false,color);
                             behavior.addToSavedTiles(i, rack_x1);
                         }
                             
@@ -225,5 +243,18 @@ public class SelectableGrid extends AnchorPane  {
                 Logger.getLogger(SelectableGrid.class.getName()).log(Level.SEVERE, null, e);
             }    
         }
+    }
+    
+    public void pintarTile(int x,int y,Color color)
+    {
+        GridTile tile = tiles.get(y).get(x);      
+        tile.activeTileColor(false, color);
+    }
+    
+    public void pintarTileDeletable(int x,int y,Color color)
+    {
+        GridTile tile = tiles.get(y).get(x);
+        userTiles.add(tile);
+        tile.activeTileColor(false, color);
     }
 }

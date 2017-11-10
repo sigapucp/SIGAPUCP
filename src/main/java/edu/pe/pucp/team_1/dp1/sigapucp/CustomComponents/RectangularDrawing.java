@@ -190,4 +190,9 @@ public class RectangularDrawing implements Behavior {
     public void fireDrawingErrorEvent() {
         getDrawingErrorEvent().fire(this, new EventArgs());
     }
+
+    @Override
+    public void clearUserTiles(List<GridTile> tiles) {
+       
+    }
 }

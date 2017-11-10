@@ -1,4 +1,3 @@
-truncate table tiposerror RESTART IDENTITY CASCADE;
 
 insert into tiposerror values ('UNK500',default,'Error desconocido');
 insert into tiposerror values ('VAL400',default,'Error de validacion tipo de dato ingresados');

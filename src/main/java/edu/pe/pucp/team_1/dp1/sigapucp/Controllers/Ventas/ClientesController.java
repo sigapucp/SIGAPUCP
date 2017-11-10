@@ -223,6 +223,7 @@ public class ClientesController extends Controller{
             crear_cliente();
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Clientes ,this.usuarioActual);
             limpiar_formulario();
+            inhabilitar_formulario();
         }else{            
             if (cliente_seleccioando == null) {
                 infoController.show("No ha seleccionado un cliente");            

@@ -113,15 +113,33 @@ public class GridTile extends StackPane {
             args.setY_cord(y_cord);
 
             activeTileEvent.fire(this, args);
-        }
-        active = true;
+        }      
         border.setFill(Color.RED);
+        active = true;
+    }
+    
+     public void activeTileColor(boolean fromEvent,Color color) {
+        if(fromEvent) {
+            tileArgs args = new tileArgs();
+            args.setX_cord(x_cord);
+            args.setY_cord(y_cord);
+
+            activeTileEvent.fire(this, args);
+        }        
+        border.setFill(color);
+        active = true;
     }
     
     
-    public void clearTile() {
-        active = false;
+    public void clearTile() {       
         border.setFill(null);
+        active = false;
+    }
+    
+    
+    public Boolean isActive()
+    {
+        return active;    
     }
     
     public int getXCord() {
@@ -134,9 +152,5 @@ public class GridTile extends StackPane {
     
     public String getTileId() {
         return String.format("%d/%d", x_cord, y_cord);
-    }
-
-    public boolean getTileState() {
-        return active;
-    }
+    }   
 }

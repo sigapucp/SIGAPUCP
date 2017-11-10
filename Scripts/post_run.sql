@@ -21,6 +21,7 @@ alter table promocionporcentajes alter column relacion_condition drop not null;
 alter table productos alter column almacen_xy_id drop not null;
 alter table productos alter column almacen_z_id drop not null;
 alter table productos alter column tipo_posicion drop not null;
+alter table productos alter column posicion_rack drop not null;
 
 alter table productos alter column rack_cod drop not null;
 alter table productos alter column rack_id drop not null;
@@ -30,4 +31,6 @@ alter table productos alter column lote_cod drop not null;
 
 alter table productos alter column almacen_cod drop not null;
 alter table productos alter column almacen_id drop not null;
+
+
 

@@ -73,7 +73,7 @@ public class TestRouting {
                     int start = Integer.min(anchorX1, anchorX2);
                     int finish = Integer.max(anchorX1, anchorX2);
                     
-                    for(;start<finish;start++)
+                    for(;start<=finish;start++)
                     {
                         mapa[anchorY1][start] = TIPO.RACK;                                                
                     }                    
@@ -82,17 +82,19 @@ public class TestRouting {
                     int start = Integer.min(anchorY1, anchorY2);
                     int finish = Integer.max(anchorY1, anchorY2);
                     
-                    for(;start<finish;start++)
+                    for(;start<=finish;start++)
                     {
                         mapa[start][anchorX1] = TIPO.RACK;                        
                     }
                 }
             }                        
-        }                      
+        }          
+        
+        
         RutaDetallada rutaGenerator = new RutaDetallada();
         PrintWriter writer = new PrintWriter("rutaTest.txt", "UTF-8");
         int nrRacks = racksAll.size();        
-        for(int i = 0;i<nrRacks-1;i++)
+        for(int i = 0;i<2;i++)
         {            
             Rack rack1 = racksAll.get(i);
             Punto rack1Relativo = relativoAlmacen.get(rack1);           
@@ -109,17 +111,7 @@ public class TestRouting {
                 for(Punto puntoRack1:puntosRack1)
                 {
                     for(Punto puntoRack2:puntosRack2)
-                    {                                               
-                        
-                        if(mapa[puntoRack1.y][puntoRack1.x] != TIPO.LIBRE)
-                        {
-                            int a =  4;
-                        }
-                        
-                        if(mapa[puntoRack2.y][puntoRack2.x] != TIPO.LIBRE)
-                        {
-                            int a =  4;
-                        }
+                    {                                                                                              
                         Estado solucion = rutaGenerator.generarRutaGreedy(copiarMapa(mapa,width,height), width, height, puntoRack1, puntoRack2); 
                         Celda.TIPO[][] mapaDibujo = copiarMapa(mapa, width, height);
                         for(Punto punto:solucion.ruta)
@@ -128,6 +120,13 @@ public class TestRouting {
                         }
                         try {
                             dibujarRuta(mapaDibujo, width, height,writer);
+                            for(Punto punto:solucion.ruta)
+                            {
+                                if(punto.dir != null)
+                                {
+                                    writer.println(punto.dir.name());
+                                }
+                            }
                         } catch (Exception ex) {
                             Logger.getLogger(TestRouting.class.getName()).log(Level.SEVERE, null, ex);
                         }                                              
@@ -138,7 +137,7 @@ public class TestRouting {
         writer.close();
     }       
     
-     private Celda.TIPO[][] copiarMapa(Celda.TIPO[][] mapa,int altura,int ancho)
+    private Celda.TIPO[][] copiarMapa(Celda.TIPO[][] mapa,int altura,int ancho)
     {
         Celda.TIPO[][] nuevoMapa = new Celda.TIPO[altura][ancho];
         
@@ -148,7 +147,7 @@ public class TestRouting {
             {
                 nuevoMapa[j][i] = mapa[j][i];
             }
-        }
+        }                
         return nuevoMapa;
     }
     

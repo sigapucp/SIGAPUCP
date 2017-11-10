@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -257,6 +258,18 @@ public class Ruta {
         } while (!temp.EsDeposito());
         temp.ImprimirLn();                        
     }    
+    
+    public List<ProductoNodo> getRutaList()
+    {
+        List<ProductoNodo> rutaLista = new ArrayList<>();
+        
+        ProductoNodo temp = _nodoInicial;
+        do {      
+           rutaLista.add(temp);
+            temp = temp.sig;            
+        } while (!temp.EsDeposito());
+        return rutaLista;
+    }
     
     public void ImprimirCosto()
     { 
