@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -159,7 +160,6 @@
                                           </AnchorPane>
                                       </content>
                                     </TitledPane>
-                                    <Button layoutX="315.0" layoutY="382.0" mnemonicParsing="false" onAction="#generarSimulacion" prefHeight="74.0" prefWidth="120.0" text="Generar Simulacion" />
                                   </children>
                                </AnchorPane>
                             </content>
@@ -208,12 +208,13 @@
                                     <GridPane prefHeight="149.0" prefWidth="573.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.0" minWidth="10.0" prefWidth="102.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="126.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="63.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="75.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="50.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="122.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="81.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="61.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="62.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="59.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="114.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="54.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="107.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="54.0" />
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints maxHeight="40.0" minHeight="6.0" prefHeight="29.0" vgrow="SOMETIMES" />
@@ -232,15 +233,21 @@
                                              </font>
                                           </Label>
                                           <ComboBox fx:id="VerNrRuta" prefHeight="25.0" prefWidth="34.0" GridPane.columnIndex="3" />
-                                          <Label prefHeight="20.0" prefWidth="124.0" text="Costo Ruta/Total:" GridPane.columnIndex="5">
+                                          <Label prefHeight="20.0" prefWidth="124.0" text="Costo Ruta/Total:" GridPane.columnIndex="4">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="VerCostoRuta" text="0/0" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                          <Label fx:id="VerCostoRuta" text="0/0" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                          <Label prefHeight="20.0" prefWidth="114.0" text="Recalcular Rutas:" GridPane.columnIndex="6">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <CheckBox fx:id="recarcularRutasCheck" mnemonicParsing="false" GridPane.columnIndex="7" GridPane.halignment="CENTER" />
                                        </children>
                                     </GridPane>
-                                    <TitledPane animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <TitledPane fx:id="tittle_pane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <content>
                                           <AnchorPane fx:id="mapa_pane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="483.0" prefWidth="676.0" style="-fx-background-color: lightblue;" />
                                        </content>
@@ -250,13 +257,18 @@
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints maxHeight="249.0" minHeight="10.0" prefHeight="211.0" vgrow="SOMETIMES" />
-                                        <RowConstraints maxHeight="165.0" minHeight="9.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                        <RowConstraints maxHeight="288.0" minHeight="10.0" prefHeight="263.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="249.0" minHeight="10.0" prefHeight="83.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="165.0" minHeight="9.0" prefHeight="9.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="381.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="249.0" minHeight="10.0" prefHeight="180.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="381.0" minHeight="10.0" prefHeight="87.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="381.0" minHeight="10.0" prefHeight="95.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button mnemonicParsing="false" onAction="#comenzarRuta" prefHeight="69.0" prefWidth="79.0" text="Comenzar" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
-                                          <Button mnemonicParsing="false" onAction="#siguientePaso" prefHeight="42.0" prefWidth="78.0" text="Siguiente Camino" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+                                          <Button mnemonicParsing="false" onAction="#comenzarRuta" prefHeight="69.0" prefWidth="89.0" text="Comenzar" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
+                                          <Button mnemonicParsing="false" onAction="#siguientePaso" prefHeight="52.0" prefWidth="88.0" text="Siguiente Camino" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+                                          <Button mnemonicParsing="false" onAction="#generarSimulacion" prefHeight="74.0" prefWidth="94.0" text="Generar Simulacion" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                                          <Button mnemonicParsing="false" onAction="#agregarSimulacion" prefHeight="61.0" prefWidth="94.0" text="Agregar Simulación" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
                                        </children>
                                     </GridPane>
                                  </children>

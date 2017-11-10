@@ -51,27 +51,27 @@ public class LinearDrawing implements Behavior{
 
         if (y < 1) { 
             // (y + 1; x)
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
+            condition = condition && !tiles.get(y+1).get(x).isActive();
             if (x >= 1)  { // (y; x - 1) && (y + 1 ; x - 1)
-                condition = condition && !tiles.get(y).get(x-1).getTileState();
-                condition = condition && !tiles.get(y+1).get(x-1).getTileState();
+                condition = condition && !tiles.get(y).get(x-1).isActive();
+                condition = condition && !tiles.get(y+1).get(x-1).isActive();
             }
         } else if (y == rows -1) {
             // (y-1; x)
-            condition = condition && !tiles.get(y-1).get(x).getTileState();
+            condition = condition && !tiles.get(y-1).get(x).isActive();
             if(x >= 1) { // (y; x-1) && (y-1; x-1)
-                condition = condition && !tiles.get(y).get(x-1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x-1).getTileState();
+                condition = condition && !tiles.get(y).get(x-1).isActive();
+                condition = condition && !tiles.get(y-1).get(x-1).isActive();
             }
         } else {
             // (y-1; x) && (y+1; x)
-            condition = condition && !tiles.get(y-1).get(x).getTileState();
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
+            condition = condition && !tiles.get(y-1).get(x).isActive();
+            condition = condition && !tiles.get(y+1).get(x).isActive();
 
             if (x >= 1) { // (y; x-1) && (y+1;x-1) && (y-1;x-1)
-                condition = condition && !tiles.get(y).get(x-1).getTileState();
-                condition = condition && !tiles.get(y+1).get(x-1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x-1).getTileState();
+                condition = condition && !tiles.get(y).get(x-1).isActive();
+                condition = condition && !tiles.get(y+1).get(x-1).isActive();
+                condition = condition && !tiles.get(y-1).get(x-1).isActive();
             }
         }
         return condition;
@@ -84,27 +84,27 @@ public class LinearDrawing implements Behavior{
         boolean condition = true;
 
         if (y < 1) {
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
+            condition = condition && !tiles.get(y+1).get(x).isActive();
 
             if(x < columns - 1) {
-                condition = condition && !tiles.get(y).get(x+1).getTileState();
-                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y).get(x+1).isActive();
+                condition = condition && !tiles.get(y+1).get(x+1).isActive();
             }
         } else if (y == rows - 1) {
-            condition = condition && !tiles.get(y-1).get(x).getTileState();
+            condition = condition && !tiles.get(y-1).get(x).isActive();
 
             if (x < columns - 1) {
-                condition = condition && !tiles.get(y).get(x+1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y).get(x+1).isActive();
+                condition = condition && !tiles.get(y-1).get(x+1).isActive();
             }
         } else {
-            condition = condition && !tiles.get(y-1).get(x).getTileState();
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
+            condition = condition && !tiles.get(y-1).get(x).isActive();
+            condition = condition && !tiles.get(y+1).get(x).isActive();
 
             if(x < columns - 1) {
-                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
-                condition = condition && !tiles.get(y).get(x+1).getTileState();
-                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y-1).get(x+1).isActive();
+                condition = condition && !tiles.get(y).get(x+1).isActive();
+                condition = condition && !tiles.get(y+1).get(x+1).isActive();
             }
         }
         return condition;
@@ -116,12 +116,12 @@ public class LinearDrawing implements Behavior{
         boolean condition = true;
 
         if (y < 1) {
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
+            condition = condition && !tiles.get(y+1).get(x).isActive();
         } else if (y == rows - 1) {
-            condition = condition && !tiles.get(y-1).get(x).getTileState();
+            condition = condition && !tiles.get(y-1).get(x).isActive();
         } else {
-            condition = condition && !tiles.get(y-1).get(x).getTileState();
-            condition = condition && !tiles.get(y+1).get(x).getTileState();
+            condition = condition && !tiles.get(y-1).get(x).isActive();
+            condition = condition && !tiles.get(y+1).get(x).isActive();
         }
         return condition;
     }
@@ -132,27 +132,27 @@ public class LinearDrawing implements Behavior{
         int columns = firstEntry.getValue().size();
 
         if(x < 1) {
-            condition = condition && !tiles.get(y).get(x+1).getTileState();
+            condition = condition && !tiles.get(y).get(x+1).isActive();
 
             if(y >= 1) {
-                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x).getTileState();
+                condition = condition && !tiles.get(y-1).get(x+1).isActive();
+                condition = condition && !tiles.get(y-1).get(x).isActive();
             }
         } else if (x == columns - 1) {
-            condition = condition && !tiles.get(y).get(x-1).getTileState();
+            condition = condition && !tiles.get(y).get(x-1).isActive();
 
             if(y >= 1) {
-                condition = condition && !tiles.get(y-1).get(x-1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x).getTileState();
+                condition = condition && !tiles.get(y-1).get(x-1).isActive();
+                condition = condition && !tiles.get(y-1).get(x).isActive();
             }
         } else {
-            condition = condition && !tiles.get(y).get(x-1).getTileState();
-            condition = condition && !tiles.get(y).get(x+1).getTileState();
+            condition = condition && !tiles.get(y).get(x-1).isActive();
+            condition = condition && !tiles.get(y).get(x+1).isActive();
 
             if (y>= 1) {
-                condition = condition && !tiles.get(y-1).get(x).getTileState();
-                condition = condition && !tiles.get(y-1).get(x+1).getTileState();
-                condition = condition && !tiles.get(y-1).get(x-1).getTileState();
+                condition = condition && !tiles.get(y-1).get(x).isActive();
+                condition = condition && !tiles.get(y-1).get(x+1).isActive();
+                condition = condition && !tiles.get(y-1).get(x-1).isActive();
             }
         }
 
@@ -166,27 +166,27 @@ public class LinearDrawing implements Behavior{
         int rows = tiles.size();
 
         if(x < 1) {
-            condition = condition && !tiles.get(y).get(x+1).getTileState();
+            condition = condition && !tiles.get(y).get(x+1).isActive();
 
             if (y < rows - 1) {
-                condition = condition && !tiles.get(y+1).get(x).getTileState();
-                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y+1).get(x).isActive();
+                condition = condition && !tiles.get(y+1).get(x+1).isActive();
             }
         } else if (x == columns - 1) {
-            condition = condition && !tiles.get(y).get(x-1).getTileState();
+            condition = condition && !tiles.get(y).get(x-1).isActive();
 
             if(y < rows - 1){
-                condition = condition && !tiles.get(y+1).get(x).getTileState();
-                condition = condition && !tiles.get(y+1).get(x-1).getTileState();
+                condition = condition && !tiles.get(y+1).get(x).isActive();
+                condition = condition && !tiles.get(y+1).get(x-1).isActive();
             }
         } else {
-            condition = condition && !tiles.get(y).get(x-1).getTileState();
-            condition = condition && !tiles.get(y).get(x+1).getTileState();
+            condition = condition && !tiles.get(y).get(x-1).isActive();
+            condition = condition && !tiles.get(y).get(x+1).isActive();
 
             if(y < rows - 1) {
-                condition = condition && !tiles.get(y+1).get(x).getTileState();
-                condition = condition && !tiles.get(y+1).get(x-1).getTileState();
-                condition = condition && !tiles.get(y+1).get(x+1).getTileState();
+                condition = condition && !tiles.get(y+1).get(x).isActive();
+                condition = condition && !tiles.get(y+1).get(x-1).isActive();
+                condition = condition && !tiles.get(y+1).get(x+1).isActive();
             }
         }
         return condition;
@@ -198,12 +198,12 @@ public class LinearDrawing implements Behavior{
         int columns = firstEntry.getValue().size();
 
         if(x< 1) {
-            condition = condition && !tiles.get(y).get(x+1).getTileState();
+            condition = condition && !tiles.get(y).get(x+1).isActive();
         } else if (x == columns - 1) {
-            condition = condition && !tiles.get(y).get(x-1).getTileState();
+            condition = condition && !tiles.get(y).get(x-1).isActive();
         } else {
-            condition = condition && !tiles.get(y).get(x+1).getTileState();
-            condition = condition && !tiles.get(y).get(x-1).getTileState();
+            condition = condition && !tiles.get(y).get(x+1).isActive();
+            condition = condition && !tiles.get(y).get(x-1).isActive();
         }
         return condition;
     }
@@ -408,10 +408,6 @@ public class LinearDrawing implements Behavior{
     @Override
     public void startDrag(int i_index, int j_index) {
     }
-
-    @Override
-    public void startDrag(int i_index, int j_index) {        
-    }  
    
 
     @Override
