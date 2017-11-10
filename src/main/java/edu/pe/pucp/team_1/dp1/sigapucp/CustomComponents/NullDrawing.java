@@ -20,7 +20,7 @@ public class NullDrawing implements Behavior{
     }
 
     @Override
-    public Boolean checkDrawRules() {
+    public Boolean checkDrawRules(TreeMap<Integer, List<GridTile>> tiles) {
         return false;
     }
 
@@ -69,4 +69,7 @@ public class NullDrawing implements Behavior{
             tile.clearTile();            
         }       
     }    
+    public void fireDrawingErrorEvent() {
+    }
+    
 }

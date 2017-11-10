@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 public interface Behavior {
     public void addSelectedTile(int i_index, int j_index);
-    public Boolean checkDrawRules();
+    public Boolean checkDrawRules(TreeMap<Integer, List<GridTile>> tiles);
     public void clearActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
     public void saveActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
     public void clearCurrentActiveTiles(TreeMap<Integer, List<GridTile>> tiles);
@@ -24,4 +24,5 @@ public interface Behavior {
     public void addToSavedTiles(int i_index, int j_index);
     public void startDrag(int i_index,int j_index);
     public void preSaveTransformation(TreeMap<Integer, List<GridTile>> tiles,int i_index,int j_index);
+    public void fireDrawingErrorEvent();
 }
