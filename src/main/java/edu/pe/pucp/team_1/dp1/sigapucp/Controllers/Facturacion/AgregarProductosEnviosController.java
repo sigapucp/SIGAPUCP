@@ -161,5 +161,5 @@ public class AgregarProductosEnviosController implements Initializable {
             infoController.show("Problemas en la inicialización de búsqueda de los Productos");
         }       
     }       
-    public Event<agregarOrdenCompraProductoArgs> devolverProductoEvent = new Event<>();                   
+    public Event<agregarOrdenCompraProductoArgs> devolverProductoEvent = new Event<>();          
 }
