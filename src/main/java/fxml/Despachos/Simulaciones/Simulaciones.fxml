@@ -209,12 +209,12 @@
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.0" minWidth="10.0" prefWidth="102.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="61.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="62.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="59.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="114.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="54.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="107.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="54.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="52.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="61.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="110.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="79.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="106.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="44.0" />
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints maxHeight="40.0" minHeight="6.0" prefHeight="29.0" vgrow="SOMETIMES" />
@@ -232,19 +232,21 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="VerNrRuta" prefHeight="25.0" prefWidth="34.0" GridPane.columnIndex="3" />
+                                          <ComboBox fx:id="VerNrRuta" prefHeight="25.0" prefWidth="57.0" GridPane.columnIndex="3" />
                                           <Label prefHeight="20.0" prefWidth="124.0" text="Costo Ruta/Total:" GridPane.columnIndex="4">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="VerCostoRuta" text="0/0" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                          <Label text="/" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                                           <Label prefHeight="20.0" prefWidth="114.0" text="Recalcular Rutas:" GridPane.columnIndex="6">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                           <CheckBox fx:id="recarcularRutasCheck" mnemonicParsing="false" GridPane.columnIndex="7" GridPane.halignment="CENTER" />
+                                          <Label fx:id="VerCostoRuta" prefHeight="17.0" prefWidth="38.0" GridPane.columnIndex="5" />
+                                          <Label fx:id="VerCostoSimulacion" prefHeight="17.0" prefWidth="37.0" GridPane.columnIndex="5" GridPane.halignment="RIGHT" />
                                        </children>
                                     </GridPane>
                                     <TitledPane fx:id="tittle_pane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">

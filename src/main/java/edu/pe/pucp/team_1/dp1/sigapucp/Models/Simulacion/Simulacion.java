@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.TupleProductos;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.ProductoNodo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Punto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Ruta;
@@ -25,10 +26,13 @@ public class Simulacion {
     private ProductoNodo nodoActual;
     private List<ProductoNodo> rutaActual;
     private int rutaActualIndex;
+    private List<TupleProductos> rutasProductos;
     
-    public Simulacion(RutaGeneral gRuta,Punto gAcopio,Double gCapacidad)
+    public Simulacion(RutaGeneral gRuta,List<TupleProductos> gRutasProductos,Punto gAcopio,Double gCapacidad)
     {
+        rutaGeneral = gRuta;
         rutas = gRuta.getRutas();    
+        rutasProductos = gRutasProductos;
         acopio = gAcopio;
         capacidad = gCapacidad;
         
@@ -69,6 +73,11 @@ public class Simulacion {
     {
         return rutaActual;
     }  
+    
+    public int getNrRutas()
+    {
+        return rutas.size();
+    }
 
     public void setRutaActual(int nrRuta)
     {
@@ -82,6 +91,11 @@ public class Simulacion {
         if(nrNodo < 0 || nrNodo >= rutaActual.size()) return;
         nodoActual = rutaActual.get(nrNodo);
         nodoActualIndex = nrNodo;
+    }
+    
+    public List<TupleProductos> getRutasProductos()
+    {
+        return rutasProductos;
     }
     
 }
