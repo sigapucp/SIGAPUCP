@@ -29,27 +29,21 @@
                   <Line endX="100.0" layoutX="125.0" layoutY="49.0" startX="-100.0" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="252.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="173.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
-                  <TextField layoutX="130.0" layoutY="62.0" prefHeight="25.0" prefWidth="106.0" />
-                  <Button layoutX="176.0" layoutY="137.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
-                  <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="R.U.C.:">
+                  <TextField layoutX="131.0" layoutY="31.0" prefHeight="25.0" prefWidth="106.0" />
+                  <Button layoutX="177.0" layoutY="101.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+                  <Label layoutX="13.0" layoutY="33.0" prefHeight="21.0" prefWidth="114.0" text="Codigo">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="130.0" layoutY="28.0" prefHeight="25.0" prefWidth="106.0" />
-                  <Label layoutX="12.0" layoutY="64.0" prefHeight="21.0" prefWidth="114.0" text="D.N.I.:">
+                  <Label layoutX="13.0" layoutY="67.0" prefHeight="21.0" prefWidth="114.0" text="Cliente">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="12.0" layoutY="98.0" prefHeight="21.0" prefWidth="114.0" text="Cliente">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField layoutX="130.0" layoutY="96.0" prefHeight="25.0" prefWidth="106.0" />
+                  <TextField layoutX="131.0" layoutY="65.0" prefHeight="25.0" prefWidth="106.0" />
                </children>
             </AnchorPane>
             <AnchorPane layoutX="29.0" layoutY="220.0" prefHeight="352.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="220.0">
