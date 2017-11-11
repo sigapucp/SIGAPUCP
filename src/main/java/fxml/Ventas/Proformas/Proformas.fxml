@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProformasController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProformasController">
    <children>
       <AnchorPane layoutX="33.0" layoutY="33.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -33,7 +33,7 @@
             <AnchorPane layoutX="40.0" layoutY="84.0" prefHeight="192.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
                <children>
                   <TextField fx:id="clienteBusq" layoutX="86.0" layoutY="67.0" prefHeight="25.0" prefWidth="150.0" />
-                  <Button layoutX="176.0" layoutY="150.0" mnemonicParsing="false" onAction="#buscarPedido" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
+                  <Button layoutX="140.0" layoutY="150.0" mnemonicParsing="false" onAction="#buscarPedido" prefHeight="27.0" prefWidth="96.0" text="Buscar" />
                   <Label layoutX="12.0" layoutY="30.0" prefHeight="21.0" prefWidth="114.0" text="Codigo">
                      <font>
                         <Font size="14.0" />

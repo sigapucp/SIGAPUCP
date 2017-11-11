@@ -28,6 +28,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -359,7 +361,20 @@ public class AlmacenesController extends Controller{
     
     @FXML
     public void buscarAlmacen(ActionEvent event) {
-        
+        String nombreAlmacen = nombre_almacen_buscar.getText();
+        String codigoAlmacen = codigo_almacen_buscar.getText();
+        try {
+            LazyList<Almacen> almacenes_encontrados = Almacen.findAll();
+            List<Almacen> almacenes_filtrados = almacenes_encontrados.stream().filter((almacen) -> 
+                    almacen.getString("nombre").contains(nombreAlmacen) && almacen.getString("almacen_cod")
+                    .contains(codigoAlmacen)).collect(Collectors.toList());
+    
+            almacenes.clear();
+            almacenes_filtrados.forEach(almacenes::add);
+            tabla_almacenes.setItems(almacenes);
+        } catch(Exception e) {
+            Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
     
     @FXML
