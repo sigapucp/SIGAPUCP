@@ -20,6 +20,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarEnviosArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarInstanciaProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.IOException;
 import java.net.URL;
@@ -163,12 +164,14 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<OrdenSalidaxProducto> masterDataTipoSalida = FXCollections.observableArrayList();    
     private final ObservableList<Producto> masterDataProducto = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
+    private List<Producto> productos_en_salida_temp;
     private OrdenSalida salida_seleccionada;
     private TipoProducto tipo_devuelto;
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage_envio = new Stage();    
-    Stage modal_stage_tipo = new Stage();  
+    Stage modal_stage_tipo = new Stage();
+    Stage modal_stage_instancia = new Stage();
     
     private void limpia_formulario(){
         try{
@@ -415,6 +418,46 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
+    public void llenar_tabla_instancias_productos(){
+        productos_en_salida_temp = new ArrayList<Producto>();
+        
+        //masterdatatipoSalida ordenSalidaxProducto
+        //limpio tabla
+        //lleno instancias de cada elemtno de mastardatatipoSalida, tabla productos en modelo
+        //cada agregar suma a la lista masterData
+        //cada eliminar resta a la lista maserData
+    }
+    private void seleccionar_instancia(List<Producto> productos) throws Exception
+    {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarInstanciaProducto.fxml"));
+            AgregarInstanciaProducto controller = new AgregarInstanciaProducto(productos);
+            loader.setController(controller);
+            Scene modal_content_scene = new Scene((Parent)loader.load());
+            modal_stage_instancia.setScene(modal_content_scene); 
+            if(modal_stage_instancia.getModality() != Modality.APPLICATION_MODAL) modal_stage_instancia.initModality(Modality.APPLICATION_MODAL); 
+            controller.devolver_instancia_producto.addHandler((Object sender, agregarInstanciaProductoArgs args) -> {
+                //envio_devuelto = args.envio;
+            });
+        }catch(Exception e){
+            infoController.show("No se pudo agregar los productos : " + e.getMessage());
+        }
+    }      
+    
+    @FXML
+    private void agregar_instancias_producto(ActionEvent event) throws IOException{
+        try{
+            List<Producto> productos = new ArrayList<Producto>();
+            for(OrdenSalidaxProducto instancia_producto : masterDataTipoSalida){
+                productos.addAll(Producto.where("tipo_cod = ?", instancia_producto.get("tipo_cod")));
+            }
+            modal_stage_instancia.showAndWait();
+            seleccionar_instancia(productos);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    
     @FXML
     private void agregar_tipos_salida(ActionEvent event) throws IOException{
         try {
@@ -637,6 +680,8 @@ public class OrdenesDeSalidaController  extends Controller{
             tipo_buscar.setItems(tipos_enum);
             llenar_combo_box_tipo();
             seleccionar_envio();
+            List<Producto> prods_temp = new ArrayList<Producto>();
+            seleccionar_instancia(prods_temp);
             setAgregarProductos();
             tipos.setOnAction(e -> manejarcomboBoxTipoSalida());
         } catch (Exception ex) {
