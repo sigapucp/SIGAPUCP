@@ -41,6 +41,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
@@ -93,6 +94,18 @@ public class DocumentosDeVentaController extends Controller{
     private TableColumn<OrdenCompraxProducto, String> columna_flete;
     @FXML
     private TableColumn<OrdenCompraxProducto, String> columna_subtotal;
+   //---------------------------------------------------------------
+    @FXML
+    private TableView<DocVenta> tabla_ventas;
+    @FXML
+    private TableColumn<DocVenta, String> ventas_codigo;
+    @FXML
+    private TableColumn<DocVenta, String> ventas_cliente;
+    @FXML
+    private TableColumn<DocVenta, String> ventas_fecha;
+    
+    @FXML
+    private AnchorPane formulario;
     
     Stage modal_stage = new Stage();
 
@@ -133,6 +146,13 @@ public class DocumentosDeVentaController extends Controller{
         
     }
     
+    @Override
+    public void nuevo(){
+        crear_nuevo = true;
+        habilitar_formulario();
+    }
+    
+    @Override
     public void guardar(){
         if (crear_nuevo){
             crear_doc_venta();
@@ -145,6 +165,7 @@ public class DocumentosDeVentaController extends Controller{
             editar_doc_venta();
         }
         crear_nuevo = false;
+        llenar_tabla();        
     }
     
     public void llenar_tabla_productos(){
@@ -171,7 +192,6 @@ public class DocumentosDeVentaController extends Controller{
     
     public void set_agregar_guia_remision(){
         try{
-            //limpiar todo, se entiende como uno nuevo
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarGuiasRemision.fxml"));
             AgregarGuiasRemisionController controller = new AgregarGuiasRemisionController(guias_remision);
             loader.setController(controller);
@@ -252,6 +272,24 @@ public class DocumentosDeVentaController extends Controller{
         ver_moneda.setItems(monedas);        
     }
     
+    public void llenar_tabla(){
+        ObservableList<DocVenta> doc_ventas = FXCollections.observableArrayList();  
+        List<DocVenta> ventas = DocVenta.findAll();
+        doc_ventas.addAll(ventas);
+        ventas_codigo.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("doc_venta_cod")));
+        ventas_cliente.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).get("nombre")));
+        ventas_fecha.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_emision")));
+        tabla_ventas.setItems(doc_ventas);        
+    }
+    
+    public void habilitar_formulario(){
+        formulario.setDisable(false);
+    }
+    
+    public void deshabilitar_formulario(){
+        formulario.setDisable(true);
+    }
+    
     public DocumentosDeVentaController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
     } 
@@ -261,6 +299,8 @@ public class DocumentosDeVentaController extends Controller{
         try{
             llenar_autocompletado();
             llenar_moneda_combobox();
+            llenar_tabla();
+            deshabilitar_formulario();
         }catch(Exception e){
             
         }
