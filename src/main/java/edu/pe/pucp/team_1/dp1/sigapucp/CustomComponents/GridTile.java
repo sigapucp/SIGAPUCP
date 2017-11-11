@@ -23,7 +23,8 @@ public class GridTile extends StackPane {
     private double tile_height;
     private int x_cord;
     private int y_cord;
-    Rectangle border;
+    private boolean active;
+    private Rectangle border; // se agrego private
     private Event<tileArgs> releaseTileEvent;
     private Event<tileArgs> activeTileEvent;
     private Event<tileArgs> pressedTileEvent;
@@ -34,6 +35,7 @@ public class GridTile extends StackPane {
         tile_height = height;
         x_cord = x;
         y_cord = y;
+        active = false;
         releaseTileEvent = new Event<>();
         activeTileEvent = new Event<>();
         pressedTileEvent = new Event<>();
@@ -104,8 +106,6 @@ public class GridTile extends StackPane {
         return dragTileEvent;
     }
     
-    
-    
     public void activeTile(boolean fromEvent) {
         if(fromEvent) {
             tileArgs args = new tileArgs();
@@ -113,13 +113,33 @@ public class GridTile extends StackPane {
             args.setY_cord(y_cord);
 
             activeTileEvent.fire(this, args);
-        }        
+        }      
         border.setFill(Color.RED);
+        active = true;
+    }
+    
+     public void activeTileColor(boolean fromEvent,Color color) {
+        if(fromEvent) {
+            tileArgs args = new tileArgs();
+            args.setX_cord(x_cord);
+            args.setY_cord(y_cord);
+
+            activeTileEvent.fire(this, args);
+        }        
+        border.setFill(color);
+        active = true;
     }
     
     
-    public void clearTile() {
+    public void clearTile() {       
         border.setFill(null);
+        active = false;
+    }
+    
+    
+    public Boolean isActive()
+    {
+        return active;    
     }
     
     public int getXCord() {
@@ -130,8 +150,7 @@ public class GridTile extends StackPane {
         return y_cord;
     }
     
-    
     public String getTileId() {
         return String.format("%d/%d", x_cord, y_cord);
-    }
+    }   
 }

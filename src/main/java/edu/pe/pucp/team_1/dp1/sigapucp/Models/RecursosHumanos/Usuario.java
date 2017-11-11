@@ -21,6 +21,13 @@ public class Usuario extends Model{
     static {
         dateFormat("dd/MM/yyyy", "last_date_change");
     }    
+
+    static{
+        validatePresenceOf("name","contact_name","provuder_ruc","phone_number");
+        validateNumericalityOf("provuder_ruc");
+        validateNumericalityOf("phone_number");
+        validateRegexpOf("provuder_ruc", "\\d{1,11}");
+    }
     
     public static boolean autenticacion (String correo_usuario, String contrasenha){
         Usuario usuario;

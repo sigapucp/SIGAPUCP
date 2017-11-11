@@ -1,0 +1,14 @@
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/sical_v8.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/Triggers_auditoria.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/acciones.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/menus.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/accionesxmenu.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/monedas.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/conversiones.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/roles.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/permisosadmin.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/parametrosSistema.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/tipo_error.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/unidades.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/usuarios.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/post_run.sql

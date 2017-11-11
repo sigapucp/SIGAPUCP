@@ -1,4 +1,4 @@
-truncate table acciones RESTART IDENTITY CASCADE;
+
 
 insert into acciones values ('NUL',default,'NullAccion','Accion Nula');
 insert into acciones values ('LOG',default,'Login','Se intenta logear a la aplicacion');

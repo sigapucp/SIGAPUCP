@@ -117,7 +117,7 @@ public class ModalAgregarProductoRackController extends ModalController {
                 producto_rack_cord_y.setEditable(false);
                 tiposPos.addAll(Arrays.asList(AlmacenAreaXY.POSICION.values()).stream()
                                 .map(x->x.name())
-                                .filter(x-> (fila > 0 && x.equals("ADELANTE")) || (fila < numFilas && x.equals("ATRAS")) )
+                                .filter(x-> (fila > 0 && x.equals(AlmacenAreaXY.POSICION.ADELANTE.name())) || (fila < numFilas && x.equals(AlmacenAreaXY.POSICION.ATRAS.name())) )
                                 .collect(Collectors.toList())
                                 );
                 producto_tipo_posicion.setItems(tiposPos);
@@ -131,7 +131,7 @@ public class ModalAgregarProductoRackController extends ModalController {
                 producto_rack_cord_x.setEditable(false);
                 tiposPos.addAll(Arrays.asList(AlmacenAreaXY.POSICION.values()).stream()
                                 .map(x->x.name())
-                                .filter(x-> (columna > 0 && x.equals("IZQUIERDA")) || (columna < numColumnas && x.equals("DERECHA")) )
+                                .filter(x-> (columna > 0 && x.equals(AlmacenAreaXY.POSICION.IZQUIERDA.name())) || (columna < numColumnas && x.equals(AlmacenAreaXY.POSICION.DERECHA.name())) )
                                 .collect(Collectors.toList())
                                 );
                 producto_tipo_posicion.setItems(tiposPos);
@@ -189,6 +189,8 @@ public class ModalAgregarProductoRackController extends ModalController {
             producto_seleccionado.set("rack_cod", rack_activo.getString("rack_cod"));
             producto_seleccionado.set("almacen_id", almacen_relacionado.getInteger("almacen_id"));
             producto_seleccionado.set("almacen_cod", almacen_relacionado.getString("almacen_cod"));
+            producto_seleccionado.set("posicion_rack",rack_activo.getString("tipo").equals(Rack.TIPO.HORIZONTAL.name()) ? 
+                    producto_rack_cord_x.getSelectionModel().selectedItemProperty().getValue() : producto_rack_cord_y.getSelectionModel().getSelectedItem());
             args.setProducto(producto_seleccionado);
             args.setAlmacenZ(almacenZ_seleccionado);
 

@@ -23,6 +23,11 @@ public class Envio extends Model{
     {
         PENDIENTE,
         ENPROCESO,
-        COMPLETA
+        COMPLETA;
+        private static Envio.ESTADO[] vals = values();
+        public Envio.ESTADO next()
+        {
+            return vals[(this.ordinal()+1) % vals.length];
+        }        
     }
 }

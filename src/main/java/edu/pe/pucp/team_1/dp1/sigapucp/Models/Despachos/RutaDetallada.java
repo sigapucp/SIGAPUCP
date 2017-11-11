@@ -32,7 +32,7 @@ import javafx.collections.transformation.SortedList;
  */
 public class RutaDetallada {
     
-    private int NR_ITERACIONES = 50;
+    private int NR_ITERACIONES = 20;
     private Double alfa_corte_ruta = 0.4;
     private List<Estado> poblacion;
     private double alfa = 0.33;
@@ -40,8 +40,9 @@ public class RutaDetallada {
     Integer a;  
     Integer c;         
     public Estado obtenerRutaOptima(Celda.TIPO[][] mapa,int altura,int ancho,Punto puntoInicial,Punto puntoFinal)
-    {        
-        Boolean solucionLista = false;
+    {   
+        try {
+            Boolean solucionLista = false;
         poblacion = new ArrayList<>();
         
         Estado mejorSolucion = null;
@@ -51,14 +52,13 @@ public class RutaDetallada {
         while(NR_ITERACIONES>=nrIteracion&&!solucionLista)
         {            
             Celda.TIPO[][] nuevoMapa = copiarMapa(mapa, altura, ancho);
-            Estado estadoInicial = getEstadoInicial();
-            Estado estadoFinal = getEstadoFinal();
+            Estado estadoInicial = getEstadoInicial(nrIteracion);
+            Estado estadoFinal = getEstadoFinal(nrIteracion);
             
             Punto pIni = null;
             Punto pFin = null;
                     
-            try {
-                
+           
             if(estadoInicial!=null)
             {
                 a = (new Random()).nextInt((estadoInicial.getCost()+1)/DIVFACTOR);
@@ -75,20 +75,16 @@ public class RutaDetallada {
             }else
             {
                 pFin = puntoFinal;
-            }                
-            } catch (Exception e) {
-                int b = 4;
-            }
-            
-           
-            Estado nuevaSolucion = generarRutaGreedy(nuevoMapa,altura,ancho,pIni,pFin);                   
+            }                            
+                       
+            Estado nuevaSolucion = generarRutaGreedy(nuevoMapa,altura,ancho,pIni,pFin);       
+
+            if(nuevaSolucion.getCost() <=1) return nuevaSolucion;
             nuevaSolucion = juntarEstado(estadoInicial,nuevaSolucion,estadoFinal,pIni,pFin);          
             if(nuevaSolucion == null) 
             {
                 continue;       
-            }
-            
-            //if(nuevaSolucion.get)
+            }                    
             
             if(mejorSolucion == null || mejorSolucion.getCost() > nuevaSolucion.getCost())
             {
@@ -98,7 +94,12 @@ public class RutaDetallada {
             poblacion.add(nuevaSolucion);                            
             nrIteracion++;                                   
         }        
-        return mejorSolucion;        
+        return mejorSolucion;       
+            
+        } catch (Exception e) {
+            
+        }
+        return null;
     }   
     
     private Estado juntarEstado(Estado inicial,Estado central,Estado fin,Punto pIni,Punto pFin)
@@ -137,42 +138,7 @@ public class RutaDetallada {
     {
         return estado.get(0).isEqual(pInicial) && estado.puntoActual.isEqual(pFinal);        
     }
-    
-    public List<Punto> generarRutaGRASP(Celda.TIPO[][] mapa,int altura,int ancho,Punto puntoInicial, Punto puntoFinal)
-    {
-        List<Punto> estadoActual = new LinkedList<>();
-        estadoActual.add(puntoInicial);
-        Punto puntoActual = puntoInicial;
-        mapa[puntoActual.y][puntoActual.x] = Celda.TIPO.VISITADA;
-        
-//        while(!esSolucion(estadoActual,puntoInicial,puntoFinal))
-//        {
-//            List<Punto> estadosPosibles = estadosPosibles(mapa,estadoActual, puntoActual, altura, ancho);
-//            
-//            estadosPosibles.sort(new Comparator<Punto>() {
-//                @Override
-//                public int compare(Punto o1, Punto o2) {
-//                    return (distanciaManhattam(o1, puntoFinal) - distanciaManhattam(o2, puntoFinal));
-//                }
-//            });
-//            
-//            if(estadosPosibles.isEmpty()) 
-//            {
-//                return null;
-//            }
-//            if(estadosPosibles.size()!=1)
-//            {
-//                estadosPosibles.remove(estadosPosibles.size()-1);                
-//            }
-//            
-//            Punto siguientePunto = getRandomItem(estadosPosibles);
-//            estadoActual.add(siguientePunto);            
-//            puntoActual = siguientePunto;
-//            mapa[puntoActual.y][puntoActual.x] = Celda.TIPO.VISITADA;            
-//            
-//        }                
-        return estadoActual;
-    }        
+       
     
     private List<Punto.DIRECCION> movimientosPosibles(TIPO[][] mapa,Punto p,int altura,int ancho)
     {
@@ -208,18 +174,21 @@ public class RutaDetallada {
     {
         return (x>=0&&x<ancho) && (y>=0&&y<altura);
     }              
-    private Estado getEstadoInicial()
+    private Estado getEstadoInicial(int nrIteracion)
     {
         if(poblacion.isEmpty()) return null;
         if(poblacion.size() == 1) return poblacion.get(0);
         
+        if(((double)nrIteracion/(double)NR_ITERACIONES) > Math.random()) return null;
         poblacion.get((new Random()).nextInt((poblacion.size()+1)/DIVFACTOR));        
         return null;
     }    
-    private Estado getEstadoFinal()
+    private Estado getEstadoFinal(int nrIteracion)
     {
         if(poblacion.isEmpty()) return null;
         if(poblacion.size() == 1) return poblacion.get(0);
+        
+        if(((double)nrIteracion/(double)NR_ITERACIONES) > Math.random()) return null;
         
         poblacion.get((new Random()).nextInt((poblacion.size()+1)/DIVFACTOR));        
         return null;
@@ -298,16 +267,13 @@ public class RutaDetallada {
             frontera.remove(estadoActual);
             if(esSolucion(estadoActual, puntoInicial, puntoFinal)) return estadoActual;            
             mapaProblema[estadoActual.puntoActual.y][estadoActual.puntoActual.x] = TIPO.VISITADA;
-                        
-            //dibujarRuta(llenarMapa(copiarMapa(mapa, altura, ancho),estadoActual), estadoActual, altura, ancho);
-            //System.out.println("");
+                                 
            List<DIRECCION> movs = movimientosPosibles(mapaProblema,estadoActual.puntoActual, altura, ancho);            
             for(DIRECCION dir:movs)
             {        
                 Estado nuevoEstado = new Estado(estadoActual);
                 Punto puntoNuevo = nuevoEstado.puntoActual.mover(dir);
-                nuevoEstado.add(puntoNuevo);
-                //costos.put(nuevoEstado,(new Random()).nextInt(distanciaManhattam(nuevoEstado.get(0), puntoFinal)));
+                nuevoEstado.add(puntoNuevo);                
                 Boolean estaEnExplorado = mapaProblema[puntoNuevo.y][puntoNuevo.x] != TIPO.VISITADA;
                 Estado estaEnFrontera = estadoEnFrontera(frontera, puntoNuevo);
                         

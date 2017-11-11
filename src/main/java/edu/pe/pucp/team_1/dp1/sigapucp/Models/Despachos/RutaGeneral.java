@@ -36,6 +36,11 @@ public class RutaGeneral {
         ConfiguracionInicial(distancias,capacidad);                        
     }
     
+    public ArrayList<Ruta> getRutas()
+    {
+        return rutas;
+    }
+    
     public void CorrerAlgoritmo() throws Exception
     {           
         double reduccionTemperatura = 0.93;
