@@ -142,9 +142,6 @@ public class DocumentosDeVentaController extends Controller{
         }
     }
     
-    public void editar_doc_venta(){
-        
-    }
     
     @Override
     public void nuevo(){
@@ -162,7 +159,6 @@ public class DocumentosDeVentaController extends Controller{
                 infoController.show("No ha seleccionado una guia");
                 return;                
             }
-            editar_doc_venta();
         }
         crear_nuevo = false;
         llenar_tabla();        
