@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="369.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="369.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane layoutX="24.0" layoutY="12.0" prefHeight="99.0" prefWidth="502.0" AnchorPane.bottomAnchor="289.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="12.0">
          <children>
@@ -34,16 +34,18 @@
          </children>
       </AnchorPane>
       <Button fx:id="buscarProductoButtom" layoutX="458.0" layoutY="130.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
-      <Button fx:id="agregarProductoButtom" layoutX="458.0" layoutY="360.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Agregar" />
+      <Button fx:id="agregarProductoButtom" layoutX="458.0" layoutY="360.0" mnemonicParsing="false" onAction="#agregarProducto" prefHeight="25.0" prefWidth="60.0" text="Agregar" />
       <TableView fx:id="tabla_producto" layoutX="24.0" layoutY="167.0" prefHeight="183.0" prefWidth="496.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="167.0">
          <columns>
             <TableColumn fx:id="columna_codigo" prefWidth="57.0" text="Código" />
             <TableColumn fx:id="columna_nombre" prefWidth="98.0" text="Nombre" />
-            <TableColumn fx:id="columna_fecha_entrada" prefWidth="98.0" text="Fecha entrada" />
-            <TableColumn fx:id="columna_lote" prefWidth="74.0" text="lote" />
-            <TableColumn fx:id="columna_almacen" prefWidth="89.0" text="almacen" />
-            <TableColumn fx:id="columna_rack" prefWidth="79.0" resizable="false" text="rack" />
+            <TableColumn fx:id="columna_fecha_entrada" prefWidth="103.0" text="Fecha de Ingreso" />
+            <TableColumn fx:id="columna_almacen" prefWidth="95.0" text="Almacen" />
+            <TableColumn fx:id="columna_rack" prefWidth="99.0" resizable="false" text="Rack" />
          </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
    </children>
 </AnchorPane>

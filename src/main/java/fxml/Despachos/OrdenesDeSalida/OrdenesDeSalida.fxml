@@ -18,7 +18,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.OrdenesDeSalidaController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.OrdenesDeSalidaController">
    <children>
       <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
          <children>
@@ -160,7 +160,7 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <TitledPane animated="false" collapsible="false" layoutX="575.0" layoutY="220.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="182.0" prefWidth="150.0" text="Acciones">
+                              <TitledPane fx:id="pane_acciones" animated="false" collapsible="false" layoutX="575.0" layoutY="220.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="182.0" prefWidth="150.0" text="Acciones">
                                  <content>
                                     <AnchorPane>
                                        <children>
@@ -183,7 +183,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Button layoutX="600.0" layoutY="30.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="125.0" text="Eliminar">
+                              <Button layoutX="600.0" layoutY="30.0" mnemonicParsing="false" onAction="#eliminar_instancias_producto" prefHeight="40.0" prefWidth="125.0" text="Eliminar">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -191,9 +191,10 @@
                               <TableView fx:id="tabla_productos" layoutX="15.0" layoutY="80.0" prefHeight="315.0" prefWidth="710.0">
                                 <columns>
                                   <TableColumn fx:id="columna_cod_prod" prefWidth="75.0" text="Código" />
-                                  <TableColumn fx:id="columna_nombre_prod" prefWidth="75.0" text="Nombre" />
                                     <TableColumn fx:id="columna_tipo_prod" prefWidth="75.0" text="Tipo" />
                                     <TableColumn fx:id="columna_fecha_prod" prefWidth="75.0" text="Fecha de Ingreso" />
+                                    <TableColumn fx:id="columna_almacen_prod" prefWidth="75.0" text="Almacén" />
+                                    <TableColumn fx:id="columna_rack_prod" prefWidth="75.0" text="Rack" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

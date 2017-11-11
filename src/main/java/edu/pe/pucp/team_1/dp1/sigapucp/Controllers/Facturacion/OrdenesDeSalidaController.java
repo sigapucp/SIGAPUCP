@@ -47,6 +47,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -132,7 +133,8 @@ public class OrdenesDeSalidaController  extends Controller{
     private TableColumn<OrdenSalidaxProducto, String> columna_cant_tipo_salida;
     @FXML
     private TableColumn<OrdenSalidaxProducto, String> columna_desc_tipo_salida;
-    
+    @FXML
+    private TitledPane pane_acciones;
     
     //TAB PRODUCTOS
     @FXML
@@ -146,11 +148,13 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private TableColumn<Producto, String> columna_cod_prod;
     @FXML
-    private TableColumn<Producto, String> columna_nombre_prod;
-    @FXML
     private TableColumn<Producto, String> columna_tipo_prod;
     @FXML
     private TableColumn<Producto, String> columna_fecha_prod;
+     @FXML
+    private TableColumn<Producto, String> columna_almacen_prod;
+    @FXML
+    private TableColumn<Producto, String> columna_rack_prod;
 
     //LOGICA
         //--------------------------------------------------//
@@ -165,9 +169,10 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<Producto> masterDataProducto = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
     private List<Producto> productos_en_salida_temp;
-    private List<Producto> productos = new ArrayList<Producto>();
+    private List<Producto> productos_instancias = new ArrayList<Producto>();
     private OrdenSalida salida_seleccionada;
     private TipoProducto tipo_devuelto;
+    private Producto instancia_devuelta;
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage_envio = new Stage();    
@@ -182,6 +187,7 @@ public class OrdenesDeSalidaController  extends Controller{
             masterDataTipoSalida.clear();
             tipos.getItems().clear();
             llenar_combo_box_tipo();
+            tipos.setDisable(false);
             masterDataProducto.clear();
             boton_tipo.setVisible(false); //Falta implementar este modal
             lbl_cant_tipo.setVisible(false);
@@ -192,6 +198,10 @@ public class OrdenesDeSalidaController  extends Controller{
             envio_dato.setVisible(false);
             lbl_codigo_pedido.setVisible(false);
             pedido_dato.setVisible(false);
+            
+            pane_producto.setDisable(true);
+            pane_acciones.setDisable(false);
+            pane_tipo.setDisable(false);
         }catch (Exception e){
             infoController.show("Ha ocurrido un error : " + e.getMessage());  
         }
@@ -232,22 +242,38 @@ public class OrdenesDeSalidaController  extends Controller{
             return;            
         }
         try{
-            if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.ENPROCESO.name())){
-                tab_producto.setDisable(false);
-                tab_tipo.setDisable(true);
-            } else if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name())){
-                tab_producto.setDisable(true);
-                tab_tipo.setDisable(false);
-            } else{
-                tab_producto.setDisable(true);
-                tab_tipo.setDisable(true);
-            }
+            masterDataProducto.clear();
             habilitar_formulario();
             limpia_formulario();
             setear_datos_salida();
             setear_tipos_salida();
+            if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.ENPROCESO.name())){
+                pane_producto.setDisable(false);
+                pane_tipo.setDisable(true);                
+                pane_acciones.setDisable(true);
+                
+                tipos.setDisable(true);
+                descripcion_envio.setEditable(false);
+                codigo_salida.setEditable(false);
+            } else if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name())){
+                pane_producto.setDisable(true);
+                pane_tipo.setDisable(false);
+                pane_acciones.setDisable(false);
+                
+                tipos.setDisable(false);
+                descripcion_envio.setEditable(false);
+                codigo_salida.setEditable(false);
+            } else{
+                pane_producto.setDisable(true);
+                pane_tipo.setDisable(true);
+                pane_acciones.setDisable(true);
+                
+                tipos.setDisable(true);
+                descripcion_envio.setEditable(true);
+                codigo_salida.setEditable(true);
+            }
         }catch (Exception e){
-            
+            infoController.show("No se pudo visualizar la orden de salida : " + e.getMessage());
         }
     }
     
@@ -267,7 +293,7 @@ public class OrdenesDeSalidaController  extends Controller{
     private void buscar_salida(ActionEvent event) throws IOException{
         salidas_temp = OrdenSalida.findAll();
         masterDataSalidas.clear();
-        String tipo = (tipos.getSelectionModel().getSelectedItem().equals(null)) ? "":tipos.getSelectionModel().getSelectedItem();
+        String tipo = (tipos.getSelectionModel().getSelectedItem()==null) ? "":tipos.getSelectionModel().getSelectedItem();
         try{
             for(OrdenSalida salida : salidas_temp){
                 if (cumple_condicion_busqueda(salida, salida_buscar.getText(), tipo)){
@@ -363,6 +389,7 @@ public class OrdenesDeSalidaController  extends Controller{
         crear_nuevo = false;
         limpia_formulario();
         inhabilitar_formulario();
+        cargar_tabla_index();
     }
     
     private void actualizar_lista_salida_tabla(){
@@ -420,26 +447,33 @@ public class OrdenesDeSalidaController  extends Controller{
     }
     
     public void llenar_tabla_instancias_productos(){
-        productos_en_salida_temp = new ArrayList<Producto>();
+        masterDataProducto.add(instancia_devuelta);
         
-        //masterdatatipoSalida ordenSalidaxProducto
-        //limpio tabla
-        //lleno instancias de cada elemtno de mastardatatipoSalida, tabla productos en modelo
-        //cada agregar suma a la lista masterData
-        //cada eliminar resta a la lista maserData
+        columna_cod_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")));
+        columna_tipo_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?",p.getValue().getInteger("tipo_id")).getString("nombre")));
+        columna_fecha_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_entrada")));
+        columna_almacen_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("almacen_cod")));
+        columna_rack_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")));
+        
+        tabla_productos.setItems(masterDataProducto);
+        
+        tabla_productos.getColumns().get(0).setVisible(false);
+        tabla_productos.getColumns().get(0).setVisible(true);
     }
+    
     private void seleccionar_instancia() throws Exception
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarInstanciaProducto.fxml"));
-            AgregarInstanciaProducto controller = new AgregarInstanciaProducto(productos);
+            AgregarInstanciaProducto controller = new AgregarInstanciaProducto(productos_instancias);
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage_instancia.setScene(modal_content_scene); 
             if(modal_stage_instancia.getModality() != Modality.APPLICATION_MODAL) modal_stage_instancia.initModality(Modality.APPLICATION_MODAL); 
             controller.devolver_instancia_producto.addHandler((Object sender, agregarInstanciaProductoArgs args) -> {
-                //envio_devuelto = args.envio;
+                instancia_devuelta = args.instancia_producto;
             });
+            modal_stage_instancia.showAndWait();
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
         }
@@ -448,14 +482,34 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private void agregar_instancias_producto(ActionEvent event) throws IOException{
         try{
-            for(OrdenSalidaxProducto instancia_producto : masterDataTipoSalida){
-                productos.addAll(Producto.where("tipo_cod = ?", instancia_producto.get("tipo_cod")));
+            productos_instancias.clear();
+            for(OrdenSalidaxProducto tipo_producto : masterDataTipoSalida){
+                Integer cantidad_tipos = 0;
+                for (Producto producto : masterDataProducto){
+                    if (producto.getInteger("tipo_id")==tipo_producto.getInteger("tipo_id"))
+                        cantidad_tipos += 1;
+                }
+                if (cantidad_tipos<tipo_producto.getInteger("cantidad"))
+                    productos_instancias.addAll(Producto.where("tipo_id = ?", tipo_producto.get("tipo_id")));                    
             }
-            seleccionar_instancia();
-            modal_stage_instancia.showAndWait();
+            if (productos_instancias.size()>0){
+                seleccionar_instancia(); 
+                llenar_tabla_instancias_productos();
+            } else{
+                infoController.show("Se completó la cantidad de productos de cada tipo");
+            }
         }catch(Exception e){
             System.out.println(e);
         }
+    }
+    
+    @FXML
+    private void eliminar_instancias_producto(ActionEvent event) throws IOException{
+        Producto producto_seleccionado = tabla_productos.getSelectionModel().getSelectedItem();
+        masterDataProducto.remove(producto_seleccionado);
+        
+        tabla_productos.getColumns().get(0).setVisible(false);
+        tabla_productos.getColumns().get(0).setVisible(true);
     }
     
     @FXML
@@ -585,6 +639,7 @@ public class OrdenesDeSalidaController  extends Controller{
     ////////////////////////////////////////////////////////////////////////////
     @Override
     public void cambiarEstado(){
+        //salida_seleccionada = tabla_salidas.getSelectionModel().getSelectedItem();
         if(salida_seleccionada == null){
             infoController.show("No ha seleccionado ningun Envio");
             return;
@@ -599,13 +654,15 @@ public class OrdenesDeSalidaController  extends Controller{
             OrdenSalida.ESTADO siguiente_estado = OrdenSalida.ESTADO.valueOf(estado_anterior).next();
             if(!confirmatonController.show("Esta accion cambiara el envio de estado " + estado_anterior + " a " + siguiente_estado.name(), "¿Desea continuar?")) return;
             salida_seleccionada.set("estado", siguiente_estado.name());
+            System.out.println(salida_seleccionada);
             salida_seleccionada.saveIt();
             
             if (estado_anterior.equals(OrdenSalida.ESTADO.ENPROCESO.name())){
-                infoController.show("El Envio fue actualizada correctamente. Todos productos han sido despachados");
+                infoController.show("La orden de salida fue actualizada correctamente. Todos productos han sido despachados");
                 Base.commitTransaction();
                 return;
-            }            
+            }     
+            Base.commitTransaction();
         }catch (Exception e){
             Base.rollbackTransaction();
             infoController.show("No se ha podido modificar el estado del Envio");
@@ -685,8 +742,8 @@ public class OrdenesDeSalidaController  extends Controller{
         } catch (Exception ex) {
             infoController.show("No se pudo cargar la ventana ordenes de salida : " + ex.getMessage());
         }
-    }    
-        
+    }
+
     @Override
     public Menu.MENU getMenu()
     {
