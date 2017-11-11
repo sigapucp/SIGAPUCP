@@ -11,6 +11,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVenta;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
@@ -68,6 +69,12 @@ public class DocumentosDeVentaController extends Controller{
     private TextField codigo_venta;
     @FXML
     public DatePicker fecha_emision;    
+    @FXML
+    private TextField subtotal;
+    @FXML
+    private TextField importe_total;
+    @FXML
+    private TextField igv_total;
     
     //------------------------------------------
     @FXML
@@ -97,6 +104,10 @@ public class DocumentosDeVentaController extends Controller{
     private GuiaRemision guia_seleccionada;
     private final ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList();
     private List<OrdenCompraxProducto> productos_temp = new ArrayList<OrdenCompraxProducto>();
+    
+    private List<Cliente> auto_completado_list_cliente;
+    ArrayList<String> posibles_clientes = new ArrayList<>();
+    AutoCompletionBinding<String> autoCompletionBinding;   
     
     public void crear_doc_venta(){
         try{
@@ -147,6 +158,17 @@ public class DocumentosDeVentaController extends Controller{
         tabla_detalle.setItems(productos);
     }
     
+    public void calcular_totales(){
+        Double sub_total = 0.0;
+        sub_total = productos_temp.stream().mapToDouble(p -> p.getDouble("subtotal_final")).sum();
+        subtotal.setText(sub_total.toString());
+        Double igv = sub_total * ParametroSistema.findFirst("name = ?","IGV").getDouble("valor");
+        igv_total.setText(igv.toString());
+        Double total = 0.0;
+        total = sub_total*(1 - igv);
+        importe_total.setText(total.toString());
+    }
+    
     public void set_agregar_guia_remision(){
         try{
             //limpiar todo, se entiende como uno nuevo
@@ -160,12 +182,12 @@ public class DocumentosDeVentaController extends Controller{
                 guia_devuelta = args.guia_remision;
                 productos_temp = OrdenCompraxProducto.where("orden_compra_cod = ?", guia_devuelta.get("orden_compra_cod"));
                 llenar_tabla_productos();
+                calcular_totales();
             });
             modal_stage.showAndWait();
         }catch (Exception e){
             System.out.println(e);
         }
-       
     }
     
     @FXML
@@ -181,9 +203,6 @@ public class DocumentosDeVentaController extends Controller{
             System.out.println(e);
         }
     }
-    private List<Cliente> auto_completado_list_cliente;
-    ArrayList<String> posibles_clientes = new ArrayList<>();
-    AutoCompletionBinding<String> autoCompletionBinding;   
     
     public void cliente_to_string() throws Exception{
         ArrayList<String> words = new ArrayList<>();
@@ -192,6 +211,7 @@ public class DocumentosDeVentaController extends Controller{
         }
         posibles_clientes = words;        
     }
+    
     private void mostrar_informacion_cliente(Cliente cliente){
         String tipo_cliente = cliente.getString("tipo_cliente");
         String dni = cliente.getString("dni");
@@ -216,6 +236,7 @@ public class DocumentosDeVentaController extends Controller{
             }
         }
     }
+    
     public void llenar_autocompletado() throws Exception{
         auto_completado_list_cliente = Cliente.findAll();
         cliente_to_string();
