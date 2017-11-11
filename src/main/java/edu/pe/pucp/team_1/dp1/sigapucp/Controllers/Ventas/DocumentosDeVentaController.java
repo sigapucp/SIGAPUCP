@@ -115,6 +115,7 @@ public class DocumentosDeVentaController extends Controller{
     private GuiaRemision guia_devuelta;
     private boolean crear_nuevo;
     private GuiaRemision guia_seleccionada;
+    private DocVenta documento_seleccionado;
     private final ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList();
     private List<OrdenCompraxProducto> productos_temp = new ArrayList<OrdenCompraxProducto>();
     
@@ -142,6 +143,35 @@ public class DocumentosDeVentaController extends Controller{
         }
     }
     
+    public void setPedidoVisible(DocVenta venta){
+        cliente_seleccionado = Cliente.findById(venta.getInteger("client_id"));
+        mostrar_informacion_cliente(cliente_seleccionado);
+        GuiaRemision guia = GuiaRemision.findById(venta.getInteger("guia_id"));
+        productos_temp.clear();
+        List<OrdenCompraxProducto> productos_lista = OrdenCompraxProducto.where("orden_compra_id = ?",guia.getInteger("orden_compra_id"));
+        productos_temp.addAll(productos_lista);
+        llenar_tabla_productos();        
+        calcular_totales();
+    }
+    
+    @FXML
+    void visualizarPedido(ActionEvent event) {
+        
+        habilitar_formulario();
+        try {
+            documento_seleccionado = tabla_ventas.getSelectionModel().getSelectedItem();
+            if (documento_seleccionado == null) 
+            {
+                infoController.show("No ha seleccionado ningun Documento de Venta");
+                return;
+            }
+
+          setPedidoVisible(documento_seleccionado);                            
+        } catch (Exception e) {
+            infoController.show("Error al mostrar el pedido: " + e.getMessage());
+        }        
+
+    }      
     
     @Override
     public void nuevo(){
