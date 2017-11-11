@@ -165,6 +165,7 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<Producto> masterDataProducto = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
     private List<Producto> productos_en_salida_temp;
+    private List<Producto> productos = new ArrayList<Producto>();
     private OrdenSalida salida_seleccionada;
     private TipoProducto tipo_devuelto;
     //MODALES FLUJO
@@ -427,7 +428,7 @@ public class OrdenesDeSalidaController  extends Controller{
         //cada agregar suma a la lista masterData
         //cada eliminar resta a la lista maserData
     }
-    private void seleccionar_instancia(List<Producto> productos) throws Exception
+    private void seleccionar_instancia() throws Exception
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarInstanciaProducto.fxml"));
@@ -447,12 +448,11 @@ public class OrdenesDeSalidaController  extends Controller{
     @FXML
     private void agregar_instancias_producto(ActionEvent event) throws IOException{
         try{
-            List<Producto> productos = new ArrayList<Producto>();
             for(OrdenSalidaxProducto instancia_producto : masterDataTipoSalida){
                 productos.addAll(Producto.where("tipo_cod = ?", instancia_producto.get("tipo_cod")));
             }
+            seleccionar_instancia();
             modal_stage_instancia.showAndWait();
-            seleccionar_instancia(productos);
         }catch(Exception e){
             System.out.println(e);
         }
@@ -680,8 +680,6 @@ public class OrdenesDeSalidaController  extends Controller{
             tipo_buscar.setItems(tipos_enum);
             llenar_combo_box_tipo();
             seleccionar_envio();
-            List<Producto> prods_temp = new ArrayList<Producto>();
-            seleccionar_instancia(prods_temp);
             setAgregarProductos();
             tipos.setOnAction(e -> manejarcomboBoxTipoSalida());
         } catch (Exception ex) {
