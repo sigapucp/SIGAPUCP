@@ -265,10 +265,8 @@ public class OrdenesDeSalidaController  extends Controller{
                 descripcion_envio.setEditable(false);
                 codigo_salida.setEditable(false);
                 String tipo_orden = obtenerTipo();
-                if (tipo_orden.equals(OrdenSalida.TIPO.Venta.name())){
-                    buscarInstancias(); 
-                    llenar_tabla_instancias_productos();
-                }                
+                buscarInstancias(); 
+                llenar_tabla_instancias_productos();
             } else if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name())){
                 pane_producto.setDisable(true);
                 pane_tipo.setDisable(false);
