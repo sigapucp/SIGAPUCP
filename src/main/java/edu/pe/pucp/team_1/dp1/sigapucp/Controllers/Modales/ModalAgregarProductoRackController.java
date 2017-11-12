@@ -157,7 +157,7 @@ public class ModalAgregarProductoRackController extends ModalController {
         double capacidadRestante = almacenZ.getDouble("capacidad_restante");
         double pesoProducto = TipoProducto.where("tipo_id = ?", producto.getInteger("tipo_id")).get(0).getDouble("peso");
 
-        if(capacidadRestante > 0 && capacidadRestante > pesoProducto) {
+        if(capacidadRestante > 0 && capacidadRestante >= pesoProducto) {
             almacenZ.setDouble("capacidad_restante", capacidadRestante - pesoProducto);
             almacenXY_seleccionado = almacenXY;
             almacenZ_seleccionado = almacenZ;
@@ -198,7 +198,14 @@ public class ModalAgregarProductoRackController extends ModalController {
            infoController.show("Se agrego correctamente un producto en el rack");
            getCurrentStage().close();
         } else {
-            warningController.show("Error al agregar un rack", "Es necesario que ingrese valores validos en los campos obligatorios");
+            if(producto_seleccionado!= null&&!revisarCapacidadRack(producto_seleccionado))
+            {
+                warningController.show("No hay espacio suficiente para ingresar el producto seleccionado","");
+                
+            }else{
+                
+            }
+            
         }
     }
 

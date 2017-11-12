@@ -29,14 +29,16 @@ public class Simulacion {
     private List<ProductoNodo> rutaActual;
     private int rutaActualIndex;
     private List<TupleProductos> rutasProductos;
+    private Integer nrProductos;
     
-    public Simulacion(RutaGeneral gRuta,List<TupleProductos> gRutasProductos,Punto gAcopio,Double gCapacidad)
+    public Simulacion(RutaGeneral gRuta,List<TupleProductos> gRutasProductos,Punto gAcopio,Double gCapacidad,Integer gNrProductos)
     {
-        rutaGeneral = gRuta;
+        rutaGeneral = gRuta;        
         rutas = gRuta.getRutas();    
         rutasProductos = gRutasProductos;
         acopio = gAcopio;
         capacidad = gCapacidad;
+        nrProductos = gNrProductos;
         
         rutaActual = rutas.get(0).getRutaList();
         nodoActualIndex = 0;      
@@ -71,6 +73,16 @@ public class Simulacion {
         return rutaActual.get(nodoActualIndex);
     }
     
+    public Punto getPuntoAcopio()
+    {
+        return acopio;
+    }
+    
+    public Integer getNrProductos()
+    {
+        return nrProductos;
+    }
+    
     public List<ProductoNodo> getRutaActual()
     {
         return rutaActual;
@@ -88,6 +100,11 @@ public class Simulacion {
         rutaActualIndex = nrRuta;
     }
     
+    public Double getCapcacidadCarro()
+    {
+        return capacidad;
+    }
+    
     public void setNodoActual(int nrNodo)
     {
         if(nrNodo < 0 || nrNodo >= rutaActual.size()) return;
@@ -103,7 +120,7 @@ public class Simulacion {
     public String getRutaString(int index,List<ProductoSimulacion> productosSimulacion)
     {
         List<ProductoNodo> rutaList = rutas.get(index).getRutaList();
-        String ruta = "{" + acopio.toString() + "},";
+        String ruta =  acopio.toString() + ",";
         for(ProductoNodo producto:rutaList)
         {
             TupleProductos tupla = rutasProductos.stream().filter(x -> x.esPar(productosSimulacion.get(producto.GetLlave()), productosSimulacion.get(producto.sig.GetLlave()))).findFirst().get();                       
@@ -117,7 +134,7 @@ public class Simulacion {
             {
                 for(Punto punto:tupla.getEstado().ruta)
                 {        
-                    if(punto.dir == null) break;
+                    if(punto.dir == null) continue;
                     ruta += punto.dir.name();                
                 }                                
             }else
@@ -132,17 +149,23 @@ public class Simulacion {
             {               
                 break;
             }
+            ruta += ",";
         }     
         return ruta;
     }    
     
+    public List<Ruta> getRutas()
+    {
+        return rutas;
+    }
+    
     public String getColorPointString(Color color)
     {
-        return "(" + (int)(color.getRed()*255) + "-" + (int)(color.getGreen()*255) + "-" + (int)(color.getBlue()*255) + ")";
+        return  (int)(color.getRed()*255) + "-" + (int)(color.getGreen()*255) + "-" + (int)(color.getBlue()*255);
     }
     
     public String getColorRouteString(Color color)
     {
-        return "[" + (int)(color.getRed()*255) + "-" + (int)(color.getGreen()*255) + "-" + (int)(color.getBlue()*255) + "]";
+        return (int)(color.getRed()*255) + "-" + (int)(color.getGreen()*255) + "-" + (int)(color.getBlue()*255);
     }
 }
