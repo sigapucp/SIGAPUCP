@@ -112,20 +112,18 @@
                         <AnchorPane layoutX="33.0" layoutY="44.0" prefHeight="277.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
                            <children>
                               <AnchorPane prefHeight="277.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <TextField fx:id="subTotal" editable="false" layoutX="432.0" layoutY="264.0" prefHeight="25.0" prefWidth="120.0" text="0.00" />
-                              <TextField fx:id="igvPedido" editable="false" layoutX="432.0" layoutY="236.0" prefHeight="13.0" prefWidth="120.0" text="0.00" />
+                              <TextField fx:id="igvNC" editable="false" layoutX="432.0" layoutY="264.0" prefHeight="25.0" prefWidth="120.0" text="0.00" />
+                              <TextField fx:id="subtotalNC" editable="false" layoutX="432.0" layoutY="236.0" prefHeight="13.0" prefWidth="120.0" text="0.00" />
                               <Label layoutX="356.0" layoutY="295.0" text="Total: " />
                               <Label layoutX="356.0" layoutY="268.0" text="I.G.V. (18%):" />
                               <Label layoutX="355.0" layoutY="240.0" text="Subtotal: " />
-                              <TextField fx:id="totalPedido" editable="false" layoutX="432.0" layoutY="292.0" prefHeight="13.0" prefWidth="120.0" promptText="0.00" />
+                              <TextField fx:id="totalNC" editable="false" layoutX="432.0" layoutY="292.0" prefHeight="13.0" prefWidth="120.0" promptText="0.00" />
                               <TableView fx:id="TablaProductos" prefHeight="230.0" prefWidth="555.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columns>
                                     <TableColumn fx:id="codProdColumn" prefWidth="75.0" text="Cod." />
                                     <TableColumn fx:id="nombreProdColumn" prefWidth="132.0" text="Nombre" />
                                     <TableColumn fx:id="cantProdColumn" prefWidth="51.0" text="Cant." />
                                     <TableColumn fx:id="precioUnitarioColumn" prefWidth="48.0" text="P.U." />
-                                    <TableColumn fx:id="descProdColumna" prefWidth="59.0" text="Descuento" />
-                                    <TableColumn fx:id="fleteProdColumn" prefWidth="53.0" text="Flete" />
                                     <TableColumn fx:id="subTotalProdColumna" prefWidth="95.0" text="SubTotal" />
                                  </columns>
                                  <columnResizePolicy>
