@@ -326,7 +326,8 @@ public class PedidosController extends Controller {
         VerDocumento.clear();
         VerDireccionDespacho.clear();
         VerProducto.clear();
-        VerDireccionFacturacion.clear();                
+        VerDireccionFacturacion.clear();     
+        pedidoSeleccionado = null;
     }
     
     @Override
@@ -736,19 +737,21 @@ public class PedidosController extends Controller {
             String estado = pedido.getString("estado");
             if(!estado.equals(OrdenCompra.ESTADO.PENDIENTE.name())) return;
         }
-        
-        if(pedidosGuardados == null) return;
-        List<OrdenCompraxProducto> pedidosProductosDelete = pedidosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+               
+        if(pedidosGuardados!=null)
+        {
+             List<OrdenCompraxProducto> pedidosProductosDelete = pedidosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
                 y.getInteger("orden_compra_id").equals(x.getInteger("orden_compra_id")) && 
                 y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
         
-        if(pedidosProductosDelete == null) return;
-        
-        for(OrdenCompraxProducto pedidoxProducto:pedidosProductosDelete)
-        {
-            OrdenCompraxProducto.delete("orden_compra_id = ? AND tipo_id = ?",pedidoxProducto.get("orden_compra_id"),pedidoxProducto.get("tipo_id"));
+            if(pedidosProductosDelete == null) return;
+
+            for(OrdenCompraxProducto pedidoxProducto:pedidosProductosDelete)
+            {
+                OrdenCompraxProducto.delete("orden_compra_id = ? AND tipo_id = ?",pedidoxProducto.get("orden_compra_id"),pedidoxProducto.get("tipo_id"));
+            }            
         }
-        
+              
         for(OrdenCompraxProducto pedidoxproducto:productos)
         {
             if(pedidoxproducto.isNew())

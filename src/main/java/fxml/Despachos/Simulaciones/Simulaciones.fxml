@@ -43,12 +43,7 @@
                   <AnchorPane layoutY="50.0" prefHeight="522.0" prefWidth="250.0">
                      <children>
                          <Line endX="100.0" layoutX="125.0" startX="-100.0" />
-                         <Label layoutX="11.0" layoutY="116.0" prefHeight="21.0" prefWidth="114.0" text="Tipo:">
-                            <font>
-                               <Font size="14.0" />
-                            </font>
-                         </Label>
-                         <Label layoutX="11.0" layoutY="71.0" prefHeight="21.0" prefWidth="114.0" text="Cliente:">
+                         <Label layoutX="11.0" layoutY="69.0" prefHeight="21.0" prefWidth="114.0" text="Tipo:">
                             <font>
                                <Font size="14.0" />
                             </font>
@@ -62,17 +57,16 @@
                          <Button layoutX="140.0" layoutY="483.0" mnemonicParsing="false" onAction="#visualizar_simulacion" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
                          <TableView fx:id="tablaOrdenesSalida" layoutX="14.0" layoutY="193.0" prefHeight="275.0" prefWidth="224.0">
                            <columns>
-                              <TableColumn fx:id="ColumnaCodigo" prefWidth="70.0" text="Codigo" />
-                             <TableColumn fx:id="ColumnaCliente" prefWidth="68.0" text="Cliente" />
-                             <TableColumn fx:id="ColumnaTipo" prefWidth="84.0" text="Tipo" />
+                              <TableColumn fx:id="ColumnaCodigo" prefWidth="58.0" text="Codigo" />
+                             <TableColumn fx:id="ColumnaTipo" prefWidth="68.0" text="Tipo" />
+                             <TableColumn fx:id="ColumnaDescripcion" prefWidth="96.0" text="Descripcion" />
                            </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                          </TableView>
                         <Button layoutX="140.0" layoutY="152.0" mnemonicParsing="false" onAction="#buscar_simulacion" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
-                        <ComboBox fx:id="BuscarTipo" layoutX="118.0" layoutY="114.0" prefHeight="25.0" prefWidth="114.0" />
-                        <TextField fx:id="BuscarCliente" layoutX="118.0" layoutY="69.0" prefHeight="25.0" prefWidth="114.0" />
+                        <ComboBox fx:id="BuscarTipo" layoutX="118.0" layoutY="67.0" prefHeight="25.0" prefWidth="114.0" />
                      </children>
                   </AnchorPane>
                </children>
@@ -85,7 +79,7 @@
                             <content>
                                <AnchorPane fx:id="formulario_general" prefHeight="200.0" prefWidth="200.0">
                                   <children>
-                                    <TitledPane animated="false" collapsible="false" layoutX="21.0" layoutY="187.0" prefHeight="172.0" prefWidth="711.0" text="Orden de Salida">
+                                    <TitledPane animated="false" collapsible="false" layoutX="21.0" layoutY="216.0" prefHeight="172.0" prefWidth="711.0" text="Orden de Salida">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="171.0" prefWidth="709.0">
                                              <children>
@@ -175,12 +169,11 @@
                                      </Label>
                                      <TableView fx:id="TablaProductosUnicos" layoutX="14.0" layoutY="69.0" prefHeight="391.0" prefWidth="610.0">
                                        <columns>
-                                         <TableColumn fx:id="ColumnaCantidadUnicos" prefWidth="74.0" text="Cantidad" />
-                                          <TableColumn fx:id="ColumnaUnicosAlmacen" prefWidth="123.0" text="Almacen" />
-                                         <TableColumn fx:id="ColumnaCodRacksUnicos" prefWidth="131.0" text="Codigo Rack" />
-                                          <TableColumn fx:id="ColumnaPosicionUnicos" prefWidth="84.0" text="Posicion" />
-                                          <TableColumn fx:id="ColumnaNivelUnicos" prefWidth="65.0" text="Nivel" />
-                                          <TableColumn fx:id="ColumnaCapacidadRestante" prefWidth="132.0" text="Capacidad Restante" />
+                                         <TableColumn fx:id="ColumnaProdCodigo" prefWidth="99.0" text="Codigo" />
+                                          <TableColumn fx:id="ColumnaAlmacen" prefWidth="109.0" text="Almacen" />
+                                         <TableColumn fx:id="ColumnaRack" prefWidth="139.0" text="Codigo Rack" />
+                                          <TableColumn fx:id="ColumnaPunto" prefWidth="81.0" text="Punto" />
+                                          <TableColumn fx:id="ColumnaColor" prefWidth="100.0" text="Color" />
                                        </columns>
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -271,6 +264,7 @@
                                           <Button mnemonicParsing="false" onAction="#siguientePaso" prefHeight="52.0" prefWidth="88.0" text="Siguiente Camino" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
                                           <Button mnemonicParsing="false" onAction="#generarSimulacion" prefHeight="74.0" prefWidth="94.0" text="Generar Simulacion" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                                           <Button mnemonicParsing="false" onAction="#agregarSimulacion" prefHeight="61.0" prefWidth="94.0" text="Agregar Simulación" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                                          <Button mnemonicParsing="false" onAction="#cambiarFondo" prefHeight="64.0" prefWidth="95.0" text="Cambiar Fondo" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
                                        </children>
                                     </GridPane>
                                  </children>

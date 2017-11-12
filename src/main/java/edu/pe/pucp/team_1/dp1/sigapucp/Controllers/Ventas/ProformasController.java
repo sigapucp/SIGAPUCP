@@ -295,6 +295,8 @@ public class ProformasController extends Controller {
             }
             crearProforma();
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Proformas ,this.usuarioActual);
+            inhabilitar_formulario();
+            limpiar_formulario();
         }else
         {
             if(proformaSelecionado == null){
@@ -408,6 +410,7 @@ public class ProformasController extends Controller {
     private void setProductos(Cotizacion cotizacion)
     {
         List<CotizacionxProducto> cotizacionesGuardadas = CotizacionxProducto.where("cotizacion_id = ?", cotizacion.getId());
+        
         for(CotizacionxProducto cotizacionxproducto:productos)
         {
             if(cotizacionxproducto.isNew())
@@ -418,18 +421,25 @@ public class ProformasController extends Controller {
             }
             cotizacionxproducto.saveIt();
         }             
-        
-        if(cotizacionesGuardadas == null) return;
-        List<CotizacionxProducto> cotizacionesProductosDelete = cotizacionesGuardadas.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+               
+        if(cotizacionesGuardadas != null)
+        {
+            List<CotizacionxProducto> cotizacionesProductosDelete = cotizacionesGuardadas.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
                 y.getInteger("cotizacion_id").equals(x.getInteger("cotizacion_id")) && 
                 y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
         
-        if(cotizacionesProductosDelete == null) return;
-        
-        for(CotizacionxProducto cotizacionxProducto:cotizacionesProductosDelete)
-        {
-            CotizacionxProducto.delete("cotizacion_id = ? AND tipo_id = ?",cotizacionxProducto.get("cotizacion_id"),cotizacionxProducto.get("tipo_id"));
+            if(cotizacionesProductosDelete == null) return;
+
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesProductosDelete)
+            {
+                CotizacionxProducto.delete("cotizacion_id = ? AND tipo_id = ?",cotizacionxProducto.get("cotizacion_id"),cotizacionxProducto.get("tipo_id"));
+            }                           
         }
+                
+        for(CotizacionxProducto cotizacionxproducto:productos)
+        {
+            cotizacionxproducto.saveIt();
+        }             
     }
     
     @FXML
@@ -527,6 +537,7 @@ public class ProformasController extends Controller {
         total.clear();                
         SpinnerValueFactory newvalueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 1);
         cantProd.setValueFactory(newvalueFactory);
+        proformaSelecionado = null;
     }      
         
     @FXML

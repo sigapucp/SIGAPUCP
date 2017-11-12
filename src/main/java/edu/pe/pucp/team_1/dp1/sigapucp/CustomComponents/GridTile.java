@@ -53,6 +53,11 @@ public class GridTile extends StackPane {
         setMouseEvents();
     }
     
+    public void setFill(Color color)
+    {
+        border.setFill(color);
+    }
+    
     private void setMouseEvents() {
         // Se ejecuta cuando solo en el primer tile seleccionado
         setOnMousePressed((event) -> {

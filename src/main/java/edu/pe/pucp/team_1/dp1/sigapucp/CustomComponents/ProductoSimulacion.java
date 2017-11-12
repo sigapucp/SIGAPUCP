@@ -108,4 +108,26 @@ public class ProductoSimulacion {
     {
         return color;
     }
+    
+    public String getProductoNombre()
+    {
+        if(isDepot()) return "Punto Acopio";
+        if(producto == null) return "";        
+        return producto.getString("producto_cod");
+    }
+    
+    public String getAlmacenName()
+    {
+        if(isDepot()) return "--";
+        if(producto == null) return "";        
+        return producto.getString("almacen_cod");
+    }
+    
+    public String getRackCode()
+    {
+        if(isDepot()) return "--";
+        if(producto == null) return "";      
+        return producto.getString("rack_cod");
+    }
+   
 }

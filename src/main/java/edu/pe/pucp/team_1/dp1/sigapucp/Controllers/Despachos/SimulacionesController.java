@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Despachos;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarOrdenesSalidaController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.WarningAlertController;
@@ -29,6 +30,8 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Simulacion;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenSalidaArgs;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -37,28 +40,37 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -79,13 +91,11 @@ public class SimulacionesController extends Controller{
     @FXML
     private TableColumn<OrdenSalida, String> ColumnaCodigo;
     @FXML
-    private TableColumn<OrdenSalida, String> ColumnaCliente;
+    private TableColumn<OrdenSalida, String> ColumnaDescripcion;
     @FXML
     private TableColumn<OrdenSalida, String> ColumnaTipo;
     @FXML
     private ComboBox<String> BuscarTipo;
-    @FXML
-    private TextField BuscarCliente;
     @FXML
     private AnchorPane tipo_producto_formulario;
     @FXML
@@ -104,19 +114,24 @@ public class SimulacionesController extends Controller{
     @FXML
     private AnchorPane formulario_productos;
     @FXML
-    private TableView<Producto> TablaProductosUnicos;
+    private TableView<ProductoSimulacion> TablaProductosUnicos;
+
     @FXML
-    private TableColumn<Producto, String> ColumnaCantidadUnicos;
+    private TableColumn<ProductoSimulacion, String> ColumnaProdCodigo;
+
     @FXML
-    private TableColumn<Producto, String> ColumnaUnicosAlmacen;
+    private TableColumn<ProductoSimulacion, String> ColumnaAlmacen;
+
     @FXML
-    private TableColumn<Producto, String> ColumnaCodRacksUnicos;
+    private TableColumn<ProductoSimulacion, String> ColumnaRack;
+    
+
     @FXML
-    private TableColumn<Producto, String> ColumnaPosicionUnicos;
+    private TableColumn<ProductoSimulacion, String> ColumnaPunto;
+
     @FXML
-    private TableColumn<Producto, String> ColumnaNivelUnicos;
-    @FXML
-    private TableColumn<Producto, String> ColumnaCapacidadRestante;
+    private TableColumn<ProductoSimulacion, Color> ColumnaColor;
+
     @FXML
     private GridPane formulario_simulacion;
     @FXML
@@ -161,11 +176,13 @@ public class SimulacionesController extends Controller{
     private List<ProductoSimulacion> productosSimulacion;
     private Boolean nextReset = false;
     private Punto acopioAnterior = null;
+    private Boolean crear_nuevo;
+    private Stage modal_stage;
+    private OrdenSalida ordenSalidaActual;
     ObservableList<Integer> nrRutas = FXCollections.observableArrayList();                           
-    ObservableList<Integer> nrSimulaciones = FXCollections.observableArrayList();  
-  
-    
-   
+    ObservableList<Integer> nrSimulaciones = FXCollections.observableArrayList();           
+    ObservableList<ProductoSimulacion> productosObs = FXCollections.observableArrayList(); 
+    ObservableList<OrdenSalida> ordenesSalida = FXCollections.observableArrayList(); 
  
     
     public SimulacionesController()
@@ -177,8 +194,8 @@ public class SimulacionesController extends Controller{
         pesos = new ArrayList<>();
         simulaciones = new ArrayList<>();
         distanciaCalculada = false;
-        simulacionActual = null;
-      
+        crear_nuevo = false;
+        simulacionActual = null;      
     }
     /**
      * Initializes the controller class.
@@ -210,15 +227,44 @@ public class SimulacionesController extends Controller{
                 simulacionActual.setRutaActual(newValue-1);
                 grid.clearUserTiles();    
                 impimirRuta(simulacionActual.getRutaActual(),simulacionActual.getRutasProductos());
-                VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));               
+                VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));           
+                System.out.println(simulacionActual.getRutaString(0, productosSimulacion));
             }          
         });
-         
-        VerNrRuta.setItems(nrRutas);
-        VerNrSimulacion.setItems(nrSimulaciones);
-      
             
+        ColumnaProdCodigo.setCellValueFactory((CellDataFeatures<ProductoSimulacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getProductoNombre()));       
+        ColumnaAlmacen.setCellValueFactory((CellDataFeatures<ProductoSimulacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getAlmacenName()));       
+        ColumnaRack.setCellValueFactory((CellDataFeatures<ProductoSimulacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getRackCode()));       
+        ColumnaPunto.setCellValueFactory((CellDataFeatures<ProductoSimulacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getPunto().toString()));       
+        ColumnaColor.setCellValueFactory((CellDataFeatures<ProductoSimulacion, Color> p) -> new ReadOnlyObjectWrapper(p.getValue().getColor()));       
+        
+        ColumnaColor.setCellFactory(column -> {
+            return new TableCell<ProductoSimulacion, Color>() {
+            @Override
+            protected void updateItem(Color item, boolean empty) {      
+                if(item == null) return;
+                String a = "-fx-background-color: rgb(" + (int)(item.getRed()*255) + "," + (int)(item.getGreen()*255) + "," + (int)(item.getBlue()*255) + ")";
+                setStyle(a);
+            }
+        };}
+        );
+            
+            
+        ColumnaCodigo.setCellValueFactory((CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("salida_cod")));   
+        ColumnaDescripcion.setCellValueFactory((CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("descripcion")));   
+        ColumnaTipo.setCellValueFactory((CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("tipo")));           
+        
+        ordenesSalida.addAll(OrdenSalida.findAll());         
+        
+        VerNrRuta.setItems(nrRutas);
+        VerNrSimulacion.setItems(nrSimulaciones);                
+        TablaProductosUnicos.setItems(productosObs);
+        tablaOrdenesSalida.setItems(ordenesSalida);
+        
+        inhabilitar_formulario();             
+        
         } catch (Exception ex) {
+            infoController.show("Error al cargar las simulaciones: " + ex.getMessage());
             Logger.getLogger(SimulacionesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }    
@@ -229,8 +275,7 @@ public class SimulacionesController extends Controller{
         for(int i = 0;i<n;i++)
         {
             lista.add(i+1);
-        }
-        
+        }        
     }
     
     @Override
@@ -323,14 +368,49 @@ public class SimulacionesController extends Controller{
         }                   
         
         Integer nrProductos = productosSimulacion.size();        
-        distancias = new double[nrProductos+1][nrProductos+1]; 
-        
+        distancias = new double[nrProductos+1][nrProductos+1];      
+        productosObs.addAll(productosSimulacion);
+    }
+    
+    private void inhabilitar_formulario()
+    {
+        formulario_general.setDisable(true);
+        formulario_productos.setDisable(true);
+        formulario_simulacion.setDisable(true);
+    }
+    
+    private void habilitar_formulario()
+    {
+        formulario_general.setDisable(false);
+        formulario_productos.setDisable(false);
+        formulario_simulacion.setDisable(false);        
     }
     
     @Override
-    public Menu.MENU getMenu()
+    public void nuevo()
     {
-        return Menu.MENU.Simulaciones;
+     
+        habilitar_formulario();
+    }
+    
+    @Override
+    public void guardar()
+    {
+        
+    }
+    
+     private void setAgregarProductos() throws Exception
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarOrdenesSalida.fxml"));
+        AgregarOrdenesSalidaController controller = new AgregarOrdenesSalidaController();
+        loader.setController(controller);                      
+        Scene modal_content_scene = new Scene((Parent)loader.load());
+        modal_stage.setScene(modal_content_scene);
+        if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
+
+        controller.devolverOrdenEvent.addHandler((Object sender, agregarOrdenSalidaArgs args) -> {
+            ordenSalidaActual = args.getOrdenSalida();
+        });             
     }
 
     @FXML
@@ -340,12 +420,32 @@ public class SimulacionesController extends Controller{
     @FXML
     private void buscar_simulacion(ActionEvent event) {
     }
+    
+    @FXML
+    private void agregarSimulacion(ActionEvent event) {       
+        if(simulacionActual == null)
+        {
+            infoController.show("No ha seleccionado ninguna Simulacion");
+            return;
+        }               
+        simulaciones.add(simulacionActual);
+        nrSimulaciones.add(simulaciones.size());
+    }
+
         
     @FXML
     private void comenzarRuta(ActionEvent event) {
         grid.clearUserTiles();    
         simulacionActual.setNodoActual(0);
         tittle_pane.setText("Inicio de Ruta");
+        
+        for(ProductoNodo producto:simulacionActual.getRutaActual())
+        {
+            TupleProductos tupla = simulacionActual.getRutasProductos().stream().filter(x -> x.esPar(productosSimulacion.get(producto.GetLlave()), productosSimulacion.get(producto.sig.GetLlave()))).findFirst().get();                                   
+            grid.pintarTileDeletable(tupla.getProductoUno().getPunto().x, tupla.getProductoUno().getPunto().y, tupla.getProductoUno().getColor());
+            grid.pintarTileDeletable(tupla.getProductoDos().getPunto().x, tupla.getProductoDos().getPunto().y, tupla.getProductoDos().getColor());
+            if(producto.sig.EsDeposito()) break;            
+        }
     }
 
     @FXML
@@ -476,12 +576,7 @@ public class SimulacionesController extends Controller{
                 TupleProductos tupla = new TupleProductos(productosSimulacion.get(i), productosSimulacion.get(j));
                 rutasProductos.add(tupla);
                 Celda.TIPO[][] mapaActual = copiarMapa(mapa,height,width);                                           
-                Estado ruta = rutaDetallada.obtenerRutaOptima(mapaActual, height, width, tupla.getProductoUno().getPunto(), tupla.getProductoDos().getPunto());               
-                if(ruta == null)
-                {
-                    int a = 3;
-                      rutaDetallada.obtenerRutaOptima(copiarMapa(mapa,height,width), height, width, tupla.getProductoUno().getPunto(), tupla.getProductoDos().getPunto());               
-                }
+                Estado ruta = rutaDetallada.obtenerRutaOptima(mapaActual, height, width, tupla.getProductoUno().getPunto(), tupla.getProductoDos().getPunto());                              
                 distancias[i][j] = ruta.getCost();
                 distancias[j][i] = ruta.getCost();
                 tupla.setRuta(ruta);                              
@@ -501,11 +596,12 @@ public class SimulacionesController extends Controller{
     {           
         for(ProductoNodo producto:rutaList)
         {
-            TupleProductos tupla = rutasProductos.stream().filter(x -> x.esPar(productosSimulacion.get(producto.GetLlave()), productosSimulacion.get(producto.sig.GetLlave()))).findFirst().get();           
-            dibujarMapa(tupla.getEstado(),tupla.getColor());
+            TupleProductos tupla = rutasProductos.stream().filter(x -> x.esPar(productosSimulacion.get(producto.GetLlave()), productosSimulacion.get(producto.sig.GetLlave()))).findFirst().get();                       
+            dibujarMapa(tupla.getEstado(),tupla.getColor());           
             grid.pintarTileDeletable(tupla.getProductoUno().getPunto().x, tupla.getProductoUno().getPunto().y, tupla.getProductoUno().getColor());
             grid.pintarTileDeletable(tupla.getProductoDos().getPunto().x, tupla.getProductoDos().getPunto().y, tupla.getProductoDos().getColor());
             if(producto.sig.EsDeposito()) break;
+            
         }
     }
     
@@ -531,15 +627,19 @@ public class SimulacionesController extends Controller{
         return nuevoMapa;
     }           
 
-    @FXML
-    private void agregarSimulacion(ActionEvent event) {       
-        if(simulacionActual == null)
-        {
-            infoController.show("No ha seleccionado ninguna Simulacion");
-            return;
-        }               
-        simulaciones.add(simulacionActual);
-        nrSimulaciones.add(simulaciones.size());
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.Simulaciones;
     }
 
+    @FXML
+    private void cambiarFondo(ActionEvent event) {
+        Random rand = new Random();
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();                      
+        grid.changeNullToColor(Color.color(r, g, b));
+    }
+ 
 }
