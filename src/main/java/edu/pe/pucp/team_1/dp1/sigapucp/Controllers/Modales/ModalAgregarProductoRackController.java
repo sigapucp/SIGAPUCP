@@ -80,7 +80,7 @@ public class ModalAgregarProductoRackController extends ModalController {
         almacen_relacionado = almacen;
         numFilas = almacen.getInteger("ancho")/almacen.getDouble("longitud_area").intValue();
         numColumnas = almacen.getInteger("largo")/almacen.getDouble("longitud_area").intValue();
-        System.out.println(String.format("El numero de filas y columnas son %d %d", numFilas, numColumnas));
+        
         validationRules.put("producto_tipo_posicion", "notNull,notEmpty");
         validationRules.put("producto_rack_cord_x", "notNull,notEmpty,numeric");
         validationRules.put("producto_rack_cord_y", "notNull,notEmpty,numeric");

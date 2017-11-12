@@ -53,6 +53,9 @@ public class Validator {
         return condition;
     }
 
+    // Paso previo para usar esta funcion, a todos los fields que van a validar, es necesario que 
+    // define el atributo id (que no es el mismo que el fx:id), en sus fields por scene builder.
+    // Este atributo se encuentra en la sección properties de scene builder.
     public boolean validate(HashMap<String, String> rules, Node... params) {
         boolean condition = true;
         for(Node param : params) {
