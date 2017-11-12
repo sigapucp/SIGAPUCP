@@ -266,10 +266,9 @@ public class OrdenesDeSalidaController  extends Controller{
                 codigo_salida.setEditable(false);
                 String tipo_orden = obtenerTipo();
                 if (tipo_orden.equals(OrdenSalida.TIPO.Venta.name())){
-                    //buscarInstancias(); 
-                }
-                buscarInstancias();
-                llenar_tabla_instancias_productos();
+                    buscarInstancias(); 
+                    llenar_tabla_instancias_productos();
+                }                
             } else if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name())){
                 pane_producto.setDisable(true);
                 pane_tipo.setDisable(false);
@@ -344,7 +343,7 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
-    private void crear_salida(){ //REVISAR
+    private void crear_salida(){ 
         try{
             String tipo = obtenerTipo();
             Base.openTransaction();  
@@ -363,7 +362,8 @@ public class OrdenesDeSalidaController  extends Controller{
                 insertar_orden_salida_envio(orden_salida);                
                         
             insertarDetalle(orden_salida.getInteger("salida_id"),orden_salida.getString("salida_cod"));
-            Base.commitTransaction();            
+            Base.commitTransaction();
+            infoController.show("La orden ha sido creada satisfactoriamente");
         }catch (Exception e){
             infoController.show("No se pudo crear la orden de salida : " + e.getMessage()); 
         }
@@ -384,7 +384,8 @@ public class OrdenesDeSalidaController  extends Controller{
             if (tipo.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())  
                 insertar_orden_salida_envio(salida_seleccionada);
             insertarDetalle(salida_seleccionada.getInteger("salida_id"),salida_seleccionada.getString("salida_cod"));
-            Base.commitTransaction();                        
+            Base.commitTransaction();  
+            infoController.show("La orden ha sido modificada satisfactoriamente");
         }catch (Exception e){
             infoController.show("No se pudo editar la orden de salida : " + e.getMessage()); 
         }
@@ -436,12 +437,15 @@ public class OrdenesDeSalidaController  extends Controller{
         String tipo_orden = obtenerTipo();
         Integer cantidad = 0;
         for (OrdenSalidaxProducto tipoProd : masterDataTipo){
-            Integer cantidad_agregar = sp_cant_tipo.getValue();
-            if (!tipo_orden.equals(OrdenSalida.TIPO.Venta.name()) && (cantidad_agregar>0))
-                tipoProd.set("cantidad",cantidad_agregar);
-            else if (cantidad_agregar==0){
-                infoController.show("No se puede agregar un tipo de producto con cantidad 0");
-                return;
+            Integer cantidad_agregar = 0;
+            if (!tipo_orden.equals(OrdenSalida.TIPO.Venta.name())){
+                cantidad_agregar = sp_cant_tipo.getValue();
+                if (cantidad_agregar>0)
+                    tipoProd.set("cantidad",cantidad_agregar);
+                else{
+                    infoController.show("No se puede agregar un tipo de producto con cantidad 0");
+                    return;
+                }
             }                
             
             if(masterDataTipoSalida.stream().anyMatch(x -> x.getInteger("tipo_id").equals(tipoProd.getInteger("tipo_id")))){
@@ -731,7 +735,7 @@ public class OrdenesDeSalidaController  extends Controller{
             // generar productos más antiguos en venta
             String tipo_orden = obtenerTipo();
             if (tipo_orden.equals(OrdenSalida.TIPO.Venta.name())){
-                /*productos_instancias.clear();
+                productos_instancias.clear();
                 for(OrdenSalidaxProducto tipo_producto : masterDataTipoSalida){
                     Integer cantidad_tipo = 0;
                     for (Producto producto : masterDataProducto){
@@ -749,28 +753,9 @@ public class OrdenesDeSalidaController  extends Controller{
                     }
                 }
                 llenar_tabla_instancias_productos();
-                guardar_instancias_productos();*/
+                guardar_instancias_productos();
             }
-            productos_instancias.clear();
-            for(OrdenSalidaxProducto tipo_producto : masterDataTipoSalida){
-                Integer cantidad_tipo = 0;
-                for (Producto producto : masterDataProducto){
-                    if (producto.getInteger("tipo_id")==tipo_producto.getInteger("tipo_id"))
-                        cantidad_tipo += 1;
-                }
-                if (cantidad_tipo<tipo_producto.getInteger("cantidad")){
-                    List<Producto> aux_productos = Producto.where("tipo_id = ?", tipo_producto.get("tipo_id")).orderBy("fecha_entrada asc");
-                    Integer contador = tipo_producto.getInteger("cantidad");
-                    for (Producto p : aux_productos){
-                        masterDataProducto.add(p);
-                        contador --;
-                        if (contador ==0) break;
-                    }                                    
-                }
-            }
-            llenar_tabla_instancias_productos();
-            guardar_instancias_productos();
-            //
+            
             
             if (estado_anterior.equals(OrdenSalida.ESTADO.ENPROCESO.name())){
                 infoController.show("La orden de salida fue actualizada correctamente. Todos productos han sido despachados");
@@ -778,6 +763,8 @@ public class OrdenesDeSalidaController  extends Controller{
                 return;
             }     
             Base.commitTransaction();
+            limpia_formulario();
+            inhabilitar_formulario();
         }catch (Exception e){
             Base.rollbackTransaction();
             infoController.show("No se ha podido modificar el estado del Envio");
