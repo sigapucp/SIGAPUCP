@@ -5,9 +5,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="100.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.BotonesAccionesController">
+<AnchorPane id="AnchorPane" prefHeight="100.0" prefWidth="362.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.BotonesAccionesController">
    <children>
-      <Button contentDisplay="TOP" disable="true" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="88.0" text="Nuevo">
+      <Button contentDisplay="TOP" disable="true" layoutX="2.0" layoutY="10.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="88.0" text="Nuevo">
          <graphic>
             <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -15,7 +15,7 @@
                </image>
             </ImageView>
          </graphic></Button>
-      <Button contentDisplay="TOP" disable="true" layoutX="218.0" layoutY="10.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="88.0" text="Desactivar">
+      <Button contentDisplay="TOP" disable="true" layoutX="182.0" layoutY="10.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="88.0" text="Desactivar">
          <graphic>
             <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -23,7 +23,7 @@
                </image>
             </ImageView>
          </graphic></Button>
-      <Button contentDisplay="TOP" layoutX="116.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAccion" prefHeight="80.0" prefWidth="88.0" text="Guardar">
+      <Button contentDisplay="TOP" layoutX="92.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAccion" prefHeight="80.0" prefWidth="88.0" text="Guardar">
          <graphic>
             <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -31,5 +31,14 @@
                </image>
             </ImageView>
          </graphic></Button>
+      <Button contentDisplay="TOP" layoutX="272.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAccion" prefHeight="80.0" prefWidth="88.0" text="Cargar">
+         <graphic>
+            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../Imagenes/weight-tool.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>
