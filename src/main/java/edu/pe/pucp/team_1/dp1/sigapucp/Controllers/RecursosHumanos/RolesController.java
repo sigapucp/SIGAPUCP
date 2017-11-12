@@ -48,6 +48,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import org.javalite.activejdbc.Base;
 
@@ -88,6 +89,8 @@ public class RolesController extends Controller{
     private TreeTableColumn<PrivilegioEntrada, Boolean> ArbolPrivilegiosColumna;
     @FXML
     private TreeTableColumn<PrivilegioEntrada, String> ArbolAccionesColumna;
+    @FXML
+    private GridPane formulario_grid;
     
     private final ObservableList<Rol> roles = FXCollections.observableArrayList();         
     private List<Rol> tempRoles;
@@ -97,6 +100,7 @@ public class RolesController extends Controller{
     private ConfirmationAlertController confirmatonController;
     private List<PrivilegioEntrada> privilegiosEntrada;
     private TreeItem<PrivilegioEntrada> rootNode;
+  
 
     /**
      * Initializes the controller class.
@@ -117,6 +121,16 @@ public class RolesController extends Controller{
                 
         rolSelecionado = null;
         crearNuevo = false;               
+    }
+    
+    private void deshabilitar_formulario()
+    {
+        formulario_grid.setDisable(true);
+    }
+    
+    private void habilitar_formulario()
+    {
+        formulario_grid.setDisable(false);
     }
     
     
@@ -208,7 +222,7 @@ public class RolesController extends Controller{
         {
             ArbolPrivilegiosTabla.setRoot(rootNode);                                                          
         }
-        
+        habilitar_formulario();        
         limpiarVerRol();
     }
 
@@ -224,7 +238,9 @@ public class RolesController extends Controller{
                 crearNuevo = false;
                 return;
             }
-            crearRol();            
+            crearRol(); 
+            limpiarVerRol();
+            deshabilitar_formulario();
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Roles ,this.usuarioActual);
         }else
         {
@@ -361,6 +377,7 @@ public class RolesController extends Controller{
       
     private void setRolVisible(Rol rol)
     {
+        habilitar_formulario();
         try {            
             String nombre = rol.getString("nombre");
             String descripcion = rol.getString("descripcion");          
@@ -524,9 +541,10 @@ public class RolesController extends Controller{
                                    
             TablaRoles.setItems(roles);           
             initializarArbolPrivilegios();
-         
+            deshabilitar_formulario();
            
         } catch (Exception e) {
+            infoController.show("Error al inicializar los roles: " + e.getMessage());
         }       
     }         
 

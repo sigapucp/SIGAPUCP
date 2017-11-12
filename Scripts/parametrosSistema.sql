@@ -1,4 +1,4 @@
-truncate table parametrossistema RESTART IDENTITY CASCADE;
+
 
 insert into parametrossistema values (default,'Prioridad Promocion Bonificacion','3','Describe la prioridad de la promocion de Bonificación. 1 es mas prioritario y 3 es menos prioritario. En caso de empate esta es la que tiene menos prioridad','admin');
 insert into parametrossistema values (default,'Prioridad Promocion Cantidad','2','Describe la prioridad de la promocion de Cantidad. 1 es mas prioritario y 3 es menos prioritario. En caso de empate esta es la que tiene prioridad media','admin');

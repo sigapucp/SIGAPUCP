@@ -8,10 +8,12 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaZ;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaxTipo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.ProductoAcumulado;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
@@ -40,7 +42,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javafx.scene.control.DatePicker;
@@ -147,19 +151,24 @@ public class ProductosController extends Controller {
     private final ObservableList<TipoProducto> productos = FXCollections.observableArrayList();     
     private final ObservableList<CategoriaProducto> categorias = FXCollections.observableArrayList();         
     private final ObservableList<Precio> precios = FXCollections.observableArrayList();         
-    private final ObservableList<Producto> productosUnicos = FXCollections.observableArrayList();       
+    private final ObservableList<ProductoAcumulado> productosUnicos = FXCollections.observableArrayList();       
     
     private TipoProducto producto_seleccionado ;
     @FXML
-    private TableView<Producto> TablaProductosUnicos;
+    private TableView<ProductoAcumulado> TablaProductosUnicos;
     @FXML
-    private TableColumn<Producto, String> ColumnaCodigoUnicos;
+    private TableColumn<ProductoAcumulado, String> ColumnaCantidadUnicos;
     @FXML
-    private TableColumn<Producto, String> ColumnaEntradaUnicos;
+    private TableColumn<ProductoAcumulado, String> ColumnaUnicosAlmacen;
     @FXML
-    private TableColumn<Producto, String> ColumnaIngresoUnicos;
+    private TableColumn<ProductoAcumulado, String> ColumnaCodRacksUnicos;
     @FXML
-    private TableColumn<Producto, String> ColumnaUbicacionUnicos;
+    private TableColumn<ProductoAcumulado, String> ColumnaPosicionUnicos;
+    @FXML
+    private TableColumn<ProductoAcumulado, String> ColumnaNivelUnicos;
+    @FXML
+    private TableColumn<ProductoAcumulado, String> ColumnaCapacidadRestante;
+    
     
     public ProductosController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -283,15 +292,31 @@ public class ProductosController extends Controller {
                 precios.add(precio);
             }
             
-            List<Producto> unicosProducto = Producto.where("tipo_id = ?",producto_seleccionado.getId());
-            for(Producto unicoProducto:unicosProducto)
-            {
-                productosUnicos.add(unicoProducto);                
-            }
-            
+            productosUnicos.addAll(getProductoUnicos(producto_seleccionado));                                                            
         } catch (Exception e) {
             infoController.show("El producto contiene errores : " + e);        
         }        
+    }
+    
+    private List<ProductoAcumulado> getProductoUnicos(TipoProducto producto_seleccionado)
+    {
+        List<ProductoAcumulado> acumulados = new ArrayList<>();
+        List<Producto> unicosProducto = Producto.where("tipo_id = ?",producto_seleccionado.getId());
+        
+        int cantidadNoUbicados = unicosProducto.stream().filter(x->x.getString("ubicado").equals("N")).collect(Collectors.toList()).size();        
+        
+        List<Producto> productosUbicados = unicosProducto.stream().filter(x->x.getString("ubicado").equals("S")).collect(Collectors.toList());
+      
+        Map<Integer, List<Producto>> productosGrouped = productosUbicados.stream().collect(Collectors.groupingBy(w -> w.getInteger("almacen_z_id")));
+        ProductoAcumulado noUbicados = new ProductoAcumulado(cantidadNoUbicados);
+        
+        for (Map.Entry<Integer, List<Producto>> entry : productosGrouped.entrySet())
+        {
+            AlmacenAreaZ areaZ = AlmacenAreaZ.findFirst("almacen_z_id = ?",entry.getKey());
+            acumulados.add(new ProductoAcumulado(entry.getValue().size(), entry.getValue().get(0),areaZ));
+        }                
+        acumulados.add(noUbicados);
+        return acumulados;
     }
 
     @FXML
@@ -655,11 +680,13 @@ public class ProductosController extends Controller {
             ColumnaPrecioFechaFinal.setCellValueFactory((TableColumn.CellDataFeatures<Precio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_fin")));
             // ToDo hace ver el default            
             
-            ColumnaCodigoUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")));
-            ColumnaEntradaUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_entrada_cod")));
-            ColumnaIngresoUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_entrada")));
-            ColumnaUbicacionUnicos.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> 
-                    new ReadOnlyObjectWrapper((p.getValue().get("ubicado").equals("S")) ? p.getValue().get("ubicacion") : "No Ubicado"));
+            ColumnaCantidadUnicos.setCellValueFactory((TableColumn.CellDataFeatures<ProductoAcumulado, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getCantidad()));
+            ColumnaUnicosAlmacen.setCellValueFactory((TableColumn.CellDataFeatures<ProductoAcumulado, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getAlmacen()));
+            ColumnaCodRacksUnicos.setCellValueFactory((TableColumn.CellDataFeatures<ProductoAcumulado, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getRack()));
+            ColumnaPosicionUnicos.setCellValueFactory((TableColumn.CellDataFeatures<ProductoAcumulado, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getPosicion()));
+            ColumnaNivelUnicos.setCellValueFactory((TableColumn.CellDataFeatures<ProductoAcumulado, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getNivel()));
+            ColumnaCapacidadRestante.setCellValueFactory((TableColumn.CellDataFeatures<ProductoAcumulado, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getRestante()));
+
             
 
             ObservableList<String> estados = FXCollections.observableArrayList();                           

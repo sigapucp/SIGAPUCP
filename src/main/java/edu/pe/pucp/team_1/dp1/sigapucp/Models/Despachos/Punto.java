@@ -18,6 +18,15 @@ public class Punto {
     public DIRECCION dir;
     public Rack.ANCLA anchorPoint;
     
+    public static DIRECCION invertirDireccion(DIRECCION gDir)
+    {
+        if(gDir == DIRECCION.E) return DIRECCION.O;
+        if(gDir == DIRECCION.O) return DIRECCION.E;
+        if(gDir == DIRECCION.N) return DIRECCION.S;
+        if(gDir == DIRECCION.S) return DIRECCION.N;
+        return gDir;
+    }
+    
     public Punto(int gX,int gY)
     {
         x = gX;
@@ -47,7 +56,7 @@ public class Punto {
         y = gY;
         anchorPoint = gAnchor;
     }
-    
+      
     public Boolean esValido(int height,int width)
     {
         return (x>=0&&x<width)&&(y>=0&&y<height);
@@ -62,7 +71,8 @@ public class Punto {
     public Punto(Punto gPunto)
     {
         x = gPunto.x;
-        y = gPunto.y;               
+        y = gPunto.y;       
+        dir = gPunto.dir;
     }
     
     public Boolean isEqual(Punto p)
@@ -99,6 +109,15 @@ public class Punto {
         return new Punto(x+moveFactorX,y+moveFactorY);   
     }
         
+    public void print()
+    {
+        System.out.print(x + " " + y);
+    }
+    
+    public void println()
+    {
+        System.out.print(x + " " + y);
+    }
     
     public enum DIRECCION
     {
@@ -106,5 +125,11 @@ public class Punto {
         S,
         E,
         O               
+    }
+    
+    @Override
+    public String toString()
+    {
+        return (x + "-" + y);
     }
 }

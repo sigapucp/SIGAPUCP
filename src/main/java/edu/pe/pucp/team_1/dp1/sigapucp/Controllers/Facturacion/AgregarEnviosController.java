@@ -10,6 +10,8 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarEnviosArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenCompraProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalida;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.net.URL;
 import java.util.List;
@@ -79,10 +81,16 @@ public class AgregarEnviosController implements  Initializable{
     
     public void llenar_tabla_envios(){
         limpiar_tabla_envios();
-        List<Envio> envios = Envio.findAll();
-        for( Envio envio : envios){
-            masterData.add(envio);
+        List<Envio> envios = Envio.where("estado = ?",Envio.ESTADO.ENPROCESO.name());
+        List<OrdenesSalidaxEnvio> envios_tomados = OrdenesSalidaxEnvio.findAll();
+        masterData.addAll(envios);
+        for (OrdenesSalidaxEnvio envio_tomado : envios_tomados){
+            for (Envio envio : envios){
+                if (envio.getInteger("envio_id")==envio_tomado.getInteger("envio_id"))
+                    masterData.remove(envio);
+            }
         }
+        
         columna_cod_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("envio_cod")));
         columna_cliente_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         columna_pedido_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));

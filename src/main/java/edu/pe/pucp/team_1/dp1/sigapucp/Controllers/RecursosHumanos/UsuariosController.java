@@ -44,6 +44,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
@@ -98,6 +99,8 @@ public class UsuariosController extends Controller{
     private TreeTableView<String> ArbolPrivilegiosTabla;
     @FXML
     private TreeTableColumn<String, String> ArbolPrivilegiosColumna;
+    @FXML
+    private GridPane formulario_grid;
       
     private final ObservableList<Usuario> usuarios = FXCollections.observableArrayList();     
      
@@ -105,6 +108,7 @@ public class UsuariosController extends Controller{
     private Boolean crearNuevo;
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmatonController;
+   
    
          
     public UsuariosController()
@@ -130,7 +134,17 @@ public class UsuariosController extends Controller{
         usuarioSelecionado = TablaUsuarios.getSelectionModel().getSelectedItem();
         if(usuarioSelecionado == null) return;        
         setUsuarioVisible(usuarioSelecionado);                        
-    }        
+    }     
+    
+    private void deshabilitar_formulario()
+    {
+        formulario_grid.setDisable(true);
+    }
+    
+    private void habilitar_formulario()
+    {
+        formulario_grid.setDisable(false);
+    }
     
     @FXML
     private void buscarUsuarios(ActionEvent event) {        
@@ -175,6 +189,7 @@ public class UsuariosController extends Controller{
     
     private void setUsuarioVisible(Usuario usuario)
     {        
+        habilitar_formulario();
         try {
             String nombre = usuario.getString("nombre");
             String apellido = usuario.getString("apellido");
@@ -191,6 +206,7 @@ public class UsuariosController extends Controller{
             
             mostrarUsuarioPrivilegios(usuario);                                                   
         } catch (Exception e) {
+            deshabilitar_formulario();
             infoController.show("El Usuario contiene errores : " + e);
         }                                
     }
@@ -240,9 +256,9 @@ public class UsuariosController extends Controller{
     @Override
     public void nuevo()
     {
-//        if(!PreCambiarAccion()) return;
         crearNuevo = true;
         limpiarVerUsuario();
+        habilitar_formulario();
     }
     
     @Override 
@@ -258,6 +274,7 @@ public class UsuariosController extends Controller{
             crearUsuario();  
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Usuarios ,this.usuarioActual);
             limpiarVerUsuario();
+            deshabilitar_formulario();
         }else
         {
             if(usuarioSelecionado==null) 
@@ -276,7 +293,7 @@ public class UsuariosController extends Controller{
     }
         
     private void editarUsuario(Usuario usuario)
-    {        
+    {                
         String cod = "USR" + String.valueOf(usuario.getId());
         String nombre = VerNombre.getText();
         String apellido = VerApellido.getText();
@@ -476,6 +493,7 @@ public class UsuariosController extends Controller{
             
             TablaUsuarios.setItems(usuarios);
             ArbolPrivilegiosTabla.setShowRoot(false);
+            deshabilitar_formulario();
             
         } catch (Exception e) {
             infoController.show("El Usuario contiene errores : " + e);        

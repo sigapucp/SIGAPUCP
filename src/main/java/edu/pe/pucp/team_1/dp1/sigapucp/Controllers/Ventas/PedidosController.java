@@ -316,13 +316,28 @@ public class PedidosController extends Controller {
         }                                                   
     }   
     
+    private void limpiar_formulario()
+    {
+        clienteSeleccionado = null;
+        vendedorSelecionado = null;
+        productoDevuelto = null;
+        productos.clear();               
+        VerCliente.clear();
+        VerDocumento.clear();
+        VerDireccionDespacho.clear();
+        VerProducto.clear();
+        VerDireccionFacturacion.clear();     
+        pedidoSeleccionado = null;
+    }
+    
     @Override
     public void nuevo(){
         crearNuevo = true;
         habilitar_formulario();
+        LabelPedido.setText("Nuevo Pedido");
+        limpiar_formulario();
         VerVendedor.setText(usuarioActual.getString("usuario_cod"));
         vendedorSelecionado = usuarioActual;
-        LabelPedido.setText("Nuevo Pedido");
     }
     
     @Override
@@ -335,6 +350,8 @@ public class PedidosController extends Controller {
             }
             crearPedido();
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Pedidos ,this.usuarioActual);
+            inhabilitar_formulario();
+            limpiar_formulario();
         } else {
             if (pedidoSeleccionado == null){
                 infoController.show("No ha seleccionado un cliente");
@@ -344,6 +361,13 @@ public class PedidosController extends Controller {
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
+            String estado = pedidoSeleccionado.getString("estado");            
+            if(!estado.equals(OrdenCompra.ESTADO.PENDIENTE.name()))
+            {
+                infoController.show("El Pedido no puede ser modifcado ya que esta en el estado: " + estado);
+                return;
+            }
+            
             editarPedido(pedidoSeleccionado);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Pedidos ,this.usuarioActual);
         }
@@ -375,18 +399,17 @@ public class PedidosController extends Controller {
             
             if(!confirmationController.show("Esta accion cambiara la Orden del estado " + estadoAnterior + " a " + siguienteEstado.name(), "¿Desea continuar?")) return;
             
-            pedidoSeleccionado.set("estado",siguienteEstado.name());                       
-            pedidoSeleccionado.saveIt();            
-                                    
-            
+                            
+                                                            
             if(estadoAnterior.equals(OrdenCompra.ESTADO.ENDESPACHO.name())) 
             {
+                pedidoSeleccionado.set("estado",siguienteEstado.name());     
+                pedidoSeleccionado.saveIt();          
                 infoController.show("El Pedido fue actualizada correctamente. Todos productos han sido despachados");
                 Base.commitTransaction();
             
                 TablaPedido.getColumns().get(0).setVisible(false);
-                TablaPedido.getColumns().get(0).setVisible(true);           
-                            
+                TablaPedido.getColumns().get(0).setVisible(true);                                       
                 return;
             }  
             
@@ -412,13 +435,18 @@ public class PedidosController extends Controller {
             {
                 infoController.show(messageStock);
                 return;
+            }else
+            {
+                pedidoSeleccionado.set("estado",siguienteEstado.name());     
+                pedidoSeleccionado.saveIt();                   
             }
                         
             for(OrdenCompraxProducto producto:productos)
             {                
                 producto.set("reservado","S");                
                 producto.saveIt();
-            }                        
+            }               
+            
             Base.commitTransaction();            
             TablaPedido.getColumns().get(0).setVisible(false);
             TablaPedido.getColumns().get(0).setVisible(true);            
@@ -637,6 +665,7 @@ public class PedidosController extends Controller {
         if(cotizacionAnexada != null)
         {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
+            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO);
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
                 OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);  
@@ -688,7 +717,7 @@ public class PedidosController extends Controller {
                 pedidoxproducto.set("orden_compra_id",pedido.getId());
                 pedidoxproducto.set("client_id",pedido.get("client_id"));
                 pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
-                pedidoxproducto.saveIt();
+              
             }
             Stock productoStock = Stock.first("tipo_id = ?", pedidoxproducto.get("tipo_id"));            
             Integer cantidadLlevada = pedidoxproducto.getInteger("cantidad");
@@ -705,19 +734,31 @@ public class PedidosController extends Controller {
         if(stockError)
         {
             infoController.show(messageStock);
+            String estado = pedido.getString("estado");
+            if(!estado.equals(OrdenCompra.ESTADO.PENDIENTE.name())) return;
         }
-        
-        if(pedidosGuardados == null) return;
-        List<OrdenCompraxProducto> pedidosProductosDelete = pedidosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+               
+        if(pedidosGuardados!=null)
+        {
+             List<OrdenCompraxProducto> pedidosProductosDelete = pedidosGuardados.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
                 y.getInteger("orden_compra_id").equals(x.getInteger("orden_compra_id")) && 
                 y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
         
-        if(pedidosProductosDelete == null) return;
-        
-        for(OrdenCompraxProducto pedidoxProducto:pedidosProductosDelete)
-        {
-            OrdenCompraxProducto.delete("orden_compra_id = ? AND tipo_id = ?",pedidoxProducto.get("orden_compra_id"),pedidoxProducto.get("tipo_id"));
+            if(pedidosProductosDelete == null) return;
+
+            for(OrdenCompraxProducto pedidoxProducto:pedidosProductosDelete)
+            {
+                OrdenCompraxProducto.delete("orden_compra_id = ? AND tipo_id = ?",pedidoxProducto.get("orden_compra_id"),pedidoxProducto.get("tipo_id"));
+            }            
         }
+              
+        for(OrdenCompraxProducto pedidoxproducto:productos)
+        {
+            if(pedidoxproducto.isNew())
+            {
+                pedidoxproducto.saveIt(); 
+            }             
+        }                                 
     }
     
     @FXML
@@ -1273,6 +1314,9 @@ public class PedidosController extends Controller {
 
             setInformacionCliente(cliente,false);     
             VerCliente.setText(cliente.getString("nombre"));      
+            
+            vendedorSelecionado = usuarioActual;
+            VerVendedor.setText(usuarioActual.getString("nombre"));
 
             String direccionFacturacion = cliente.getString("direccion_facturacion");        
             String direccionDespacho = cliente.getString("direccion_despacho");
@@ -1314,7 +1358,8 @@ public class PedidosController extends Controller {
             pedidoxproducto.set("subtotal_previo",cotizacionxProducto.get("subtotal_previo")); 
             pedidoxproducto.set("descuento",cotizacionxProducto.get("descuento"));
             pedidoxproducto.set("flete",cotizacionxProducto.get("flete"));                    
-            pedidoxproducto.set("subtotal_final",cotizacionxProducto.get("subtotal_final"));    
+            pedidoxproducto.set("subtotal_final",cotizacionxProducto.get("subtotal_final"));   
+            pedidoxproducto.set("reservado","N");
             ordenCompraxProductos.add(pedidoxproducto);
         }
         return ordenCompraxProductos;
