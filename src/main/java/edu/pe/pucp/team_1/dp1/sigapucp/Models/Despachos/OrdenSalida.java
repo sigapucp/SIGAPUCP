@@ -19,8 +19,7 @@ public class OrdenSalida extends Model{
     public enum TIPO
     {
         Venta,
-        Devolucion,
-        Encuentro,
+        Rotura,
         Otras
     }
     
@@ -28,6 +27,11 @@ public class OrdenSalida extends Model{
     {
         PENDIENTE,
         ENPROCESO,
-        COMPLETA
+        COMPLETA;
+        private static OrdenSalida.ESTADO[] vals = values();
+        public OrdenSalida.ESTADO next()
+        {
+            return vals[(this.ordinal()+1) % vals.length];
+        }
     }    
 }

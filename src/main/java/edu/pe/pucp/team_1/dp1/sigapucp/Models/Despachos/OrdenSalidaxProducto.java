@@ -11,14 +11,10 @@ import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
- * @author Jauma
+ * @author a20111628
  */
-@Table("OrdenesSalidaxProductosFinal")
-@CompositePK({ "producto_cod", "producto_id", "tipo_cod","tipo_id","orden_entrada_cod","orden_entrada_id","salida_cod","salida_id" })
-public class OrdenSalidaxProductoFinal extends Model{
-    public enum ESTADO
-    {        
-        RESERVADO,
-        DESPACHADO
-    }
+@Table("OrdenesSalidaxProductos")
+@CompositePK({"salida_cod", "salida_id", "tipo_id", "tipo_cod"})
+public class OrdenSalidaxProducto extends Model{
+    
 }
