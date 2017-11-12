@@ -16,5 +16,4 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("OrdenesEntradaxProductos")
 @CompositePK({ "tipo_id", "tipo_cod", "orden_entrada_id","orden_entrada_cod"})
 public class OrdenEntradaxProducto extends Model{
-    
 }
