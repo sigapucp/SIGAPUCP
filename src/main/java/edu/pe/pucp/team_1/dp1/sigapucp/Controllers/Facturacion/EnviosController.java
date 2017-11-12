@@ -650,7 +650,7 @@ public class EnviosController extends Controller{
     @FXML
     private void agregarCliente(ActionEvent event) {
         modal_stage.showAndWait();
-        if(cliente_seleccionado==null) return;        
+        if(cliente_seleccionado==null) return;      
         mostrar_informacion_cliente(cliente_seleccionado);
         nombre_cliente.setText(cliente_seleccionado.getString("nombre"));
         llenar_ordenes_compra_cliente();        
