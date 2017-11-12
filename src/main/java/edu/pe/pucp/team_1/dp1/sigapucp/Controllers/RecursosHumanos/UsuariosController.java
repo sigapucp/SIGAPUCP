@@ -64,8 +64,8 @@ public class UsuariosController extends Controller{
     private TableColumn<Usuario,String> ColumnaNombre;    
     @FXML
     private TableColumn<Usuario,String> ColumnaApellido;
-    @FXML
-    private TableColumn<Usuario,String> ColumnaEstado;
+//    @FXML
+//    private TableColumn<Usuario,String> ColumnaEstado;
     @FXML
     private TableColumn<Usuario,String> ColumnaRol;
                    
@@ -79,8 +79,8 @@ public class UsuariosController extends Controller{
     private TextField BusquedaNombre;
     @FXML
     private TextField BusquedaApellido;
-    @FXML
-    private ComboBox<String> BusquedaEstado;
+    //@FXML
+    //private ComboBox<String> BusquedaEstado;
     @FXML
     private ComboBox<String> BusquedaRol;
         
@@ -156,7 +156,7 @@ public class UsuariosController extends Controller{
         String codigo = BusquedaCodigo.getText();
         String nombre = BusquedaNombre.getText();
         String apellido = BusquedaApellido.getText();
-        String estado = BusquedaEstado.getValue();
+        //String estado = BusquedaEstado.getValue();
         String rol = BusquedaRol.getValue();
         
         List<Usuario> tempUsuarios = Usuario.where("estado = ?", Usuario.ESTADO.ACTIVO.name());
@@ -176,10 +176,10 @@ public class UsuariosController extends Controller{
             tempUsuarios = tempUsuarios.stream().filter(p -> p.getString("apellido").equals(apellido)).collect(Collectors.toList());
         }
         
-        if(estado!=null&&!estado.isEmpty())
-        {
-            tempUsuarios = tempUsuarios.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
-        }
+//        if(estado!=null&&!estado.isEmpty())
+//        {
+//            tempUsuarios = tempUsuarios.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
+//        }
         
         if(rol!=null&&!rol.isEmpty())
         {
@@ -251,7 +251,7 @@ public class UsuariosController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             } 
-           if(!confirmatonController.show("Se deshabilitara la categoria con nombre: " + VerNombre.getText(), "¿Desea continuar?")) return;
+           if(!confirmatonController.show("Se deshabilitara el usuario con codigo: " + usuarioSelecionado.getString("estado"), "¿Desea continuar?")) return;
            Base.openTransaction();
            
            usuarioSelecionado.set("estado",Usuario.ESTADO.INACTIVO.name());
@@ -264,7 +264,8 @@ public class UsuariosController extends Controller{
            RefrescarTabla(Usuario.where("estado = 'ACTIVO'"));
            //cargar
         } catch (Exception e) {
-           infoController.show("El Usuario contiene errores : " + e);        
+           infoController.show("Error al desactivar usuario"); 
+           System.out.println(e);
            Base.rollbackTransaction();
         }
      }
@@ -337,7 +338,7 @@ public class UsuariosController extends Controller{
         infoController.show("El usuario ha sido editado satisfactoriamente");        
         }
         catch(Exception e){
-            infoController.show("Error al editar usuario");
+            infoController.show("Error al editar usuario: " + e);
             System.out.println(e);
             Base.rollbackTransaction();
         }                
@@ -379,7 +380,7 @@ public class UsuariosController extends Controller{
         //deshabilitarDetalle();
         }
         catch(Exception e){
-           infoController.show("Error al crear un usuario");
+           infoController.show("Error al crear un usuario: " + e);
            System.out.println(e);
            Base.rollbackTransaction();           
         }finally{
@@ -487,14 +488,14 @@ public class UsuariosController extends Controller{
             ColumnaCodigo.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("usuario_cod")));
             ColumnaNombre.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
             ColumnaApellido.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("apellido"))); 
-            ColumnaEstado.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado"))); 
+            //ColumnaEstado.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado"))); 
             ColumnaRol.setCellValueFactory((CellDataFeatures<Usuario, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getRol().get("nombre"))); 
             
             ArbolPrivilegiosColumna.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getValue())); 
                         
             ObservableList<String> estados = FXCollections.observableArrayList();                           
-            estados.add("");
-            estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
+            //estados.add("");
+            //estados.addAll(Arrays.asList(Usuario.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                        
             
             
             ObservableList<String> rolesNames = FXCollections.observableArrayList();   
@@ -509,7 +510,7 @@ public class UsuariosController extends Controller{
                 rolesCods.add(rol.getString("rol_cod"));
             }
 
-            BusquedaEstado.setItems(estados);
+            //BusquedaEstado.setItems(estados);
             BusquedaRol.setItems(rolesNames);                        
             VerRol.setItems(rolesCods);          
             

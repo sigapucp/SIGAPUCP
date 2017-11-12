@@ -142,7 +142,7 @@ public class ClientesController extends Controller{
         }
         catch(Exception e){
             System.out.println(e);
-            infoController.show("El cliente contiene errores"); 
+            infoController.show("El cliente contiene errores: " + e); 
             Base.rollbackTransaction();
         }finally{
             crear_nuevo = false;
@@ -161,6 +161,8 @@ public class ClientesController extends Controller{
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
+            infoController.show("Error al editar el cliente: " + e);
+            System.out.println(e);
             Base.rollbackTransaction();
         }
     }

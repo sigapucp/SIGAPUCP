@@ -23,10 +23,9 @@ public class Usuario extends Model{
     }    
 
     static{
-        validatePresenceOf("name","contact_name","provuder_ruc","phone_number");
-        validateNumericalityOf("provuder_ruc");
-        validateNumericalityOf("phone_number");
-        validateRegexpOf("provuder_ruc", "\\d{1,11}");
+        validatePresenceOf("nombre","email","nombre","telefono","apellido");
+        validateNumericalityOf("telefono");
+        validateEmailOf("email");
     }
     
     public static boolean autenticacion (String correo_usuario, String contrasenha){

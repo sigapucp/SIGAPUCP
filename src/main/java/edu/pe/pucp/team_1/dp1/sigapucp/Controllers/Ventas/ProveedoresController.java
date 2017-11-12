@@ -109,7 +109,7 @@ public class ProveedoresController extends Controller{
         }
         catch(Exception e){
             Base.rollbackTransaction();
-            infoController.show("Error al crear proveedor");
+            infoController.show("Error al crear proveedor:" + e);
             System.out.println(e);
             crear_nuevo = true;
         }   
@@ -127,7 +127,8 @@ public class ProveedoresController extends Controller{
         }
         catch(Exception e){
             Base.rollbackTransaction();
-            infoController.show("El proveedor contiene errores: "+e); 
+            infoController.show("Error al editar proveedor: "+ e ); 
+            System.out.println(e);
         }        
     }
     

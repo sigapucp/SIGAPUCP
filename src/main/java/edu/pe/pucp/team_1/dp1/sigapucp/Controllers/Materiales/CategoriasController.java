@@ -129,7 +129,7 @@ public class CategoriasController extends Controller{
         }
         catch(Exception e){    
             Base.rollbackTransaction();
-            infoController.show("Error al crear la categoria");
+            infoController.show("Error al crear la categoria:" + e);
             System.out.println(e);
             crear_nuevo = true;
         }
@@ -150,7 +150,7 @@ public class CategoriasController extends Controller{
             infoController.show("La categoria ha sido editada");
         }
         catch(Exception e){
-            infoController.show("Error al editar la categoria");
+            infoController.show("Error al editar la categoria: " + e);
             System.out.println(e);
         }
     }

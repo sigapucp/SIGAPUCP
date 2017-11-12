@@ -20,6 +20,7 @@ import org.javalite.activejdbc.annotations.Table;
 public class CategoriaProducto extends Model{
     static{
         validatePresenceOf("nombre","categoria_code");
+        
     }
     public void asignar_atributos(String usuario,String codigo, String nombre, String descripcion){
         this.set("last_user_change",usuario);
