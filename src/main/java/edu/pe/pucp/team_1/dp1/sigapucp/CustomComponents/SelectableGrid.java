@@ -28,7 +28,7 @@ public class SelectableGrid extends AnchorPane  {
     private int grid_heigth;
     private int grid_real_width;
     private int grid_real_heigth;
-    private TreeMap<Integer, List<GridTile>> tiles;
+    private TreeMap<Integer, List<GridTile>> tiles;    
     private List<GridTile> userTiles;    
     private Behavior behavior;
     private int current_x_tile;
@@ -103,6 +103,43 @@ public class SelectableGrid extends AnchorPane  {
     
     public void clearCurrentActiveTiles() {
         behavior.clearCurrentActiveTiles(tiles);
+    }
+    
+    public void changeNullToWhite()
+    {
+          tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                if(!j.isActive())
+                {
+                    j.setFill(Color.WHITE);
+                }
+            });
+        });        
+    }
+    
+    public void changeNullToColor(Color color)
+    {        
+        tiles.forEach((i, list) -> {
+          list.forEach((j) -> {
+              if(!j.isActive())
+              {
+                  j.setFill(color);
+              }
+          });
+      });        
+
+    }
+    
+    public void changeWhiteToNull()
+    {
+          tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                if(!j.isActive())
+                {
+                    j.setFill(null);
+                }
+            });
+        });        
     }
     
     public void clearAndSaveTempTiles() {

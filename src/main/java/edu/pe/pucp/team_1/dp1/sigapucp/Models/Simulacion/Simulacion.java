@@ -5,12 +5,14 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.ProductoSimulacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.TupleProductos;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.ProductoNodo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Punto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Ruta;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.RutaGeneral;
 import java.util.List;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -98,4 +100,49 @@ public class Simulacion {
         return rutasProductos;
     }
     
+    public String getRutaString(int index,List<ProductoSimulacion> productosSimulacion)
+    {
+        List<ProductoNodo> rutaList = rutas.get(index).getRutaList();
+        String ruta = "{" + acopio.toString() + "},";
+        for(ProductoNodo producto:rutaList)
+        {
+            TupleProductos tupla = rutasProductos.stream().filter(x -> x.esPar(productosSimulacion.get(producto.GetLlave()), productosSimulacion.get(producto.sig.GetLlave()))).findFirst().get();                       
+            
+            Color color = tupla.getProductoUno().getColor();
+            
+            ruta += getColorPointString(color) + ",";
+            ruta += getColorRouteString(tupla.getColor()) + ",";
+                        
+            if(productosSimulacion.get(producto.GetLlave()) == tupla.getProductoUno())
+            {
+                for(Punto punto:tupla.getEstado().ruta)
+                {        
+                    if(punto.dir == null) break;
+                    ruta += punto.dir.name();                
+                }                                
+            }else
+            {        
+                for(int i = tupla.getEstado().ruta.size() -1;i>=0;i--)
+                {
+                    if(tupla.getEstado().ruta.get(i).dir == null) continue;
+                    ruta += Punto.invertirDireccion(tupla.getEstado().ruta.get(i).dir).name();                                    
+                }                               
+            }                             
+            if(producto.sig.EsDeposito()) 
+            {               
+                break;
+            }
+        }     
+        return ruta;
+    }    
+    
+    public String getColorPointString(Color color)
+    {
+        return "(" + (int)(color.getRed()*255) + "-" + (int)(color.getGreen()*255) + "-" + (int)(color.getBlue()*255) + ")";
+    }
+    
+    public String getColorRouteString(Color color)
+    {
+        return "[" + (int)(color.getRed()*255) + "-" + (int)(color.getGreen()*255) + "-" + (int)(color.getBlue()*255) + "]";
+    }
 }

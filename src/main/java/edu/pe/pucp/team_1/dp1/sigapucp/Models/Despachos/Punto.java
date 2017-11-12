@@ -18,6 +18,15 @@ public class Punto {
     public DIRECCION dir;
     public Rack.ANCLA anchorPoint;
     
+    public static DIRECCION invertirDireccion(DIRECCION gDir)
+    {
+        if(gDir == DIRECCION.E) return DIRECCION.O;
+        if(gDir == DIRECCION.O) return DIRECCION.E;
+        if(gDir == DIRECCION.N) return DIRECCION.S;
+        if(gDir == DIRECCION.S) return DIRECCION.N;
+        return gDir;
+    }
+    
     public Punto(int gX,int gY)
     {
         x = gX;
@@ -116,5 +125,11 @@ public class Punto {
         S,
         E,
         O               
+    }
+    
+    @Override
+    public String toString()
+    {
+        return (x + "-" + y);
     }
 }

@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
 
+import static edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra.ESTADO.values;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
@@ -16,5 +17,16 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("DocVentas")
 @IdName("doc_venta_id")
 public class DocVenta extends Model{
-    
+    public enum ESTADO
+    {
+        PENDIENTE,
+        ENDESPACHO,
+        COMPLETA;
+        
+        private static DocVenta.ESTADO[] vals = values();
+        public DocVenta.ESTADO next()
+        {
+            return vals[(this.ordinal()+1) % vals.length];
+        }
+    }    
 }
