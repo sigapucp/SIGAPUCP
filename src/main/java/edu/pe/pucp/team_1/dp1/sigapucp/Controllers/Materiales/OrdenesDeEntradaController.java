@@ -66,6 +66,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
@@ -131,9 +133,10 @@ public class OrdenesDeEntradaController extends Controller {
     private TableColumn<OrdenEntradaxProducto, String> ColumnaProductoDescripcion;
     @FXML
     private DatePicker BusquedaFecha;
-    @FXML 
-    static Stage modal_stage = new Stage();
-    
+    @FXML
+    private GridPane formulario_grid;
+        
+    static Stage modal_stage = new Stage();    
     private final ObservableList<OrdenEntrada> entradas = FXCollections.observableArrayList();
     private final ObservableList<OrdenEntradaxProducto> productos = FXCollections.observableArrayList();   
        
@@ -157,7 +160,8 @@ public class OrdenesDeEntradaController extends Controller {
     Cliente clienteBuscado;
     Proveedor proveedorBuscado;
     TipoProducto procutoBuscado;
-    
+  
+   
     public OrdenesDeEntradaController()
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -178,6 +182,16 @@ public class OrdenesDeEntradaController extends Controller {
         entradaSelecionada = null;
     }
     
+    private void deshabilitar_formulario()
+    {
+        formulario_grid.setDisable(true);
+    }
+    
+    private void habilitar_formulario()
+    {
+        formulario_grid.setDisable(false);
+    }
+    
     @FXML
     private void visualizarOrden(ActionEvent event) {  
         try {            
@@ -187,7 +201,7 @@ public class OrdenesDeEntradaController extends Controller {
                 infoController.show("No ha seleccionado ninguna Orden");
                 return;
             }
-
+            habilitar_formulario();
             VerFecha.setValue(entradaSelecionada.getDate("fecha_emision").toLocalDate());
             VerDescripcion.setText(entradaSelecionada.getString("descripcion"));
             VerTipo.getSelectionModel().select(entradaSelecionada.getString("tipo"));
@@ -425,7 +439,7 @@ public class OrdenesDeEntradaController extends Controller {
             limpiar_formulario();
         }
         catch(Exception e){
-            infoController.show("La orden contiene errores : " + e);        
+            infoController.show("La orden contiene errores : " + e);                 
             Base.rollbackTransaction();
         }
     }
@@ -460,6 +474,8 @@ public class OrdenesDeEntradaController extends Controller {
     public void nuevo(){
         crearNuevo = true;
         limpiar_formulario(); 
+        habilitar_formulario();
+        entradaSelecionada = null;
     }
     
     @Override
@@ -554,6 +570,8 @@ public class OrdenesDeEntradaController extends Controller {
                 return;
             }
             crear_orden();
+            deshabilitar_formulario();
+            entradaSelecionada = null;
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.OrdendeEntrada ,this.usuarioActual);
         }
         else {
@@ -566,6 +584,15 @@ public class OrdenesDeEntradaController extends Controller {
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
+            
+            String estado = entradaSelecionada.getString("estado");
+            
+            if(estado.equals(OrdenEntrada.ESTADO.Parcial.name())||estado.equals(OrdenEntrada.ESTADO.Completa.name()))
+            {
+                infoController.show("La orden se encuentra en el estado: " + estado + " por lo que ya no puede ser modificada");
+                return;
+            }
+                    
             editar_orden(entradaSelecionada);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.OrdendeEntrada ,this.usuarioActual);
         }    
@@ -886,6 +913,8 @@ public class OrdenesDeEntradaController extends Controller {
             controller.devolverProductoEvent.addHandler((Object sender, agregarProductoArgs args) -> {
                 productoDevuelto = args.producto;
             });
+            
+            deshabilitar_formulario();
                               
             TablaOrdenes.setItems(entradas);
             TablaProductos.setItems(productos);                                               

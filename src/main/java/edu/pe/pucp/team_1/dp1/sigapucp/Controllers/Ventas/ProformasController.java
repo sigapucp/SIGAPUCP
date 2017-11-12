@@ -305,6 +305,14 @@ public class ProformasController extends Controller {
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
+            
+            String estado = proformaSelecionado.getString("estado");            
+            if(estado.equals(Cotizacion.ESTADO.CONPEDIDO.name()))
+            {
+                infoController.show("La proforma no puede ser modifcada ya que esta anexada a un Pedido");
+                return;
+            }
+            
             editarProforma(proformaSelecionado);
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Proformas ,this.usuarioActual);
         }        

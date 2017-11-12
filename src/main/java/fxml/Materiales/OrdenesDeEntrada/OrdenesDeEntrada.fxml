@@ -123,7 +123,7 @@
                   </GridPane>
                </children>
             </GridPane>
-            <GridPane>
+            <GridPane fx:id="formulario_grid">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="15.0" />
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="582.0" />
@@ -269,6 +269,5 @@
             </GridPane>
          </items>
       </SplitPane>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" />
    </children>
 </AnchorPane>

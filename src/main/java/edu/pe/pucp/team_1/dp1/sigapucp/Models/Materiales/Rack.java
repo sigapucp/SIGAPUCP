@@ -43,11 +43,9 @@ public class Rack extends Model{
         set("y_ancla2", rackYAncla2);
         set("estado", rackEstado);
         
-        if(rackXAncla1==rackXAncla2)
-        {
+        if(rackXAncla1==rackXAncla2) {
             set("tipo",TIPO.VERTICAL.name());
-        }else
-        {
+        } else {
             set("tipo",TIPO.HORIZONTAL.name());
         }
     }
@@ -137,5 +135,11 @@ public class Rack extends Model{
         NO,
         SE,
         SO
+    }        
+    
+    public enum ESTADO
+    {
+        ACTIVO,
+        INACTIVO
     }
 }

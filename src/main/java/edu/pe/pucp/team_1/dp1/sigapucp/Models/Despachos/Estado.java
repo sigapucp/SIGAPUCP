@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,27 +20,27 @@ public class Estado {
     
     public Estado()
     {
-        puntoActual = new Punto(0,0);
+        puntoActual = null;
         ruta = new LinkedList<>();
     }
     
     public Estado(Estado gEstado)
     {
-        puntoActual = new Punto(gEstado.puntoActual);
-        ruta = new LinkedList<>(gEstado.ruta);
+        ruta = new LinkedList<>();
+        for(Punto punto:gEstado.ruta)
+        {
+            ruta.add(new Punto(punto));
+        }
+        puntoActual = ruta.get(ruta.size()-1);       
     }
     
     public Estado(int gX,int gY)
     {
         puntoActual = new Punto(gX, gY);
         ruta = new LinkedList<>();
+        ruta.add(puntoActual);
     }
     
-     public Estado(Punto gPunto,List<Punto> gRuta)
-    {
-        puntoActual = new Punto(gPunto);
-        ruta = gRuta;
-    }
     
     public int getCost()
     {
