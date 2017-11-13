@@ -182,7 +182,6 @@ public class GuiasRemisionController extends Controller{
     
     @Override
     public void cambiarEstado(){
-        System.out.println("------------------------");
         if(guia_seleccionada == null)
         {
             infoController.show("No ha seleccionado ninguna Guia de Remision");
@@ -215,6 +214,8 @@ public class GuiasRemisionController extends Controller{
         envio_nuevo = true;
         crearNuevo = true;
         limpiar_formulario();
+        desbloquear_formulario();
+
         //boton_guardar.setDisable(false);
     }
     
@@ -290,12 +291,30 @@ public class GuiasRemisionController extends Controller{
         nombre_cliente.setEditable(false);
         ruc_cliente.setEditable(false);
         dni_cliente.setEditable(false);
-        fecha_remision.setEditable(false);
+        envios_combobox.setDisable(true);
+        
+        fecha_remision.setDisable(true);
         partida_remision.setEditable(false);
         codigo_remision.setEditable(false);
         llegada_remision.setEditable(false);
+        
         marca_vehiculo_remision.setEditable(false);
         placa_vehiculo_remision.setEditable(false);
+    }
+    
+    public void desbloquear_formulario(){
+        nombre_cliente.setEditable(true);
+        ruc_cliente.setEditable(true);
+        dni_cliente.setEditable(true);        
+        envios_combobox.setDisable(false);
+        
+        fecha_remision.setDisable(false);
+        partida_remision.setEditable(true);
+        codigo_remision.setEditable(true);
+        llegada_remision.setEditable(true);
+        
+        marca_vehiculo_remision.setEditable(true);
+        placa_vehiculo_remision.setEditable(true);
     }
     
     public void completar_datos(){
@@ -346,9 +365,19 @@ public class GuiasRemisionController extends Controller{
         nombre_cliente.clear();
         dni_cliente.clear();
         ruc_cliente.clear();
-        tabla_productos.getItems().clear();
         envios_combobox.getSelectionModel().clearSelection();
-        envios_combobox.getItems().clear();             
+
+        envios_combobox.getItems().clear();
+        
+        fecha_remision.getEditor().clear();
+        codigo_remision.clear();
+        partida_remision.clear();
+        llegada_remision.clear();
+        
+        marca_vehiculo_remision.clear();
+        placa_vehiculo_remision.clear();
+        
+        tabla_productos.getItems().clear();
     }    
     
     public void llenar_envios_cliente(){        
