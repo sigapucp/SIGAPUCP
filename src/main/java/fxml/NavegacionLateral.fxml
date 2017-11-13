@@ -13,6 +13,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
+
 <AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.NavegacionLateralController">
     <stylesheets>
         <URL value="@/styles/botonesacciones.css" />
@@ -160,6 +161,15 @@
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
                                     <Image url="@Imagenes/salida_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="277.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Nota de Credito">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/icons8-paycheque.png" />
                                  </image>
                               </ImageView>
                            </graphic>
