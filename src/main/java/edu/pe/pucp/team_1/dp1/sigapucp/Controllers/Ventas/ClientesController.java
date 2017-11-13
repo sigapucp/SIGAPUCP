@@ -142,7 +142,7 @@ public class ClientesController extends Controller{
         }
         catch(Exception e){
             System.out.println(e);
-            infoController.show("El cliente contiene errores :"+ e); 
+            infoController.show("El cliente contiene errores: " + e); 
             Base.rollbackTransaction();
         }finally{
             crear_nuevo = false;
@@ -161,6 +161,8 @@ public class ClientesController extends Controller{
             infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
         }
         catch(Exception e){
+            infoController.show("Error al editar el cliente: " + e);
+            System.out.println(e);
             Base.rollbackTransaction();
         }
     }
@@ -203,9 +205,11 @@ public class ClientesController extends Controller{
             infoController.show("¡Carga masiva de datos de clientes exitosa!");
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Clientes, this.usuarioActual);
             inputStream.close();
+            clientes = Cliente.findAll();
             cargar_tabla_index();
         } catch (FileNotFoundException ex) {
-            System.out.println("INCORRECTO");
+            infoController.show("Error en la carga masiva");
+            System.out.println(ex);
             Base.rollbackTransaction();
             Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -268,9 +272,12 @@ public class ClientesController extends Controller{
            Base.commitTransaction();
            infoController.show("El cliente ha sido deshabilitado");
            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.DES, Menu.MENU.Clientes ,this.usuarioActual);
+           clientes = Cliente.findAll();
            limpiar_formulario();
            cargar_tabla_index();
         } catch (Exception e) {
+           infoController.show("Error al deshabilitar cliente");
+           System.out.println(e);
            Base.rollbackTransaction();
         }
      }
@@ -314,6 +321,7 @@ public class ClientesController extends Controller{
             
         }
         catch( Exception e){
+            infoController.show("Error al mostrar detalle");
             System.out.println(e);
         }
     }  
@@ -334,24 +342,24 @@ public class ClientesController extends Controller{
     public boolean cumple_condicion_busqueda(Cliente cliente, String ruc, String dni, String nombres, String estado){
         boolean match = true;
         if ( ruc.equals("") && dni.equals("") && nombres.equals("") && estado.equals("")){
-            match = false;
+            match = true;
         }
         else {
-            match = (!ruc.equals("")) ? (match && (cliente.get("ruc")).equals(ruc)) : true;
-            match = (!dni.equals("")) ? (match && (cliente.get("dni")).equals(dni)) : true;
-            match = (!nombres.equals("")) ? (match && (cliente.get("nombre")).equals(nombres)) : true;
-            match = (!estado.equals("")) ? (match && (cliente.get("tipo_cliente")).equals(estado)) : true;
+            match = (!ruc.equals("")) ? (match && (cliente.get("ruc")).equals(ruc)) : match;
+            match = (!dni.equals("")) ? (match && (cliente.get("dni")).equals(dni)) : match;
+            match = (!nombres.equals("")) ? (match && (cliente.get("nombre")).equals(nombres)) : match;
+            match = (!estado.equals("")) ? (match && (cliente.get("tipo_cliente")).equals(estado)) : match;
         }
         return match;
     }
     @FXML
     public void buscar_cliente(ActionEvent event) throws IOException{
 
-        String ruc = rucBusq.getText();
+        /*String ruc = rucBusq.getText();
         String dni = dniBusq.getText();
         String nombres = nombreBusq.getText();
         String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
-        System.out.println(estado);
+        //System.out.println(estado);
         List<Cliente> temp_clientes = Cliente.findAll();
         
         if(ruc!=null&&!ruc.isEmpty())
@@ -377,8 +385,34 @@ public class ClientesController extends Controller{
         cargar_tabla_index();
         try {                        
         } catch (Exception e) {
-            infoController.show("El Cliente contiene errores : " + e);                    
+            infoController.show("Error al filtrar clientes");
+            System.out.println(e);
+        }*/
+        clientes = Cliente.where("estado = ?", Cliente.ESTADO.ACTIVO.name());
+        masterData.clear();
+        String estado = ( estadoBusq.getSelectionModel().getSelectedItem() == null ) ? "" : estadoBusq.getSelectionModel().getSelectedItem().toString();
+        System.out.println(estado);
+        System.out.println("antes del loop");
+        try{
+            for (Cliente cliente : clientes){
+                System.out.println("Ingreso al loop");
+                if (cumple_condicion_busqueda(cliente, rucBusq.getText(), dniBusq.getText(), nombreBusq.getText(), estado)){
+                    
+                    System.out.println("cumplo condicion");
+                    masterData.add(cliente);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("Error al filtrar clientes");
+            System.out.println(e);
         }
+        tabla_clientes.getItems().clear();
+        tabla_clientes.setEditable(false);
+        columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("ruc")));
+        columna_dni.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("dni")));
+        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Cliente, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        tabla_clientes.getItems().addAll(masterData);
+        
     }
     
     public void llenar_estado_social_busqueda(){

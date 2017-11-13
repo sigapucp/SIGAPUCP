@@ -18,13 +18,16 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("categoria_id")
 @Many2Many(other = TipoProducto.class, join = "categoriasxtipos", sourceFKName = "categoria_id", targetFKName = "tipo_id")
 public class CategoriaProducto extends Model{
-    
+    static{
+        validatePresenceOf("nombre","categoria_code");
+        
+    }
     public void asignar_atributos(String usuario,String codigo, String nombre, String descripcion){
         this.set("last_user_change",usuario);
         this.set("categoria_code",codigo);
         this.set("nombre", nombre );
         this.set("descripcion", descripcion);
-        this.set("estado","activo");
+        this.set("estado",ESTADO.ACTIVO.name());
         
     }
     public enum ESTADO

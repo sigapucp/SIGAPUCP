@@ -63,8 +63,8 @@ public class RolesController extends Controller{
     private AnchorPane usuario_container;
     @FXML
     private TextField BusquedaNombre;
-    @FXML
-    private ComboBox<String> BusquedaEstado;
+//    @FXML
+//    private ComboBox<String> BusquedaEstado;
     @FXML
     private ComboBox<String> BusquedaRol;
     @FXML
@@ -73,8 +73,8 @@ public class RolesController extends Controller{
     private TableColumn<Rol, String> ColumnaCodigo;
     @FXML
     private TableColumn<Rol, String> ColumnaNombre;
-    @FXML
-    private TableColumn<Rol, String> ColumnaEstado;
+//    @FXML
+//    private TableColumn<Rol, String> ColumnaEstado;
     @FXML
     private TableColumn<Rol, String> ColumnaDescipcion;
     @FXML
@@ -148,7 +148,7 @@ public class RolesController extends Controller{
         
         String codigo = BusquedaRol.getSelectionModel().getSelectedItem();
         String nombre = BusquedaNombre.getText();
-        String estado = BusquedaEstado.getSelectionModel().getSelectedItem();        
+        //String estado = BusquedaEstado.getSelectionModel().getSelectedItem();        
         
         tempRoles = Rol.findAll();
         
@@ -162,14 +162,15 @@ public class RolesController extends Controller{
             tempRoles = tempRoles.stream().filter(p -> p.getString("nombre").equals(nombre)).collect(Collectors.toList());
         }
         
-        if(estado!=null&&!estado.isEmpty())
-        {
-            tempRoles = tempRoles.stream().filter(p -> p.getString("estado").equals(estado)).collect(Collectors.toList());
-        }                
+//        if(estado!=null&&!estado.isEmpty())
+//        {
+//            tempRoles = tempRoles.stream().filter(p -> p.getString("estado").equals(estado)).collect(Collectors.toList());
+//        }                
         RefrescarTabla(tempRoles);
         try {                        
         } catch (Exception e) {
-            
+            infoController.show("Error al filtrar roles");
+            System.out.println(e);
         }
     }
     
@@ -187,6 +188,7 @@ public class RolesController extends Controller{
      @Override
      public void desactivar()
      {
+        rolSelecionado = TablaRoles.getSelectionModel().getSelectedItem();
         if(rolSelecionado==null) 
         {
             infoController.show("No ha seleccionado un rol");            
@@ -197,7 +199,7 @@ public class RolesController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
-            if(!confirmatonController.show("Se deshabilitara el rol con código: " + VerNombre.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se deshabilitara el rol con código: " + rolSelecionado.getString("rol_cod"), "¿Desea continuar?")) return;
             Base.openTransaction();
            
            rolSelecionado.set("estado",Rol.ESTADO.INACTIVO.name());
@@ -209,8 +211,9 @@ public class RolesController extends Controller{
            limpiarVerRol();
            RefrescarTabla(Rol.where("estado='ACTIVO'"));
         } catch (Exception e) {
-            infoController.show("El rol contiene errores: " + e);
-           Base.rollbackTransaction();
+            infoController.show("Error al desactivar roles");
+            System.out.println(e);
+            Base.rollbackTransaction();
         }
      }
     
@@ -304,7 +307,7 @@ public class RolesController extends Controller{
         }          
         
         Base.commitTransaction();
-        infoController.show("El rol ha sido editado creado satisfactoriamente");        
+        infoController.show("El rol ha sido creado satisfactoriamente");        
         }
         catch(Exception e){
            Base.rollbackTransaction();           
@@ -356,7 +359,8 @@ public class RolesController extends Controller{
         infoController.show("El Rol ha sido editado satisfactoriamente");        
         }
         catch(Exception e){
-            infoController.show("No se ha podido guardar el rol: " + e.getMessage());
+            infoController.show("No se ha podido editar el rol: " + e);
+            System.out.println(e);
            Base.rollbackTransaction();
         }                
     }
@@ -372,6 +376,8 @@ public class RolesController extends Controller{
             TablaRoles.getColumns().get(0).setVisible(false);
             TablaRoles.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
+            infoController.show("Error al refrescar tabla");
+            System.out.println(e);
         }                                  
     }
       
@@ -466,7 +472,7 @@ public class RolesController extends Controller{
             
             ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<Rol, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rol_cod")));
             ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<Rol, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));            
-            ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<Rol, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));             
+            //ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<Rol, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));             
             ColumnaDescipcion.setCellValueFactory((TableColumn.CellDataFeatures<Rol, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descripcion")));             
             
             ArbolAccionesColumna.setCellValueFactory((TreeTableColumn.CellDataFeatures<PrivilegioEntrada, String> param) -> param.getValue().getValue().getNombrePrivilegio());
@@ -520,24 +526,24 @@ public class RolesController extends Controller{
             ObservableList<String> estados = FXCollections.observableArrayList();    
             ObservableList<String> estadosNoPad = FXCollections.observableArrayList(); 
             
-            estados.add("");
-            estados.addAll(Arrays.asList(Rol.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));            
-            estadosNoPad.addAll(Arrays.asList(Rol.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                              
+            //estados.add("");
+            //estados.addAll(Arrays.asList(Rol.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));            
+            //estadosNoPad.addAll(Arrays.asList(Rol.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));                              
             
             ObservableList<String> rolesNames = FXCollections.observableArrayList();   
             ObservableList<String> rolesCods = FXCollections.observableArrayList();   
             
             List<Rol> rolesTemp = Rol.findAll();
             
-            rolesNames.add("");
+            rolesCods.add("");
             for(Rol rol:rolesTemp)
             {
-                rolesNames.add(rol.getString("nombre"));
+                //rolesNames.add(rol.getString("nombre"));
                 rolesCods.add(rol.getString("rol_cod"));
             }
 
-            BusquedaEstado.setItems(estados);
-            BusquedaRol.setItems(rolesNames);
+            //BusquedaEstado.setItems(estados);
+            BusquedaRol.setItems(rolesCods);
                                    
             TablaRoles.setItems(roles);           
             initializarArbolPrivilegios();
