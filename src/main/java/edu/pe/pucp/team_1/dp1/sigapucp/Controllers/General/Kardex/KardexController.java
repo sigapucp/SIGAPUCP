@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.General.Kardex;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalida;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalidaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
@@ -86,7 +87,7 @@ public class KardexController extends Controller {
     private TipoProducto producto_seleccionado ;
     private final ObservableList<Kardex> masterDatakardex = FXCollections.observableArrayList();
     private List<OrdenEntradaxProducto> entradas;
-    private List<OrdenSalida> salidas;
+    private List<OrdenSalidaxProducto> salidas;
     private Integer existencias_cantidad;
     private Double existencias_precio;
     
@@ -168,39 +169,25 @@ public class KardexController extends Controller {
     }
     
     private void cargarSalidas(){
-        salidas = OrdenSalida.findAll();
-        for (OrdenSalida orden_salida: salidas){
-            
-            List<OrdenesSalidaxEnvio> ordenesXenvio = OrdenesSalidaxEnvio.where("salida_id = ?", orden_salida.getInteger("salida_id"));
-            Integer aux_sal_cant = 0;
-            Double aux_sal_costo = 0.0;
-            
-            for (OrdenesSalidaxEnvio envio : ordenesXenvio){
-                Integer id = envio.getInteger("orden_compra_id");
-                Integer id_client = envio.getInteger("client_id");
-                String cod = envio.getString("orden_compra_cod");
-                
-                OrdenCompraxProducto producto = OrdenCompraxProducto.findFirst("client_id = ? AND orden_compra_id = ? AND orden_compra_cod = ? AND tipo_id = ? AND tipo_cod = ?",id_client,id,cod,producto_seleccionado.getInteger("tipo_id"),producto_seleccionado.getString("tipo_cod") );
-                if (!(producto==null)){
-                    aux_sal_cant += producto.getInteger("cantidad");
-                    aux_sal_costo += producto.getDouble("subtotal_final");
-                }
-            }
-            
+        salidas = OrdenSalidaxProducto.where("tipo_id = ? AND tipo_cod = ?",producto_seleccionado.get("tipo_id"),producto_seleccionado.get("tipo_cod"));
+        for (OrdenSalidaxProducto salida_producto: salidas){
+            OrdenSalida salida_padre = OrdenSalida.findFirst("salida_id = ?", salida_producto.get("salida_id"));
             //fecha
-            Date auxfecha = orden_salida.getDate("last_data_change");
+            Date auxfecha = salida_padre.getDate("last_data_change");
             String fecha = new SimpleDateFormat("yyyy-MM-dd").format(auxfecha);
             //detalle
-            String detalle = orden_salida.getString("tipo");
+            String detalle = salida_padre.getString("tipo");
              
             String ent_cant = "";
             String ent_costo = "";            
             
             //Cantidad
-            
+            Integer aux_sal_cant = salida_producto.getInteger("cantidad");
             String sal_cant = aux_sal_cant.toString();
                         
+            Double precio = obtenerPrecio(salida_producto.get("tipo_id").toString(), salida_producto.getString("tipo_cod"), auxfecha);
             //Costo
+            Double aux_sal_costo = aux_sal_cant * precio;
             String sal_costo = aux_sal_costo.toString();
             
             //Stock (Existencias)
