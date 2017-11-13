@@ -1,4 +1,4 @@
-\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/sical_v8.sql
+\i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/sical_v9.sql
 \i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/Triggers_auditoria.sql
 \i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/acciones.sql
 \i C:/Users/Jauma/Desktop/AProgram/NetBeans/SimulatedAnnealing/SIGAPUCP/Scripts/menus.sql

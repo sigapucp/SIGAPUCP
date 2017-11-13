@@ -1,6 +1,8 @@
 alter table ordenesentrada alter column provuder_ruc drop not null;
 alter table ordenesentrada alter column proveedor_id drop not null;
 alter table ordenesentrada alter column client_id drop not null;
+alter table ordenesentrada alter column doc_venta_id drop not null;
+alter table ordenesentrada alter column doc_venta_cod drop not null;
 
 
 alter table ordenescompra alter column cotizacion_id drop not null;

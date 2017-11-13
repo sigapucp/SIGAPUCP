@@ -12,6 +12,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import java.net.URL;
 import java.time.LocalDate;
@@ -216,6 +217,12 @@ public class GuiasRemisionController extends Controller{
         infoController = new InformationAlertController();
         pedidoSeleccionado = null;
         crearNuevo = true;
+    }
+    
+    @Override
+    public Menu.MENU getMenu()
+    {
+        return Menu.MENU.GuiaDeRemision;
     }
 
     public void initialize(URL location, ResourceBundle resources) {

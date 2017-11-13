@@ -162,9 +162,9 @@
                               <GridPane>
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="99.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.0" minWidth="10.0" prefWidth="195.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="119.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="240.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.0" minWidth="10.0" prefWidth="164.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="142.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="192.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="42.0" vgrow="SOMETIMES" />
@@ -172,13 +172,16 @@
                                 </rowConstraints>
                                  <children>
                                     <Label fx:id="ProveedorLabel" alignment="CENTER" prefHeight="17.0" prefWidth="77.0" text="Proveedor:" GridPane.rowIndex="1" />
-                                    <TextField fx:id="ClienteBuscar" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Fecha:" GridPane.columnIndex="2" />
+                                    <TextField fx:id="ClienteBuscar" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="40.0" text="Fecha:" textAlignment="CENTER" GridPane.columnIndex="2" />
                                     <Label alignment="CENTER" prefHeight="17.0" prefWidth="65.0" text="Tipo:" />
                                     <ComboBox fx:id="VerTipo" prefWidth="150.0" GridPane.columnIndex="1" />
                                     <DatePicker fx:id="VerFecha" GridPane.columnIndex="3" />
                                     <Label fx:id="ClienteLabel" alignment="CENTER" prefHeight="17.0" prefWidth="77.0" text="Cliente:" GridPane.rowIndex="1" />
-                                    <TextField fx:id="ProveedorBuscar" prefHeight="25.0" prefWidth="165.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <TextField fx:id="ProveedorBuscar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label fx:id="DocumentoVentalLabel" alignment="CENTER" prefHeight="17.0" prefWidth="116.0" text="Documento de Venta:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <TextField fx:id="VerDocVenta" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="144.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <Button fx:id="buscarDocVentaButon" mnemonicParsing="false" onAction="#buscarDocVenta" prefHeight="25.0" prefWidth="32.0" text="+" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </content></TitledPane>
