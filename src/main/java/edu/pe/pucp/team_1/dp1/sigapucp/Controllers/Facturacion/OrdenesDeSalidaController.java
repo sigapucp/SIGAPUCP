@@ -422,7 +422,7 @@ public class OrdenesDeSalidaController  extends Controller{
                 salidaxProductoFinal.saveIt(); 
                 
                 Producto p = Producto.findFirst("producto_id = ?", salidaxProductoFinal.getInteger("producto_id"));
-                p.set("estado",Producto.ESTADO.DESPACHADO.name());
+                p.set("estado",Producto.ESTADO.RESERVADO.name());
                 p.saveIt();
             }             
         }           
@@ -533,11 +533,7 @@ public class OrdenesDeSalidaController  extends Controller{
         cantidad_tipos_total = 0;
         String tipo_salida = obtenerTipo_salida();
         for(OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
-            List<Producto> productosAlmacen;
-            if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name()))
-                productosAlmacen = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"), Producto.ESTADO.RESERVADO.name()).orderBy("fecha_entrada asc");
-            else
-                productosAlmacen = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"), Producto.ESTADO.INGRESADO.name()).orderBy("fecha_entrada asc");
+            List<Producto> productosAlmacen = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"), Producto.ESTADO.INGRESADO.name()).orderBy("fecha_adquirida asc");
             productos_instancias.addAll(productosAlmacen);
             cantidad_tipos_total += salidaxtipoproducto.getInteger("cantidad");
         }
@@ -772,8 +768,7 @@ public class OrdenesDeSalidaController  extends Controller{
             if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name())){
                 productos_instancias.clear();
                 for(OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
-                    List<Producto> aux_productos = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"),Producto.ESTADO.INGRESADO.name()).orderBy("fecha_entrada asc");
-                    //List<Producto> aux_productos = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"),Producto.ESTADO.RESERVADO.name()).orderBy("fecha_entrada asc");
+                    List<Producto> aux_productos = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"),Producto.ESTADO.INGRESADO.name()).orderBy("fecha_adquirida asc");
                     Integer contador = salidaxtipoproducto.getInteger("cantidad");
                     for (Producto p : aux_productos){
                         OrdenSalidaxProductoFinal salidaxproductofinal = new OrdenSalidaxProductoFinal();
@@ -785,7 +780,7 @@ public class OrdenesDeSalidaController  extends Controller{
                         salidaxproductofinal.set("orden_entrada_cod",p.get("orden_entrada_cod"));
                         salidaxproductofinal.set("orden_entrada_id",p.get("orden_entrada_id"));
                         masterDataProductoFinal.add(salidaxproductofinal);
-                        p.set("estado",Producto.ESTADO.DESPACHADO.name());
+                        p.set("estado",Producto.ESTADO.RESERVADO.name());
                         p.saveIt();
                         contador --;
                         if (contador ==0) break;
