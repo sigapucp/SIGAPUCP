@@ -223,22 +223,28 @@ public class RacksController extends Controller{
                 String almacenNomb = String.valueOf(buscar_rack_almacen_nomb.getSelectionModel().getSelectedItem() == null ? "" : buscar_rack_almacen_nomb.getSelectionModel().getSelectedItem());
                 String rackCod = buscar_rack_cod.getText();
                 String productoNomb = buscar_rack_producto.getText();
-                
-                List<Rack> racks_filtrados = racks_existentes.stream().filter((rack) -> {
+                Almacen almacen_seleccionado = Almacen.findFirst("nombre = ?", almacenNomb);
+                List<Rack> racks_filtrados = new ArrayList<>();
+
+                racks_filtrados = racks_existentes.stream().filter((rack) -> {
                     Almacen almacenRack = rack.parent(Almacen.class);
-                    boolean rackProdutosCond = validator.isEmptyString(productoNomb) ? true : Producto.findBySQL("SELECT productos.* FROM productos LEFT JOIN tiposproducto ON productos.tipo_cod = tiposproducto.tipo_cod WHERE tiposproducto.nombre = ? AND rack_cod = ?", productoNomb, rack.getString("rack_cod")).size() > 0;
-                    boolean rackAnchoCond = validator.isEmptyString(rackAncho) ? true : almacenRack.getDouble("longitud_area") < Double.valueOf(rackAncho);
-                    boolean rackLargoCond = validator.isEmptyString(rackLargo) ? true : rack.getInteger("longitud") < Integer.valueOf(rackLargo);
-                    boolean rackAltoCond = validator.isEmptyString(rackAlto) ? true : rack.getInteger("altura ") < Integer.valueOf(rackAlto);
+                    boolean cond = true;
+                    // Validacion nombre Almacen
+                    cond = cond && (almacen_seleccionado == null || almacen_seleccionado.getString("es_central").equals("T") ? true :almacenRack.getString("nombre").contains(almacenNomb));
+                    // Validacion codigo Rack
+                    cond = cond && rack.getString("rack_cod").contains(rackCod);
+                    // Validacion Ancho
+                    cond = cond && (validator.isEmptyString(rackAncho) ? true : almacenRack.getDouble("longitud_area") < Double.valueOf(rackAncho));
+                    // Validacion Largo
+                    cond = cond && (validator.isEmptyString(rackLargo) ? true : rack.getInteger("longitud") < Integer.valueOf(rackLargo));
+                    // Validacion Alto
+                    cond = cond && (validator.isEmptyString(rackAlto) ? true : rack.getInteger("altura ") < Integer.valueOf(rackAlto));
+                    // Validacion Productos
+                    cond = cond && (validator.isEmptyString(productoNomb) ? true : Producto.findBySQL("SELECT productos.* FROM productos LEFT JOIN tiposproducto ON productos.tipo_cod = tiposproducto.tipo_cod WHERE tiposproducto.nombre = ? AND rack_cod = ?", productoNomb, rack.getString("rack_cod")).size() > 0);
     
-                    return almacenRack.getString("nombre").contains(almacenNomb) &&
-                    rack.getString("rack_cod").contains(rackCod) &&
-                    rackAnchoCond &&
-                    rackLargoCond &&
-                    rackAltoCond &&
-                    rackProdutosCond;
+                    return cond;
                 }).collect(Collectors.toList());
-    
+
                 racks_busqueda.clear();
                 racks_filtrados.forEach(racks_busqueda::add);
                 buscar_rack_tabla.setItems(racks_busqueda);
@@ -296,7 +302,6 @@ public class RacksController extends Controller{
             // Menu de Busqueda
             ObservableList<String> almacenes = FXCollections.observableArrayList();
             almacenes.addAll(Almacen.findAll().stream()
-                    .filter(almacen -> almacen.getString("es_central").equals("F"))
                     .map(almacen -> almacen.getString("nombre")).collect(Collectors.toList())
             );
 
