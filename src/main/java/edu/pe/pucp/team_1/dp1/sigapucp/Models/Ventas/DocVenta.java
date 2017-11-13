@@ -17,6 +17,9 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("docventas")
 @IdName("doc_venta_id")
 public class DocVenta extends Model{
+    static{
+        validatePresenceOf("guia_cod", "tipo", "doc_venta_cod", "fecha_emision");
+    }    
     public enum ESTADO
     {
         CANCELADA,
