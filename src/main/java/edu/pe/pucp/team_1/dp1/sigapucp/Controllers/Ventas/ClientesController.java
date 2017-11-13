@@ -8,7 +8,6 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
@@ -19,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.javalite.activejdbc.Base;
@@ -28,7 +26,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -39,7 +36,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import java.util.stream.Collectors;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
@@ -306,12 +302,12 @@ public class ClientesController extends Controller{
                 persoJuri.setSelected(false);
                 repLegal.setDisable(true);
             }else if (registro_seleccionado.getString("tipo_cliente").equals("PersonaJuridica")){
-                ruc.setText(registro_seleccionado.getString("ruc"));
                 dni.setDisable(true);
                 persoNatu.setSelected(false);
                 persoJuri.setSelected(true);
                 repLegal.setText(registro_seleccionado.getString("nombre_contacto"));
             }
+            ruc.setText(registro_seleccionado.getString("ruc"));
             clienteSh.setText(registro_seleccionado.getString("nombre"));
             telf.setText(registro_seleccionado.getString("telef_contacto"));
             envioDir.setText(registro_seleccionado.getString("direccion_despacho"));
@@ -420,8 +416,8 @@ public class ClientesController extends Controller{
     }
     
     public void control_check_box(){
-        persoNatu.setOnAction(e -> manejarAreaTexto(ruc,repLegal));
-        persoJuri.setOnAction(e -> manejarAreaTexto(dni));        
+        persoNatu.setOnAction(e -> manejarNatural(repLegal));
+        persoJuri.setOnAction(e -> manejarJuridica(dni));        
     }
     
     public void cargar_tabla_index(){
@@ -460,27 +456,18 @@ public class ClientesController extends Controller{
         ObservableList<String> departamentos = FXCollections.observableArrayList();       
         departamentos.addAll(Arrays.asList(Flete.ZONA.values()).stream().map(x->x.name()).collect(Collectors.toList()));
         VerDepartamento.setItems(departamentos);
-        
-        
-        tabla_clientes.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
-            if (newSelection != null){
-                cliente_seleccioando = tabla_clientes.getSelectionModel().getSelectedItem();                
-                tabla_clientes.getSelectionModel().clearSelection();        
-            }
-        });
     }    
     
-    private void manejarAreaTexto(TextField texto, TextField texto2){    
+    private void manejarNatural(TextField texto){    
         if (persoNatu.isSelected()){
             texto.setDisable(true);
-            texto2.setDisable(true);
             dni.setDisable(false);
             persoJuri.setDisable(false);
             persoJuri.setSelected(false);
         }
     }
     
-    private void manejarAreaTexto(TextField texto){
+    private void manejarJuridica(TextField texto){
         if (persoJuri.isSelected()){
             texto.setDisable(true);
             ruc.setDisable(false);

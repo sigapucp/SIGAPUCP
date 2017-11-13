@@ -34,6 +34,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.net.URL;
 import java.sql.Date;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,13 +195,18 @@ public class ProformasController extends Controller {
         clienteColumn.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         ColumnaEstado.setCellValueFactory((CellDataFeatures<Cotizacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
         
+        DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();
+        sym.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(sym);
+        
         codProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         nombreProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
         cantProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("precio_unitario"))));
-        descProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("descuento"))));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("flete"))));
-        subTotalProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("subtotal_final"))));        
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().get("precio_unitario"))));
+        descProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().get("descuento"))));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().get("flete"))));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().get("subtotal_final"))));        
         
         cotizaciones.addAll(tempCotizaciones);
         tablaPedidos.setItems(cotizaciones);
@@ -687,10 +693,15 @@ public class ProformasController extends Controller {
     
     private void setValorTotal(Double valor)
     {        
-        subTotalFinal.setText(new DecimalFormat("#.##").format(valor));
+         DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();
+        sym.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(sym);
+        
+        subTotalFinal.setText(df.format(valor));
         Double valorIgv = IGV*valor;            
-        igvTotal.setText(new DecimalFormat("#.##").format(valorIgv));
-        total.setText(new DecimalFormat("#.##").format((valor+valorIgv)));                
+        igvTotal.setText(df.format(valorIgv));
+        total.setText(df.format((valor+valorIgv)));                
     }
     
     private Double calcularDescuento(CotizacionxProducto producto) throws Exception
