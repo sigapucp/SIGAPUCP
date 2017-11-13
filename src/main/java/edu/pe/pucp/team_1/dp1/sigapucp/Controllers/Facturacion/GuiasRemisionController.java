@@ -214,6 +214,7 @@ public class GuiasRemisionController extends Controller{
         habilitar_formulario();
         envio_nuevo = true;
         crearNuevo = true;
+        limpiar_formulario();
         //boton_guardar.setDisable(false);
     }
     
@@ -347,7 +348,7 @@ public class GuiasRemisionController extends Controller{
         ruc_cliente.clear();
         tabla_productos.getItems().clear();
         envios_combobox.getSelectionModel().clearSelection();
-        envios_combobox.getItems().clear();
+        envios_combobox.getItems().clear();             
     }    
     
     public void llenar_envios_cliente(){        
