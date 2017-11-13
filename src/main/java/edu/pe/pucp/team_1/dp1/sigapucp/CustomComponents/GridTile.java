@@ -158,4 +158,10 @@ public class GridTile extends StackPane {
     public String getTileId() {
         return String.format("%d/%d", x_cord, y_cord);
     }   
+    
+    public void paintTile(Color color)
+    {
+        clearTile();
+        border.setFill(color);
+    }
 }

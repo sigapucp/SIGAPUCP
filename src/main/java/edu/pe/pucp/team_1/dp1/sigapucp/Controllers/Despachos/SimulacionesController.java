@@ -201,6 +201,8 @@ public class SimulacionesController extends Controller{
     private Punto acopioAnterior = null;    
     private Stage modal_stage;
     private OrdenSalida ordenSalidaActual;
+    private Color colorActual = null;
+    private Color colorActualSaved = null;
     
     ObservableList<Integer> nrRutas = FXCollections.observableArrayList();                           
     ObservableList<Integer> nrSimulaciones = FXCollections.observableArrayList();           
@@ -238,21 +240,21 @@ public class SimulacionesController extends Controller{
                 if(newValue == null) return;
                 if(newValue<0||newValue>simulaciones.size()) return;
                 simulacionActual = simulaciones.get(newValue-1);
-                grid.clearUserTiles();    
+                grid.clearUserTilesColor(colorActual);    
                 impimirRuta(simulacionActual.getRutaActual(),simulacionActual.getRutasProductos());
                 fillListUpTo(nrRutas, simulacionActual.getNrRutas());
                 VerCostoSimulacion.setText(String.valueOf(simulacionActual.getCosto()));                
             }          
         });
             
-            VerNrRutaSaved.valueProperty().addListener(new ChangeListener<Integer>() {
+            VerNrRuta.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
                 if(simulacionActual == null) return;
                 if(newValue == null) return;
                 if(newValue<0||newValue>simulacionActual.getNrRutas()) return;
                 simulacionActual.setRutaActual(newValue-1);
-                grid.clearUserTiles();    
+                grid.clearUserTilesColor(colorActual);
                 impimirRuta(simulacionActual.getRutaActual(),simulacionActual.getRutasProductos());
                 VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));                           
             }          
@@ -272,16 +274,16 @@ public class SimulacionesController extends Controller{
             }          
         });
             
-            VerNrRuta.valueProperty().addListener(new ChangeListener<Integer>() {
+            VerNrRutaSaved.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
                 if(simulacionActualSaved == null) return;
                 if(newValue == null) return;
                 if(newValue<0||newValue>simulacionActualSaved.getNrRutas()) return;
-                simulacionActual.setRutaActual(newValue-1);
-                gridSaved.clearUserTiles();    
+                simulacionActualSaved.setRutaActual(newValue-1);
+                gridSaved.clearUserTilesColor(colorActualSaved);
                 imprimirRutaSaved(simulacionActualSaved.getRutaActual().getRuta());
-                VerCostoRutaSaved.setText(String.valueOf(simulacionActual.getCostoRutaActual()));                        
+                VerCostoRutaSaved.setText(String.valueOf(simulacionActualSaved.getCostoRutaActual()));                        
             }          
         });                        
             
@@ -436,8 +438,6 @@ public class SimulacionesController extends Controller{
         nextReset = false;
         VerAcopioX.setText("0");
         VerAcopioY.setText("0");
-        VerAnchoAlmacen.clear();
-        VerLargoAlmacen.clear();
         VerCapacidadCarrito.clear();      
         VerDescripcion.clear();
         if(productos != null) productos.clear();     
@@ -539,6 +539,8 @@ public class SimulacionesController extends Controller{
             }                                
         }
         
+        grid.clearUserTiles();
+        gridSaved.clearUserTiles();
         List<Producto> productosOrden =  new ArrayList<>();
         List<OrdenSalidaxProductoFinal> productosFinal = OrdenSalidaxProductoFinal.where("salida_id = ?", ordenSalidaActual.getId());
         
@@ -689,7 +691,7 @@ public class SimulacionesController extends Controller{
         
     @FXML
     private void comenzarRuta(ActionEvent event) {
-        grid.clearUserTiles();    
+        grid.clearUserTilesColor(colorActual);
         simulacionActual.setNodoActual(0);
         tittle_pane.setText("Inicio de Ruta");
         
@@ -928,7 +930,8 @@ public class SimulacionesController extends Controller{
         float r = rand.nextFloat();
         float g = rand.nextFloat();
         float b = rand.nextFloat();                      
-        grid.changeNullToColor(Color.color(r, g, b));
+        colorActual = Color.color(r, g, b);
+        grid.changeNullToColor(colorActual);
     }
 
     @FXML
@@ -936,8 +939,9 @@ public class SimulacionesController extends Controller{
         Random rand = new Random();
         float r = rand.nextFloat();
         float g = rand.nextFloat();
-        float b = rand.nextFloat();                      
-        gridSaved.changeNullToColor(Color.color(r, g, b));
+        float b = rand.nextFloat();  
+        colorActualSaved = Color.color(r, g, b);
+        gridSaved.changeNullToColor(colorActualSaved);         
     }
- 
+
 }

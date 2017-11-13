@@ -37,6 +37,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -242,10 +243,10 @@ public class PedidosController extends Controller {
         codProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         nombreProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
         cantProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
-        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
-        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("precio_unitario"))));
+        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("descuento"))));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("flete"))));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("subtotal_final"))));        
         
         pedidos.addAll(tempPedido);
         TablaPedido.setItems(pedidos);
@@ -533,10 +534,10 @@ public class PedidosController extends Controller {
                  
     private void setValorTotal(Double valor)
     {        
-        subTotal.setText(String.valueOf(valor));
+        subTotal.setText(new DecimalFormat("#.##").format(valor));
         Double valorIgv = IGV*valor;            
-        igvPedido.setText(String.valueOf(valorIgv));
-        totalPedido.setText(String.valueOf(valor+valorIgv));                
+        igvPedido.setText(new DecimalFormat("#.##").format(valorIgv));
+        totalPedido.setText(new DecimalFormat("#.##").format(valor+valorIgv));                
     }
             
     private void clienteToString() throws Exception{
@@ -668,7 +669,7 @@ public class PedidosController extends Controller {
         if(cotizacionAnexada != null)
         {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
-            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO);
+            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO.name());
             cotizacionAnexada.saveIt();
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
@@ -722,11 +723,11 @@ public class PedidosController extends Controller {
             {
                 pedidoxproducto.set("orden_compra_id",pedido.getId());
                 pedidoxproducto.set("client_id",pedido.get("client_id"));
-                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
-              
+                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));              
             }
             Stock productoStock = Stock.first("tipo_id = ?", pedidoxproducto.get("tipo_id"));            
             Integer cantidadLlevada = pedidoxproducto.getInteger("cantidad");
+            pedidoxproducto.set("cantidad_en_envios",cantidadLlevada);
             Integer stockLogico = productoStock.getInteger("stock_logico");
             
             if(cantidadLlevada > stockLogico)
@@ -759,11 +760,8 @@ public class PedidosController extends Controller {
         }
               
         for(OrdenCompraxProducto pedidoxproducto:productos)
-        {
-            if(pedidoxproducto.isNew())
-            {
-                pedidoxproducto.saveIt(); 
-            }             
+        {            
+            pedidoxproducto.saveIt();                         
         }                                 
     }
     
@@ -1338,6 +1336,7 @@ public class PedidosController extends Controller {
           
             productos.clear();
             productos.addAll(generarProductos(cotizacion));  
+            cotizacionAnexada = cotizacion;
 
             crearNuevo = true;
             habilitar_formulario();
