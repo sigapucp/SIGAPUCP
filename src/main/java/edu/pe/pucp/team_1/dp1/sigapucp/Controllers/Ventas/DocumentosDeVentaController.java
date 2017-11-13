@@ -76,6 +76,10 @@ public class DocumentosDeVentaController extends Controller{
     private TextField importe_total;
     @FXML
     private TextField igv_total;
+    @FXML
+    private TextField guia_remision_busqueda;
+   @FXML
+    private ComboBox<String> tipo_doc;    
     
     //------------------------------------------
     @FXML
@@ -131,21 +135,28 @@ public class DocumentosDeVentaController extends Controller{
             venta.set("doc_venta_cod", codigo_venta.getText());
             venta.set("estado", DocVenta.ESTADO.PENDIENTE.name());
             venta.set("last_user_change", usuarioActual.getString("usuario_cod"));
-            venta.set("guia_id", guia_seleccionada.getId());
-            venta.set("guia_cod", guia_seleccionada.getString("guia_cod"));
+            venta.set("guia_id", guia_devuelta.getId());
+            venta.set("guia_cod", guia_devuelta.getString("guia_cod"));
+            venta.set("tipo",tipo_doc.getSelectionModel().getSelectedItem());
             LocalDate fechaLocal = fecha_emision.getValue();
-            Date fecha = Date.valueOf(fechaLocal);                    
+            Date fecha = Date.valueOf(fechaLocal);  
             venta.set("fecha_emision", fecha);
             venta.saveIt();
             Base.commitTransaction();
         }catch ( Exception e){
-            infoController.show("Se ha creado el documento de venta: ");        
+            infoController.show("Se ha creado el documento de venta: " + e.getMessage());
         }
     }
     
     public void setPedidoVisible(DocVenta venta){
         cliente_seleccionado = Cliente.findById(venta.getInteger("client_id"));
         mostrar_informacion_cliente(cliente_seleccionado);
+        codigo_venta.setText(venta.getString("doc_venta_cod"));
+        //ver_moneda.setValue(venta.getString("estado"));
+        tipo_doc.setValue(venta.getString("tipo"));
+        guia_remision_busqueda.setText(venta.getString("guia_cod"));
+        LocalDate fecha = venta.getDate("fecha_emision").toLocalDate();
+        fecha_emision.setValue(fecha);
         GuiaRemision guia = GuiaRemision.findById(venta.getInteger("guia_id"));
         productos_temp.clear();
         List<OrdenCompraxProducto> productos_lista = OrdenCompraxProducto.where("orden_compra_id = ?",guia.getInteger("orden_compra_id"));
@@ -154,9 +165,37 @@ public class DocumentosDeVentaController extends Controller{
         calcular_totales();
     }
     
+    public void bloquear_datos(){
+        nombre_cliente.setEditable(false);
+        dni_cliente.setEditable(false);
+        ruc_cliente.setEditable(false);
+        ver_moneda.setEditable(false);
+        fecha_emision.setEditable(false);
+        codigo_venta.setEditable(false);
+        tipo_doc.setEditable(false);
+        guia_remision_busqueda.setEditable(false);
+        subtotal.setEditable(false);
+        igv_total.setEditable(false);
+        importe_total.setEditable(false);
+    }
+    
+    public void desbloquear_datos(){
+        nombre_cliente.setEditable(true);
+        dni_cliente.setEditable(true);
+        ruc_cliente.setEditable(true);
+        ver_moneda.setEditable(true);
+        fecha_emision.setEditable(true);
+        codigo_venta.setEditable(true);
+        tipo_doc.setEditable(true);
+        guia_remision_busqueda.setEditable(true);
+        subtotal.setEditable(true);
+        igv_total.setEditable(true);
+        importe_total.setEditable(true);        
+    }
+    
     @FXML
-    void visualizarPedido(ActionEvent event) {
-        
+    void visualizar_doc_venta(ActionEvent event) {
+        productos.clear();
         habilitar_formulario();
         try {
             documento_seleccionado = tabla_ventas.getSelectionModel().getSelectedItem();
@@ -166,32 +205,74 @@ public class DocumentosDeVentaController extends Controller{
                 return;
             }
 
-          setPedidoVisible(documento_seleccionado);                            
+          setPedidoVisible(documento_seleccionado);
+          bloquear_datos();
         } catch (Exception e) {
             infoController.show("Error al mostrar el pedido: " + e.getMessage());
         }        
 
     }      
     
+    public void limpiar_formulario(){
+        nombre_cliente.clear();
+        dni_cliente.clear();
+        ruc_cliente.clear();
+        dni_cliente.setDisable(false);
+        ruc_cliente.setDisable(false);
+        fecha_emision.getEditor().clear();
+        codigo_venta.clear();
+        guia_remision_busqueda.clear();
+        subtotal.clear();
+        igv_total.clear();
+        importe_total.clear();
+        productos.clear();
+    }
+    
+    @Override
+    public void desactivar(){
+        documento_seleccionado.set("estado", DocVenta.ESTADO.CANCELADA.name());
+    }
+    @Override
+    public void cambiarEstado(){
+        if(documento_seleccionado == null)
+        {
+            infoController.show("No ha seleccionado ninguna Documento de Venta");
+            return;
+        }
+        
+        if(documento_seleccionado.getString("estado").equals(GuiaRemision.ESTADO.COMPLETA.name()))
+        {
+            infoController.show("El documento de venta ya ha sido completada");
+            return;
+        }                        
+        try{
+            Base.openTransaction();
+            documento_seleccionado.set("estado", GuiaRemision.ESTADO.COMPLETA.name());
+            infoController.show("Se ha completado correctamente");
+            Base.connection();
+        }catch(Exception e){
+            infoController.show("Ha ocurrido un error");
+        }
+    }        
+    
     @Override
     public void nuevo(){
         crear_nuevo = true;
         habilitar_formulario();
+        limpiar_formulario();
+        desbloquear_datos();
     }
     
     @Override
     public void guardar(){
         if (crear_nuevo){
             crear_doc_venta();
+            infoController.show("Se creo satisfactoriamente");
         }
-        else{
-            if(guia_seleccionada == null){
-                infoController.show("No ha seleccionado una guia");
-                return;                
-            }
-        }
-        crear_nuevo = false;
-        llenar_tabla();        
+        deshabilitar_formulario();
+        limpiar_formulario();        
+        llenar_tabla();
+        crear_nuevo = true;
     }
     
     public void llenar_tabla_productos(){
@@ -209,10 +290,10 @@ public class DocumentosDeVentaController extends Controller{
         Double sub_total = 0.0;
         sub_total = productos_temp.stream().mapToDouble(p -> p.getDouble("subtotal_final")).sum();
         subtotal.setText(sub_total.toString());
-        Double igv = sub_total * ParametroSistema.findFirst("name = ?","IGV").getDouble("valor");
+        Double igv = sub_total * ParametroSistema.findFirst("nombre = ?","IGV").getDouble("valor");
         igv_total.setText(igv.toString());
         Double total = 0.0;
-        total = sub_total*(1 - igv);
+        total = sub_total + igv;
         importe_total.setText(total.toString());
     }
     
@@ -226,6 +307,7 @@ public class DocumentosDeVentaController extends Controller{
             if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
             controller.devolver_guia_remision.addHandler((Object sender, agregarGuiaRemisionArgs args) -> {
                 guia_devuelta = args.guia_remision;
+                guia_remision_busqueda.setText(guia_devuelta.getString("guia_cod"));
                 productos_temp = OrdenCompraxProducto.where("orden_compra_cod = ?", guia_devuelta.get("orden_compra_cod"));
                 llenar_tabla_productos();
                 calcular_totales();
@@ -272,6 +354,7 @@ public class DocumentosDeVentaController extends Controller{
             ruc_cliente.setText(ruc);
             dni_cliente.setDisable(true);
         }          
+        nombre_cliente.setText(cliente.getString("nombre"));
     }
     private void handleAutoCompletar() {
         int i = 0;
@@ -298,6 +381,13 @@ public class DocumentosDeVentaController extends Controller{
         ver_moneda.setItems(monedas);        
     }
     
+    public void llenar_tipo_doc_combobox(){
+        ObservableList<String> tipos = FXCollections.observableArrayList();  
+        tipos.add(DocVenta.TIPO.BOLETA.name());
+        tipos.add(DocVenta.TIPO.FACTURA.name());
+        tipo_doc.setItems(tipos);
+    }
+    
     public void llenar_tabla(){
         ObservableList<DocVenta> doc_ventas = FXCollections.observableArrayList();  
         List<DocVenta> ventas = DocVenta.findAll();
@@ -318,6 +408,8 @@ public class DocumentosDeVentaController extends Controller{
     
     public DocumentosDeVentaController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        infoController = new InformationAlertController();
+        crear_nuevo = false;
     } 
     
     @Override
@@ -325,6 +417,7 @@ public class DocumentosDeVentaController extends Controller{
         try{
             llenar_autocompletado();
             llenar_moneda_combobox();
+            llenar_tipo_doc_combobox();
             llenar_tabla();
             deshabilitar_formulario();
         }catch(Exception e){

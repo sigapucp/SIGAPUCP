@@ -182,7 +182,6 @@ public class GuiasRemisionController extends Controller{
     
     @Override
     public void cambiarEstado(){
-        System.out.println("------------------------");
         if(guia_seleccionada == null)
         {
             infoController.show("No ha seleccionado ninguna Guia de Remision");
