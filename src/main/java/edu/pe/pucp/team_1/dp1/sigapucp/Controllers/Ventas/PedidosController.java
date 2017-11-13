@@ -668,7 +668,7 @@ public class PedidosController extends Controller {
         if(cotizacionAnexada != null)
         {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
-            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO);
+            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO.name());
             cotizacionAnexada.saveIt();
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
@@ -722,11 +722,11 @@ public class PedidosController extends Controller {
             {
                 pedidoxproducto.set("orden_compra_id",pedido.getId());
                 pedidoxproducto.set("client_id",pedido.get("client_id"));
-                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
-              
+                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));              
             }
             Stock productoStock = Stock.first("tipo_id = ?", pedidoxproducto.get("tipo_id"));            
             Integer cantidadLlevada = pedidoxproducto.getInteger("cantidad");
+            pedidoxproducto.set("cantidad_en_envios",cantidadLlevada);
             Integer stockLogico = productoStock.getInteger("stock_logico");
             
             if(cantidadLlevada > stockLogico)
@@ -759,11 +759,8 @@ public class PedidosController extends Controller {
         }
               
         for(OrdenCompraxProducto pedidoxproducto:productos)
-        {
-            if(pedidoxproducto.isNew())
-            {
-                pedidoxproducto.saveIt(); 
-            }             
+        {            
+            pedidoxproducto.saveIt();                         
         }                                 
     }
     
@@ -1338,6 +1335,7 @@ public class PedidosController extends Controller {
           
             productos.clear();
             productos.addAll(generarProductos(cotizacion));  
+            cotizacionAnexada = cotizacion;
 
             crearNuevo = true;
             habilitar_formulario();

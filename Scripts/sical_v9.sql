@@ -265,8 +265,8 @@ CREATE TABLE AccionesxMenus
 CREATE TABLE SimulacionesxDespachos
 (
  salida_cod    VARCHAR(30) NOT NULL ,
- salida_id     SERIAL NOT NULL ,
- simulacion_id SERIAL NOT NULL ,
+ salida_id     INT NOT NULL ,
+ simulacion_id INT NOT NULL ,
 
  CONSTRAINT pk_753 PRIMARY KEY  (salida_cod , salida_id , simulacion_id ),
  CONSTRAINT fk_2009 FOREIGN KEY (simulacion_id)
@@ -289,7 +289,7 @@ CREATE TABLE RutasDespacho
  ruta_despacho_id    SERIAL NOT NULL ,
  ruta_orden          TEXT NOT NULL ,
  distancia_recorrida DECIMAL(10,2) NOT NULL ,
- simulacion_id       SERIAL NOT NULL ,
+ simulacion_id       INT NOT NULL ,
 
  CONSTRAINT pk_734 PRIMARY KEY  (ruta_despacho_id ),
  CONSTRAINT fk_2005 FOREIGN KEY (simulacion_id)
@@ -471,9 +471,9 @@ CREATE TABLE Usuarios
 CREATE TABLE OrdenesSalidaxProductos
 (
  salida_cod  VARCHAR(30) NOT NULL ,
- salida_id   SERIAL NOT NULL ,
+ salida_id   INT NOT NULL ,
  tipo_cod    VARCHAR(20) NOT NULL ,
- tipo_id     SERIAL NOT NULL ,
+ tipo_id     INT NOT NULL ,
  cantidad    DECIMAL(10,2) NOT NULL ,
  despachado  VARCHAR(20) NOT NULL ,
  tipo_salida VARCHAR(20) NOT NULL ,
@@ -501,10 +501,10 @@ CREATE TABLE AccionLog
  usuario_cod   VARCHAR(20) NOT NULL ,
  usuario_id    INT NOT NULL ,
  accion_cod    VARCHAR(30) NOT NULL ,
- accion_id     SERIAL NOT NULL ,
- menu_id       SERIAL NOT NULL ,
+ accion_id     INT NOT NULL ,
+ menu_id       INT NOT NULL ,
  rol_cod       VARCHAR(30) NOT NULL ,
- rol_id        SERIAL NOT NULL ,
+ rol_id        INT NOT NULL ,
 
  CONSTRAINT pk_1059 PRIMARY KEY  (accion_log_id ),
  CONSTRAINT fk_1064 FOREIGN KEY (usuario_cod, usuario_id)
@@ -558,12 +558,12 @@ CREATE TABLE Precios
  fecha_inicio DATE NOT NULL ,
  fecha_fin    DATE NOT NULL ,
  es_default   CHAR(1) NOT NULL ,
- moneda_id    SERIAL NOT NULL ,
+ moneda_id    INT NOT NULL ,
 
  CONSTRAINT pk_1034 PRIMARY KEY  (tipo_id , tipo_cod , precio_id ),
  CONSTRAINT fk_1031 FOREIGN KEY (tipo_cod, tipo_id)
   REFERENCES TiposProducto(tipo_cod, tipo_id),
- CONSTRAINT fk_1037 FOREIGN KEY (moneda_id)
+ CONSTRAINT fk_2052 FOREIGN KEY (moneda_id)
   REFERENCES Monedas(moneda_id)
 );
 
@@ -571,7 +571,7 @@ CREATE TABLE Precios
 
 --SKIP Index: fkIdx_1031
 
---SKIP Index: fkIdx_1037
+--SKIP Index: fkIdx_2052
 
 
 --************************************** Fletes
@@ -688,6 +688,7 @@ CREATE TABLE OrdenesCompra
  direccion_facturacion VARCHAR(150) NOT NULL ,
  departamento          VARCHAR(50) NOT NULL ,
  tipo                  VARCHAR(50) NOT NULL ,
+ 
 
  CONSTRAINT pk_469 PRIMARY KEY  (orden_compra_cod , client_id , orden_compra_id ),
  CONSTRAINT fk_471 FOREIGN KEY (client_id)
@@ -742,38 +743,6 @@ CREATE TABLE CotizacionxProductos
 --SKIP Index: fkIdx_458
 
 
---************************************** RutasRacks
-
-CREATE TABLE RutasRacks
-(
- distancia     DECIMAL(10,2) NOT NULL ,
- nr_pasos      INT NOT NULL ,
- rack1_ancla   VARCHAR(10) NOT NULL ,
- rack2_ancla   VARCHAR(10) NOT NULL ,
- rack1_cod     VARCHAR(50) NOT NULL ,
- almacen1_id   INT NOT NULL ,
- rack1_id      SERIAL NOT NULL ,
- almacen1_cod  VARCHAR(50) NOT NULL ,
- rack2_cod     VARCHAR(50) NOT NULL ,
- almacen2_id   INT NOT NULL ,
- rack2_id      SERIAL NOT NULL ,
- almacen2_cod  VARCHAR(50) NOT NULL ,
- ruta_rack_cod VARCHAR(30) NOT NULL ,
-
- CONSTRAINT pk_365 PRIMARY KEY  (ruta_rack_cod ),
- CONSTRAINT fk_1956 FOREIGN KEY (rack1_cod, almacen1_id, rack1_id, almacen1_cod)
-  REFERENCES Racks(rack_cod, almacen_id, rack_id, almacen_cod),
- CONSTRAINT fk_1963 FOREIGN KEY (rack2_cod, almacen2_id, rack2_id, almacen2_cod)
-  REFERENCES Racks(rack_cod, almacen_id, rack_id, almacen_cod)
-);
-
-
-
---SKIP Index: fkIdx_1956
-
---SKIP Index: fkIdx_1963
-
-
 --************************************** AlmacenAreaXYs
 
 CREATE TABLE AlmacenAreaXYs
@@ -822,23 +791,6 @@ CREATE TABLE AccionesxRoles
 --SKIP Index: fkIdx_1632
 
 --SKIP Index: fkIdx_1644
-
-
---************************************** RutasRackCompleta
-
-CREATE TABLE RutasRackCompleta
-(
- ruta_rack_cod VARCHAR(30) NOT NULL ,
- ruta          TEXT NOT NULL ,
-
- CONSTRAINT PK_Ruta_RackCompleta PRIMARY KEY  (ruta_rack_cod ),
- CONSTRAINT fk_1935 FOREIGN KEY (ruta_rack_cod)
-  REFERENCES RutasRacks(ruta_rack_cod)
-);
-
-
-
---SKIP Index: fkIdx_1935
 
 
 --************************************** Envios
@@ -1266,7 +1218,7 @@ CREATE TABLE OrdenesEntrada
  proveedor_id        INT NOT NULL ,
  doc_venta_cod       VARCHAR(30) NOT NULL ,
  client_id           INT NOT NULL ,
- doc_venta_id        SERIAL NOT NULL ,
+ doc_venta_id        INT NOT NULL ,
 
  CONSTRAINT pk_767 PRIMARY KEY  (orden_entrada_cod , orden_entrada_id ),
  CONSTRAINT fk_1790 FOREIGN KEY (provuder_ruc, proveedor_id)
@@ -1350,7 +1302,7 @@ CREATE TABLE Productos
  fecha_entrada     DATE NULL ,
  fecha_caducidad   DATE NULL ,
  fecha_adquirida   DATE NOT NULL ,
- almacen_z_id      SERIAL NOT NULL ,
+ almacen_z_id      INT NOT NULL ,
  rack_cod          VARCHAR(50) NOT NULL ,
  rack_id           INT NOT NULL ,
  lote_cod          VARCHAR(10) NULL ,
@@ -1390,13 +1342,13 @@ CREATE TABLE Productos
 CREATE TABLE OrdenesSalidaxProductosFinal
 (
  producto_cod      VARCHAR(30) NOT NULL ,
- producto_id       SERIAL NOT NULL ,
+ producto_id       INT NOT NULL ,
  tipo_cod          VARCHAR(20) NOT NULL ,
  orden_entrada_cod VARCHAR(30) NOT NULL ,
  orden_entrada_id  INT NOT NULL ,
  tipo_id           INT NOT NULL ,
  salida_cod        VARCHAR(30) NOT NULL ,
- salida_id         SERIAL NOT NULL ,
+ salida_id         INT NOT NULL ,
  estado            VARCHAR(30) NOT NULL ,
 
  CONSTRAINT pk_719 PRIMARY KEY  (producto_cod , producto_id , tipo_cod , orden_entrada_cod , orden_entrada_id , tipo_id , salida_cod , salida_id ),

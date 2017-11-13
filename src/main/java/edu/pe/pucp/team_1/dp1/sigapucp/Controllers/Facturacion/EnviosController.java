@@ -323,9 +323,9 @@ public class EnviosController extends Controller{
     @Override
     public void guardar(){
         if (crearNuevo){
-            crear_envio();
+            crear_envio();           
+            limpiar_formulario();    
             inhabilitar_formulario();
-            limpiar_formulario();            
         } else {
             if ( envio_seleccionado == null){ 
                 infoController.show("No ha seleccionado ningun envio");
@@ -407,11 +407,8 @@ public class EnviosController extends Controller{
         }
               
         for(OrdenesCompraxProductosxenvio envioxProducto:productos)
-        {
-            if(envioxProducto.isNew())
-            {                
-                envioxProducto.saveIt(); 
-            }             
+        {                 
+            envioxProducto.saveIt();                     
         }             
         
         List<OrdenCompraxProducto> productosxorden = OrdenCompraxProducto.where("orden_compra_id = ?", envio.get("orden_compra_id"));
@@ -584,6 +581,7 @@ public class EnviosController extends Controller{
         nombre_cliente.setEditable(true);
         ruc_cliente.setEditable(true);
         ordenes_compra_combobox.setDisable(false);        
+        boton_agregar_cliente.setDisable(false);
     }  
     
     @Override
