@@ -25,9 +25,10 @@ import java.awt.Desktop.Action;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +37,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -65,17 +67,18 @@ public class RacksController extends Controller{
     @FXML private TableColumn<Producto, String> rack_form_producto_cod_column;
     @FXML private TableColumn<Producto, String> rack_form_producto_fecha_venc_column;
     @FXML private TableColumn<Producto, String> rack_form_producto_nombre_column;
+    @FXML private ComboBox<String> buscar_rack_almacen_nomb;
     @FXML private TextField rack_form_cod_field;
     @FXML private TextField rack_form_almacen_nombre_field;
     @FXML private TextField rack_form_cantidad_productos_field;
     @FXML private TextField rack_form_alto_field;
     @FXML private TextField rack_form_ancho_field;
     @FXML private TextField rack_form_largo_field;
-    @FXML private TextField buscar_rack_cod;
-    @FXML private TextField buscar_rack_altura;
-    @FXML private TextField buscar_rack_ancho;
-    @FXML private TextField buscar_rack_largo;
-    @FXML private TextField buscar_rack_producto;
+@FXML private TextField buscar_rack_cod;
+@FXML private TextField buscar_rack_altura;
+@FXML private TextField buscar_rack_ancho;
+@FXML private TextField buscar_rack_largo;
+@FXML private TextField buscar_rack_producto;
     @FXML private TableView<Rack> buscar_rack_tabla;
     @FXML private TableColumn<Rack, String> buscar_columna_codigo_rack;
     
@@ -93,7 +96,6 @@ public class RacksController extends Controller{
     private void actualizarTablaBusqueda() {
         try {
             LazyList<Rack> rackActuales = Rack.findAll();
-            
             racks_busqueda.clear();
             rackActuales.forEach(racks_busqueda::add);
             buscar_rack_tabla.setItems(racks_busqueda);
@@ -206,6 +208,48 @@ public class RacksController extends Controller{
         rack_form_container.setDisable(false);
     }
     
+    @FXML
+    public void buscarRacks(ActionEvent event) {
+        try {
+            String rackAncho = buscar_rack_ancho.getText();
+            String rackAlto = buscar_rack_altura.getText();
+            String rackLargo = buscar_rack_largo.getText();
+
+            if( (validator.isEmptyString(rackAncho) || validator.isNumeric(rackAncho)) && 
+                (validator.isEmptyString(rackAlto) || validator.isNumeric(rackAlto)) && 
+                (validator.isEmptyString(rackLargo) || validator.isNumeric(rackLargo)) )
+            {
+                LazyList<Rack> racks_existentes = Rack.findAll();
+                String almacenNomb = String.valueOf(buscar_rack_almacen_nomb.getSelectionModel().getSelectedItem() == null ? "" : buscar_rack_almacen_nomb.getSelectionModel().getSelectedItem());
+                String rackCod = buscar_rack_cod.getText();
+                String productoNomb = buscar_rack_producto.getText();
+                
+                List<Rack> racks_filtrados = racks_existentes.stream().filter((rack) -> {
+                    Almacen almacenRack = rack.parent(Almacen.class);
+                    boolean rackProdutosCond = validator.isEmptyString(productoNomb) ? true : Producto.findBySQL("SELECT productos.* FROM productos LEFT JOIN tiposproducto ON productos.tipo_cod = tiposproducto.tipo_cod WHERE tiposproducto.nombre = ? AND rack_cod = ?", productoNomb, rack.getString("rack_cod")).size() > 0;
+                    boolean rackAnchoCond = validator.isEmptyString(rackAncho) ? true : almacenRack.getDouble("longitud_area") < Double.valueOf(rackAncho);
+                    boolean rackLargoCond = validator.isEmptyString(rackLargo) ? true : rack.getInteger("longitud") < Integer.valueOf(rackLargo);
+                    boolean rackAltoCond = validator.isEmptyString(rackAlto) ? true : rack.getInteger("altura ") < Integer.valueOf(rackAlto);
+    
+                    return almacenRack.getString("nombre").contains(almacenNomb) &&
+                    rack.getString("rack_cod").contains(rackCod) &&
+                    rackAnchoCond &&
+                    rackLargoCond &&
+                    rackAltoCond &&
+                    rackProdutosCond;
+                }).collect(Collectors.toList());
+    
+                racks_busqueda.clear();
+                racks_filtrados.forEach(racks_busqueda::add);
+                buscar_rack_tabla.setItems(racks_busqueda);
+            } else {
+                infoController.show("Solo se permiten valores numericos en los campos de Alto maximo, Ancho maximo, Largo, maximo");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(RacksController.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
     @Override
     public void guardar() {
         Rack rack = rack_seleccionado;
@@ -248,16 +292,28 @@ public class RacksController extends Controller{
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Tabla de Busqueda
-        buscar_columna_codigo_rack.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod") ));
-        // Tabla de Formulario ; Nota camibar UI
-        rack_form_producto_cod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")) );
-        rack_form_producto_fecha_venc_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_caducidad")) );
-        rack_form_producto_nombre_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) ->
-            new ReadOnlyObjectWrapper(
-                TipoProducto.findById(p.getValue().getInteger("tipo_id")).getString("nombre")
-            )
-        );
-        actualizarTablaBusqueda();
+        try {
+            // Menu de Busqueda
+            ObservableList<String> almacenes = FXCollections.observableArrayList();
+            almacenes.addAll(Almacen.findAll().stream()
+                    .filter(almacen -> almacen.getString("es_central").equals("F"))
+                    .map(almacen -> almacen.getString("nombre")).collect(Collectors.toList())
+            );
+
+            buscar_rack_almacen_nomb.setItems(almacenes);
+            buscar_columna_codigo_rack.setCellValueFactory( (TableColumn.CellDataFeatures<Rack, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod") ));
+
+            // Tabla de Formulario
+            rack_form_producto_cod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")) );
+            rack_form_producto_fecha_venc_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_caducidad")) );
+            rack_form_producto_nombre_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) ->
+                new ReadOnlyObjectWrapper(
+                    TipoProducto.findById(p.getValue().getInteger("tipo_id")).getString("nombre")
+                )
+            );
+            actualizarTablaBusqueda();
+        } catch (Exception e) {
+            Logger.getLogger(RacksController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 }
