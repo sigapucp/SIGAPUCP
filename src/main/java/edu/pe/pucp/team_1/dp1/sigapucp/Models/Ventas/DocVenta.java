@@ -19,8 +19,8 @@ import org.javalite.activejdbc.annotations.Table;
 public class DocVenta extends Model{
     public enum ESTADO
     {
+        CANCELADA,
         PENDIENTE,
-        ENDESPACHO,
         COMPLETA;
         
         private static DocVenta.ESTADO[] vals = values();

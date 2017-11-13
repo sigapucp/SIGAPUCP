@@ -152,15 +152,45 @@ public class DocumentosDeVentaController extends Controller{
         cliente_seleccionado = Cliente.findById(venta.getInteger("client_id"));
         mostrar_informacion_cliente(cliente_seleccionado);
         codigo_venta.setText(venta.getString("doc_venta_cod"));
-        ver_moneda.setValue(venta.getString("estado"));
+        //ver_moneda.setValue(venta.getString("estado"));
         tipo_doc.setValue(venta.getString("tipo"));
         guia_remision_busqueda.setText(venta.getString("guia_cod"));
+        LocalDate fecha = venta.getDate("fecha_emision").toLocalDate();
+        fecha_emision.setValue(fecha);
         GuiaRemision guia = GuiaRemision.findById(venta.getInteger("guia_id"));
         productos_temp.clear();
         List<OrdenCompraxProducto> productos_lista = OrdenCompraxProducto.where("orden_compra_id = ?",guia.getInteger("orden_compra_id"));
         productos_temp.addAll(productos_lista);
         llenar_tabla_productos();        
         calcular_totales();
+    }
+    
+    public void bloquear_datos(){
+        nombre_cliente.setEditable(false);
+        dni_cliente.setEditable(false);
+        ruc_cliente.setEditable(false);
+        ver_moneda.setEditable(false);
+        fecha_emision.setEditable(false);
+        codigo_venta.setEditable(false);
+        tipo_doc.setEditable(false);
+        guia_remision_busqueda.setEditable(false);
+        subtotal.setEditable(false);
+        igv_total.setEditable(false);
+        importe_total.setEditable(false);
+    }
+    
+    public void desbloquear_datos(){
+        nombre_cliente.setEditable(true);
+        dni_cliente.setEditable(true);
+        ruc_cliente.setEditable(true);
+        ver_moneda.setEditable(true);
+        fecha_emision.setEditable(true);
+        codigo_venta.setEditable(true);
+        tipo_doc.setEditable(true);
+        guia_remision_busqueda.setEditable(true);
+        subtotal.setEditable(true);
+        igv_total.setEditable(true);
+        importe_total.setEditable(true);        
     }
     
     @FXML
@@ -175,7 +205,8 @@ public class DocumentosDeVentaController extends Controller{
                 return;
             }
 
-          setPedidoVisible(documento_seleccionado);                            
+          setPedidoVisible(documento_seleccionado);
+          bloquear_datos();
         } catch (Exception e) {
             infoController.show("Error al mostrar el pedido: " + e.getMessage());
         }        
@@ -198,10 +229,38 @@ public class DocumentosDeVentaController extends Controller{
     }
     
     @Override
+    public void desactivar(){
+        documento_seleccionado.set("estado", DocVenta.ESTADO.CANCELADA.name());
+    }
+    @Override
+    public void cambiarEstado(){
+        if(documento_seleccionado == null)
+        {
+            infoController.show("No ha seleccionado ninguna Documento de Venta");
+            return;
+        }
+        
+        if(documento_seleccionado.getString("estado").equals(GuiaRemision.ESTADO.COMPLETA.name()))
+        {
+            infoController.show("El documento de venta ya ha sido completada");
+            return;
+        }                        
+        try{
+            Base.openTransaction();
+            documento_seleccionado.set("estado", GuiaRemision.ESTADO.COMPLETA.name());
+            infoController.show("Se ha completado correctamente");
+            Base.connection();
+        }catch(Exception e){
+            infoController.show("Ha ocurrido un error");
+        }
+    }        
+    
+    @Override
     public void nuevo(){
         crear_nuevo = true;
         habilitar_formulario();
         limpiar_formulario();
+        desbloquear_datos();
     }
     
     @Override
@@ -210,16 +269,10 @@ public class DocumentosDeVentaController extends Controller{
             crear_doc_venta();
             infoController.show("Se creo satisfactoriamente");
         }
-        else{
-            if(guia_seleccionada == null){
-                infoController.show("No ha seleccionado una guia");
-                return;                
-            }
-        }
-        crear_nuevo = false;
         deshabilitar_formulario();
         limpiar_formulario();        
         llenar_tabla();
+        crear_nuevo = true;
     }
     
     public void llenar_tabla_productos(){
