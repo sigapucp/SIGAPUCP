@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -236,6 +237,11 @@ public class PedidosController extends Controller {
         pedidos.clear();
         productos.clear();
         
+        DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();
+        sym.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(sym);
+        
         CodigoPedidoColumna.setCellValueFactory((CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));   
         ClientePedidoColumna.setCellValueFactory((CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         EstadoPedidoColumna.setCellValueFactory((CellDataFeatures<OrdenCompra, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
@@ -243,10 +249,10 @@ public class PedidosController extends Controller {
         codProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         nombreProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
         cantProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("precio_unitario"))));
-        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("descuento"))));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("flete"))));
-        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("subtotal_final"))));        
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().getDouble("precio_unitario"))));
+        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().getDouble("descuento"))));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().getDouble("flete"))));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(df.format(p.getValue().getDouble("subtotal_final"))));        
         
         pedidos.addAll(tempPedido);
         TablaPedido.setItems(pedidos);
@@ -534,10 +540,18 @@ public class PedidosController extends Controller {
                  
     private void setValorTotal(Double valor)
     {        
-        subTotal.setText(new DecimalFormat("#.##").format(valor));
-        Double valorIgv = IGV*valor;            
-        igvPedido.setText(new DecimalFormat("#.##").format(valorIgv));
-        totalPedido.setText(new DecimalFormat("#.##").format(valor+valorIgv));                
+        DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();
+        sym.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(sym);
+        subTotal.setText(df.format(valor));
+        
+        //subTotal.setText(new DecimalFormat("#.00").format(valor));
+        Double valorIgv = IGV*valor;  
+        igvPedido.setText(df.format(valorIgv));
+        //igvPedido.setText(new DecimalFormat("#.00").format(valorIgv));
+        totalPedido.setText(df.format(valor+valorIgv));                
+        //totalPedido.setText(new DecimalFormat("#.00").format(valor+valorIgv));                
     }
             
     private void clienteToString() throws Exception{
