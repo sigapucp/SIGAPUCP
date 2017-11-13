@@ -211,6 +211,7 @@ public class GuiasRemisionController extends Controller{
         habilitar_formulario();
         envio_nuevo = true;
         crearNuevo = true;
+        //boton_guardar.setDisable(false);
     }
     
     public void inhabilitar_formulario(){
@@ -306,7 +307,7 @@ public class GuiasRemisionController extends Controller{
     @FXML
     public void visualizar_guia(ActionEvent event){
         //falta desactivar boton guardar
-        boton_guardar.setDisable(true);
+        //boton_guardar.setDisable(true);
         habilitar_formulario();
         guia_seleccionada = tabla_guias.getSelectionModel().getSelectedItem();
         if (guia_seleccionada == null){
@@ -395,7 +396,6 @@ public class GuiasRemisionController extends Controller{
         infoController = new InformationAlertController();
         pedidoSeleccionado = null;
         crearNuevo = true;
-        boton_guardar.setDisable(false);
     }
     
     @Override
