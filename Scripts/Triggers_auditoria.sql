@@ -17,6 +17,7 @@ $T_Usuarios_BIU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_Usuarios_BIU BEFORE INSERT OR UPDATE ON Usuarios
 FOR EACH ROW EXECUTE PROCEDURE Usuarios_audit();
 
+-- Stock Entry
 CREATE FUNCTION Stock_entry() RETURNS trigger AS $T_Stock_AU$
 BEGIN
   IF (NEW.ingresado = 'S') THEN
@@ -32,9 +33,10 @@ $T_Stock_AU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_Stock_AU AFTER UPDATE ON OrdenesEntradaxProductos
 FOR EACH ROW EXECUTE PROCEDURE Stock_entry();
 
+-- Stock Reserved
 CREATE FUNCTION Stock_reserved() RETURNS trigger AS $T_Stock_reserved_AU$
 BEGIN
-  IF (NEW.reservado = 'S' AND OLD.reservado != 'S') THEN
+  IF (NEW.despachado = 'S' AND OLD.despachado != 'S') THEN
     UPDATE Stocks
     SET  stock_logico = stock_logico - NEW.cantidad
     WHERE tipo_id = NEW.tipo_id;
@@ -47,6 +49,27 @@ $T_Stock_reserved_AU$ LANGUAGE plpgsql;
 CREATE TRIGGER T_Stock_reserved_AU AFTER UPDATE ON OrdenesCompraxProductos
 FOR EACH ROW EXECUTE PROCEDURE Stock_reserved();
 
+-- Stock exit
+CREATE FUNCTION Stock_exit() RETURNS trigger AS $T_Stock_exit_AU$
+BEGIN
+  IF (NEW.despachado = 'S' AND OLD.despachado != 'S') THEN
+    IF (NEW.tipo_salida = 'Venta') THEN
+    UPDATE Stocks
+    SET  stock_real = stock_real - NEW.cantidad
+    WHERE tipo_id = NEW.tipo_id;
+    ELSE
+    UPDATE Stocks
+    SET  stock_real = stock_real - NEW.cantidad,stock_logico = stock_logico - NEW.cantidad
+    WHERE tipo_id = NEW.tipo_id;
+    END IF;    
+    RETURN NEW;
+  END IF;
+  RETURN NULL;
+END;
+$T_Stock_exit_AU$ LANGUAGE plpgsql;
+
+CREATE TRIGGER T_Stock_exit_AU AFTER UPDATE ON OrdenesSalidaxProductos
+FOR EACH ROW EXECUTE PROCEDURE Stock_exit();
 --Roles
 
 CREATE FUNCTION Roles_audit() RETURNS trigger AS $T_Roles_BIU$

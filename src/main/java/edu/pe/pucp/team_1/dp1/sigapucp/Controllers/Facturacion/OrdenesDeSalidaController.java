@@ -746,7 +746,12 @@ public class OrdenesDeSalidaController  extends Controller{
             
             if (siguiente_estado.name().equals(OrdenSalida.ESTADO.COMPLETA.name())){
                 for (OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida)
+                {
                     cantidad += salidaxtipoproducto.getInteger("cantidad");
+                    salidaxtipoproducto.set("despachado","S");
+                    salidaxtipoproducto.saveIt();
+                }
+                                                                    
                 if (masterDataProductoFinal.size()==cantidad){
                     salida_seleccionada.set("estado", siguiente_estado.name());
                     salida_seleccionada.saveIt();
@@ -760,6 +765,7 @@ public class OrdenesDeSalidaController  extends Controller{
                     return;
                 }
             }
+            
             salida_seleccionada.set("estado", siguiente_estado.name());
             salida_seleccionada.saveIt();
             
@@ -784,7 +790,7 @@ public class OrdenesDeSalidaController  extends Controller{
                         p.saveIt();
                         contador --;
                         if (contador ==0) break;
-                    }    
+                    }                     
                 }
                 actualizar_tabla_instancias_productos();
                 guardar_instancias_productos();

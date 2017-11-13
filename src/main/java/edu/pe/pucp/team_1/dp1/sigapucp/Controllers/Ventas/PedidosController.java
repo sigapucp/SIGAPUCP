@@ -37,6 +37,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -242,10 +243,10 @@ public class PedidosController extends Controller {
         codProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         nombreProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
         cantProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
-        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
-        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("precio_unitario"))));
+        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("descuento"))));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("flete"))));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("subtotal_final"))));        
         
         pedidos.addAll(tempPedido);
         TablaPedido.setItems(pedidos);
@@ -533,10 +534,10 @@ public class PedidosController extends Controller {
                  
     private void setValorTotal(Double valor)
     {        
-        subTotal.setText(String.valueOf(valor));
+        subTotal.setText(new DecimalFormat("#.##").format(valor));
         Double valorIgv = IGV*valor;            
-        igvPedido.setText(String.valueOf(valorIgv));
-        totalPedido.setText(String.valueOf(valor+valorIgv));                
+        igvPedido.setText(new DecimalFormat("#.##").format(valorIgv));
+        totalPedido.setText(new DecimalFormat("#.##").format(valor+valorIgv));                
     }
             
     private void clienteToString() throws Exception{
