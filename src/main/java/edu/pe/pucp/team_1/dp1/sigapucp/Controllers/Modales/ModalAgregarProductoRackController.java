@@ -163,7 +163,6 @@ public class ModalAgregarProductoRackController extends ModalController {
             almacenZ_seleccionado = almacenZ;
             condition = true;
         }
-
         return condition;
     }
 

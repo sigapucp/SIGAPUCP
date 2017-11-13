@@ -29,4 +29,11 @@ public class DocVenta extends Model{
             return vals[(this.ordinal()+1) % vals.length];
         }
     }    
+    
+    public enum TIPO
+    {
+        BOLETA,
+        FACTURA
+       
+    }
 }

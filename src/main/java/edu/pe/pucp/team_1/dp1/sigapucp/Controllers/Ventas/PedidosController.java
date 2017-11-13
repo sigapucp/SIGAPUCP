@@ -23,6 +23,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVenta;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -603,6 +604,7 @@ public class PedidosController extends Controller {
         String direccionFacturacion = VerDireccionFacturacion.getText();
         String direccionDespacho = VerDireccionDespacho.getText();
         String departamento = clienteSeleccionado.getString("departamento");
+        String tipo = (TipoDocBoleta.isSelected()) ? DocVenta.TIPO.BOLETA.name() : DocVenta.TIPO.FACTURA.name();
               
         Integer cotizacion_id = null;
         if(cotizacionAnexada != null)
@@ -610,7 +612,7 @@ public class PedidosController extends Controller {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
-                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);          
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento,tipo);          
         String cod = pedido.getString("orden_compra_cod");        
         pedido.saveIt();
       
@@ -659,6 +661,7 @@ public class PedidosController extends Controller {
         String direccionFacturacion = VerDireccionFacturacion.getText();
         String direccionDespacho = VerDireccionDespacho.getText();
         String departamento = clienteSeleccionado.getString("departamento");
+        String tipo = (TipoDocBoleta.isSelected()) ? DocVenta.TIPO.BOLETA.name() : DocVenta.TIPO.FACTURA.name();
         
         OrdenCompra pedido = new OrdenCompra();
         Integer cotizacion_id = null;
@@ -669,10 +672,11 @@ public class PedidosController extends Controller {
             cotizacionAnexada.saveIt();
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
-                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);  
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento,tipo);  
         
         String cod = "PED" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenescompra_orden_compra_id_seq")))) + 1);
-        pedido.set("orden_compra_cod",cod);        
+        pedido.set("orden_compra_cod",cod);                
+        pedido.set("tipo",tipo);
         pedido.saveIt();
       
         setProductos(pedido);
@@ -686,7 +690,7 @@ public class PedidosController extends Controller {
     }
     
      private void asignar_data(OrdenCompra pedido,String usuarioAccion, Integer clienteId, Date fechaEmision, Double igvVale, Double total, 
-             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion,String departamento) throws Exception{
+             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion,String departamento,String tipo) throws Exception{
                        
         pedido.set("client_id",clienteId);
         pedido.setDate("fecha_emision", fechaEmision);
@@ -700,7 +704,8 @@ public class PedidosController extends Controller {
         pedido.set("usuario_id",vendedor.getId());                                                        
         pedido.set("direccion_despacho",direccionDespacho);
         pedido.set("direccion_facturacion",direccionFacturacion);                
-        pedido.set("departamento",departamento);                
+        pedido.set("departamento",departamento);                        
+        pedido.set("tipo",tipo);
     } 
      
     private void setProductos(OrdenCompra pedido) throws Exception
