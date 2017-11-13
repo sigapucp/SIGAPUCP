@@ -6,6 +6,8 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -31,6 +33,13 @@ public class Punto {
     {
         x = gX;
         y = gY;
+    }
+    
+    public Punto(String str)
+    {
+        List<String> punto = Arrays.asList(str.split("-"));
+        x = Integer.valueOf(punto.get(0));
+        y = Integer.valueOf(punto.get(1));        
     }
     
     public Punto(int gX,int gY,Rack.ANCLA gAnchor)
@@ -107,6 +116,35 @@ public class Punto {
         
         dir = gDir;             
         return new Punto(x+moveFactorX,y+moveFactorY);   
+    }
+    
+    public void moverA(char c)
+    {
+        int moveFactorX = 0;
+        int moveFactorY = 0;
+        
+        if(c == DIRECCION.N.name().charAt(0))
+        {
+            moveFactorY--;
+        }
+        
+        if(c == DIRECCION.S.name().charAt(0))
+        {
+            moveFactorY++;
+        }
+        
+        if(c == DIRECCION.E.name().charAt(0))
+        {
+            moveFactorX--;
+        }
+        
+        if(c == DIRECCION.O.name().charAt(0))
+        {
+            moveFactorX++;
+        }
+        
+        x += moveFactorX;
+        y += moveFactorY;        
     }
         
     public void print()

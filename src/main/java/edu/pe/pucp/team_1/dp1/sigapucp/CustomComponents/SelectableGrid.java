@@ -283,6 +283,11 @@ public class SelectableGrid extends AnchorPane  {
         tile.activeTileColor(false, color);
     }
     
+    public Boolean isTileActive(int x,int j)
+    {
+        return tiles.get(j).get(x).isActive();
+    }
+    
     public void pintarTileDeletable(int x,int y,Color color)
     {
         GridTile tile = tiles.get(y).get(x);

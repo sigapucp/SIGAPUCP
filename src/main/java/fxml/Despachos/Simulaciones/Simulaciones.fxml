@@ -9,6 +9,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
@@ -79,7 +80,7 @@
                             <content>
                                <AnchorPane fx:id="formulario_general" prefHeight="200.0" prefWidth="200.0">
                                   <children>
-                                    <TitledPane animated="false" collapsible="false" layoutX="21.0" layoutY="216.0" prefHeight="172.0" prefWidth="711.0" text="Orden de Salida">
+                                    <TitledPane animated="false" collapsible="false" layoutX="21.0" layoutY="216.0" prefHeight="313.0" prefWidth="711.0" text="Orden de Salida">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="171.0" prefWidth="709.0">
                                              <children>
@@ -88,25 +89,25 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="473.0" layoutY="35.0" prefHeight="20.0" prefWidth="58.0" text="Fecha:">
+                                                <Label layoutX="445.0" layoutY="35.0" prefHeight="20.0" prefWidth="58.0" text="Fecha:">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="VerCodigoOrden" editable="false" layoutX="103.0" layoutY="32.0" prefHeight="25.0" prefWidth="107.0" />
+                                                <TextField fx:id="VerCodigoOrden" editable="false" layoutX="103.0" layoutY="32.0" prefHeight="25.0" prefWidth="141.0" />
                                                 <Label layoutX="26.0" layoutY="86.0" text="Tipo">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="VerClienteOrden" editable="false" layoutX="323.0" layoutY="32.0" prefHeight="25.0" prefWidth="114.0" />
-                                                <Label layoutX="263.0" layoutY="32.0" prefHeight="20.0" prefWidth="60.0" text="Cliente:">
+                                                <DatePicker fx:id="VerFechaOrden" editable="false" layoutX="519.0" layoutY="32.0" />
+                                                <TextField fx:id="VerTipoOrden" editable="false" layoutX="103.0" layoutY="85.0" prefHeight="25.0" prefWidth="139.0" />
+                                                <Label layoutX="26.0" layoutY="138.0" text="Descripción:">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <DatePicker fx:id="VerFechaOrden" editable="false" layoutX="519.0" layoutY="33.0" />
-                                                <TextField fx:id="VerTipoOrden" editable="false" layoutX="103.0" layoutY="85.0" prefHeight="25.0" prefWidth="105.0" />
+                                                <TextArea fx:id="VerDescripcion" editable="false" layoutX="103.0" layoutY="172.0" prefHeight="101.0" prefWidth="545.0" wrapText="true" />
                                              </children>
                                           </AnchorPane>
                                        </content>
@@ -167,7 +168,7 @@
                                            <Font size="20.0" />
                                         </font>
                                      </Label>
-                                     <TableView fx:id="TablaProductosUnicos" layoutX="14.0" layoutY="69.0" prefHeight="391.0" prefWidth="610.0">
+                                     <TableView fx:id="TablaProductosUnicos" layoutX="14.0" layoutY="69.0" prefHeight="409.0" prefWidth="711.0">
                                        <columns>
                                          <TableColumn fx:id="ColumnaProdCodigo" prefWidth="99.0" text="Codigo" />
                                           <TableColumn fx:id="ColumnaAlmacen" prefWidth="109.0" text="Almacen" />
@@ -201,11 +202,11 @@
                                     <GridPane prefHeight="149.0" prefWidth="573.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.0" minWidth="10.0" prefWidth="102.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="61.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="52.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="61.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="110.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="79.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="64.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="53.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="69.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="108.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="71.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="106.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="44.0" />
                                       </columnConstraints>
@@ -219,14 +220,14 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="VerNrSimulacion" prefHeight="25.0" prefWidth="43.0" GridPane.columnIndex="1" />
-                                          <Label text="Nr Ruta:" GridPane.columnIndex="2">
+                                          <ComboBox fx:id="VerNrSimulacion" prefHeight="25.0" prefWidth="59.0" GridPane.columnIndex="1" />
+                                          <Label prefHeight="20.0" prefWidth="60.0" text="Nr Ruta:" GridPane.columnIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="VerNrRuta" prefHeight="25.0" prefWidth="57.0" GridPane.columnIndex="3" />
-                                          <Label prefHeight="20.0" prefWidth="124.0" text="Costo Ruta/Total:" GridPane.columnIndex="4">
+                                          <ComboBox fx:id="VerNrRuta" prefHeight="25.0" prefWidth="71.0" GridPane.columnIndex="3" />
+                                          <Label prefHeight="20.0" prefWidth="112.0" text="Costo Ruta/Total:" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -238,8 +239,8 @@
                                              </font>
                                           </Label>
                                           <CheckBox fx:id="recarcularRutasCheck" mnemonicParsing="false" GridPane.columnIndex="7" GridPane.halignment="CENTER" />
-                                          <Label fx:id="VerCostoRuta" prefHeight="17.0" prefWidth="38.0" GridPane.columnIndex="5" />
-                                          <Label fx:id="VerCostoSimulacion" prefHeight="17.0" prefWidth="37.0" GridPane.columnIndex="5" GridPane.halignment="RIGHT" />
+                                          <Label fx:id="VerCostoRuta" prefHeight="17.0" prefWidth="38.0" textAlignment="CENTER" GridPane.columnIndex="5" />
+                                          <Label fx:id="VerCostoSimulacion" prefHeight="17.0" prefWidth="37.0" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="RIGHT" />
                                        </children>
                                     </GridPane>
                                     <TitledPane fx:id="tittle_pane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -265,6 +266,84 @@
                                           <Button mnemonicParsing="false" onAction="#generarSimulacion" prefHeight="74.0" prefWidth="94.0" text="Generar Simulacion" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                                           <Button mnemonicParsing="false" onAction="#agregarSimulacion" prefHeight="61.0" prefWidth="94.0" text="Agregar Simulación" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
                                           <Button mnemonicParsing="false" onAction="#cambiarFondo" prefHeight="64.0" prefWidth="95.0" text="Cambiar Fondo" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Simulacion Guardada">
+                           <content>
+                              <GridPane fx:id="formulario_simulacion1">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="4.0" prefWidth="28.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="695.0" minWidth="10.0" prefWidth="618.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="224.0" minWidth="10.0" prefWidth="104.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="291.0" minHeight="1.0" prefHeight="1.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="239.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="518.0" minHeight="10.0" prefHeight="509.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="466.0" minHeight="0.0" prefHeight="3.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <GridPane prefHeight="149.0" prefWidth="573.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.0" minWidth="10.0" prefWidth="94.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="71.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="365.0" minWidth="10.0" prefWidth="53.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="0.0" prefWidth="63.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="116.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="71.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="106.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="44.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="40.0" minHeight="6.0" prefHeight="29.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="65.0" minHeight="-Infinity" prefHeight="0.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label text="Nr Simulacion:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="VerNrSimulacionSaved" prefHeight="25.0" prefWidth="58.0" GridPane.columnIndex="1" />
+                                          <Label prefHeight="20.0" prefWidth="60.0" text="Nr Ruta:" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="VerNrRutaSaved" prefHeight="25.0" prefWidth="63.0" GridPane.columnIndex="3" />
+                                          <Label prefHeight="20.0" prefWidth="112.0" text="Costo Ruta/Total:" GridPane.columnIndex="4" GridPane.halignment="RIGHT">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="/" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                          <Label fx:id="VerCostoRutaSaved" prefHeight="17.0" prefWidth="38.0" textAlignment="CENTER" GridPane.columnIndex="5" />
+                                          <Label fx:id="VerCostoSimulacionSaved" prefHeight="17.0" prefWidth="37.0" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="RIGHT" />
+                                       </children>
+                                    </GridPane>
+                                    <TitledPane fx:id="tittle_pane1" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <content>
+                                          <AnchorPane fx:id="mapa_paneSaved" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="483.0" prefWidth="676.0" style="-fx-background-color: lightblue;" />
+                                       </content>
+                                    </TitledPane>
+                                    <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="249.0" minHeight="10.0" prefHeight="83.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="165.0" minHeight="9.0" prefHeight="9.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="381.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="249.0" minHeight="10.0" prefHeight="180.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="381.0" minHeight="10.0" prefHeight="87.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="381.0" minHeight="10.0" prefHeight="95.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#cambiarFondoSaved" prefHeight="64.0" prefWidth="95.0" text="Cambiar Fondo" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
                                        </children>
                                     </GridPane>
                                  </children>
