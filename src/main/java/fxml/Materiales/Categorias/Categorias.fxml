@@ -31,14 +31,14 @@
                   <AnchorPane layoutY="50.0" prefHeight="522.0" prefWidth="250.0">
                      <children>
                         <Line endX="100.0" layoutX="125.0" startX="-100.0" />
-                        <Label layoutX="14.0" layoutY="25.0" prefHeight="21.0" prefWidth="114.0" text="Código">
+                        <Label layoutX="14.0" layoutY="25.0" prefHeight="21.0" prefWidth="114.0" text="Código:">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <TextField fx:id="codigoBuscar" layoutX="145.0" layoutY="23.0" prefHeight="25.0" prefWidth="87.0" />
                         <TextField fx:id="nombreBuscar" layoutX="145.0" layoutY="56.0" prefHeight="25.0" prefWidth="87.0" />
-                        <Label layoutX="14.0" layoutY="58.0" prefHeight="21.0" prefWidth="114.0" text="Nombre">
+                        <Label layoutX="14.0" layoutY="58.0" prefHeight="21.0" prefWidth="114.0" text="Nombre:">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -68,20 +68,20 @@
                         <Line endX="600.0" layoutX="133.0" layoutY="50.0" startX="-100.0" />
                      </children>
                   </Pane>
-                  <Pane layoutY="85.0" prefHeight="491.0" prefWidth="750.0">
+                  <Pane layoutY="50.0" prefHeight="491.0" prefWidth="750.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" prefHeight="215.0" prefWidth="701.0" text="Información General">
+                        <TitledPane animated="false" collapsible="false" layoutX="25.0" layoutY="14.0" prefHeight="215.0" prefWidth="701.0" text="Información General">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <Label layoutX="24.0" layoutY="34.0" text="Nombre">
+                                    <Label layoutX="24.0" layoutY="34.0" text="Nombre:">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                     <TextField fx:id="nombre_categoria" layoutX="147.0" layoutY="32.0" prefHeight="25.0" prefWidth="500.0" />
                                     <TextField fx:id="codigo_categoria" layoutX="147.0" layoutY="100.0" prefHeight="25.0" prefWidth="499.0" />
-                                    <Label layoutX="24.0" layoutY="102.0" text="Código">
+                                    <Label layoutX="24.0" layoutY="102.0" text="Código:">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -90,7 +90,7 @@
                               </AnchorPane>
                           </content>
                         </TitledPane>
-                        <TitledPane animated="false" collapsible="false" layoutY="226.0" prefHeight="206.0" prefWidth="701.0" text="Descripción">
+                        <TitledPane animated="false" collapsible="false" layoutX="25.0" layoutY="264.0" prefHeight="206.0" prefWidth="701.0" text="Descripción">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>

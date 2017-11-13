@@ -6,6 +6,8 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -18,10 +20,26 @@ public class Punto {
     public DIRECCION dir;
     public Rack.ANCLA anchorPoint;
     
+    public static DIRECCION invertirDireccion(DIRECCION gDir)
+    {
+        if(gDir == DIRECCION.E) return DIRECCION.O;
+        if(gDir == DIRECCION.O) return DIRECCION.E;
+        if(gDir == DIRECCION.N) return DIRECCION.S;
+        if(gDir == DIRECCION.S) return DIRECCION.N;
+        return gDir;
+    }
+    
     public Punto(int gX,int gY)
     {
         x = gX;
         y = gY;
+    }
+    
+    public Punto(String str)
+    {
+        List<String> punto = Arrays.asList(str.split("-"));
+        x = Integer.valueOf(punto.get(0));
+        y = Integer.valueOf(punto.get(1));        
     }
     
     public Punto(int gX,int gY,Rack.ANCLA gAnchor)
@@ -99,6 +117,35 @@ public class Punto {
         dir = gDir;             
         return new Punto(x+moveFactorX,y+moveFactorY);   
     }
+    
+    public void moverA(char c)
+    {
+        int moveFactorX = 0;
+        int moveFactorY = 0;
+        
+        if(c == DIRECCION.N.name().charAt(0))
+        {
+            moveFactorY--;
+        }
+        
+        if(c == DIRECCION.S.name().charAt(0))
+        {
+            moveFactorY++;
+        }
+        
+        if(c == DIRECCION.E.name().charAt(0))
+        {
+            moveFactorX--;
+        }
+        
+        if(c == DIRECCION.O.name().charAt(0))
+        {
+            moveFactorX++;
+        }
+        
+        x += moveFactorX;
+        y += moveFactorY;        
+    }
         
     public void print()
     {
@@ -116,5 +163,11 @@ public class Punto {
         S,
         E,
         O               
+    }
+    
+    @Override
+    public String toString()
+    {
+        return (x + "-" + y);
     }
 }

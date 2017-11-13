@@ -317,6 +317,8 @@ public class RutaGeneral {
           }          
     }
     
+    
+    
     public double GetCosto(ArrayList<Ruta> rutas)
     {
         double cost = 0.0;
@@ -338,13 +340,20 @@ public class RutaGeneral {
         }                      
     }
     
-    private void Inicializar(int nPedidos,List<Double> pesos,double [][] distancias)            
+    private void Inicializar(int nPedidos,List<Double> pesos,double [][] distancias) 
     {        
         productos = new ArrayList<>();     
         rutas = new ArrayList<>();
         estadoProblema = new EstadoProblema();
         rutaAEstado = new HashMap<>();
         _distancias = distancias;
+        if(pesos.isEmpty())
+        {
+            for(int i = 0;i<nPedidos;i++)
+            {
+                pesos.add(0.0);
+            }
+        }
         for(int i = 0; i<nPedidos; i++)
         {
             productos.add(new ProductoNodo(i+1, "Prod" + String.valueOf(i+1), pesos.get(i),false));           

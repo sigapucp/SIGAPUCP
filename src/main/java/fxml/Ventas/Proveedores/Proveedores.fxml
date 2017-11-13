@@ -15,7 +15,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ProveedoresController">
    <children>
-      <AnchorPane layoutX="63.0" layoutY="63.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane prefHeight="572.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane layoutX="3.0" layoutY="2.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -61,74 +61,69 @@
             <Insets />
          </opaqueInsets>
       </AnchorPane>
-      <AnchorPane layoutX="313.0" layoutY="63.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane layoutX="250.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="2.0" layoutY="2.0" prefHeight="50.0" prefWidth="749.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane prefHeight="50.0" prefWidth="750.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="51.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label layoutX="133.0" layoutY="10.0" text="Proveedor:">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Label>
                   <Line endX="600.0" layoutX="133.0" layoutY="49.0" startX="-100.0" />
-                  <Label layoutX="246.0" layoutY="11.0" text="Detalle">
+                  <Label layoutX="133.0" layoutY="10.0" text="Detalle de la categoría">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="proveedor_formulario" layoutX="257.0" layoutY="48.0" prefHeight="522.0" prefWidth="750.0">
-         <children>
-            <TitledPane animated="false" collapsible="false" layoutX="31.0" layoutY="24.0" prefHeight="202.0" prefWidth="701.0" text="Información General">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="181.0" prefWidth="699.0">
-                     <children>
-                        <TextField fx:id="proveedor_nombre" layoutX="166.0" layoutY="40.0" prefHeight="25.0" prefWidth="501.0" />
-                        <Label layoutX="22.0" layoutY="32.0" text="Proveedor">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="22.0" layoutY="79.0" text="R.U.C.:">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="ruc" layoutX="166.0" layoutY="76.0" prefHeight="25.0" prefWidth="120.0" />
-                        <Label layoutX="361.0" layoutY="78.0" text="Telefono:">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="telf" layoutX="452.0" layoutY="76.0" prefHeight="25.0" prefWidth="213.0" />
-                        <Label layoutX="20.0" layoutY="119.0" text="Representante legal:">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="repLegal" layoutX="166.0" layoutY="116.0" prefHeight="25.0" prefWidth="499.0" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </TitledPane>
-            <TitledPane animated="false" collapsible="false" layoutX="31.0" layoutY="242.0" prefHeight="263.0" prefWidth="701.0">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1852.0">
-                     <children>
-                        <Label layoutX="14.0" layoutY="32.0" text="Comentarios">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextArea fx:id="comentarios" layoutX="155.0" layoutY="32.0" prefHeight="176.0" prefWidth="507.0" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </TitledPane>
+            <AnchorPane fx:id="proveedor_formulario" layoutY="50.0" prefHeight="522.0" prefWidth="750.0">
+               <children>
+                  <TitledPane animated="false" collapsible="false" layoutX="31.0" layoutY="24.0" prefHeight="202.0" prefWidth="701.0" text="Información General">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="181.0" prefWidth="699.0">
+                           <children>
+                              <TextField fx:id="proveedor_nombre" layoutX="165.0" layoutY="30.0" prefHeight="25.0" prefWidth="501.0" />
+                              <Label layoutX="22.0" layoutY="32.0" text="Proveedor">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="22.0" layoutY="79.0" text="R.U.C.:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="ruc" layoutX="166.0" layoutY="76.0" prefHeight="25.0" prefWidth="120.0" />
+                              <Label layoutX="361.0" layoutY="78.0" text="Telefono:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="telf" layoutX="452.0" layoutY="76.0" prefHeight="25.0" prefWidth="213.0" />
+                              <Label layoutX="20.0" layoutY="119.0" text="Representante legal:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="repLegal" layoutX="166.0" layoutY="116.0" prefHeight="25.0" prefWidth="499.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane animated="false" collapsible="false" layoutX="31.0" layoutY="242.0" prefHeight="263.0" prefWidth="701.0">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1852.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="32.0" text="Comentarios">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="comentarios" layoutX="155.0" layoutY="32.0" prefHeight="176.0" prefWidth="507.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>

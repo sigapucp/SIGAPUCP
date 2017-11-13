@@ -18,8 +18,9 @@ import org.javalite.activejdbc.annotations.Table;
 public class Proveedor extends Model{
     
     static{
-        validatePresenceOf("name");
+        validatePresenceOf("name","contact_name","provuder_ruc","phone_number");
         validateNumericalityOf("provuder_ruc");
+        validateNumericalityOf("phone_number");
         validateRegexpOf("provuder_ruc", "\\d{1,11}");
     }
     
@@ -29,7 +30,7 @@ public class Proveedor extends Model{
         int telef_contacto = (telf_contacto.equals("")) ? 0 : Integer.parseInt(telf_contacto);
         this.set("phone_number",  telef_contacto);
         this.set("provuder_ruc", ruc);
-        this.set("status", "activo");
+        this.set("status", ESTADO.ACTIVO.name());
         this.set("annotation", comentarios);
     }    
     public enum ESTADO

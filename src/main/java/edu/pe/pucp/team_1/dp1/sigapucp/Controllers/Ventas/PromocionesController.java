@@ -448,15 +448,32 @@ public class PromocionesController extends Controller{
     
     private void editar_promocion(Promocion promocion_aux){
         try{
+            
+            //Obteniendo valores para Objeto Promoción  
+            if(dpFecha1.getValue().isAfter(dpFecha2.getValue()))
+            {
+                infoController.show("La fecha inicial tiene que ser luego de la fecha final");
+                return;
+            }
+            
+            String tipoPromo = obtener_tipo_promo();                            
+            if(tipoPromo.equals(Promocion.TIPO.CANTIDAD.name()))
+            {
+                int nrComprar =  (Integer)spCompro.getValue();                
+                int nrObtener = (Integer)spLlevo.getValue();
+                if(nrComprar>= nrObtener)
+                {
+                    infoController.show("El numero que se debe Obtener debe ser mayor al que se va a comprar");
+                    return;
+                }
+            }            
             Base.openTransaction();  
-            //Obteniendo valores para Objeto Promoción         
             String codigoPromo = txtFieCodigoPromo.getText();
             String fechaIni = formatoFecha(dpFecha1.getValue(),"dd/MM/yyyy"); 
             String fechaFin = formatoFecha(dpFecha2.getValue(),"dd/MM/yyyy");
             String prioridad = obtener_prioridad();
             String es_categoria = promocion_aux.getString("es_categoria");
-            String estado = Promocion.ESTADO.ACTIVO.name();
-            String tipoPromo = obtener_tipo_promo();
+            String estado = Promocion.ESTADO.ACTIVO.name();          
             
             String codigo = "";
             codigo = (tipoPromo.equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto2.getText();    
@@ -498,8 +515,25 @@ public class PromocionesController extends Controller{
     
     public void crear_promocion(){
         try{
-            Base.openTransaction();  
+          
             //Obteniendo valores para Objeto Promoción
+            if(dpFecha1.getValue().isAfter(dpFecha2.getValue()))
+            {
+                infoController.show("La fecha inicial tiene que ser luego de la fecha final");
+                return;
+            }
+            String tipoPromo = obtener_tipo_promo();                            
+            if(tipoPromo.equals(Promocion.TIPO.CANTIDAD.name()))
+            {
+                int nrComprar =  (Integer)spCompro.getValue();                
+                int nrObtener = (Integer)spLlevo.getValue();
+                if(nrComprar>= nrObtener)
+                {
+                    infoController.show("El numero que se debe Obtener debe ser mayor al que se va a comprar");
+                    return;
+                }
+            }            
+            Base.openTransaction();  
             promocion_seleccionada = new Promocion();
             String codigoPromo = txtFieCodigoPromo.getText();
             String fechaIni = formatoFecha(dpFecha1.getValue(),"dd/MM/yyyy"); 
@@ -507,8 +541,9 @@ public class PromocionesController extends Controller{
             String prioridad = obtener_prioridad();
             String es_categoria = (obtener_es_categoria) ? "S":"N";
             String estado = Promocion.ESTADO.ACTIVO.name();
-            String tipoPromo = obtener_tipo_promo();
+         
             
+           
             String codigo = "";
             codigo = (tipoPromo.equals(Promocion.TIPO.PORCENTAJE.name())) ? txtFieCodigoProducto3.getText():txtFieCodigoProducto2.getText();    
             System.out.println(codigo);
@@ -842,6 +877,7 @@ public class PromocionesController extends Controller{
     
     @Override
     public void desactivar(){
+        promocion_seleccionada = tabla_promociones.getSelectionModel().getSelectedItem();
         if (promocion_seleccionada==null){
             infoController.show("No se selecciono una promocion");
             return;

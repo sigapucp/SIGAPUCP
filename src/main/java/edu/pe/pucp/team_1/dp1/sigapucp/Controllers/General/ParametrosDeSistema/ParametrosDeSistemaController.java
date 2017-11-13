@@ -10,9 +10,15 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ErrorAlertControlle
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -80,6 +86,37 @@ public class ParametrosDeSistemaController extends Controller{
             errorController.show("Error de Valor. La prioridades debe ser entre 1,2,3", e.getMessage());
             Base.rollbackTransaction();
         }        
+    }
+    
+    @Override
+    public void cargar(){
+        Runtime r = Runtime.getRuntime();
+        Process p;
+        ProcessBuilder pb;
+        r = Runtime.getRuntime();
+        pb = new ProcessBuilder( 
+            "C:\\Program Files\\PostgreSQL\\10\\bin\\pg_restore.exe",
+            "--host=200.16.7.146",
+            "--port=5432",
+            "--username=sigapucp",
+            "--dbname=sigapucp_db_admin",
+            "--role=postgres",
+            "--password=sigapucp",
+            "--verbose",
+           "D:\\sathish\\rawDatabase.backup");
+        pb.redirectErrorStream(true);
+        try {
+            p = pb.start();
+            InputStream is = p.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String ll;
+            while ((ll = br.readLine()) != null) {
+             System.out.println(ll);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ParametrosDeSistemaController.class.getName()).log(Level.SEVERE, null, ex);
+        }                    
     }
     
     private void setVisibleParametro(String nombre)

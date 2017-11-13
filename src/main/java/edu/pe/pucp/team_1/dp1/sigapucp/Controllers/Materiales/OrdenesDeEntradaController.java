@@ -6,6 +6,7 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import com.sun.javafx.font.FontConstants;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarDocVentasController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarProductosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
@@ -24,8 +25,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVenta;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
+import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarDocVentasArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,6 +56,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -135,8 +139,14 @@ public class OrdenesDeEntradaController extends Controller {
     private DatePicker BusquedaFecha;
     @FXML
     private GridPane formulario_grid;
-        
-    static Stage modal_stage = new Stage();    
+    @FXML
+    private Label DocumentoVentalLabel;
+    @FXML
+    private TextField VerDocVenta;
+ 
+   
+    static Stage modal_stage = new Stage();   
+    static Stage modal_doc_venta_stage = new Stage();
     private final ObservableList<OrdenEntrada> entradas = FXCollections.observableArrayList();
     private final ObservableList<OrdenEntradaxProducto> productos = FXCollections.observableArrayList();   
        
@@ -144,22 +154,23 @@ public class OrdenesDeEntradaController extends Controller {
     private Boolean crearNuevo;
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmationController;
-    
-    private List<Cliente> autoCompletadoClienteList;    
+        
     private List<Proveedor> autoCompletadoProveedorList;
-    private List<TipoProducto> autoCompletadoProductoList;
-    ArrayList<String> possiblewordsCliente = new ArrayList<>();    
+    private List<TipoProducto> autoCompletadoProductoList;    
     ArrayList<String> possiblewordsProveedor = new ArrayList<>();    
-    ArrayList<String> possiblewordsProducto = new ArrayList<>();       
-    AutoCompletionBinding<String> autoCompletionBindingCliente;
+    ArrayList<String> possiblewordsProducto = new ArrayList<>();           
     AutoCompletionBinding<String> autoCompletionBindingProveedor;
     AutoCompletionBinding<String> autoCompletionBindingProducto;
     TipoProducto productoDevuelto = null;
     Proveedor proveedorDevuelto = null;
     Cliente clienteDevuelto = null;
+    DocVenta docVentaDevuelto = null;
     Cliente clienteBuscado;
     Proveedor proveedorBuscado;
     TipoProducto procutoBuscado;
+    @FXML
+    private Button buscarDocVentaButon;
+  
   
    
     public OrdenesDeEntradaController()
@@ -214,13 +225,17 @@ public class OrdenesDeEntradaController extends Controller {
             if(tipo.equals(OrdenEntrada.TIPO.Compra.name()))
             {
                 ProveedorBuscar.setText(Proveedor.findFirst("proveedor_id = ?", entradaSelecionada.get("proveedor_id")).getString("name"));
+                proveedorDevuelto = Proveedor.findById(entradaSelecionada.get("proveedor_id"));
             }
             
             if(tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
             {
-                ProveedorBuscar.setText(Cliente.findFirst("client_id = ?", entradaSelecionada.get("client_id")).getString("nombre"));
+                clienteDevuelto = Cliente.findById(entradaSelecionada.get("client_id"));
+                docVentaDevuelto = DocVenta.findById(entradaSelecionada.get("doc_venta_id"));
+                ClienteBuscar.setText(clienteDevuelto.getString("nombre"));
+                VerDocVenta.setText(docVentaDevuelto.getString("doc_venta_cod"));                
             }
-            
+           buscarDocVentaButon.setDisable(true);
         } catch (Exception e) {
             infoController.show("Error en Entrada Seleccionada");
         }                        
@@ -357,6 +372,8 @@ public class OrdenesDeEntradaController extends Controller {
             {
                 codInicial = "DEV";
                 orden.set("client_id",clienteDevuelto.getId());
+                orden.set("doc_venta_id",docVentaDevuelto.getId());
+                orden.set("doc_venta_cod",docVentaDevuelto.get("doc_venta_cod"));
             }            
             if(tipo.equals(OrdenEntrada.TIPO.Encuentro.name()))
             {
@@ -476,6 +493,7 @@ public class OrdenesDeEntradaController extends Controller {
         limpiar_formulario(); 
         habilitar_formulario();
         entradaSelecionada = null;
+        buscarDocVentaButon.setDisable(false);
     }
     
     @Override
@@ -705,6 +723,17 @@ public class OrdenesDeEntradaController extends Controller {
         VerProducto.clear();
         valueFactory.setValue(1);
         VerTipo.getSelectionModel().clearSelection();        
+        ProveedorBuscar.clear();
+        ProveedorBuscar.setVisible(false);
+        ClienteBuscar.setVisible(false);
+        VerDocVenta.clear();
+        DocumentoVentalLabel.setVisible(false);
+        ClienteLabel.setVisible(false);
+        ProveedorLabel.setVisible(false);
+        clienteDevuelto = null;
+        proveedorDevuelto = null;
+        docVentaDevuelto = null;
+        
     }         
     
     @Override
@@ -727,25 +756,16 @@ public class OrdenesDeEntradaController extends Controller {
             infoController.show("La orden de entradada contiene errores : " + e.getMessage());      
         }                                  
     }
-      
-    private void handleAutoCompletarCliente() {
-        int i = 0;
-        for (Cliente cliente : autoCompletadoClienteList){
-            String nombre = cliente.getString("nombre");
-            if(nombre == null) continue;
-            if (nombre.equals(ClienteBuscar.getText())){           
-                  clienteDevuelto = cliente;
-            }
-        }
-    }
+   
     
     private void buscar_cliente(String nombre_cli){
         int i = 0;
-        for (Cliente cliente : autoCompletadoClienteList){
+        List<Cliente> clientes = Cliente.where("estado = ?",Cliente.ESTADO.ACTIVO);
+        for (Cliente cliente : clientes){
             String nombre = cliente.getString("nombre");
             if(nombre == null) continue;
             if (nombre.equals(nombre_cli)){           
-                  clienteBuscado = cliente;
+                clienteBuscado = cliente;
             }
         }
     }
@@ -782,15 +802,7 @@ public class OrdenesDeEntradaController extends Controller {
                 productoDevuelto = tipoProducto;             
             }
         }
-    }
-    
-    private void clienteToString() {
-        ArrayList<String> words = new ArrayList<>();
-        for (Cliente cliente : autoCompletadoClienteList){
-            words.add(cliente.getString("nombre"));
-        }        
-        possiblewordsCliente = words;
-    }
+    }       
     
     private void proveedorToString() {
         ArrayList<String> words = new ArrayList<>();
@@ -806,7 +818,25 @@ public class OrdenesDeEntradaController extends Controller {
             words.add(producto.getString("nombre"));
         }               
         possiblewordsProducto = words;
-    }             
+    }     
+     
+    private void setAgregarDocVentas() throws Exception
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarDocVentas.fxml"));
+        AgregarDocVentasController controller = new AgregarDocVentasController();
+        loader.setController(controller);                      
+        Scene modal_content_scene = new Scene((Parent)loader.load());
+        modal_doc_venta_stage.setScene(modal_content_scene);
+        if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
+
+        controller.devolverDocVentaEvent.addHandler((Object sender, agregarDocVentasArgs args) -> {
+            docVentaDevuelto = args.getDocVenta();
+            if(docVentaDevuelto != null)
+            {
+                clienteDevuelto = Cliente.findById(docVentaDevuelto.get("client_id"));
+            }                        
+        });              
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -852,6 +882,9 @@ public class OrdenesDeEntradaController extends Controller {
                         ProveedorBuscar.setVisible(true);
                         ClienteLabel.setVisible(false);
                         ClienteBuscar.setVisible(false);
+                        VerDocVenta.setVisible(false);
+                        DocumentoVentalLabel.setVisible(false);
+                        buscarDocVentaButon.setVisible(false);
                         enter = true;
                     }                    
                     if(newValue.equals(OrdenEntrada.TIPO.Devolucion.name()))
@@ -860,6 +893,9 @@ public class OrdenesDeEntradaController extends Controller {
                         ProveedorBuscar.setVisible(false);
                         ClienteLabel.setVisible(true);
                         ClienteBuscar.setVisible(true);
+                        VerDocVenta.setVisible(true);
+                        DocumentoVentalLabel.setVisible(true);
+                        buscarDocVentaButon.setVisible(true);
                         enter = true;
                     }                
                     
@@ -868,7 +904,10 @@ public class OrdenesDeEntradaController extends Controller {
                         ProveedorLabel.setVisible(false);
                         ProveedorBuscar.setVisible(false);
                         ClienteLabel.setVisible(false);
-                        ClienteBuscar.setVisible(false);                        
+                        ClienteBuscar.setVisible(false);    
+                        VerDocVenta.setVisible(false);
+                        DocumentoVentalLabel.setVisible(false);
+                        buscarDocVentaButon.setVisible(false);
                     }
                 }
             });
@@ -877,17 +916,12 @@ public class OrdenesDeEntradaController extends Controller {
             ProveedorBuscar.setVisible(false);
             ClienteLabel.setVisible(false);
             ClienteBuscar.setVisible(false);
-            
-            autoCompletadoClienteList = Cliente.findAll();
+            VerDocVenta.setVisible(false);
+            DocumentoVentalLabel.setVisible(false);
+            buscarDocVentaButon.setVisible(false);
+                     
             autoCompletadoProductoList = TipoProducto.findAll();
-            autoCompletadoProveedorList = Proveedor.findAll();
-            
-            clienteToString();
-            autoCompletionBindingCliente = TextFields.bindAutoCompletion(ClienteBuscar, possiblewordsCliente);
-            
-            autoCompletionBindingCliente.addEventHandler(EventType.ROOT, (event) -> {
-            handleAutoCompletarCliente();
-            });
+            autoCompletadoProveedorList = Proveedor.findAll();                      
             
             proveedorToString();
             autoCompletionBindingProveedor = TextFields.bindAutoCompletion(ProveedorBuscar, possiblewordsProveedor);
@@ -914,6 +948,8 @@ public class OrdenesDeEntradaController extends Controller {
                 productoDevuelto = args.producto;
             });
             
+            setAgregarDocVentas();
+            
             deshabilitar_formulario();
                               
             TablaOrdenes.setItems(entradas);
@@ -922,6 +958,13 @@ public class OrdenesDeEntradaController extends Controller {
             infoController.show("La orden de entradada contiene errores : " + e);    
         }
     }
-    
 
+    @FXML
+    private void buscarDocVenta(ActionEvent event) {
+        modal_doc_venta_stage.showAndWait();
+        if(docVentaDevuelto==null) return;        
+        VerDocVenta.setText(docVentaDevuelto.getString("doc_venta_cod"));
+        if(clienteDevuelto == null) return;
+        ClienteBuscar.setText(clienteBuscado.getString("nombre"));
+    }    
 }

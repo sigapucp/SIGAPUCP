@@ -15,9 +15,9 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.EnviosController">
    <children>
-      <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0">
+      <AnchorPane layoutX="4.0" layoutY="6.0" prefHeight="572.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="0.0">
          <children>
             <TextField fx:id="envio_buscar" layoutX="118.0" layoutY="67.0" prefHeight="27.0" prefWidth="114.0" />
             <Button layoutX="136.0" layoutY="178.0" mnemonicParsing="false" onAction="#buscar_envio" prefHeight="25.0" prefWidth="96.0" text="Buscar" />
@@ -43,7 +43,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Pane layoutX="6.0" prefHeight="50.0" prefWidth="250.0">
+            <Pane layoutX="6.0" prefHeight="50.0" prefWidth="250.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label layoutX="78.0" layoutY="12.0" text="Búsqueda">
                      <font>
@@ -66,7 +66,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="envio_formulario" layoutX="260.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0">
+      <AnchorPane fx:id="envio_formulario" layoutX="260.0" layoutY="-1.0" prefHeight="572.0" prefWidth="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane layoutX="1.0" prefHeight="51.0" prefWidth="750.0" AnchorPane.bottomAnchor="522.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -166,7 +166,7 @@
                                  </font>
                               </Label>
                               <ComboBox fx:id="ordenes_compra_combobox" layoutX="156.0" layoutY="85.0" prefWidth="150.0" />
-                              <Button layoutX="601.0" layoutY="12.0" mnemonicParsing="false" onAction="#agregarCliente" text="+" />
+                              <Button fx:id="boton_agregar_cliente" layoutX="601.0" layoutY="12.0" mnemonicParsing="false" onAction="#agregarCliente" text="+" />
                            </children>
                         </AnchorPane>
                      </children>

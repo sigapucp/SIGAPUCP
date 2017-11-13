@@ -5,6 +5,8 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
+import static edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra.ESTADO.values;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
@@ -19,8 +21,13 @@ public class GuiaRemision extends Model{
  
     public enum ESTADO
     {
-        PENDIENTE,
+        CANCELADA,
         ENPROCESO,
-        COMPLETA
+        COMPLETA;
+        private static GuiaRemision.ESTADO[] vals = values();
+        public GuiaRemision.ESTADO next()
+        {
+            return vals[(this.ordinal()+1) % vals.length];
+        }        
     }        
 }

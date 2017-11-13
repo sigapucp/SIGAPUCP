@@ -6,13 +6,15 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.CompositePK;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  *
  * @author Jauma
  */
-@Table("rutasracks")
-public class RutaRack extends Model{
+@Table("SimulacionesxDespachos")
+@CompositePK({ "salida_cod", "salida_id", "simulacion_id"})
+public class SimulacionesxDespachos extends Model{
     
 }

@@ -28,4 +28,9 @@ public class Main extends Application {
         stage.setResizable(false);       
         stage.show();
     }
+    
+    @Override
+    public void stop(){
+        if(Base.hasConnection()) Base.close();
+    }
 }

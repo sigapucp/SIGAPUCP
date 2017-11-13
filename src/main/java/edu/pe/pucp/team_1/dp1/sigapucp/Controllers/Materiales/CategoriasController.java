@@ -64,6 +64,7 @@ public class CategoriasController extends Controller{
     private CategoriaProducto categoria_seleccionada;
     
     private InformationAlertController infoController;
+    
     private ConfirmationAlertController confirmatonController;
     
     private Boolean crear_nuevo;
@@ -71,7 +72,7 @@ public class CategoriasController extends Controller{
     private List<CategoriaProducto> categorias;
     
     private final ObservableList<CategoriaProducto> masterData = FXCollections.observableArrayList();
-    private final ObservableList<CategoriaProducto> masterData_filtro = FXCollections.observableArrayList();
+    
     public CategoriasController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         infoController = new InformationAlertController();
@@ -80,23 +81,22 @@ public class CategoriasController extends Controller{
         crear_nuevo = false;
     }
     
-    public boolean cumple_condicion_busqueda(CategoriaProducto categoria, String codigo, String nombre){
-        boolean match = false;
-        if ( codigo.equals("") && nombre.equals("")){
-            match = false;
+    public boolean cumple_condicion_busqueda(CategoriaProducto categoria, String nombre, String codigo){
+        boolean match = true;
+        if (codigo.equals("") && nombre.equals("")){
+            match = true;
         }
         else {
-            match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : true;
-            match = (!nombre.equals("")) ? (match && (categoria.get("nombre")).equals(nombre)) : true;
+            match = (!codigo.equals("")) ? (match && (categoria.get("categoria_code")).equals(codigo)) : match;
+            match = (!nombre.equals("")) ? (match && (categoria.get("nombre")).equals(nombre)) : match;
         }
         return match;
     }    
     
     @FXML
     public void buscar_categoria(ActionEvent event) throws IOException{
-        categorias = CategoriaProducto.findAll();
+        categorias = CategoriaProducto.where("estado = ?", CategoriaProducto.ESTADO.ACTIVO.name());
         masterData.clear();
-        
         try{
             for(CategoriaProducto categoria : categorias){
                 if (cumple_condicion_busqueda(categoria, nombreBuscar.getText(), codigoBuscar.getText())){
@@ -104,8 +104,14 @@ public class CategoriasController extends Controller{
                 }
             }
         }catch(Exception e){
+            infoController.show("Error al filtrar categorias");
             System.out.println(e);
-        }                
+        }
+        tablaCategorias.getItems().clear();
+        tablaCategorias.setEditable(false);
+        ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
+        ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
+        tablaCategorias.getItems().addAll(masterData);
     }
        
     public void crear_categoria(){
@@ -121,9 +127,10 @@ public class CategoriasController extends Controller{
             deshabilitar_formulario();
             crear_nuevo = false;
         }
-        catch(Exception e){
-            System.out.println("La categoria contiene errores: "+e);    
+        catch(Exception e){    
             Base.rollbackTransaction();
+            infoController.show("Error al crear la categoria:" + e);
+            System.out.println(e);
             crear_nuevo = true;
         }
     }
@@ -143,7 +150,8 @@ public class CategoriasController extends Controller{
             infoController.show("La categoria ha sido editada");
         }
         catch(Exception e){
-            
+            infoController.show("Error al editar la categoria: " + e);
+            System.out.println(e);
         }
     }
     
@@ -182,6 +190,7 @@ public class CategoriasController extends Controller{
     
     @Override
     public void desactivar(){
+        categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();
         if (categoria_seleccionada==null){
             infoController.show("No se selecciono una categoria");
             return;
@@ -191,7 +200,7 @@ public class CategoriasController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
-            if(!confirmatonController.show("Se deshabilitara la categoria con código: " + codigo_categoria.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se deshabilitara la categoria con código: " + categoria_seleccionada.getString("categoria_code"), "¿Desea continuar?")) return;
             Base.openTransaction();
             categoria_seleccionada.set("estado",CategoriaProducto.ESTADO.INACTIVO.name());
             categoria_seleccionada.saveIt();
@@ -201,38 +210,38 @@ public class CategoriasController extends Controller{
             limpiar_formulario();
             cargar_tabla_index();
         }catch(Exception e){
-            infoController.show("El producto contiene errores: " + e);
             Base.rollbackTransaction();
+            infoController.show("Error al desactivar la categoria");
+            System.out.println(e);           
         }
     }
-    
-    
+        
     public void cargar_tabla_index(){
         tablaCategorias.getItems().clear();
         masterData.clear();
         for (CategoriaProducto categoria : categorias){
-            if (categoria.getString("estado").equals("activo")){
+            if (categoria.getString("estado").equals(CategoriaProducto.ESTADO.ACTIVO.name())){
                 masterData.add(categoria);
-            }
-            
+            }           
         }
         tablaCategorias.setEditable(false);
         ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("categoria_code")));
         ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<CategoriaProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
         tablaCategorias.getItems().addAll(masterData);
     }
+    
     @FXML
     public void mostrar_detalle_categoria(ActionEvent event) throws IOException{
         try{
-            CategoriaProducto registro_seleccionado = tablaCategorias.getSelectionModel().getSelectedItem();
+            categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();
             DetalleCategoria.setDisable(false);
-            CategoriaProducto cate = CategoriaProducto.findFirst("nombre = ?", registro_seleccionado.getString("nombre"));
-            nombre_categoria.setText(registro_seleccionado.getString("nombre"));
-            codigo_categoria.setText(registro_seleccionado.getString("categoria_code"));
-            descripcion_categoria.setText(registro_seleccionado.getString("descripcion"));
-            
+            CategoriaProducto cate = CategoriaProducto.findFirst("nombre = ?", categoria_seleccionada.getString("nombre"));
+            nombre_categoria.setText(categoria_seleccionada.getString("nombre"));
+            codigo_categoria.setText(categoria_seleccionada.getString("categoria_code"));
+            descripcion_categoria.setText(categoria_seleccionada.getString("descripcion"));           
         }
         catch( Exception e){
+            infoController.show("Error al mostrar detalle de la categoria");
             System.out.println(e);
         }
     }
@@ -252,12 +261,6 @@ public class CategoriasController extends Controller{
         categorias = null;
         categorias = CategoriaProducto.findAll();
         cargar_tabla_index();
-        tablaCategorias.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
-            if (newSelection != null){
-                categoria_seleccionada = tablaCategorias.getSelectionModel().getSelectedItem();                
-                tablaCategorias.getSelectionModel().clearSelection();        
-            }
-        });
     }
     
     @Override

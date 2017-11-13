@@ -53,6 +53,11 @@ public class GridTile extends StackPane {
         setMouseEvents();
     }
     
+    public void setFill(Color color)
+    {
+        border.setFill(color);
+    }
+    
     private void setMouseEvents() {
         // Se ejecuta cuando solo en el primer tile seleccionado
         setOnMousePressed((event) -> {
@@ -153,4 +158,10 @@ public class GridTile extends StackPane {
     public String getTileId() {
         return String.format("%d/%d", x_cord, y_cord);
     }   
+    
+    public void paintTile(Color color)
+    {
+        clearTile();
+        border.setFill(color);
+    }
 }

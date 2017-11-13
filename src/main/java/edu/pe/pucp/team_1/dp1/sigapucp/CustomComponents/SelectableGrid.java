@@ -28,7 +28,7 @@ public class SelectableGrid extends AnchorPane  {
     private int grid_heigth;
     private int grid_real_width;
     private int grid_real_heigth;
-    private TreeMap<Integer, List<GridTile>> tiles;
+    private TreeMap<Integer, List<GridTile>> tiles;    
     private List<GridTile> userTiles;    
     private Behavior behavior;
     private int current_x_tile;
@@ -105,6 +105,43 @@ public class SelectableGrid extends AnchorPane  {
         behavior.clearCurrentActiveTiles(tiles);
     }
     
+    public void changeNullToWhite()
+    {
+          tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                if(!j.isActive())
+                {
+                    j.setFill(Color.WHITE);
+                }
+            });
+        });        
+    }
+    
+    public void changeNullToColor(Color color)
+    {        
+        tiles.forEach((i, list) -> {
+          list.forEach((j) -> {
+              if(!j.isActive())
+              {
+                  j.setFill(color);
+              }
+          });
+      });        
+
+    }
+    
+    public void changeWhiteToNull()
+    {
+          tiles.forEach((i, list) -> {
+            list.forEach((j) -> {
+                if(!j.isActive())
+                {
+                    j.setFill(null);
+                }
+            });
+        });        
+    }
+    
     public void clearAndSaveTempTiles() {
         behavior.clearAndSaveTempTiles(tiles);
     }
@@ -115,7 +152,19 @@ public class SelectableGrid extends AnchorPane  {
         {
             tile.clearTile();
         }
+        userTiles.clear();
     }
+    
+    public void clearUserTilesColor(Color color)
+    {
+        for(GridTile tile:userTiles)
+        {
+            tile.paintTile(color);
+        }
+        userTiles.clear();
+    }
+    
+    
     
     public void setNumRow(int rows) {
         num_rows = rows;
@@ -244,6 +293,11 @@ public class SelectableGrid extends AnchorPane  {
     {
         GridTile tile = tiles.get(y).get(x);      
         tile.activeTileColor(false, color);
+    }
+    
+    public Boolean isTileActive(int x,int j)
+    {
+        return tiles.get(j).get(x).isActive();
     }
     
     public void pintarTileDeletable(int x,int y,Color color)

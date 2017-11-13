@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -8,7 +13,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.NavegacionLateralController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.NavegacionLateralController">
     <stylesheets>
         <URL value="@/styles/botonesacciones.css" />
     </stylesheets>
@@ -19,16 +24,7 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Dashboard">
-                           <graphic>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                 <image>
-                                    <Image url="@Imagenes/dashboard_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Auditoria">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Auditoria">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -37,16 +33,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Reporte de Errores">
-                           <graphic>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
-                                 <image>
-                                    <Image url="@Imagenes/errorReport_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Parametros de Sistema">
+                        <Button contentDisplay="TOP" layoutY="142.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Parametros de Sistema">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -54,7 +41,7 @@
                                  </image>
                               </ImageView>
                            </graphic></Button>
-                        <Button contentDisplay="TOP" layoutY="284.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Kardex">
+                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Kardex">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -132,7 +119,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Guias de Remision">
+                        <Button contentDisplay="TOP" layoutY="213.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Guias de Remision">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -141,7 +128,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Envios">
+                        <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Envios">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
@@ -150,11 +137,20 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button contentDisplay="TOP" layoutY="206.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Ordenes de Salida">
+                        <Button contentDisplay="TOP" layoutY="71.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Ordenes de Salida">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
                                  <image>
                                     <Image url="@Imagenes/salida_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button contentDisplay="TOP" layoutY="277.0" mnemonicParsing="false" onAction="#abrirBusquedaModulo" prefHeight="71.0" prefWidth="200.0" text="Nota de Credito">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="botonImagenImg">
+                                 <image>
+                                    <Image url="@Imagenes/icons8-paycheque.png" />
                                  </image>
                               </ImageView>
                            </graphic>

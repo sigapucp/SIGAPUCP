@@ -65,7 +65,7 @@ public class RacksController extends Controller{
     @FXML private AnchorPane rack_form_container;
     @FXML private TableView<Producto> rack_form_producto_tabla;
     @FXML private TableColumn<Producto, String> rack_form_producto_cod_column;
-    @FXML private TableColumn<Producto, String> rack_form_producto_fecha_venc_column;
+    @FXML private TableColumn<Producto, String> rack_form_producto_posicion_column;
     @FXML private TableColumn<Producto, String> rack_form_producto_nombre_column;
     @FXML private ComboBox<String> buscar_rack_almacen_nomb;
     @FXML private TextField rack_form_cod_field;
@@ -310,7 +310,7 @@ public class RacksController extends Controller{
 
             // Tabla de Formulario
             rack_form_producto_cod_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")) );
-            rack_form_producto_fecha_venc_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_caducidad")) );
+            rack_form_producto_posicion_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("posicion_rack")) );
             rack_form_producto_nombre_column.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) ->
                 new ReadOnlyObjectWrapper(
                     TipoProducto.findById(p.getValue().getInteger("tipo_id")).getString("nombre")

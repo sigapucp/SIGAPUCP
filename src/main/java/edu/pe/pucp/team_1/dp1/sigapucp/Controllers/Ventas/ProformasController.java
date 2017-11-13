@@ -33,6 +33,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.net.URL;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -196,10 +197,10 @@ public class ProformasController extends Controller {
         codProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         nombreProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
         cantProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
-        descProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
-        subTotalProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("precio_unitario"))));
+        descProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("descuento"))));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("flete"))));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<CotizacionxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().get("subtotal_final"))));        
         
         cotizaciones.addAll(tempCotizaciones);
         tablaPedidos.setItems(cotizaciones);
@@ -295,6 +296,8 @@ public class ProformasController extends Controller {
             }
             crearProforma();
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Proformas ,this.usuarioActual);
+            inhabilitar_formulario();
+            limpiar_formulario();
         }else
         {
             if(proformaSelecionado == null){
@@ -408,6 +411,7 @@ public class ProformasController extends Controller {
     private void setProductos(Cotizacion cotizacion)
     {
         List<CotizacionxProducto> cotizacionesGuardadas = CotizacionxProducto.where("cotizacion_id = ?", cotizacion.getId());
+        
         for(CotizacionxProducto cotizacionxproducto:productos)
         {
             if(cotizacionxproducto.isNew())
@@ -418,18 +422,25 @@ public class ProformasController extends Controller {
             }
             cotizacionxproducto.saveIt();
         }             
-        
-        if(cotizacionesGuardadas == null) return;
-        List<CotizacionxProducto> cotizacionesProductosDelete = cotizacionesGuardadas.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
+               
+        if(cotizacionesGuardadas != null)
+        {
+            List<CotizacionxProducto> cotizacionesProductosDelete = cotizacionesGuardadas.stream().filter(x -> productos.stream().noneMatch(y -> !y.isNew() && 
                 y.getInteger("cotizacion_id").equals(x.getInteger("cotizacion_id")) && 
                 y.getInteger("tipo_id").equals(x.getInteger("tipo_id")))).collect(Collectors.toList());
         
-        if(cotizacionesProductosDelete == null) return;
-        
-        for(CotizacionxProducto cotizacionxProducto:cotizacionesProductosDelete)
-        {
-            CotizacionxProducto.delete("cotizacion_id = ? AND tipo_id = ?",cotizacionxProducto.get("cotizacion_id"),cotizacionxProducto.get("tipo_id"));
+            if(cotizacionesProductosDelete == null) return;
+
+            for(CotizacionxProducto cotizacionxProducto:cotizacionesProductosDelete)
+            {
+                CotizacionxProducto.delete("cotizacion_id = ? AND tipo_id = ?",cotizacionxProducto.get("cotizacion_id"),cotizacionxProducto.get("tipo_id"));
+            }                           
         }
+                
+        for(CotizacionxProducto cotizacionxproducto:productos)
+        {
+            cotizacionxproducto.saveIt();
+        }             
     }
     
     @FXML
@@ -527,6 +538,7 @@ public class ProformasController extends Controller {
         total.clear();                
         SpinnerValueFactory newvalueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 1);
         cantProd.setValueFactory(newvalueFactory);
+        proformaSelecionado = null;
     }      
         
     @FXML
@@ -675,10 +687,10 @@ public class ProformasController extends Controller {
     
     private void setValorTotal(Double valor)
     {        
-        subTotalFinal.setText(String.valueOf(valor));
+        subTotalFinal.setText(new DecimalFormat("#.##").format(valor));
         Double valorIgv = IGV*valor;            
-        igvTotal.setText(String.valueOf(valorIgv));
-        total.setText(String.valueOf(valor+valorIgv));                
+        igvTotal.setText(new DecimalFormat("#.##").format(valorIgv));
+        total.setText(new DecimalFormat("#.##").format((valor+valorIgv)));                
     }
     
     private Double calcularDescuento(CotizacionxProducto producto) throws Exception
