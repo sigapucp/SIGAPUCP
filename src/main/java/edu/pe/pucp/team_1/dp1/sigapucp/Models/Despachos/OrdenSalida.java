@@ -19,6 +19,10 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("salida_id")
 @Many2Many(other = SimulacionBD.class, join = "SimulacionesxDespachos", sourceFKName = "salida_id", targetFKName = "simulacion_id")
 public class OrdenSalida extends Model{
+    static{
+        validatePresenceOf("salida_cod", "tipo", "estado");
+    }
+    
     public enum TIPO
     {
         Venta,

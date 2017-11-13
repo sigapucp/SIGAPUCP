@@ -143,12 +143,10 @@
                      <content>
                         <AnchorPane prefHeight="239.0" prefWidth="175.0">
                            <children>
-                              <Button layoutX="71.0" mnemonicParsing="false" onAction="#agregaProducto" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="0.0" />
-                              <Button layoutX="71.0" layoutY="84.0" mnemonicParsing="false" onAction="#eliminarProducto" prefHeight="40.0" prefWidth="40.0" text="X" />
-                              <Button layoutX="71.0" layoutY="157.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="D" AnchorPane.bottomAnchor="50.0" />
-                              <Label layoutX="45.0" layoutY="55.0" text="Agregar Producto" />
-                              <Label layoutX="43.0" layoutY="124.0" text="Eliminar Producto" />
-                              <Label layoutX="61.0" layoutY="194.0" text="Descuentos" />
+                              <Button layoutX="68.0" layoutY="40.0" mnemonicParsing="false" onAction="#agregaProducto" prefHeight="40.0" prefWidth="40.0" text="A" AnchorPane.topAnchor="40.0" />
+                              <Button layoutX="68.0" layoutY="126.0" mnemonicParsing="false" onAction="#eliminarProducto" prefHeight="40.0" prefWidth="40.0" text="X" />
+                              <Label layoutX="44.0" layoutY="94.0" text="Agregar Producto" />
+                              <Label layoutX="41.0" layoutY="176.0" text="Eliminar Producto" />
                            </children>
                         </AnchorPane>
                      </content>

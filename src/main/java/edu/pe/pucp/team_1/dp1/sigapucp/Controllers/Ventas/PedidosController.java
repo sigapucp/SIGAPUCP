@@ -23,6 +23,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CambioMoneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cotizacion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.CotizacionxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVenta;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -36,6 +37,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.cambiarMenuArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -241,10 +243,10 @@ public class PedidosController extends Controller {
         codProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
         nombreProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
         cantProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
-        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
-        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
-        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
+        precioUnitarioColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("precio_unitario"))));
+        descProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("descuento"))));
+        fleteProdColumn.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("flete"))));
+        subTotalProdColumna.setCellValueFactory((CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(new DecimalFormat("#.##").format(p.getValue().getDouble("subtotal_final"))));        
         
         pedidos.addAll(tempPedido);
         TablaPedido.setItems(pedidos);
@@ -411,7 +413,7 @@ public class PedidosController extends Controller {
                 TablaPedido.getColumns().get(0).setVisible(false);
                 TablaPedido.getColumns().get(0).setVisible(true);                                       
                 return;
-            }  
+            }
             
              
             Boolean stockError = false;
@@ -532,10 +534,10 @@ public class PedidosController extends Controller {
                  
     private void setValorTotal(Double valor)
     {        
-        subTotal.setText(String.valueOf(valor));
+        subTotal.setText(new DecimalFormat("#.##").format(valor));
         Double valorIgv = IGV*valor;            
-        igvPedido.setText(String.valueOf(valorIgv));
-        totalPedido.setText(String.valueOf(valor+valorIgv));                
+        igvPedido.setText(new DecimalFormat("#.##").format(valorIgv));
+        totalPedido.setText(new DecimalFormat("#.##").format(valor+valorIgv));                
     }
             
     private void clienteToString() throws Exception{
@@ -603,6 +605,7 @@ public class PedidosController extends Controller {
         String direccionFacturacion = VerDireccionFacturacion.getText();
         String direccionDespacho = VerDireccionDespacho.getText();
         String departamento = clienteSeleccionado.getString("departamento");
+        String tipo = (TipoDocBoleta.isSelected()) ? DocVenta.TIPO.BOLETA.name() : DocVenta.TIPO.FACTURA.name();
               
         Integer cotizacion_id = null;
         if(cotizacionAnexada != null)
@@ -610,7 +613,7 @@ public class PedidosController extends Controller {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
-                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);          
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento,tipo);          
         String cod = pedido.getString("orden_compra_cod");        
         pedido.saveIt();
       
@@ -659,20 +662,22 @@ public class PedidosController extends Controller {
         String direccionFacturacion = VerDireccionFacturacion.getText();
         String direccionDespacho = VerDireccionDespacho.getText();
         String departamento = clienteSeleccionado.getString("departamento");
+        String tipo = (TipoDocBoleta.isSelected()) ? DocVenta.TIPO.BOLETA.name() : DocVenta.TIPO.FACTURA.name();
         
         OrdenCompra pedido = new OrdenCompra();
         Integer cotizacion_id = null;
         if(cotizacionAnexada != null)
         {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
-            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO);
+            cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO.name());
             cotizacionAnexada.saveIt();
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
-                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);  
+                OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento,tipo);  
         
         String cod = "PED" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from ordenescompra_orden_compra_id_seq")))) + 1);
-        pedido.set("orden_compra_cod",cod);        
+        pedido.set("orden_compra_cod",cod);                
+        pedido.set("tipo",tipo);
         pedido.saveIt();
       
         setProductos(pedido);
@@ -686,7 +691,7 @@ public class PedidosController extends Controller {
     }
     
      private void asignar_data(OrdenCompra pedido,String usuarioAccion, Integer clienteId, Date fechaEmision, Double igvVale, Double total, 
-             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion,String departamento) throws Exception{
+             String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion,String departamento,String tipo) throws Exception{
                        
         pedido.set("client_id",clienteId);
         pedido.setDate("fecha_emision", fechaEmision);
@@ -700,7 +705,8 @@ public class PedidosController extends Controller {
         pedido.set("usuario_id",vendedor.getId());                                                        
         pedido.set("direccion_despacho",direccionDespacho);
         pedido.set("direccion_facturacion",direccionFacturacion);                
-        pedido.set("departamento",departamento);                
+        pedido.set("departamento",departamento);                        
+        pedido.set("tipo",tipo);
     } 
      
     private void setProductos(OrdenCompra pedido) throws Exception
@@ -717,11 +723,11 @@ public class PedidosController extends Controller {
             {
                 pedidoxproducto.set("orden_compra_id",pedido.getId());
                 pedidoxproducto.set("client_id",pedido.get("client_id"));
-                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));
-              
+                pedidoxproducto.set("orden_compra_cod",pedido.get("orden_compra_cod"));              
             }
             Stock productoStock = Stock.first("tipo_id = ?", pedidoxproducto.get("tipo_id"));            
             Integer cantidadLlevada = pedidoxproducto.getInteger("cantidad");
+            pedidoxproducto.set("cantidad_en_envios",cantidadLlevada);
             Integer stockLogico = productoStock.getInteger("stock_logico");
             
             if(cantidadLlevada > stockLogico)
@@ -754,11 +760,8 @@ public class PedidosController extends Controller {
         }
               
         for(OrdenCompraxProducto pedidoxproducto:productos)
-        {
-            if(pedidoxproducto.isNew())
-            {
-                pedidoxproducto.saveIt(); 
-            }             
+        {            
+            pedidoxproducto.saveIt();                         
         }                                 
     }
     
@@ -776,7 +779,7 @@ public class PedidosController extends Controller {
             OrdenCompraxProducto pedidoxProducto = TablaProductos.getSelectionModel().getSelectedItem();
             if(pedidoxProducto==null)
             {
-                infoController.show("No ha seleccionado ningun Pedido");
+                infoController.show("No ha seleccionado ningun Producto");
                 return;
             }         
 
@@ -1333,6 +1336,7 @@ public class PedidosController extends Controller {
           
             productos.clear();
             productos.addAll(generarProductos(cotizacion));  
+            cotizacionAnexada = cotizacion;
 
             crearNuevo = true;
             habilitar_formulario();

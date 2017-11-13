@@ -163,7 +163,6 @@ public class ModalAgregarProductoRackController extends ModalController {
             almacenZ_seleccionado = almacenZ;
             condition = true;
         }
-
         return condition;
     }
 
@@ -198,7 +197,7 @@ public class ModalAgregarProductoRackController extends ModalController {
            infoController.show("Se agrego correctamente un producto en el rack");
            getCurrentStage().close();
         } else {
-            if(producto_seleccionado!= null&&!revisarCapacidadRack(producto_seleccionado))
+            if(producto_seleccionado!= null&&  validator.validate(validationRules, producto_tipo_posicion, producto_rack_cord_x, producto_rack_cord_y, producto_rack_cord_z)&&!revisarCapacidadRack(producto_seleccionado))
             {
                 warningController.show("No hay espacio suficiente para ingresar el producto seleccionado","");
                 

@@ -152,7 +152,19 @@ public class SelectableGrid extends AnchorPane  {
         {
             tile.clearTile();
         }
+        userTiles.clear();
     }
+    
+    public void clearUserTilesColor(Color color)
+    {
+        for(GridTile tile:userTiles)
+        {
+            tile.paintTile(color);
+        }
+        userTiles.clear();
+    }
+    
+    
     
     public void setNumRow(int rows) {
         num_rows = rows;

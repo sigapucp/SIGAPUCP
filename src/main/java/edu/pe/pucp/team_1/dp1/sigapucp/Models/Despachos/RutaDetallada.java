@@ -78,9 +78,9 @@ public class RutaDetallada {
             }                            
                        
             Estado nuevaSolucion = generarRutaGreedy(nuevoMapa,altura,ancho,pIni,pFin);       
-
+           
             if(nuevaSolucion.getCost() <=1) return nuevaSolucion;
-            nuevaSolucion = juntarEstado(estadoInicial,nuevaSolucion,estadoFinal,pIni,pFin);          
+            nuevaSolucion = juntarEstado(estadoInicial,nuevaSolucion,estadoFinal,pIni,pFin);                
             if(nuevaSolucion == null) 
             {
                 continue;       
@@ -97,14 +97,15 @@ public class RutaDetallada {
         return mejorSolucion;       
             
         } catch (Exception e) {
-            
+            System.out.println(e.getMessage());            
         }
         return null;
     }   
     
     private Estado juntarEstado(Estado inicial,Estado central,Estado fin,Punto pIni,Punto pFin)
     {
-        Estado nuevoEstado = new Estado();        
+        Estado nuevoEstado = new Estado();    
+        int startfrom = 0;
         if(inicial!=null)
         {
             for(Punto punto:inicial.ruta)
@@ -114,11 +115,12 @@ public class RutaDetallada {
                 {
                     break;
                 }
-            }            
+            }   
+            startfrom = 1;
         }        
         if(central!=null)
         {
-            for(ListIterator iter = central.ruta.listIterator(1);iter.hasNext();) {
+            for(ListIterator iter = central.ruta.listIterator(startfrom);iter.hasNext();) {
                 Punto punto = (Punto)iter.next();
                 nuevoEstado.add(punto);
             }          
