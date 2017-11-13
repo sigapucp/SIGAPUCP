@@ -723,6 +723,17 @@ public class OrdenesDeEntradaController extends Controller {
         VerProducto.clear();
         valueFactory.setValue(1);
         VerTipo.getSelectionModel().clearSelection();        
+        ProveedorBuscar.clear();
+        ProveedorBuscar.setVisible(false);
+        ClienteBuscar.setVisible(false);
+        VerDocVenta.clear();
+        DocumentoVentalLabel.setVisible(false);
+        ClienteLabel.setVisible(false);
+        ProveedorLabel.setVisible(false);
+        clienteDevuelto = null;
+        proveedorDevuelto = null;
+        docVentaDevuelto = null;
+        
     }         
     
     @Override

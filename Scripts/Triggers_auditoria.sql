@@ -34,7 +34,7 @@ FOR EACH ROW EXECUTE PROCEDURE Stock_entry();
 
 CREATE FUNCTION Stock_reserved() RETURNS trigger AS $T_Stock_reserved_AU$
 BEGIN
-  IF (NEW.reservado = 'S') THEN
+  IF (NEW.reservado = 'S' AND OLD.reservado != 'S') THEN
     UPDATE Stocks
     SET  stock_logico = stock_logico - NEW.cantidad
     WHERE tipo_id = NEW.tipo_id;

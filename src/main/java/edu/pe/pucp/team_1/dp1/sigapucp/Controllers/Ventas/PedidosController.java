@@ -781,7 +781,7 @@ public class PedidosController extends Controller {
             OrdenCompraxProducto pedidoxProducto = TablaProductos.getSelectionModel().getSelectedItem();
             if(pedidoxProducto==null)
             {
-                infoController.show("No ha seleccionado ningun Pedido");
+                infoController.show("No ha seleccionado ningun Producto");
                 return;
             }         
 
