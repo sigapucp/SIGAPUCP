@@ -398,7 +398,11 @@ public class AlmacenesController extends Controller{
                 almacen_lado_grilla.setText(String.valueOf(ladoGrillaAlmacen));
                 radio_btn_almacen_logico.setDisable(false);
                 radio_btn_almacen_fisico.setDisable(false);
-                
+
+                almacen_largo_field.setEditable(false);
+                almacen_ancho_field.setEditable(false);
+                almacen_lado_grilla.setEditable(false);
+
                 if( String.valueOf(almacen_seleccionado.get("es_central")).equals("T") ) {
                     tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
                     radio_btn_almacen_logico.setDisable(true);
