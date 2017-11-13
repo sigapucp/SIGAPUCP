@@ -76,6 +76,10 @@ public class DocumentosDeVentaController extends Controller{
     private TextField importe_total;
     @FXML
     private TextField igv_total;
+    @FXML
+    private TextField guia_remision_busqueda;
+   @FXML
+    private ComboBox<String> tipo_doc;    
     
     //------------------------------------------
     @FXML
@@ -131,21 +135,26 @@ public class DocumentosDeVentaController extends Controller{
             venta.set("doc_venta_cod", codigo_venta.getText());
             venta.set("estado", DocVenta.ESTADO.PENDIENTE.name());
             venta.set("last_user_change", usuarioActual.getString("usuario_cod"));
-            venta.set("guia_id", guia_seleccionada.getId());
-            venta.set("guia_cod", guia_seleccionada.getString("guia_cod"));
+            venta.set("guia_id", guia_devuelta.getId());
+            venta.set("guia_cod", guia_devuelta.getString("guia_cod"));
+            venta.set("tipo",tipo_doc.getSelectionModel().getSelectedItem());
             LocalDate fechaLocal = fecha_emision.getValue();
-            Date fecha = Date.valueOf(fechaLocal);                    
+            Date fecha = Date.valueOf(fechaLocal);  
             venta.set("fecha_emision", fecha);
             venta.saveIt();
             Base.commitTransaction();
         }catch ( Exception e){
-            infoController.show("Se ha creado el documento de venta: ");        
+            infoController.show("Se ha creado el documento de venta: " + e.getMessage());
         }
     }
     
     public void setPedidoVisible(DocVenta venta){
         cliente_seleccionado = Cliente.findById(venta.getInteger("client_id"));
         mostrar_informacion_cliente(cliente_seleccionado);
+        codigo_venta.setText(venta.getString("doc_venta_cod"));
+        ver_moneda.setValue(venta.getString("estado"));
+        tipo_doc.setValue(venta.getString("tipo"));
+        guia_remision_busqueda.setText(venta.getString("guia_cod"));
         GuiaRemision guia = GuiaRemision.findById(venta.getInteger("guia_id"));
         productos_temp.clear();
         List<OrdenCompraxProducto> productos_lista = OrdenCompraxProducto.where("orden_compra_id = ?",guia.getInteger("orden_compra_id"));
@@ -155,8 +164,8 @@ public class DocumentosDeVentaController extends Controller{
     }
     
     @FXML
-    void visualizarPedido(ActionEvent event) {
-        
+    void visualizar_doc_venta(ActionEvent event) {
+        productos.clear();
         habilitar_formulario();
         try {
             documento_seleccionado = tabla_ventas.getSelectionModel().getSelectedItem();
@@ -173,16 +182,33 @@ public class DocumentosDeVentaController extends Controller{
 
     }      
     
+    public void limpiar_formulario(){
+        nombre_cliente.clear();
+        dni_cliente.clear();
+        ruc_cliente.clear();
+        dni_cliente.setDisable(false);
+        ruc_cliente.setDisable(false);
+        fecha_emision.getEditor().clear();
+        codigo_venta.clear();
+        guia_remision_busqueda.clear();
+        subtotal.clear();
+        igv_total.clear();
+        importe_total.clear();
+        productos.clear();
+    }
+    
     @Override
     public void nuevo(){
         crear_nuevo = true;
         habilitar_formulario();
+        limpiar_formulario();
     }
     
     @Override
     public void guardar(){
         if (crear_nuevo){
             crear_doc_venta();
+            infoController.show("Se creo satisfactoriamente");
         }
         else{
             if(guia_seleccionada == null){
@@ -191,7 +217,9 @@ public class DocumentosDeVentaController extends Controller{
             }
         }
         crear_nuevo = false;
-        llenar_tabla();        
+        deshabilitar_formulario();
+        limpiar_formulario();        
+        llenar_tabla();
     }
     
     public void llenar_tabla_productos(){
@@ -209,10 +237,10 @@ public class DocumentosDeVentaController extends Controller{
         Double sub_total = 0.0;
         sub_total = productos_temp.stream().mapToDouble(p -> p.getDouble("subtotal_final")).sum();
         subtotal.setText(sub_total.toString());
-        Double igv = sub_total * ParametroSistema.findFirst("name = ?","IGV").getDouble("valor");
+        Double igv = sub_total * ParametroSistema.findFirst("nombre = ?","IGV").getDouble("valor");
         igv_total.setText(igv.toString());
         Double total = 0.0;
-        total = sub_total*(1 - igv);
+        total = sub_total + igv;
         importe_total.setText(total.toString());
     }
     
@@ -226,6 +254,7 @@ public class DocumentosDeVentaController extends Controller{
             if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL);    
             controller.devolver_guia_remision.addHandler((Object sender, agregarGuiaRemisionArgs args) -> {
                 guia_devuelta = args.guia_remision;
+                guia_remision_busqueda.setText(guia_devuelta.getString("guia_cod"));
                 productos_temp = OrdenCompraxProducto.where("orden_compra_cod = ?", guia_devuelta.get("orden_compra_cod"));
                 llenar_tabla_productos();
                 calcular_totales();
@@ -272,6 +301,7 @@ public class DocumentosDeVentaController extends Controller{
             ruc_cliente.setText(ruc);
             dni_cliente.setDisable(true);
         }          
+        nombre_cliente.setText(cliente.getString("nombre"));
     }
     private void handleAutoCompletar() {
         int i = 0;
@@ -298,6 +328,13 @@ public class DocumentosDeVentaController extends Controller{
         ver_moneda.setItems(monedas);        
     }
     
+    public void llenar_tipo_doc_combobox(){
+        ObservableList<String> tipos = FXCollections.observableArrayList();  
+        tipos.add(DocVenta.TIPO.BOLETA.name());
+        tipos.add(DocVenta.TIPO.FACTURA.name());
+        tipo_doc.setItems(tipos);
+    }
+    
     public void llenar_tabla(){
         ObservableList<DocVenta> doc_ventas = FXCollections.observableArrayList();  
         List<DocVenta> ventas = DocVenta.findAll();
@@ -318,6 +355,8 @@ public class DocumentosDeVentaController extends Controller{
     
     public DocumentosDeVentaController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
+        infoController = new InformationAlertController();
+        crear_nuevo = false;
     } 
     
     @Override
@@ -325,6 +364,7 @@ public class DocumentosDeVentaController extends Controller{
         try{
             llenar_autocompletado();
             llenar_moneda_combobox();
+            llenar_tipo_doc_combobox();
             llenar_tabla();
             deshabilitar_formulario();
         }catch(Exception e){

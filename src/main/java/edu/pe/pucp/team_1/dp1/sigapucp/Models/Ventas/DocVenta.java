@@ -14,7 +14,7 @@ import org.javalite.activejdbc.annotations.Table;
  *
  * @author Jauma
  */
-@Table("DocVentas")
+@Table("docventas")
 @IdName("doc_venta_id")
 public class DocVenta extends Model{
     public enum ESTADO
