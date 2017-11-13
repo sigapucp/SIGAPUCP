@@ -412,7 +412,7 @@ public class PedidosController extends Controller {
                 TablaPedido.getColumns().get(0).setVisible(false);
                 TablaPedido.getColumns().get(0).setVisible(true);                                       
                 return;
-            }  
+            }
             
              
             Boolean stockError = false;
