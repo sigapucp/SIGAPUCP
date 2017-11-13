@@ -75,8 +75,7 @@ public class OrdenesDeSalidaController  extends Controller{
     //FORMULARIO
         //--------------------------------------------------//    
     @FXML
-    private AnchorPane salida_formulario;
-    
+    private AnchorPane salida_formulario;    
     @FXML
     private ComboBox<String> tipos;
     @FXML
@@ -140,22 +139,21 @@ public class OrdenesDeSalidaController  extends Controller{
     //TAB PRODUCTOS
     @FXML
     private Tab tab_producto;
-
     @FXML
     private AnchorPane pane_producto;
         //TABLA PRODUCTOS
     @FXML
-    private TableView<Producto> tabla_productos;
+    private TableView<OrdenSalidaxProductoFinal> tabla_productos;
     @FXML
-    private TableColumn<Producto, String> columna_cod_prod;
+    private TableColumn<OrdenSalidaxProductoFinal, String> columna_cod_prod;
     @FXML
-    private TableColumn<Producto, String> columna_tipo_prod;
+    private TableColumn<OrdenSalidaxProductoFinal, String> columna_tipo_prod;
     @FXML
-    private TableColumn<Producto, String> columna_fecha_prod;
+    private TableColumn<OrdenSalidaxProductoFinal, String> columna_fecha_prod;
      @FXML
-    private TableColumn<Producto, String> columna_almacen_prod;
+    private TableColumn<OrdenSalidaxProductoFinal, String> columna_almacen_prod;
     @FXML
-    private TableColumn<Producto, String> columna_rack_prod;
+    private TableColumn<OrdenSalidaxProductoFinal, String> columna_rack_prod;
 
     //LOGICA
         //--------------------------------------------------//
@@ -167,13 +165,13 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<OrdenSalida> masterDataSalidas = FXCollections.observableArrayList();
     private final ObservableList<OrdenSalidaxProducto> masterDataTipo = FXCollections.observableArrayList();
     private final ObservableList<OrdenSalidaxProducto> masterDataTipoSalida = FXCollections.observableArrayList();    
-    private final ObservableList<Producto> masterDataProducto = FXCollections.observableArrayList();
+    private final ObservableList<OrdenSalidaxProductoFinal> masterDataProductoFinal = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
-    private List<Producto> productos_en_salida_temp;
-    private List<Producto> productos_instancias = new ArrayList<Producto>();
+    private List<Producto> productos_instancias;
     private OrdenSalida salida_seleccionada;
     private TipoProducto tipo_devuelto;
     private Producto instancia_devuelta;
+    private Integer cantidad_tipos_total;
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage_envio = new Stage();    
@@ -189,10 +187,10 @@ public class OrdenesDeSalidaController  extends Controller{
             tipos.getItems().clear();
             llenar_combo_box_tipo();
             tipos.setDisable(false);
-            masterDataProducto.clear();
-            boton_tipo.setVisible(false); //Falta implementar este modal
+            masterDataProductoFinal.clear();
+            boton_tipo.setVisible(false); 
             lbl_cant_tipo.setVisible(false);
-            sp_cant_tipo.setVisible(false); //llenarlo con el stock lógico disponible
+            sp_cant_tipo.setVisible(false);
             
             boton_envio.setVisible(false);
             lbl_codigo_envio.setVisible(false);
@@ -216,10 +214,10 @@ public class OrdenesDeSalidaController  extends Controller{
         descripcion_envio.setText(salida_seleccionada.getString("descripcion"));
     }
     
-    private void setear_tipos_salida(){ // REVISAR
-        String tipo = obtenerTipo();
-        if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
-            List<OrdenesSalidaxEnvio> salida_envios = OrdenesSalidaxEnvio.where("salida_cod = ?", salida_seleccionada.getString("salida_cod"));
+    private void setear_tipos_salida(){
+        String tipo_salida = obtenerTipo_salida();
+        if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name())){
+            List<OrdenesSalidaxEnvio> salida_envios = OrdenesSalidaxEnvio.where("salida_id = ?", salida_seleccionada.get("salida_id"));
             List<Envio> envios_temp = new ArrayList<Envio>();
             for(OrdenesSalidaxEnvio salida_envio : salida_envios){
                 Envio envio_temp = Envio.findById(salida_envio.getInteger("envio_id"));
@@ -228,17 +226,16 @@ public class OrdenesDeSalidaController  extends Controller{
             envios_disponibles = envios_temp;
         } 
         
-        List<OrdenSalidaxProducto> productos = OrdenSalidaxProducto.where("salida_id = ?",salida_seleccionada.getInteger("salida_id"));
-        for (OrdenSalidaxProducto tipoProd : productos)
+        List<OrdenSalidaxProducto> salidaxtipoproducto = OrdenSalidaxProducto.where("salida_id = ?",salida_seleccionada.getInteger("salida_id"));
+        for (OrdenSalidaxProducto tipoProd : salidaxtipoproducto)
             masterDataTipoSalida.add(tipoProd);
         llenar_tabla_salida();
     }
     
-    private void buscarInstancias(){
+    private void mostrarProductosFinales(){
         List<OrdenSalidaxProductoFinal> productos_finales = OrdenSalidaxProductoFinal.where("salida_id = ?", salida_seleccionada.getInteger("salida_id"));
         for (OrdenSalidaxProductoFinal producto : productos_finales){
-            Producto p = Producto.findFirst("producto_id = ?", producto.getInteger("producto_id"));
-            masterDataProducto.add(p);            
+            masterDataProductoFinal.add(producto);            
         }
     }
     
@@ -251,7 +248,7 @@ public class OrdenesDeSalidaController  extends Controller{
             return;            
         }
         try{
-            masterDataProducto.clear();
+            masterDataProductoFinal.clear();
             habilitar_formulario();
             limpia_formulario();
             setear_datos_salida();
@@ -264,9 +261,9 @@ public class OrdenesDeSalidaController  extends Controller{
                 tipos.setDisable(true);
                 descripcion_envio.setEditable(false);
                 codigo_salida.setEditable(false);
-                String tipo_orden = obtenerTipo();
-                buscarInstancias(); 
-                llenar_tabla_instancias_productos();
+                mostrarProductosFinales(); 
+                actualizar_tabla_instancias_productos();
+                cargarModalAgregar();
             } else if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name())){
                 pane_producto.setDisable(true);
                 pane_tipo.setDisable(false);
@@ -283,6 +280,7 @@ public class OrdenesDeSalidaController  extends Controller{
                 tipos.setDisable(true);
                 descripcion_envio.setEditable(true);
                 codigo_salida.setEditable(true);
+                mostrarProductosFinales(); 
             }
         }catch (Exception e){
             infoController.show("No se pudo visualizar la orden de salida : " + e.getMessage());
@@ -319,35 +317,35 @@ public class OrdenesDeSalidaController  extends Controller{
     
     private void insertar_orden_salida_envio(OrdenSalida salida){
         for(Envio envio : envios_disponibles){
-            OrdenesSalidaxEnvio salida_envio = new OrdenesSalidaxEnvio();
-            salida_envio.set("orden_compra_cod", envio.getString("orden_compra_cod"));
-            salida_envio.set("client_id", envio.getInteger("client_id"));
-            salida_envio.set("orden_compra_id", envio.getInteger("orden_compra_id"));
-            salida_envio.set("salida_cod", salida.getString("salida_cod"));
-            salida_envio.set("salida_id", salida.getInteger("salida_id"));
-            salida_envio.set("envio_id", envio.getInteger("envio_id"));
-            salida_envio.set("envio_cod", envio.getString("envio_cod"));
-            salida_envio.saveIt();
+            OrdenesSalidaxEnvio salidaxenvio = new OrdenesSalidaxEnvio();
+            salidaxenvio.set("orden_compra_cod", envio.getString("orden_compra_cod"));
+            salidaxenvio.set("client_id", envio.getInteger("client_id"));
+            salidaxenvio.set("orden_compra_id", envio.getInteger("orden_compra_id"));
+            salidaxenvio.set("salida_cod", salida.getString("salida_cod"));
+            salidaxenvio.set("salida_id", salida.getInteger("salida_id"));
+            salidaxenvio.set("envio_id", envio.getInteger("envio_id"));
+            salidaxenvio.set("envio_cod", envio.getString("envio_cod"));
+            salidaxenvio.saveIt();
         }
     }
     
     private void insertarDetalle(Integer idSalida, String codSalida){
-        for (OrdenSalidaxProducto tipoProd : masterDataTipoSalida){
-            tipoProd.set("salida_id",idSalida);
-            tipoProd.set("salida_cod",codSalida);
-            tipoProd.set("despachado","N");
-            tipoProd.set("tipo_salida",tipos.getSelectionModel().getSelectedItem());
-            tipoProd.saveIt();
+        for (OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
+            salidaxtipoproducto.set("salida_id",idSalida);
+            salidaxtipoproducto.set("salida_cod",codSalida);
+            salidaxtipoproducto.set("despachado","N");
+            salidaxtipoproducto.set("tipo_salida",tipos.getSelectionModel().getSelectedItem());
+            salidaxtipoproducto.saveIt();
         }
     }
     
     private void crear_salida(){ 
         try{
-            String tipo = obtenerTipo();
+            String tipo_salida = obtenerTipo_salida();
             Base.openTransaction();  
             OrdenSalida orden_salida = new OrdenSalida();
             orden_salida.set("last_user_change", usuarioActual.getString("usuario_cod"));
-            orden_salida.set("tipo",tipo);
+            orden_salida.set("tipo",tipo_salida);
             orden_salida.set("descripcion", descripcion_envio.getText());
             orden_salida.set("salida_cod", codigo_salida.getText());
             orden_salida.set("estado", OrdenSalida.ESTADO.PENDIENTE.name());
@@ -356,7 +354,7 @@ public class OrdenesDeSalidaController  extends Controller{
             orden_salida.set("ruta_orden", "test");
             orden_salida.set("nr_asignados", 1);
             orden_salida.saveIt();
-            if (tipo.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())                
+            if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())                
                 insertar_orden_salida_envio(orden_salida);                
                         
             insertarDetalle(orden_salida.getInteger("salida_id"),orden_salida.getString("salida_cod"));
@@ -370,18 +368,23 @@ public class OrdenesDeSalidaController  extends Controller{
     private void eliminar_orden_salida_envios(){
         OrdenesSalidaxEnvio.delete("salida_id = ?", salida_seleccionada.getId());
     }
+    private void eliminar_detalle(){
+        OrdenSalidaxProducto.delete("salida_id = ?", salida_seleccionada.getId());
+    }
     
-    private void editar_orden_salida(){ //REVISAR
+    private void editar_orden_salida(){
         try{
-            String tipo = obtenerTipo();
+            String tipo_salida = obtenerTipo_salida();
             Base.openTransaction();  
             salida_seleccionada.set("salida_cod",codigo_salida.getText());
             salida_seleccionada.set("descripcion", descripcion_envio.getText());
             salida_seleccionada.set("tipo",tipos.getSelectionModel().getSelectedItem());
             salida_seleccionada.saveIt();
             eliminar_orden_salida_envios();
-            if (tipo.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())  
+            if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name()) && !envios_disponibles.isEmpty())  
                 insertar_orden_salida_envio(salida_seleccionada);
+            if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.PENDIENTE.name()))
+                eliminar_detalle();
             insertarDetalle(salida_seleccionada.getInteger("salida_id"),salida_seleccionada.getString("salida_cod"));
             Base.commitTransaction();  
             infoController.show("La orden ha sido modificada satisfactoriamente");
@@ -391,44 +394,54 @@ public class OrdenesDeSalidaController  extends Controller{
     }
     
     private void guardar_instancias_productos(){
-        if (!masterDataProducto.isEmpty()){
-            for (Producto instancia_producto : masterDataProducto){
-                OrdenSalidaxProductoFinal producto_final = new OrdenSalidaxProductoFinal();
-                producto_final.set("producto_cod",instancia_producto.get("producto_cod"));
-                producto_final.set("producto_id",instancia_producto.get("producto_id"));
-                producto_final.set("tipo_cod",instancia_producto.get("tipo_cod"));
-                producto_final.set("tipo_id",instancia_producto.get("tipo_id"));
-                producto_final.set("salida_id",salida_seleccionada.get("salida_id"));
-                producto_final.set("salida_cod",salida_seleccionada.getString("salida_cod"));
-                producto_final.set("orden_entrada_cod",instancia_producto.get("orden_entrada_cod"));
-                producto_final.set("orden_entrada_id",instancia_producto.get("orden_entrada_id"));
-                producto_final.set("estado",OrdenSalidaxProductoFinal.ESTADO.RESERVADO.name());
-                producto_final.saveIt();
-                
-                instancia_producto.set("estado",Producto.ESTADO.DESPACHADO.name());
-                instancia_producto.saveIt();
-            }                
-        } else{
-            infoController.show("No ha seleccionado ningun Producto específico para la orden de salida");
+        List<OrdenSalidaxProductoFinal> productosGuardados = OrdenSalidaxProductoFinal.where("salida_id = ?", salida_seleccionada.getId());
+        if(productosGuardados!=null)
+        {
+             List<OrdenSalidaxProductoFinal> salidasProductosDelete = productosGuardados.stream().filter(x -> masterDataProductoFinal.stream().noneMatch(y -> !y.isNew() && 
+                y.getInteger("salida_id").equals(x.getInteger("salida_id")) && 
+                y.getInteger("producto_id").equals(x.getInteger("producto_id")))).collect(Collectors.toList());
+        
+            if(salidasProductosDelete == null) return;
+
+            for(OrdenSalidaxProductoFinal salidaxProductoFinal:salidasProductosDelete)
+            {
+                Producto p = Producto.findFirst("producto_id = ?", salidaxProductoFinal.getInteger("producto_id"));
+                p.set("estado",Producto.ESTADO.INGRESADO.name());
+                p.saveIt();
+                OrdenSalidaxProductoFinal.delete("salida_id = ? AND producto_id = ?",salidaxProductoFinal.get("salida_id"),salidaxProductoFinal.get("producto_id"));
+            }            
         }
+              
+        for(OrdenSalidaxProductoFinal salidaxProductoFinal:masterDataProductoFinal)
+        {
+            if(salidaxProductoFinal.isNew())
+            {
+                salidaxProductoFinal.set("salida_id",salida_seleccionada.get("salida_id"));
+                salidaxProductoFinal.set("salida_cod",salida_seleccionada.getString("salida_cod"));
+                salidaxProductoFinal.set("estado",OrdenSalidaxProductoFinal.ESTADO.RESERVADO.name());
+                salidaxProductoFinal.saveIt(); 
+                
+                Producto p = Producto.findFirst("producto_id = ?", salidaxProductoFinal.getInteger("producto_id"));
+                p.set("estado",Producto.ESTADO.DESPACHADO.name());
+                p.saveIt();
+            }             
+        }           
     }
     
     @Override
     public void guardar(){     
         if (crear_nuevo){
-                crear_salida();
+            crear_salida();
         }else {
             if (salida_seleccionada == null){ 
                 infoController.show("No ha seleccionado ninguna Orden de Salida"); 
                 return;
             }
             if (salida_seleccionada.get("estado").equals(OrdenSalida.ESTADO.ENPROCESO.name())){
-                OrdenSalidaxProductoFinal.delete("salida_id = ?", salida_seleccionada.getInteger("salida_id"));
                 guardar_instancias_productos();
             }
             editar_orden_salida();
-        }
-        
+        }        
         crear_nuevo = false;
         limpia_formulario();
         inhabilitar_formulario();
@@ -436,11 +449,11 @@ public class OrdenesDeSalidaController  extends Controller{
     }
     
     private void actualizar_lista_salida_tabla(){
-        String tipo_orden = obtenerTipo();
+        String tipo_salida = obtenerTipo_salida();
         Integer cantidad = 0;
         for (OrdenSalidaxProducto tipoProd : masterDataTipo){
             Integer cantidad_agregar = 0;
-            if (!tipo_orden.equals(OrdenSalida.TIPO.Venta.name())){
+            if (!tipo_salida.equals(OrdenSalida.TIPO.Venta.name())){
                 cantidad_agregar = sp_cant_tipo.getValue();
                 if (cantidad_agregar>0)
                     tipoProd.set("cantidad",cantidad_agregar);
@@ -451,10 +464,10 @@ public class OrdenesDeSalidaController  extends Controller{
             }                
             
             if(masterDataTipoSalida.stream().anyMatch(x -> x.getInteger("tipo_id").equals(tipoProd.getInteger("tipo_id")))){
-                for (OrdenSalidaxProducto tipo_salida : masterDataTipoSalida){
-                    if (tipoProd.get("tipo_id")==tipo_salida.get("tipo_id")){
-                        cantidad = tipo_salida.getInteger("cantidad")+tipoProd.getInteger("cantidad");
-                        tipo_salida.set("cantidad",cantidad);
+                for (OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
+                    if (tipoProd.get("tipo_id")==salidaxtipoproducto.get("tipo_id")){
+                        cantidad = salidaxtipoproducto.getInteger("cantidad")+tipoProd.getInteger("cantidad");
+                        salidaxtipoproducto.set("cantidad",cantidad);
                     }
                 }
             } else {
@@ -469,21 +482,17 @@ public class OrdenesDeSalidaController  extends Controller{
         productos.clear();
         productos.addAll(masterDataTipoSalida);
         
-        columna_cod_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-        columna_nombre_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("nombre")));
-        columna_cant_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getInteger("cantidad")));
-        columna_desc_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("descripcion")));
-
-        tabla_tipos_salida.setItems(masterDataTipoSalida);
         tabla_tipos_salida.getColumns().get(0).setVisible(false);
         tabla_tipos_salida.getColumns().get(0).setVisible(true); 
     }
     
-    private void agregar_a_lista_envios(){
-        if(!envios_disponibles.stream().anyMatch(x -> x.getInteger("tipo_id").equals(envio_devuelto.getInteger("tipo_id")))){
+    private Boolean agregar_a_lista_envios(){
+        if(!envios_disponibles.stream().anyMatch(x -> x.getInteger("envio_id").equals(envio_devuelto.getInteger("envio_id")))){
             envios_disponibles.add(envio_devuelto);
+            return false;
         }else{
             infoController.show("Ha seleccionado un envio ya agregado");
+            return true;
         }
     }
     
@@ -497,8 +506,7 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
-    public void llenar_tabla_instancias_productos(){  
-        
+    public void actualizar_tabla_instancias_productos(){          
         tabla_productos.getColumns().get(0).setVisible(false);
         tabla_productos.getColumns().get(0).setVisible(true);
     }
@@ -521,38 +529,42 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }      
     
+    private void cargarModalAgregar(){
+        cantidad_tipos_total = 0;
+        String tipo_salida = obtenerTipo_salida();
+        for(OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
+            List<Producto> productosAlmacen;
+            if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name()))
+                productosAlmacen = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"), Producto.ESTADO.RESERVADO.name()).orderBy("fecha_entrada asc");
+            else
+                productosAlmacen = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"), Producto.ESTADO.INGRESADO.name()).orderBy("fecha_entrada asc");
+            productos_instancias.addAll(productosAlmacen);
+            cantidad_tipos_total += salidaxtipoproducto.getInteger("cantidad");
+        }
+    }
+    
     @FXML
     private void agregar_instancias_producto(ActionEvent event) throws IOException{
-        try{            
-            productos_instancias.clear();
-            Integer cantidad_tipos_total = 0;
-            String tipo_orden = obtenerTipo();
-            for(OrdenSalidaxProducto tipo_producto : masterDataTipoSalida){
-                Integer cantidad_tipo = 0;
-                for (Producto producto : masterDataProducto){
-                    if (producto.getInteger("tipo_id")==tipo_producto.getInteger("tipo_id"))
-                        cantidad_tipo += 1;
-                }
-                if (cantidad_tipo<tipo_producto.getInteger("cantidad")){
-                    List<Producto> aux_productos;
-                    if (tipo_orden.equals(OrdenSalida.TIPO.Venta.name()))
-                        aux_productos = Producto.where("tipo_id = ? AND estado = ?", tipo_producto.get("tipo_id"), Producto.ESTADO.RESERVADO.name()).orderBy("fecha_entrada asc");
-                    else
-                        aux_productos = Producto.where("tipo_id = ? AND estado = ?", tipo_producto.get("tipo_id"), Producto.ESTADO.INGRESADO.name()).orderBy("fecha_entrada asc");
-                    productos_instancias.addAll(aux_productos);
-                    for (Producto productoSelect : masterDataProducto){
-                        for (Producto productoAlmacen : aux_productos){
-                            if (productoSelect.getInteger("producto_id")==productoAlmacen.getInteger("producto_id"))
-                                productos_instancias.remove(productoAlmacen);
-                        }
-                    }                            
-                }
-                cantidad_tipos_total += tipo_producto.getInteger("cantidad");
-            }
-            if (cantidad_tipos_total > masterDataProducto.size()){
+        try{
+            if (cantidad_tipos_total > masterDataProductoFinal.size()){
                 seleccionar_instancia(); 
-                masterDataProducto.add(instancia_devuelta);
-                llenar_tabla_instancias_productos();
+                if (instancia_devuelta != null){
+                    OrdenSalidaxProductoFinal salidaxproductofinal = new OrdenSalidaxProductoFinal();
+                    salidaxproductofinal.set("producto_cod",instancia_devuelta.getString("producto_cod"));
+                    salidaxproductofinal.set("producto_id",instancia_devuelta.getInteger("producto_id"));
+                    salidaxproductofinal.set("tipo_cod",instancia_devuelta.getString("tipo_cod"));
+                    salidaxproductofinal.set("tipo_id",instancia_devuelta.getInteger("tipo_id"));
+                    salidaxproductofinal.set("producto_cod",instancia_devuelta.getString("producto_cod"));
+                    salidaxproductofinal.set("orden_entrada_cod",instancia_devuelta.get("orden_entrada_cod"));
+                    salidaxproductofinal.set("orden_entrada_id",instancia_devuelta.get("orden_entrada_id"));
+                    masterDataProductoFinal.add(salidaxproductofinal);
+                    for (Producto p: productos_instancias){
+                        if (p.getInteger("producto_id")==instancia_devuelta.get("producto_id")){
+                            productos_instancias.remove(p);
+                            break;
+                        }
+                    }
+                }                
             } else{
                 infoController.show("Se completó la cantidad de productos de cada tipo");
             }
@@ -563,21 +575,16 @@ public class OrdenesDeSalidaController  extends Controller{
     
     @FXML
     private void eliminar_instancias_producto(ActionEvent event) throws IOException{
-        Producto producto_seleccionado = tabla_productos.getSelectionModel().getSelectedItem();
+        OrdenSalidaxProductoFinal producto_seleccionado = tabla_productos.getSelectionModel().getSelectedItem();
         if (producto_seleccionado == null){
-            infoController.show("No se ha seleccionado ningun producto");
+            infoController.show("No se ha seleccionado ningún producto");
             return;
         }
-        String tipo_orden = obtenerTipo();
-        if (tipo_orden.equals(OrdenSalida.TIPO.Venta.name()))
-            producto_seleccionado.set("estado",Producto.ESTADO.RESERVADO.name());
-        else
-            producto_seleccionado.set("estado",Producto.ESTADO.INGRESADO.name());
-        producto_seleccionado.saveIt();
-        masterDataProducto.remove(producto_seleccionado);
+        Producto p = Producto.findFirst("producto_id = ?", producto_seleccionado.get("producto_id"));
+        productos_instancias.add(p);
+        masterDataProductoFinal.remove(producto_seleccionado);
         
-        tabla_productos.getColumns().get(0).setVisible(false);
-        tabla_productos.getColumns().get(0).setVisible(true);
+        actualizar_tabla_instancias_productos();
     }
     
     @FXML
@@ -588,9 +595,11 @@ public class OrdenesDeSalidaController  extends Controller{
             if ( (tipo_seleccionado == null ) || (codigo == null)){
                 infoController.show("Debe completar los datos de la orden de salida ");
             }else{
+                Boolean repetido = false;
                 if (tipo_seleccionado.equals(OrdenSalida.TIPO.Venta.name()))
-                    agregar_a_lista_envios();                
-                actualizar_lista_salida_tabla();
+                    repetido = agregar_a_lista_envios();                
+                if (!repetido)
+                    actualizar_lista_salida_tabla();
                 llenar_tabla_salida();
             }
         } catch (Exception e) {
@@ -601,8 +610,8 @@ public class OrdenesDeSalidaController  extends Controller{
     private void cargar_tipos_producto(){
         masterDataTipo.clear();
         
-        String tipo = obtenerTipo();
-        if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
+        String tipo_salida = obtenerTipo_salida();
+        if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name())){
             List<OrdenesCompraxProductosxenvio> productos_envio = OrdenesCompraxProductosxenvio.where("envio_id = ?",envio_devuelto.getId() );
             for( OrdenesCompraxProductosxenvio producto_envio : productos_envio){
                 OrdenSalidaxProducto producto_salida = new OrdenSalidaxProducto();
@@ -618,13 +627,7 @@ public class OrdenesDeSalidaController  extends Controller{
             producto_salida.set("tipo_cod",tipo_devuelto.getString("tipo_cod"));
             producto_salida.setInteger("cantidad",0);
             masterDataTipo.add(producto_salida);            
-        }        
-        columna_cod_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-        columna_nombre_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("nombre")));        
-        columna_cant_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getInteger("cantidad").toString()));
-        columna_desc_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("descripcion")));
-        
-        tabla_tipos.setItems(masterDataTipo);
+        }                
     }
        
     private void mostrar_datos_pedido(){
@@ -649,16 +652,30 @@ public class OrdenesDeSalidaController  extends Controller{
         columna_cod_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("salida_cod")));
         columna_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
 
-        tabla_salidas.setItems(masterDataSalidas);
+        tabla_salidas.setItems(masterDataSalidas);        
+        
+        columna_cod_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+        columna_nombre_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("nombre")));        
+        columna_cant_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getInteger("cantidad").toString()));
+        columna_desc_tipo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("descripcion")));
+        
+        tabla_tipos.setItems(masterDataTipo);
+        
+        columna_cod_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+        columna_nombre_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("nombre")));
+        columna_cant_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getInteger("cantidad")));
+        columna_desc_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?", p.getValue().getInteger("tipo_id")).getString("descripcion")));
+
+        tabla_tipos_salida.setItems(masterDataTipoSalida);
         
         //tabla 2do tab
-        columna_cod_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")));
-        columna_tipo_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?",p.getValue().getInteger("tipo_id")).getString("nombre")));
-        columna_fecha_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_entrada")));
-        columna_almacen_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("almacen_cod")));
-        columna_rack_prod.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")));
+        columna_cod_prod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProductoFinal, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")));
+        columna_tipo_prod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProductoFinal, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?",p.getValue().getInteger("tipo_id")).getString("nombre")));
+        columna_fecha_prod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProductoFinal, String> p) -> new ReadOnlyObjectWrapper(Producto.findFirst("tipo_id = ?",p.getValue().getInteger("tipo_id")).get("fecha_entrada")));
+        columna_almacen_prod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProductoFinal, String> p) -> new ReadOnlyObjectWrapper(Producto.findFirst("producto_id = ?",p.getValue().getInteger("producto_id")).get("almacen_cod")));
+        columna_rack_prod.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalidaxProductoFinal, String> p) -> new ReadOnlyObjectWrapper(Producto.findFirst("producto_id = ?",p.getValue().getInteger("producto_id")).get("rack_cod")));
         
-        tabla_productos.setItems(masterDataProducto);
+        tabla_productos.setItems(masterDataProductoFinal);
     }
     
     private void habilitar_formulario(){
@@ -675,7 +692,7 @@ public class OrdenesDeSalidaController  extends Controller{
         tipos.setItems(tipos_enum);
     }
     
-    private String obtenerTipo(){
+    private String obtenerTipo_salida(){
         String tipo = (tipos.getSelectionModel().getSelectedItem() == null ) ? "" : tipos.getSelectionModel().getSelectedItem(); 
         return tipo;
     }
@@ -687,9 +704,9 @@ public class OrdenesDeSalidaController  extends Controller{
         masterDataTipoSalida.clear();
         tabla_tipos_salida.getItems().clear();
         
-        String tipo = obtenerTipo();
+        String tipo_salida = obtenerTipo_salida();
         
-        if (tipo.equals(OrdenSalida.TIPO.Venta.name())){
+        if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name())){
             envios_disponibles.clear();
             boton_tipo.setVisible(false);
             lbl_cant_tipo.setVisible(false);
@@ -717,25 +734,30 @@ public class OrdenesDeSalidaController  extends Controller{
     @Override
     public void cambiarEstado(){
         if(salida_seleccionada == null){
-            infoController.show("No ha seleccionado ningun Envio");
+            infoController.show("No ha seleccionado ninguna orden de salida");
             return;
         }
         if (salida_seleccionada.getString("estado").equals(OrdenSalida.ESTADO.COMPLETA.name())){
-            infoController.show("El envio ya ha sido completada");
+            infoController.show("Esta orden de salida ya ha sido completada");
             return;            
         }
         try{
             Base.openTransaction();
             String estado_anterior = salida_seleccionada.getString("estado");
             OrdenSalida.ESTADO siguiente_estado = OrdenSalida.ESTADO.valueOf(estado_anterior).next();
-            if(!confirmatonController.show("Esta accion cambiara el envio de estado " + estado_anterior + " a " + siguiente_estado.name(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Esta acción cambiará la orden de salida de estado " + estado_anterior + " a " + siguiente_estado.name(), "¿Desea continuar?")) return;
             Integer cantidad = 0;
-            if (siguiente_estado.equals(OrdenSalida.ESTADO.COMPLETA.name())){
-                for (OrdenSalidaxProducto tipo : masterDataTipoSalida)
-                    cantidad += tipo.getInteger("cantidad");
-                if (masterDataProducto.size()==cantidad){
+            
+            if (siguiente_estado.name().equals(OrdenSalida.ESTADO.COMPLETA.name())){
+                for (OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida)
+                    cantidad += salidaxtipoproducto.getInteger("cantidad");
+                if (masterDataProductoFinal.size()==cantidad){
                     salida_seleccionada.set("estado", siguiente_estado.name());
                     salida_seleccionada.saveIt();
+                    infoController.show("La orden de salida fue actualizada correctamente. Todos productos han sido despachados");
+                    Base.commitTransaction();
+                    limpia_formulario();
+                    inhabilitar_formulario();
                     return;
                 } else{
                     infoController.show("No se ha completado la cantidad de productos específicos necesario en la orden de salida");
@@ -746,37 +768,34 @@ public class OrdenesDeSalidaController  extends Controller{
             salida_seleccionada.saveIt();
             
             // generar productos más antiguos en venta
-            String tipo_orden = obtenerTipo();
-            if (tipo_orden.equals(OrdenSalida.TIPO.Venta.name())){
+            String tipo_salida = obtenerTipo_salida();
+            if (tipo_salida.equals(OrdenSalida.TIPO.Venta.name())){
                 productos_instancias.clear();
-                for(OrdenSalidaxProducto tipo_producto : masterDataTipoSalida){
-                    Integer cantidad_tipo = 0;
-                    for (Producto producto : masterDataProducto){
-                        if (producto.getInteger("tipo_id")==tipo_producto.getInteger("tipo_id"))
-                            cantidad_tipo += 1;
-                    }
-                    if (cantidad_tipo<tipo_producto.getInteger("cantidad")){
-                        List<Producto> aux_productos = Producto.where("tipo_id = ? AND estado = ?", tipo_producto.get("tipo_id"),Producto.ESTADO.RESERVADO.name()).orderBy("fecha_entrada asc");
-                        Integer contador = tipo_producto.getInteger("cantidad");
-                        for (Producto p : aux_productos){
-                            masterDataProducto.add(p);
-                            p.set("estado",Producto.ESTADO.DESPACHADO.name());
-                            p.saveIt();
-                            contador --;
-                            if (contador ==0) break;
-                        }                                    
-                    }
+                for(OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
+                    List<Producto> aux_productos = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"),Producto.ESTADO.INGRESADO.name()).orderBy("fecha_entrada asc");
+                    //List<Producto> aux_productos = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"),Producto.ESTADO.RESERVADO.name()).orderBy("fecha_entrada asc");
+                    Integer contador = salidaxtipoproducto.getInteger("cantidad");
+                    for (Producto p : aux_productos){
+                        OrdenSalidaxProductoFinal salidaxproductofinal = new OrdenSalidaxProductoFinal();
+                        salidaxproductofinal.set("producto_cod",p.getString("producto_cod"));
+                        salidaxproductofinal.set("producto_id",p.getInteger("producto_id"));
+                        salidaxproductofinal.set("tipo_cod",p.getString("tipo_cod"));
+                        salidaxproductofinal.set("tipo_id",p.getInteger("tipo_id"));
+                        salidaxproductofinal.set("producto_cod",p.getString("producto_cod"));
+                        salidaxproductofinal.set("orden_entrada_cod",p.get("orden_entrada_cod"));
+                        salidaxproductofinal.set("orden_entrada_id",p.get("orden_entrada_id"));
+                        masterDataProductoFinal.add(salidaxproductofinal);
+                        p.set("estado",Producto.ESTADO.DESPACHADO.name());
+                        p.saveIt();
+                        contador --;
+                        if (contador ==0) break;
+                    }    
                 }
-                llenar_tabla_instancias_productos();
+                actualizar_tabla_instancias_productos();
                 guardar_instancias_productos();
+                infoController.show("Fueron asignados los productos más antiguos de cada tipo seleccionado a esta salida");
             }
-            
-            
-            if (estado_anterior.equals(OrdenSalida.ESTADO.ENPROCESO.name())){
-                infoController.show("La orden de salida fue actualizada correctamente. Todos productos han sido despachados");
-                Base.commitTransaction();
-                return;
-            }     
+            infoController.show("La orden de salida fue actualizada correctamente. Ya puede modificar los productos específicos");
             Base.commitTransaction();
             limpia_formulario();
             inhabilitar_formulario();
@@ -853,6 +872,7 @@ public class OrdenesDeSalidaController  extends Controller{
             tipos_enum.addAll(Arrays.asList(OrdenSalida.TIPO.values()).stream().map(x->x.name()).collect(Collectors.toList()));  
             tipo_buscar.setItems(tipos_enum);
             llenar_combo_box_tipo();
+            productos_instancias = new ArrayList<Producto>();
             seleccionar_envio();
             setAgregarProductos();
             tipos.setOnAction(e -> manejarcomboBoxTipoSalida());
