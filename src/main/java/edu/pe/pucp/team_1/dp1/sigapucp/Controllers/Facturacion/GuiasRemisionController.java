@@ -167,9 +167,12 @@ public class GuiasRemisionController extends Controller{
     @Override
     public void guardar(){
         try{
-            crear_remision();
-            inhabilitar_formulario();
-            llenar_tabla_guias();            
+            if (crearNuevo){
+                crear_remision();
+                inhabilitar_formulario();
+                llenar_tabla_guias();    
+                crearNuevo = false;
+            }
         }catch(Exception e){
             infoController.show("Ocurrio un error durante la creacion de una guia de remision : " + e.getMessage());
             inhabilitar_formulario();            
@@ -308,6 +311,7 @@ public class GuiasRemisionController extends Controller{
     public void visualizar_guia(ActionEvent event){
         //falta desactivar boton guardar
         //boton_guardar.setDisable(true);
+        crearNuevo = false;
         habilitar_formulario();
         guia_seleccionada = tabla_guias.getSelectionModel().getSelectedItem();
         if (guia_seleccionada == null){
