@@ -16,6 +16,14 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("cotizaciones")
 @IdName("cotizacion_id")
 public class Cotizacion extends Model{
+
+    static{
+        validatePresenceOf("nombre", "direccion_despacho", "direccion_facturacion");
+        validateNumericalityOf("telef_contacto");
+        validateNumericalityOf("dni");
+        validateNumericalityOf("ruc");
+    }
+    
     static {
         dateFormat("dd/MM/yyyy", "fecha_emision");
     }     

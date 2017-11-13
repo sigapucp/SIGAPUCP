@@ -44,8 +44,8 @@ public class AgregarProductosController implements Initializable {
     private TextField BuscarNombre;
     @FXML
     private ComboBox<String> BuscarCategoria;
-    @FXML
-    private ComboBox<String> BuscarEstado;
+//    @FXML
+//    private ComboBox<String> BuscarEstado;
     @FXML
     private Button buscarProductoButtom;        
     @FXML
@@ -57,8 +57,8 @@ public class AgregarProductosController implements Initializable {
     @FXML
     private TableColumn<TipoProducto, String> ColumnaNombre;
 
-    @FXML
-    private TableColumn<TipoProducto, String> ColumnaEstado;
+//    @FXML
+//    private TableColumn<TipoProducto, String> ColumnaEstado;
 
     @FXML
     private TableColumn<TipoProducto, String> ColumnaCodigo;
@@ -87,7 +87,7 @@ public class AgregarProductosController implements Initializable {
         String codigo = BuscarCodigo.getText();
         String nombre = BuscarNombre.getText();
         String categoria = BuscarCategoria.getSelectionModel().getSelectedItem();
-        String estado = BuscarEstado.getSelectionModel().getSelectedItem();        
+        //String estado = BuscarEstado.getSelectionModel().getSelectedItem();        
         
         List<TipoProducto> tempProductos = TipoProducto.findAll();
         try{
@@ -102,10 +102,10 @@ public class AgregarProductosController implements Initializable {
                 tempProductos = tempProductos.stream().filter(p -> p.getString("nombre").equals(nombre)).collect(Collectors.toList());
             }
            
-            if(estado!=null&&!estado.isEmpty())
-            {                
-                tempProductos = tempProductos.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
-            }
+////            if(estado!=null&&!estado.isEmpty())
+////            {                
+////                tempProductos = tempProductos.stream().filter(p -> p.get("estado").equals(estado)).collect(Collectors.toList());
+////            }
 
             if(categoria!=null&&!categoria.isEmpty())
             {
@@ -155,25 +155,25 @@ public class AgregarProductosController implements Initializable {
         try {            
             ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
-            ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
+            //ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
             ColumnaDescripcion.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descripcion")));
 
-            ObservableList<String> estados = FXCollections.observableArrayList();                                           
+            //ObservableList<String> estados = FXCollections.observableArrayList();                                           
             ObservableList<String> categoriasDrop = FXCollections.observableArrayList(); 
 
-            estados.add(""); 
-            estados.addAll(Arrays.asList(TipoProducto.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
+            //estados.add(""); 
+            //estados.addAll(Arrays.asList(TipoProducto.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
 
             categoriasDrop.add("");
             categoriasDrop.addAll(CategoriaProducto.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
 
 
-            BuscarEstado.setItems(estados);
+            //BuscarEstado.setItems(estados);
             BuscarCategoria.setItems(categoriasDrop);      
             productos.addAll(TipoProducto.findAll());
             TablaProductos.setItems(productos);            
         } catch (Exception e) {
-            infoController.show("Problemas en la inicializaciond de busqueda de Producto");
+            infoController.show("Problemas en la inicializacion de busqueda de Producto");
         }       
     }       
     public Event<agregarProductoArgs> devolverProductoEvent = new Event<>();                   

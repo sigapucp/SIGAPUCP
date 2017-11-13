@@ -12,7 +12,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.CategoriaProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Promocion;
@@ -353,16 +356,26 @@ public class FletesController extends Controller {
     public void guardar()
     {
         if (crear_nuevo){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Fletes, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crear_nuevo = false;
+                return;
+            }
             crear_flete();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Fletes ,this.usuarioActual);
+            limpiar_formulario();
         }
         else {
-            if(fleteSeleccionado==null) 
-            {
-                VerCodigoFlete.setDisable(true);
-                infoController.show("No ha seleccionado un Flete");            
+            if (fleteSeleccionado == null){
+                infoController.show("No he seleccionado un flete");
+                return;
+            }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Fletes, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
             editar_flete(fleteSeleccionado);
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Fletes ,this.usuarioActual);
         }    
         RefrescarTabla(Flete.findAll());        
     }

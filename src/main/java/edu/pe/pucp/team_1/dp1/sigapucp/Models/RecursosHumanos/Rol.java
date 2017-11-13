@@ -18,6 +18,10 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("rol_id")
 public class Rol extends Model{
     
+    static{
+        validatePresenceOf("nombre","descripcion");
+    }
+    
     public enum ESTADO
     {
         ACTIVO,

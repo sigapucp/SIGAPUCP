@@ -67,13 +67,17 @@ public class ProveedoresController extends Controller{
     private TableColumn<Proveedor, String> columna_nombre;
     @FXML
     private TableView<Proveedor> tabla_proveedor;
-    
-    
+       
     private Boolean crear_nuevo;
+    
     private Proveedor proveedor_seleccionado;
+    
     private InformationAlertController infoController;
+    
     private ConfirmationAlertController confirmatonController;
+    
     private List<Proveedor> proveedores;
+    
     private final ObservableList<Proveedor> masterData = FXCollections.observableArrayList();
     
     
@@ -90,7 +94,6 @@ public class ProveedoresController extends Controller{
     }
     
     public void crear_proveedor(){
-
         try{
             Base.openTransaction();  
             Proveedor nuevo_proveedor = new Proveedor();
@@ -105,9 +108,9 @@ public class ProveedoresController extends Controller{
             crear_nuevo = false;
         }
         catch(Exception e){
-            System.out.println(e);
             Base.rollbackTransaction();
-            infoController.show("El proveedor contiene errores"); 
+            infoController.show("Error al crear proveedor:" + e);
+            System.out.println(e);
             crear_nuevo = true;
         }   
         
@@ -124,7 +127,8 @@ public class ProveedoresController extends Controller{
         }
         catch(Exception e){
             Base.rollbackTransaction();
-            infoController.show("El proveedor contiene errores: "+e); 
+            infoController.show("Error al editar proveedor: "+ e ); 
+            System.out.println(e);
         }        
     }
     
@@ -140,7 +144,7 @@ public class ProveedoresController extends Controller{
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Proveedores ,this.usuarioActual);
         }else{
             if (proveedor_seleccionado == null){
-                infoController.show("No ha seleccionado un cliente");
+                infoController.show("No ha seleccionado un proveedor");
                 return;
             }
             if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Proveedores, Accion.ACCION.MOD)){
@@ -198,9 +202,12 @@ public class ProveedoresController extends Controller{
             infoController.show("¡Carga masiva de datos de proveedores exitosa!");
             AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CSV, Menu.MENU.Proveedores, this.usuarioActual);
             inputStream.close();
+            proveedores = Proveedor.findAll();
             cargar_tabla_index();
+            
         } catch (FileNotFoundException ex) {
-            System.out.println("INCORRECTO");
+            infoController.show("Error en la carga masiva");
+            System.out.println(ex);
             Base.rollbackTransaction();
             Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -236,14 +243,17 @@ public class ProveedoresController extends Controller{
 
         if(nombres!=null&&!nombres.isEmpty())
         {            
-            temp_proveedores = temp_proveedores.stream().filter(p -> p.getString("name").equals(ruc)).collect(Collectors.toList());
+            temp_proveedores = temp_proveedores.stream().filter(p -> p.getString("name").equals(nombres)).collect(Collectors.toList());
         }
+        
+        
                 
         proveedores = temp_proveedores;
         cargar_tabla_index();
         try {                        
         } catch (Exception e) {
-            infoController.show("El Usuario contiene errores : " + e);                    
+            infoController.show("Error al filtrar proveedores");                    
+            System.out.println(e);
         }                
         
     }
@@ -251,10 +261,9 @@ public class ProveedoresController extends Controller{
     public void cargar_tabla_index(){
         masterData.clear();
         for( Proveedor cliente : proveedores){
-            if (cliente.getString("status").equals("activo")){
+            if (cliente.getString("status").equals(Proveedor.ESTADO.ACTIVO.name())){
                 masterData.add(cliente);
-            }
-            
+            }            
         }
         tabla_proveedor.setEditable(false);
         columna_ruc.setCellValueFactory((TableColumn.CellDataFeatures<Proveedor, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("provuder_ruc")));
@@ -279,11 +288,13 @@ public class ProveedoresController extends Controller{
             comentarios.setText(registro_seleccionado.getString("annotation"));
         }
         catch( Exception e){
+            infoController.show("Error al mostrar el detalle del proveedor");
             System.out.println(e);
         }
     }  
     @Override
     public void desactivar(){
+        proveedor_seleccionado = tabla_proveedor.getSelectionModel().getSelectedItem();
         if (proveedor_seleccionado==null){
             infoController.show("No se selecciono un proveedor");
             return;
@@ -293,7 +304,7 @@ public class ProveedoresController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             }
-            if(!confirmatonController.show("Se deshabilitara el proveedor con código: " + proveedor_nombre.getText(), "¿Desea continuar?")) return;
+            if(!confirmatonController.show("Se deshabilitara el proveedor con nombre: " + proveedor_seleccionado.getString("name"), "¿Desea continuar?")) return;
             Base.openTransaction();
             proveedor_seleccionado.set("status",Proveedor.ESTADO.INACTIVO.name());
             proveedor_seleccionado.saveIt();
@@ -303,8 +314,9 @@ public class ProveedoresController extends Controller{
             limpiar_formulario();
             cargar_tabla_index();
         }catch(Exception e){
-            infoController.show("El proveedor contiene errores: " + e);
             Base.rollbackTransaction();
+            infoController.show("Error al desactivar el proveedor");
+            System.out.println(e);           
         }
     }    
     @Override
@@ -313,13 +325,6 @@ public class ProveedoresController extends Controller{
         inhabilitar_formulario();
         proveedores = null;
         proveedores = Proveedor.findAll();
-        cargar_tabla_index();
-        tabla_proveedor.getSelectionModel().selectedIndexProperty().addListener((obs,oldSelection,newSelection) -> {
-            if (newSelection != null){
-                proveedor_seleccionado = tabla_proveedor.getSelectionModel().getSelectedItem();
-                tabla_proveedor.getSelectionModel().clearSelection();        
-            }
-        });        
-    }    
-    
+        cargar_tabla_index();        
+    }        
 }
