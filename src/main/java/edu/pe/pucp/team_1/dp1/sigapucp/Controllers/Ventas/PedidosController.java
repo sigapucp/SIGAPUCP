@@ -666,6 +666,7 @@ public class PedidosController extends Controller {
         {
             cotizacion_id = cotizacionAnexada.getInteger("cotizacion_id");
             cotizacionAnexada.set("estado",Cotizacion.ESTADO.CONPEDIDO);
+            cotizacionAnexada.saveIt();
         }
         asignar_data(pedido,usuarioActual.getString("usuario_cod"),clienteSeleccionado.getInteger("client_id"), fecha, igvValue,totalValue,
                 OrdenCompra.ESTADO.PENDIENTE.name(),vendedorSelecionado,moneda.getInteger("moneda_id"),cotizacion_id,direccionDespacho,direccionFacturacion,departamento);  

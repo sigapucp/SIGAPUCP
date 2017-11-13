@@ -147,7 +147,7 @@ public class AgregarOrdenesSalidaController extends Controller{
         RefrescarTabla(tempOrdenes);
         try {                        
         } catch (Exception e) {
-            infoController.show("El Cliente contiene errores : " + e);                    
+            infoController.show("La Orden contiene errores : " + e);                    
         }
     }
     

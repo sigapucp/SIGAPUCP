@@ -332,6 +332,9 @@ public class EnviosController extends Controller{
     public void guardar(){
         if (crearNuevo){
             crear_envio();
+            inhabilitar_formulario();
+            limpiar_formulario();
+            
         } else {
             if ( envio_seleccionado == null){ 
                 infoController.show("No ha seleccionado ningun envio");
@@ -569,8 +572,9 @@ public class EnviosController extends Controller{
         for( Envio envio : envios){
             masterData.add(envio);
         }
-        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
-        columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
+        
+        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
+        columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("envio_cod")));
         columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
         tabla_envios.setItems(masterData);   
     }
@@ -649,10 +653,15 @@ public class EnviosController extends Controller{
 
     @FXML
     private void agregarCliente(ActionEvent event) {
-        modal_stage.showAndWait();
-        if(cliente_seleccionado==null) return;      
-        mostrar_informacion_cliente(cliente_seleccionado);
-        nombre_cliente.setText(cliente_seleccionado.getString("nombre"));
-        llenar_ordenes_compra_cliente();        
+        try {
+            setAgregarClientes();
+            modal_stage.showAndWait();
+            if(cliente_seleccionado==null) return;
+            mostrar_informacion_cliente(cliente_seleccionado);
+            nombre_cliente.setText(cliente_seleccionado.getString("nombre"));        
+            llenar_ordenes_compra_cliente();
+        } catch (Exception ex) {
+            infoController.show("Error al buscar clientes");
+        }
     }
 }

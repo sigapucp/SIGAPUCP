@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Despachos;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarOrdenesSalidaController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.WarningAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.NullDrawing;
@@ -16,11 +17,18 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.TupleProductos;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Celda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Estado;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalida;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalidaxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalidaxProductoFinal;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.ProductoNodo;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Punto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.Ruta;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.RutaDespacho;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.RutaDetallada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.RutaGeneral;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.RutaSaved;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.SimulacionBD;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.SimulacionSaved;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.SimulacionesxDespachos;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.TestRouting;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Almacen;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaXY;
@@ -30,14 +38,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Simulacion;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenSalidaArgs;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -53,7 +57,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
@@ -64,6 +67,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
@@ -73,7 +77,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
-import org.javalite.activejdbc.Model;
 
 /**
  * FXML Controller class
@@ -101,9 +104,9 @@ public class SimulacionesController extends Controller{
     @FXML
     private AnchorPane formulario_general;
     @FXML
-    private TextField VerCodigoOrden;
+    private TextField VerCodigoOrden;    
     @FXML
-    private TextField VerClienteOrden;
+    private TextArea VerDescripcion;
     @FXML
     private DatePicker VerFechaOrden;
     @FXML
@@ -156,11 +159,27 @@ public class SimulacionesController extends Controller{
     private TitledPane tittle_pane;
     @FXML
     private Label VerCostoSimulacion;
+    @FXML
+    private GridPane formulario_simulacion1;
+    @FXML
+    private ComboBox<Integer> VerNrSimulacionSaved;
+    @FXML
+    private ComboBox<Integer> VerNrRutaSaved;
+    @FXML
+    private Label VerCostoRutaSaved;
+    @FXML
+    private Label VerCostoSimulacionSaved;   
+    @FXML
+    private AnchorPane mapa_paneSaved;
     
     
     private SelectableGrid grid;
+    private SelectableGrid gridSaved;
+    
     private WarningAlertController warningController;
+    private ConfirmationAlertController confirmationController;
     private InformationAlertController infoController;
+    
     private LazyList<Rack> racksActuales;
     private List<Producto> productos;
     private RutaDetallada rutaDetallada;
@@ -170,31 +189,39 @@ public class SimulacionesController extends Controller{
     private int width;
     private double[][] distancias;
     private List<Double> pesos; 
+    
     private List<Simulacion> simulaciones;
-    private Boolean distanciaCalculada;
+    private List<SimulacionSaved> simulacionesSaved;
     private Simulacion simulacionActual;    
+    private SimulacionSaved simulacionActualSaved;    
+    
+    private Boolean distanciaCalculada;
     private List<ProductoSimulacion> productosSimulacion;
     private Boolean nextReset = false;
-    private Punto acopioAnterior = null;
-    private Boolean crear_nuevo;
+    private Punto acopioAnterior = null;    
     private Stage modal_stage;
     private OrdenSalida ordenSalidaActual;
+    
     ObservableList<Integer> nrRutas = FXCollections.observableArrayList();                           
     ObservableList<Integer> nrSimulaciones = FXCollections.observableArrayList();           
+    
+    ObservableList<Integer> nrRutasSaved = FXCollections.observableArrayList();                           
+    ObservableList<Integer> nrSimulacionesSaved = FXCollections.observableArrayList();           
+        
     ObservableList<ProductoSimulacion> productosObs = FXCollections.observableArrayList(); 
-    ObservableList<OrdenSalida> ordenesSalida = FXCollections.observableArrayList(); 
- 
+    ObservableList<OrdenSalida> ordenesSalida = FXCollections.observableArrayList();      
     
     public SimulacionesController()
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         warningController = new WarningAlertController();
         infoController = new InformationAlertController();      
+        confirmationController = new ConfirmationAlertController();
         rutaDetallada = new RutaDetallada();     
         pesos = new ArrayList<>();
         simulaciones = new ArrayList<>();
-        distanciaCalculada = false;
-        crear_nuevo = false;
+        simulacionesSaved = new ArrayList<>();
+        distanciaCalculada = false;       
         simulacionActual = null;      
     }
     /**
@@ -218,7 +245,7 @@ public class SimulacionesController extends Controller{
             }          
         });
             
-            VerNrRuta.valueProperty().addListener(new ChangeListener<Integer>() {
+            VerNrRutaSaved.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
                 if(simulacionActual == null) return;
@@ -227,10 +254,36 @@ public class SimulacionesController extends Controller{
                 simulacionActual.setRutaActual(newValue-1);
                 grid.clearUserTiles();    
                 impimirRuta(simulacionActual.getRutaActual(),simulacionActual.getRutasProductos());
-                VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));           
-                System.out.println(simulacionActual.getRutaString(0, productosSimulacion));
+                VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));                           
             }          
         });
+            
+            
+        VerNrSimulacionSaved.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {                
+                if(newValue == null) return;
+                if(newValue<0||newValue>simulacionesSaved.size()) return;
+                simulacionActualSaved = simulacionesSaved.get(newValue-1);
+                gridSaved.clearUserTiles();    
+                imprimirRutaSaved(simulacionActualSaved.getRutaActual().getRuta());
+                fillListUpTo(nrRutasSaved, simulacionActualSaved.getNrRutas());
+                VerCostoSimulacionSaved.setText(String.valueOf(simulacionActualSaved.getCosto()));                
+            }          
+        });
+            
+            VerNrRuta.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+                if(simulacionActualSaved == null) return;
+                if(newValue == null) return;
+                if(newValue<0||newValue>simulacionActualSaved.getNrRutas()) return;
+                simulacionActual.setRutaActual(newValue-1);
+                gridSaved.clearUserTiles();    
+                imprimirRutaSaved(simulacionActualSaved.getRutaActual().getRuta());
+                VerCostoRutaSaved.setText(String.valueOf(simulacionActual.getCostoRutaActual()));                        
+            }          
+        });                        
             
         ColumnaProdCodigo.setCellValueFactory((CellDataFeatures<ProductoSimulacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getProductoNombre()));       
         ColumnaAlmacen.setCellValueFactory((CellDataFeatures<ProductoSimulacion, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getAlmacenName()));       
@@ -257,7 +310,10 @@ public class SimulacionesController extends Controller{
         ordenesSalida.addAll(OrdenSalida.findAll());         
         
         VerNrRuta.setItems(nrRutas);
-        VerNrSimulacion.setItems(nrSimulaciones);                
+        VerNrRutaSaved.setItems(nrRutasSaved);
+        VerNrSimulacion.setItems(nrSimulaciones);  
+        VerNrSimulacionSaved.setItems(nrSimulacionesSaved);
+        
         TablaProductosUnicos.setItems(productosObs);
         tablaOrdenesSalida.setItems(ordenesSalida);
         
@@ -292,6 +348,7 @@ public class SimulacionesController extends Controller{
         Double realHeight = mapa_pane.getPrefHeight();
         
         grid = new SelectableGrid(ancho, largo, area, new NullDrawing(),realWidth.intValue(),realHeight.intValue());                        
+        gridSaved = new SelectableGrid(ancho, largo, area, new NullDrawing(),realWidth.intValue(),realHeight.intValue());
         
         height = largo/area;
         width = ancho/area;
@@ -334,6 +391,7 @@ public class SimulacionesController extends Controller{
                     {
                         mapa[anchorY1][start] = Celda.TIPO.RACK;                                                
                         grid.pintarTile(start,anchorY1, Color.RED);
+                        gridSaved.pintarTile(start,anchorY1, Color.RED);
                     }                    
                 }else
                 {
@@ -344,32 +402,15 @@ public class SimulacionesController extends Controller{
                     {
                         mapa[start][anchorX1] = Celda.TIPO.RACK;       
                         grid.pintarTile(anchorX1,start, Color.RED);
+                        gridSaved.pintarTile(anchorX1,start, Color.RED);
                     }
                 }
             }                        
         }           
         mapa_pane.getChildren().setAll(grid);       
-        
-        
-        
+        mapa_paneSaved.getChildren().setAll(gridSaved);        
         /////////////// Change
-        productos = Producto.where("ubicado = ?", "S");       
-        productosSimulacion = new ArrayList<>();        
-        productosSimulacion.add(new ProductoSimulacion());
-        for(Producto producto:productos)
-        {
-            ProductoSimulacion pSimulacion = new ProductoSimulacion(producto);
-            if(!pSimulacion.getPunto().esValido(height, width))
-            {
-                infoController.show("El producto " + producto.getString("producto_cod") + " posee una posicion invalida");
-                return;
-            }            
-            productosSimulacion.add(pSimulacion);                                  
-        }                   
         
-        Integer nrProductos = productosSimulacion.size();        
-        distancias = new double[nrProductos+1][nrProductos+1];      
-        productosObs.addAll(productosSimulacion);
     }
     
     private void inhabilitar_formulario()
@@ -377,6 +418,7 @@ public class SimulacionesController extends Controller{
         formulario_general.setDisable(true);
         formulario_productos.setDisable(true);
         formulario_simulacion.setDisable(true);
+        formulario_simulacion1.setDisable(true);
     }
     
     private void habilitar_formulario()
@@ -384,19 +426,79 @@ public class SimulacionesController extends Controller{
         formulario_general.setDisable(false);
         formulario_productos.setDisable(false);
         formulario_simulacion.setDisable(false);        
+        formulario_simulacion1.setDisable(false);
     }
     
-    @Override
-    public void nuevo()
+    private void limpiar_formulario()
     {
-     
-        habilitar_formulario();
-    }
+        ordenSalidaActual = null;
+        distanciaCalculada = false;
+        nextReset = false;
+        VerAcopioX.setText("0");
+        VerAcopioY.setText("0");
+        VerAnchoAlmacen.clear();
+        VerLargoAlmacen.clear();
+        VerCapacidadCarrito.clear();      
+        VerDescripcion.clear();
+        if(productos != null) productos.clear();     
+        if(simulaciones != null) simulaciones.clear();
+        if(simulacionesSaved != null) simulacionesSaved.clear();
+        productosObs.clear();
+        nrRutas.clear();
+        nrSimulaciones.clear();
+        nrRutasSaved.clear();
+        nrSimulacionesSaved.clear();
+        VerCostoRuta.setText("--");
+        VerCostoSimulacion.setText("--");
+    }     
     
     @Override
     public void guardar()
     {
+        if(productosSimulacion == null)
+        {
+            infoController.show("No ha seleccionado ninguna Orden");
+            return;
+        }
         
+        try {
+            Base.openTransaction();
+            for(Simulacion simulacion:simulaciones)
+            {
+                SimulacionBD simulacionBD = new SimulacionBD();
+                
+                simulacionBD.set("capacidad_carro",simulacion.getCapcacidadCarro());
+                simulacionBD.set("nr_productos",simulacion.getNrProductos());
+                simulacionBD.set("distancia_total",simulacion.getCosto());
+                simulacionBD.set("punto_acopio_x",simulacion.getPuntoAcopio().x);
+                simulacionBD.set("punto_acopio_y",simulacion.getPuntoAcopio().y);
+                
+                simulacionBD.saveIt();
+                for(int i = 0;i<simulacion.getNrRutas();i++)
+                {
+                    RutaDespacho rutaDespacho = new RutaDespacho();
+                    
+                    rutaDespacho.set("distancia_recorrida",simulacion.getRutas().get(i).GetDistancia());
+                    rutaDespacho.set("simulacion_id",simulacionBD.getId());
+                    rutaDespacho.set("ruta_orden",simulacion.getRutaString(i, productosSimulacion));                     
+                    rutaDespacho.saveIt();                                        
+                }              
+                
+                SimulacionesxDespachos simxdes = new SimulacionesxDespachos();
+                simxdes.set("salida_cod",ordenSalidaActual.get("salida_cod"));
+                simxdes.set("salida_id",ordenSalidaActual.get("salida_id"));
+                simxdes.set("simulacion_id",simulacionBD.get("simulacion_id"));
+                simxdes.saveIt();
+            }
+            
+            Base.commitTransaction();
+            infoController.show("La simulaciones se han guardado satisfactoriamente");
+        } catch (Exception e) {
+            infoController.show("Error al guardar Simulaciones: " + e.getMessage());
+            Base.rollbackTransaction();
+        }
+        inhabilitar_formulario();
+        limpiar_formulario();        
     }
     
      private void setAgregarProductos() throws Exception
@@ -415,11 +517,163 @@ public class SimulacionesController extends Controller{
 
     @FXML
     private void visualizar_simulacion(ActionEvent event) {
+        habilitar_formulario();
+        limpiar_formulario();
+        
+        ordenSalidaActual = tablaOrdenesSalida.getSelectionModel().getSelectedItem();
+        if(ordenSalidaActual == null)
+        {
+            infoController.show("No ha seleccionado ninguna Orden Valida");
+            return;
+        }
+        
+        String tipo = ordenSalidaActual.getString("tipo");
+        
+        if(!tipo.equals(OrdenSalida.TIPO.Venta.name()))
+        {
+            if(!confirmationController.show("La orden de salida es del tipo: " + tipo + ".", "¿Seguro que desea continuar?"))
+            {
+                inhabilitar_formulario();
+                ordenSalidaActual = null;
+                return;
+            }                                
+        }
+        
+        List<Producto> productosOrden =  new ArrayList<>();
+        List<OrdenSalidaxProductoFinal> productosFinal = OrdenSalidaxProductoFinal.where("salida_id = ?", ordenSalidaActual.getId());
+        
+        for(OrdenSalidaxProductoFinal productoFinal:productosFinal)
+        {
+            productosOrden.add(Producto.findFirst("producto_id = ?", productoFinal.get("producto_id")));
+        }
+        
+        productos = productosOrden.stream().filter(x -> x.getString("ubicado").equals("S")).collect(Collectors.toList());
+        if(productos.isEmpty())
+        {
+            infoController.show("No hay con una ubicacion en esta orden");
+            limpiar_formulario();
+            inhabilitar_formulario();
+            return;            
+        }
+        
+        List<Producto> noUbicados = productosOrden.stream().filter(x -> x.getString("ubicado").equals("N")).collect(Collectors.toList());
+        
+        if(!noUbicados.isEmpty())
+        {
+            String msg = "Los siguientes productos no han sido ubicados por lo que no se tomaran cuenta en la simulación:\n\n";
+            for(Producto producto:noUbicados)
+            {
+                msg += producto.getString("producto_id") + "\n";
+            }
+            infoController.show(msg);
+        }
+
+        VerCodigoOrden.setText(ordenSalidaActual.getString("salida_cod"));
+        VerTipoOrden.setText(ordenSalidaActual.getString("tipo"));
+        VerDescripcion.setText(ordenSalidaActual.getString("descripcion"));
+        VerFechaOrden.setValue(ordenSalidaActual.getDate("last_data_change").toLocalDate());
+                
+        productosSimulacion = new ArrayList<>();        
+        productosSimulacion.add(new ProductoSimulacion());
+        for(Producto producto:productos)
+        {
+            ProductoSimulacion pSimulacion = new ProductoSimulacion(producto);
+            if(!pSimulacion.getPunto().esValido(height, width))
+            {
+                infoController.show("El producto " + producto.getString("producto_cod") + " posee una posicion invalida");
+                return;
+            }            
+            productosSimulacion.add(pSimulacion);                                  
+        }                   
+        
+        Integer nrProductos = productosSimulacion.size();        
+        distancias = new double[nrProductos+1][nrProductos+1];                           
+        RefrescarTablaProductos(productosSimulacion);
+        
+        setProductosGuardados(ordenSalidaActual);
+    }
+    
+    private void setProductosGuardados(OrdenSalida ordenSalida)
+    {        
+        try {            
+                        
+            List<SimulacionBD> simulacionesGuardadas = ordenSalida.getAll(SimulacionBD.class);
+            for(SimulacionBD simulacion:simulacionesGuardadas)
+            {
+                SimulacionSaved nuevaSimulacionSaved = new SimulacionSaved(simulacion.getDouble("distancia_total"),simulacion.getDouble("capacidad_carro"),
+                        simulacion.getInteger("nr_productos"),simulacion.getInteger("punto_acopio_x"),simulacion.getInteger("punto_acopio_y"));
+                
+                simulacionesSaved.add(nuevaSimulacionSaved);
+                
+                List<RutaDespacho> rutas = RutaDespacho.where("simulacion_id = ?", simulacion.getId());
+                nrSimulacionesSaved.add(simulacionesSaved.size());
+                
+                for(RutaDespacho ruta:rutas)
+                {
+                    RutaSaved rutaSaved = new RutaSaved(ruta.getString("ruta_orden"),ruta.getDouble("distancia_recorrida"));                    
+                    nuevaSimulacionSaved.addRuta(rutaSaved);
+                }                                
+            }
+            
+        } catch (Exception e) {
+            infoController.show("No se ha podido cargar las simulaciones guardadas: " + e.getMessage());
+        }
     }
 
     @FXML
     private void buscar_simulacion(ActionEvent event) {
+        String codigo = BuscarCodigo.getText();      
+        String tipo = BuscarTipo.getSelectionModel().getSelectedItem();        
+                
+        List<OrdenSalida> tempOrdenes = OrdenSalida.where("estado = ?",OrdenSalida.ESTADO.ENPROCESO.name());
+        
+        if(codigo!=null&&!codigo.isEmpty())
+        {            
+            tempOrdenes = tempOrdenes.stream().filter(p -> p.getString("producto_cod").equals(codigo)).collect(Collectors.toList());
+        }
+      
+        if(tipo!=null&&!tipo.isEmpty())
+        {
+            tempOrdenes = tempOrdenes.stream().filter(p -> p.getString("tipo").equals(tipo)).collect(Collectors.toList());
+        }
+      
+        RefrescarTabla(tempOrdenes);
+        try {                        
+        } catch (Exception e) {
+            infoController.show("La Orden contiene errores : " + e);                    
+        }
     }
+    
+    private void RefrescarTabla(List<OrdenSalida> ordenesRefresh)
+    {        
+        try {
+            ordenesSalida.removeAll(ordenesSalida);                 
+            if(ordenesRefresh == null) return;
+            for (OrdenSalida orden : ordenesRefresh) {
+                ordenesSalida.add(orden);
+            }               
+            tablaOrdenesSalida.getColumns().get(0).setVisible(false);
+            tablaOrdenesSalida.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+            infoController.show("Las ordenes contienen errores : " + e.getMessage());      
+        }                                  
+    }
+    
+    private void RefrescarTablaProductos(List<ProductoSimulacion> productosRefresh)
+    {        
+        try {
+            productosObs.removeAll(productosObs);                 
+            if(productosRefresh == null) return;
+            for (ProductoSimulacion producto : productosRefresh) {
+                productosObs.add(producto);
+            }               
+            TablaProductosUnicos.getColumns().get(0).setVisible(false);
+            TablaProductosUnicos.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+            infoController.show("Los productos contienen errores : " + e.getMessage());      
+        }                                  
+    }
+    
     
     @FXML
     private void agregarSimulacion(ActionEvent event) {       
@@ -495,7 +749,7 @@ public class SimulacionesController extends Controller{
         
         Punto acopio = new Punto(acopioX, acopioY);
         
-        if(!acopio.esValido(height, width))
+        if(!acopio.esValido(height, width)||grid.isTileActive(acopio.x, acopio.y))
         {
             infoController.show("El punto de acopio no es valido");
             return;            
@@ -529,7 +783,7 @@ public class SimulacionesController extends Controller{
         acopioAnterior = acopio;
         rutaGeneral = new RutaGeneral(productosSimulacion.size()-1, distancias, pesos, capacidadCarro);
         rutaGeneral.CorrerAlgoritmo();               
-        Simulacion nuevaSimulacion = new Simulacion(rutaGeneral,rutasProductos, acopio, capacidadCarro);        
+        Simulacion nuevaSimulacion = new Simulacion(rutaGeneral,rutasProductos, acopio, capacidadCarro,productosSimulacion.size()-1);        
         simulacionActual = nuevaSimulacion;
         
         VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));
@@ -605,6 +859,41 @@ public class SimulacionesController extends Controller{
         }
     }
     
+    private void imprimirRutaSaved(String ruta)
+    {
+        List<String> elements = Arrays.asList(ruta.split(","));
+                
+        Punto actual = new Punto(elements.get(0));
+        Color colorActual = Color.BLACK;
+        
+        int nrElemeents = elements.size();
+        
+        for(int i = 1;i<nrElemeents;i++)
+        {
+            Color color = getColor(elements.get(i++));
+            gridSaved.pintarTileDeletable(actual.x, actual.y,color);            
+            
+            colorActual = getColor(elements.get(i++));
+            
+            for(int j = 0;j<elements.get(i).length();j++)
+            {
+                char c = elements.get(i).charAt(j);
+                actual.moverA(c);        
+                gridSaved.pintarTileDeletable(actual.x, actual.y, colorActual);               
+            }
+        }                
+    }
+    
+    public Color getColor(String clr)
+    {
+        List<String> punto = Arrays.asList(clr.split("-"));
+        Integer r = Integer.valueOf(punto.get(0));
+        Integer g = Integer.valueOf(punto.get(1));        
+        Integer b = Integer.valueOf(punto.get(2));     
+        
+        return Color.rgb(r, g, b);
+    }
+    
     public void dibujarMapa(Estado solucion,Color color)
     {
         for(Punto punto:solucion.ruta)
@@ -640,6 +929,15 @@ public class SimulacionesController extends Controller{
         float g = rand.nextFloat();
         float b = rand.nextFloat();                      
         grid.changeNullToColor(Color.color(r, g, b));
+    }
+
+    @FXML
+    private void cambiarFondoSaved(ActionEvent event) {
+        Random rand = new Random();
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();                      
+        gridSaved.changeNullToColor(Color.color(r, g, b));
     }
  
 }
