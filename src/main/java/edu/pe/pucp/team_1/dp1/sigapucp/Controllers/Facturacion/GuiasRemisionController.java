@@ -185,7 +185,7 @@ public class GuiasRemisionController extends Controller{
     public void guardar(){
         try{
             if (crearNuevo){
-                if (!Usuario.tienePermiso(permisosActual, Menu.MENU.GuiaDeRemision, Accion.ACCION.CRE)){
+                if (!Usuario.tienePermiso(permisosActual, Menu.MENU.GuiaDeRemision, Accion.ACCION.VIW)){
                     infoController.show("No tiene los permisos suficientes para realizar esta acción");
                     crearNuevo = false;
                     return;

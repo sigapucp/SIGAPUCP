@@ -439,7 +439,7 @@ public class OrdenesDeSalidaController  extends Controller{
     @Override
     public void guardar(){     
         if (crear_nuevo){
-            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.OrdendeSalida, Accion.ACCION.CRE)){
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.OrdendeSalida, Accion.ACCION.VIW)){
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 crear_nuevo = false;
                 return;
