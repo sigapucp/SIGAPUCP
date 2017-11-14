@@ -472,9 +472,9 @@
  ordenescompraxproductos;1, 1, 5, 'PED5', 'HMR2', 6.00, 120.00, 60.00, 20.00, 60.00, 0.00, 0.00, 'N', 6.00
 
 
- ordenescompraxproductosxenvio;'PED3', 1, 3, 1, 'HMR2', 1, 'ENVPED3', 6.00
- ordenescompraxproductosxenvio;'PED3', 1, 3, 1, 'HMR2', 2, 'ENVPED3', 4.00
- ordenescompraxproductosxenvio;'PED4', 1, 4, 2, 'LAP2', 3, 'ENVPED4', 1.00
+ ordenescompraxproductosxenvio;'PED3', 1, 3, 1, 'HMR2', 1, 'ENVPED3', 6.00,6.00
+ ordenescompraxproductosxenvio;'PED3', 1, 3, 1, 'HMR2', 2, 'ENVPED3', 4.00,4.00
+ ordenescompraxproductosxenvio;'PED4', 1, 4, 2, 'LAP2', 3, 'ENVPED4', 1.00,1.00
 
 
 
