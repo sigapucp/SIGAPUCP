@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion.ACCION;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.WarningAlertController;
@@ -18,7 +19,9 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.NullDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomComponents.RectangularDrawing;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaXY;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.AlmacenAreaZ;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.TipoError;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createAlmacenArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.createRackArgs;
@@ -28,6 +31,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -359,7 +364,20 @@ public class AlmacenesController extends Controller{
     
     @FXML
     public void buscarAlmacen(ActionEvent event) {
-        
+        String nombreAlmacen = nombre_almacen_buscar.getText();
+        String codigoAlmacen = codigo_almacen_buscar.getText();
+        try {
+            LazyList<Almacen> almacenes_encontrados = Almacen.findAll();
+            List<Almacen> almacenes_filtrados = almacenes_encontrados.stream().filter((almacen) -> 
+                    almacen.getString("nombre").contains(nombreAlmacen) && 
+                    almacen.getString("almacen_cod").contains(codigoAlmacen))
+                    .collect(Collectors.toList());
+            almacenes.clear();
+            almacenes_filtrados.forEach(almacenes::add);
+            tabla_almacenes.setItems(almacenes);
+        } catch(Exception e) {
+            Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
     
     @FXML
@@ -380,7 +398,11 @@ public class AlmacenesController extends Controller{
                 almacen_lado_grilla.setText(String.valueOf(ladoGrillaAlmacen));
                 radio_btn_almacen_logico.setDisable(false);
                 radio_btn_almacen_fisico.setDisable(false);
-                
+
+                almacen_largo_field.setEditable(false);
+                almacen_ancho_field.setEditable(false);
+                almacen_lado_grilla.setEditable(false);
+
                 if( String.valueOf(almacen_seleccionado.get("es_central")).equals("T") ) {
                     tipoAlmacen.selectToggle(radio_btn_almacen_fisico);
                     radio_btn_almacen_logico.setDisable(true);
@@ -543,7 +565,7 @@ public class AlmacenesController extends Controller{
                                 usuarioActual);
                         
                         almacen.saveIt();
-                        
+
                         almacenes_logicos.forEach((almacenLogico) -> {
                             if (almacenLogico.isNew()) {
                                 String almacenLogCod = generateAlmacenCode('F', almacenCentralCod);
@@ -553,7 +575,11 @@ public class AlmacenesController extends Controller{
                         });
                         Base.commitTransaction();
                         clearAlmacenForm();
-                        
+
+                        AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Almacenes ,this.usuarioActual);
+                        almacenes_logicos.forEach(t -> {
+                            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Almacenes ,this.usuarioActual);
+                        });
                         infoController.show("El almacen Central y los almacenes logicos se crearon satisfactoriamente");
                         actualizarTablaBusqueda();
                     } catch(Exception e) {
@@ -564,8 +590,6 @@ public class AlmacenesController extends Controller{
                     
                 } else {
                     try {
-//                        System.out.println(almacen);
-                        System.out.println(racks);
                         Base.openTransaction();
                         almacen.updateAtributosAlmacenLogico(almacenNombre,
                                 almacenLargo,
@@ -575,10 +599,15 @@ public class AlmacenesController extends Controller{
                                 usuarioActual,
                                 racks);
                         almacen.saveIt();
+
                         crearPosicionesXY(racks);
                         Base.commitTransaction();
                         clearAlmacenForm();
-                        
+
+                        AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Almacenes, this.usuarioActual);
+                        racks.forEach(t -> {
+                            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Racks, this.usuarioActual);
+                        });
                         infoController.show("El almacen Logico y los racks se crearon satisfactoriamente");
                     } catch(Exception e) {
                         Logger.getLogger(AlmacenesController.class.getName()).log(Level.SEVERE, null, e);
