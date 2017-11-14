@@ -251,7 +251,7 @@ public class UsuariosController extends Controller{
                 infoController.show("No tiene los permisos suficientes para realizar esta acción");
                 return;
             } 
-           if(!confirmatonController.show("Se deshabilitara el usuario con codigo: " + usuarioSelecionado.getString("estado"), "¿Desea continuar?")) return;
+           if(!confirmatonController.show("Se deshabilitara el usuario con codigo: " + usuarioSelecionado.getString("rol_cod"), "¿Desea continuar?")) return;
            Base.openTransaction();
            
            usuarioSelecionado.set("estado",Usuario.ESTADO.INACTIVO.name());
