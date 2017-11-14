@@ -11,7 +11,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
@@ -335,7 +338,13 @@ public class EnviosController extends Controller{
     @Override
     public void guardar(){
         if (crearNuevo){
-            crear_envio();           
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Envios, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
+            crear_envio();       
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.Envios ,this.usuarioActual);
             limpiar_formulario();    
             inhabilitar_formulario();
         } else {
@@ -343,7 +352,12 @@ public class EnviosController extends Controller{
                 infoController.show("No ha seleccionado ningun envio");
                 return;
             }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Envios, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_envio();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.Envios ,this.usuarioActual);
         }
         crearNuevo = false;
         RefrescarTabla(Envio.findAll());
