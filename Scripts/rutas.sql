@@ -17,7 +17,7 @@ CREATE TABLE Simulaciones
 
 CREATE TABLE SimulacionesxDespachos
 (
- salida_cod    NVARCHAR(30) NOT NULL ,
+ salida_cod    VARCHAR(30) NOT NULL ,
  salida_id     SERIAL NOT NULL ,
  simulacion_id SERIAL NOT NULL ,
 

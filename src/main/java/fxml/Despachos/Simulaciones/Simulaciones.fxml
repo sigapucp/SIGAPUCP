@@ -245,7 +245,7 @@
                                     </GridPane>
                                     <TitledPane fx:id="tittle_pane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <content>
-                                          <AnchorPane fx:id="mapa_pane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="483.0" prefWidth="676.0" style="-fx-background-color: lightblue;" />
+                                          <AnchorPane fx:id="mapa_pane" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="483.0" prefWidth="676.0" style="-fx-background-color: lightblue;" />
                                        </content>
                                     </TitledPane>
                                     <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">
@@ -327,7 +327,7 @@
                                     </GridPane>
                                     <TitledPane fx:id="tittle_pane1" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="509.0" prefWidth="665.0" text="Mapa" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <content>
-                                          <AnchorPane fx:id="mapa_paneSaved" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="483.0" prefWidth="676.0" style="-fx-background-color: lightblue;" />
+                                          <AnchorPane fx:id="mapa_paneSaved" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="483.0" prefWidth="676.0" style="-fx-background-color: lightblue;" />
                                        </content>
                                     </TitledPane>
                                     <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">

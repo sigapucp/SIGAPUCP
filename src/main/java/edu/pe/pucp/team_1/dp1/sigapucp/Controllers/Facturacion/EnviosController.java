@@ -104,6 +104,9 @@ public class EnviosController extends Controller{
     private TableColumn<Envio, String> columna_envio;
     @FXML
     private TableColumn<Envio, String> columna_pedido;
+    @FXML
+    private TableColumn<Envio, String> columna_estado;
+
         //PRODUCTOS ENVIAR
         //--------------------------------------------------//
     @FXML
@@ -596,6 +599,7 @@ public class EnviosController extends Controller{
         columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("envio_cod")));
         columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
+        columna_estado.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
         masterData.addAll(Envio.findAll());
         tabla_envios.setItems(masterData);   
     }

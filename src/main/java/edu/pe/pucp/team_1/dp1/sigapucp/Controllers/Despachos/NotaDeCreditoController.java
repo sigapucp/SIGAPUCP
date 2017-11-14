@@ -16,7 +16,6 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarClienteArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenEntradaProductoArgs;
 import java.io.IOException;
@@ -48,6 +47,8 @@ import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.LazyList;
+import org.javalite.activejdbc.Model;
 
 /**
  * FXML Controller class
@@ -146,6 +147,14 @@ public class NotaDeCreditoController extends Controller {
     @FXML
     private ComboBox<String> ordenes_entrada_combobox;
     
+    @FXML
+    private Button boton_agregar_cliente;
+    
+    @FXML
+    private Button bttn_agregar_prod;
+
+    @FXML
+    private Button bttn_eliminar_prod;
         
     
     //LOGICA
@@ -175,6 +184,8 @@ public class NotaDeCreditoController extends Controller {
     private Boolean orden_entrada_nueva;
     private NotaDeCredito nota_seleccionada;
     private Double IGV;
+    
+    private ObservableList<OrdenEntradaxProducto> productos = FXCollections.observableArrayList(); 
 
     /**
      * Initializes the controller class.
@@ -189,7 +200,7 @@ public class NotaDeCreditoController extends Controller {
             inhabilitar_formulario();            
             setAgregarClientes();
         } catch (Exception ex){
-            infoController.show("No se pudo cargar la ventana envios : " + ex.getMessage());
+            infoController.show("No se pudo cargar la ventana nota de credito : " + ex.getMessage());
         }
     }    
     
@@ -200,6 +211,23 @@ public class NotaDeCreditoController extends Controller {
        limpiar_formulario();
        orden_entrada_nueva = true;
     }
+    
+    @Override
+    public void guardar(){
+        if (crearNuevo){
+            crear_nota_credito();           
+            limpiar_formulario();    
+            inhabilitar_formulario();
+        } else {
+            if ( nota_seleccionada == null){ 
+                infoController.show("No ha seleccionado ningun envio");
+                return;
+            }
+            editar_entrada();
+        }
+        crearNuevo = false;
+        RefrescarTabla(NotaDeCredito.findAll());
+    }    
     
     public NotaDeCreditoController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -217,9 +245,9 @@ public class NotaDeCreditoController extends Controller {
         for( NotaDeCredito nota : notas_credito){
             masterData.add(nota);
         }
-        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<NotaDeCredito, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("client_id")));
+        columna_cliente.setCellValueFactory((TableColumn.CellDataFeatures<NotaDeCredito, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("credit_note_cod")));
         columna_envio.setCellValueFactory((TableColumn.CellDataFeatures<NotaDeCredito, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
-        columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<NotaDeCredito, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
+        columna_pedido.setCellValueFactory((TableColumn.CellDataFeatures<NotaDeCredito, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_entrada_cod")));
         tabla_notas_cred.setItems(masterData);   
     }
 
@@ -288,7 +316,7 @@ public class NotaDeCreditoController extends Controller {
         nombre_cliente.clear();
         dni_cliente.clear();
         ruc_cliente.clear();
-        tabla_notas_cred.getItems().clear();
+        TablaProductos.getItems().clear();
         ordenes_entrada_combobox.getSelectionModel().clearSelection();
     }        
      
@@ -323,11 +351,45 @@ public class NotaDeCreditoController extends Controller {
     }
     
     @FXML
-    private void buscar_nota_credito(ActionEvent event) {
+    public void buscar_nota_credito(ActionEvent event) throws IOException{
+        List<NotaDeCredito> notas = NotaDeCredito.findAll();
+        masterData.clear();
+        try{
+            for(NotaDeCredito nc : notas){
+                if (cumple_condicion_busqueda(nc, cod_nota_buscar.getText(), cliente_buscar.getText(), orden_entrada_buscar.getText())){
+                    masterData.add(nc);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("No se pudo buscar el envio : " + e.getMessage());
+        }
     }
 
     @FXML
-    private void visualizar_nota_credito(ActionEvent event) {
+    private void visualizar_nota_credito(ActionEvent event) throws  IOException{
+        crearNuevo = false;
+        nota_seleccionada = tabla_notas_cred.getSelectionModel().getSelectedItem();
+        if (nota_seleccionada == null){
+            infoController.show("Nota de credito no seleccionada");  
+            return;            
+        }
+        try{
+            habilitar_formulario();
+            boton_agregar_cliente.setDisable(true);
+            buscarProducto.setDisable(true);
+            bttn_agregar_prod.setDisable(true);
+            bttn_eliminar_prod.setDisable(true);
+            dni_cliente.setEditable(false);
+            nombre_cliente.setEditable(false);
+            ruc_cliente.setEditable(false);
+            ordenes_entrada_combobox.setDisable(true);
+            limpiar_formulario();
+            setear_datos_nota();
+            setear_productos_nota();
+            
+        }catch (Exception e){
+            infoController.show("Error al cargar Envio: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -370,7 +432,7 @@ public class NotaDeCreditoController extends Controller {
                 producto_devuelto = args.orden_entrada_producto;
             });                 
             modal_stage.showAndWait();
-            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, producto_devuelto.getInteger("cantidad_descuento_disponible"), 0);
+            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, producto_devuelto.getInteger("cantidad"), 0);
             cantidad_producto.setValueFactory(cantidad_productoValues);
         }catch(Exception e){
             infoController.show("No se pudo agregar los productos : " + e.getMessage());
@@ -391,10 +453,10 @@ public class NotaDeCreditoController extends Controller {
         try{
             for(OrdenEntradaxProducto producto_disponible : productos_disponibles){
                 if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
-                    Integer cantidad = producto_disponible.getInteger("cantidad_descuento_disponible") - (Integer)cantidad_producto.getValue();
+                    Integer cantidad = producto_disponible.getInteger("cantidad") - (Integer)cantidad_producto.getValue();
                     if (cantidad >= 0){
                         if (cantidad_producto.getValue() != 0){
-                            producto_disponible.setInteger("cantidad_descuento_disponible", cantidad);
+                            producto_disponible.setInteger("cantidad", cantidad);
                             actualizar_lista_producto_a_agregar(producto_disponible);
                             llenar_tabla_productos_a_enviar();
                         }else{
@@ -420,8 +482,8 @@ public class NotaDeCreditoController extends Controller {
             limpiar_tabla_productos();
             codProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             nombreProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
-            cantProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("cantidad")));
-            precioUnitarioColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
+            cantProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper((p.getValue().get("cantidad"))));
+            //precioUnitarioColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
             TablaProductos.setItems(productos);
         }catch(Exception e){
             System.out.println(e);
@@ -441,7 +503,7 @@ public class NotaDeCreditoController extends Controller {
             productoxdevolucion.set("cantidad", productoxdevolucion.getInteger("cantidad") + extraCant);                                                                                                     
             break;
         }
-        calcularFinal();
+        //calcularFinal();
         
     }
     
@@ -472,8 +534,8 @@ public class NotaDeCreditoController extends Controller {
                 productoxentrada.set("tipo_id",producto_disponible.get("tipo_id"));
                 productoxentrada.set("tipo_cod",producto_disponible.get("tipo_cod"));  
                 productoxentrada.set("cantidad", cantidad_producto.getValue());       
-                productoxentrada.set("precio_unitario",producto_disponible.get("precio_unitario"));                  
-                productoxentrada.set("subtotal_final",producto_disponible.get("subtotal_final"));             
+                //productoxentrada.set("precio_unitario",producto_disponible.get("precio_unitario"));                  
+                //productoxentrada.set("subtotal_final",producto_disponible.get("subtotal_final"));             
                 productos_a_agregar.add(productoxentrada);
                 isNew = true;
             }else{
@@ -496,6 +558,95 @@ public class NotaDeCreditoController extends Controller {
         mostrar_informacion_cliente(cliente_seleccionado);
         nombre_cliente.setText(cliente_seleccionado.getString("nombre"));
         llenar_ordenes_entrada_cliente();        
+    }
+
+    private void crear_nota_credito(){
+        try{
+            Base.openTransaction();  
+            NotaDeCredito nueva_nota = new NotaDeCredito();
+            String credit_note_cod = "NC" + orden_entrada_seleccionada.getString("orden_entrada_cod");
+            if(!confirmatonController.show("Se creará el envio con código: " + credit_note_cod, "¿Desea continuar?")) return;
+            
+            nueva_nota.set("credit_note_cod", credit_note_cod);
+            nueva_nota.set("orden_entrada_cod", orden_entrada_seleccionada.get("orden_entrada_cod"));
+            nueva_nota.set("orden_entrada_id", orden_entrada_seleccionada.getInteger("orden_entrada_id"));
+            nueva_nota.set("client_id", cliente_seleccionado.getInteger("client_id"));
+            nueva_nota.set("last_user_change", usuarioActual.getString("usuario_cod"));
+            nueva_nota.set("explicacion", orden_entrada_seleccionada.get("descripcion"));
+            nueva_nota.set("fecha_emision", orden_entrada_seleccionada.get("fecha_emision"));
+            nueva_nota.saveIt();       
+            Base.commitTransaction();
+           
+            infoController.show("El Envio se creo satisfactoriamente");
+        } catch (Exception e){
+            infoController.show("No se pudo crear el envio : " + e.getMessage()); 
+        }
+    }
+
+    private void editar_entrada() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+     private void RefrescarTabla(List<NotaDeCredito> tempNC)
+    {
+        try {
+            if(tempNC == null) return;
+            masterData.removeAll(masterData);                        
+            for (NotaDeCredito nc : tempNC) {
+                masterData.add(nc);
+            }               
+            tabla_notas_cred.getColumns().get(0).setVisible(false);
+            tabla_notas_cred.getColumns().get(0).setVisible(true);
+        } catch (Exception e) {
+            infoController.show("Error al refrescar Tabla: " + e.getMessage());
+        }                                  
+    }
+
+    private void setear_datos_nota() {
+        Cliente cliente_temp = Cliente.findById(nota_seleccionada.getInteger("client_id"));
+        String tipo_cliente = cliente_temp.getString("tipo_cliente");
+        String dni = cliente_temp.getString("dni");
+        String ruc = cliente_temp.getString("ruc");
+   
+        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
+        {
+            dni_cliente.setText(dni);
+            ruc_cliente.setDisable(true);
+        }else
+        {
+            ruc_cliente.setText(ruc);
+            dni_cliente.setDisable(true);
+        }
+        nombre_cliente.setText(cliente_temp.getString("nombre"));
+        ordenes_entrada_combobox.setValue(nota_seleccionada.getString("orden_entrada_cod"));
+        orden_entrada_seleccionada = OrdenEntrada.findById(nota_seleccionada.get("orden_entrada_id"));    
+        //llenarHashDisponibles(orden_entrada_seleccionada);
+        cliente_seleccionado = cliente_temp;
+    }
+
+    private void setear_productos_nota() {
+        try{          
+            productos.clear();
+            List<OrdenEntradaxProducto> productos_agregados = OrdenEntradaxProducto.where("orden_entrada_id = ?",orden_entrada_seleccionada.getId());
+            productos.addAll(productos_agregados); 
+            productos_a_agregar = productos;
+            llenar_tabla_productos_a_enviar();
+        }catch(Exception e){
+            System.out.println(e);
+        }  
+    }
+
+    public boolean cumple_condicion_busqueda(NotaDeCredito nota, String codigo, String cliente, String ordEntrada){
+        boolean match = true;        
+        if ( codigo.equals("") && cliente.equals("") && ordEntrada.equals("")){
+            match = true;
+        }else {
+            match = (!codigo.equals("")) ? (match && (nota.get("credit_note_cod")).equals(codigo)) : match;
+            Integer idCliente = (cliente_seleccionado!=null) ? (Integer)cliente_seleccionado.getId():0;
+            match = (!cliente.equals("")) ? (match && (nota.get("cliente_id")==idCliente)) : match;
+            match = (!ordEntrada.equals("")) ? (match && (nota.get("orden_entrada_cod")).equals(ordEntrada)) : match;
+        }
+        return match;
     }
     
 }

@@ -16,7 +16,7 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("Notascredito")
 @IdName("credit_note_id")
-//@CompositePK({"credit_note_cod","client_id","credit_note_id"})
+//@CompositePK({"credit_note_cod", "client_id", "credit_note_id"})
 public class NotaDeCredito extends Model{
     
 }
