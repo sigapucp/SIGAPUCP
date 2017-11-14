@@ -62,9 +62,6 @@ public class AuditoriaController extends Controller {
     private ComboBox<String> AccionC;
 
     @FXML
-    private TextField HoraDos;
-
-    @FXML
     private DatePicker AuditoriaFechaUno;
 
     @FXML
@@ -78,9 +75,6 @@ public class AuditoriaController extends Controller {
 
     @FXML
     private TextField EmpleadoAuditoria;
-
-    @FXML
-    private CheckBox EntreHora;
 
     @FXML
     private TableView<Auditoria> TablaAuditoria;
@@ -101,10 +95,7 @@ public class AuditoriaController extends Controller {
     private TableColumn<Auditoria,String> ColumnaRol;
 
     @FXML
-    private CheckBox EntreFecha;
-
-    @FXML
-    private TextField HoraUno;   
+    private CheckBox EntreFecha; 
     
     private List<AccionLog> acciones;
     
@@ -123,17 +114,7 @@ public class AuditoriaController extends Controller {
         if (!EntreFecha.isSelected()){
             AuditoriaFechaDos.setDisable(true);
         }      
-    }
-    @FXML
-    private void handleCheckBoxDos(ActionEvent event){
-        if (EntreHora.isSelected()){
-            HoraDos.setDisable(false);
-        }
-        
-        if (!EntreHora.isSelected()){
-            HoraDos.setDisable(true);
-        }     
-    }    
+    }  
     
     public void limpiar_tabla_index(){
         TablaAuditoria.getItems().clear();
@@ -202,15 +183,24 @@ public class AuditoriaController extends Controller {
     }
     
     
-        public boolean cumple_condicion_busqueda(Auditoria registro_auditoria, String empleado, String descripcion, String accion, String modulo, LocalDate fecha1, LocalDate fecha2, String hora1, String hora2) throws ParseException {//, LocalDate fecha1, LocalDate fecha2, String hora1, String hora2){
-        boolean match = true;        
-        if ( empleado.equals("") && descripcion.equals("")&& accion==null && modulo==null && fecha1==null && fecha2==null && hora1==null && hora2==null){
+        public boolean cumple_condicion_busqueda(Auditoria registro_auditoria, String empleado, String descripcion, String accion, String modulo, LocalDate fecha1, LocalDate fecha2) throws ParseException {
+        boolean match = true;   
+        
+        //System.out.println(registro_auditoria.getEmpleado());
+        
+        String empleado_nombre = registro_auditoria.getEmpleado();
+        
+        if (empleado_nombre == null){
+            empleado_nombre = "";
+        }
+        
+        if ( empleado.equals("") && descripcion.equals("")&& accion.equals("") && modulo.equals("") && fecha1==null && fecha2==null){
             match = true;
         }else {
-            match = (!empleado.equals("")) ? (match && (registro_auditoria.getEmpleado()).equals(empleado)) : match;
+            match = (!empleado.equals("")) ? (match && (empleado_nombre).equals(empleado)) : match;
             match = (!descripcion.equals("")) ? (match && (registro_auditoria.getDescripcion()).equals(descripcion)) : match;
-            match = (!(accion==null)) ? (match && (registro_auditoria.getAccion()).equals(accion)) : match;
-            match = (!(modulo==null)) ? (match && (registro_auditoria.getModulo()).equals(modulo)) : match;
+            match = (!(accion.equals(""))) ? (match && (registro_auditoria.getAccion()).equals(accion)) : match;
+            match = (!(modulo.equals(""))) ? (match && (registro_auditoria.getModulo()).equals(modulo)) : match;
             Date fechaDate1 = new Date();
             Date fechaDate2 = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -234,22 +224,29 @@ public class AuditoriaController extends Controller {
         
         LocalDate fecha1 = AuditoriaFechaUno.getValue();
         LocalDate fecha2 = AuditoriaFechaDos.getValue();
-        String hora1 = HoraUno.getText();
-        String hora2 = HoraDos.getText();
         ObservableList<Auditoria> masterDataAux = FXCollections.observableArrayList();
-        int aux = 0;
-        System.out.println(masterData.size());
+        
+        String empleado = EmpleadoAuditoria.getText();
+                
+        String descripcion = DescripcionAuditoria.getText();
+        
+        String accion = AccionC.getSelectionModel().getSelectedItem();
+        if (accion==null){
+            accion = "";
+        }
+        
+        String modulo = Modulo.getSelectionModel().getSelectedItem();
+        
+        if (modulo==null){
+            modulo = "";
+        }
+
         
         int cant_elementos = masterData.size();
         
         for (int i = 0; i < cant_elementos; i++){
-            System.out.println("entro al loop");
-            if (cumple_condicion_busqueda(masterData.get(i),EmpleadoAuditoria.getText(),DescripcionAuditoria.getText(),AccionC.getSelectionModel().getSelectedItem(),Modulo.getSelectionModel().getSelectedItem(),fecha1,fecha2,hora1,hora2)){//,fecha1,fecha2,hora1,hora2)){
-                System.out.println("cumplio condicion");
+            if (cumple_condicion_busqueda(masterData.get(i),empleado,descripcion,accion,modulo,fecha1,fecha2)){
                 masterDataAux.add(masterData.get(i));
-                aux++;
-            }else{
-                System.out.println("no cumplio condicion");
             }                                 
         }
 

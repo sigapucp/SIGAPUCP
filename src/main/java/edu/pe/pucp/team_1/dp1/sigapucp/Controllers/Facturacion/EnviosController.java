@@ -166,11 +166,18 @@ public class EnviosController extends Controller{
             Base.openTransaction();
             String estado_anterior = envio_seleccionado.getString("estado");
             Envio.ESTADO siguiente_estado = Envio.ESTADO.valueOf(estado_anterior).next();
+            if(siguiente_estado == Envio.ESTADO.COMPLETA)
+            {
+                infoController.show("El envio solo se puede completar al anexarlo a una guia de remision");
+                return;
+            }
             if(!confirmatonController.show("Esta accion cambiara el envio de estado " + estado_anterior + " a " + siguiente_estado.name(), "¿Desea continuar?")) return;
             envio_seleccionado.set("estado", siguiente_estado.name());
             envio_seleccionado.saveIt();            
             infoController.show("El Envio fue actualizada correctamente");                             
             Base.commitTransaction();
+            tabla_envios.getColumns().get(0).setVisible(false);
+            tabla_envios.getColumns().get(0).setVisible(true);
         }catch (Exception e){
             Base.rollbackTransaction();
             infoController.show("No se ha podido modificar el estado del Envio");
@@ -199,6 +206,8 @@ public class EnviosController extends Controller{
             }              
             productos.remove(envioxproducto);                   
             pedidosNrDisponibles.put(envioxproducto.getInteger("tipo_id"),pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id"))+envioxproducto.getInteger("cantidad"));
+            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id")), 0);
+            cantidad_producto.setValueFactory(cantidad_productoValues);
             tabla_productos.getColumns().get(0).setVisible(false);
             tabla_productos.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
@@ -280,7 +289,7 @@ public class EnviosController extends Controller{
         try{
             Base.openTransaction();  
             Envio envio = new Envio();
-            String envio_cod = "ENV" + orden_compra_seleccionada.getString("orden_compra_cod");
+            String envio_cod = "ENV" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from envios_envio_id_seq")))) + 1) + orden_compra_seleccionada.getString("orden_compra_cod");
             if(!confirmatonController.show("Se creará el envio con código: " + envio_cod, "¿Desea continuar?")) return;
             
             envio.set("envio_cod", envio_cod);
@@ -374,7 +383,9 @@ public class EnviosController extends Controller{
             {
                 extraCant += cantidad_producto.getValue();
             }
-            productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
+            productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);  
+            pedidosNrDisponibles.put(productoxenvio.getInteger("tipo_id"),pedidosNrDisponibles.get(productoxenvio.getInteger("tipo_id"))-extraCant);
+           
             break;
         }    
     }
@@ -440,12 +451,15 @@ public class EnviosController extends Controller{
                     Integer cantidad = cantidad_producto.getValue();                    
                     envioxproducto.set("tipo_id",producto_devuelto.getInteger("tipo_id"));
                     envioxproducto.set("tipo_cod",producto_devuelto.get("tipo_cod"));                                
-                    envioxproducto.set("cantidad",cantidad);      
-                    pedidosNrDisponibles.put(envioxproducto.getInteger("tipo_id"),pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id"))-envioxproducto.getInteger("cantidad"));                    
+                    envioxproducto.set("cantidad",cantidad);  
+                    envioxproducto.set("cantidad_para_devolver",cantidad);                      
+                    pedidosNrDisponibles.put(envioxproducto.getInteger("tipo_id"),pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id"))-envioxproducto.getInteger("cantidad"));                                      
                     productos.add(envioxproducto);
                     isNew = true;                    
                 }                          
-               RecalcularTabla(isNew);
+                RecalcularTabla(isNew);
+                SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, pedidosNrDisponibles.get(producto_devuelto.getInteger("tipo_id")), 0);
+                cantidad_producto.setValueFactory(cantidad_productoValues);
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         }                

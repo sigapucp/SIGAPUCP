@@ -47,7 +47,8 @@ public class AgregarProductosController implements Initializable {
 //    @FXML
 //    private ComboBox<String> BuscarEstado;
     @FXML
-    private Button buscarProductoButtom;        
+    private Button buscarProductoButtom;    
+    
     @FXML
     private Button agregarProductoButtom;    
     
@@ -69,16 +70,24 @@ public class AgregarProductosController implements Initializable {
     private TipoProducto ProductoBusqueda = null;
     private InformationAlertController infoController;
     private final ObservableList<TipoProducto> productos = FXCollections.observableArrayList();     
-    
+    private List<TipoProducto> productosMostrar;
     public AgregarProductosController()
     {
-         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");  
+        if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");  
         infoController = new InformationAlertController();
+        productosMostrar = TipoProducto.where("estado = ?", TipoProducto.ESTADO.ACTIVO.name());
     }
 
     /**
      * Initializes the controller class.
      */
+    
+    public void setProductosMostrar(List<TipoProducto> gProductosMostrar)
+    {
+        productosMostrar = gProductosMostrar;
+        productos.removeAll(productos);
+        productos.addAll(productosMostrar);
+    }
     
     
     @FXML
@@ -89,7 +98,7 @@ public class AgregarProductosController implements Initializable {
         String categoria = BuscarCategoria.getSelectionModel().getSelectedItem();
         //String estado = BuscarEstado.getSelectionModel().getSelectedItem();        
         
-        List<TipoProducto> tempProductos = TipoProducto.findAll();
+        List<TipoProducto> tempProductos = productosMostrar;
         try{
             
             if(codigo!=null&&!codigo.isEmpty())
@@ -155,22 +164,17 @@ public class AgregarProductosController implements Initializable {
         try {            
             ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             ColumnaNombre.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("nombre")));
-            //ColumnaEstado.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
             ColumnaDescripcion.setCellValueFactory((TableColumn.CellDataFeatures<TipoProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descripcion")));
 
-            //ObservableList<String> estados = FXCollections.observableArrayList();                                           
             ObservableList<String> categoriasDrop = FXCollections.observableArrayList(); 
-
-            //estados.add(""); 
-            //estados.addAll(Arrays.asList(TipoProducto.ESTADO.values()).stream().map(x->x.name()).collect(Collectors.toList()));   
-
+            
             categoriasDrop.add("");
             categoriasDrop.addAll(CategoriaProducto.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
 
 
             //BuscarEstado.setItems(estados);
             BuscarCategoria.setItems(categoriasDrop);      
-            productos.addAll(TipoProducto.findAll());
+            productos.addAll(productosMostrar);
             TablaProductos.setItems(productos);            
         } catch (Exception e) {
             infoController.show("Problemas en la inicializacion de busqueda de Producto");

@@ -22,13 +22,14 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <AnchorPane layoutX="24.0" layoutY="12.0" prefHeight="99.0" prefWidth="502.0" AnchorPane.bottomAnchor="289.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="12.0">
+      <AnchorPane layoutX="24.0" layoutY="12.0" prefHeight="117.0" prefWidth="502.0" AnchorPane.bottomAnchor="240.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="12.0">
          <children>
             <Label layoutX="14.0" layoutY="42.0" text="Cliente">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
+
             <Label layoutX="14.0" layoutY="79.0" text="Cod.Envio">
                <font>
                   <Font size="14.0" />

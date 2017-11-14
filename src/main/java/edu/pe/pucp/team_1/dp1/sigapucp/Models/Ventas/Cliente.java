@@ -5,6 +5,7 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas;
 
+import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
@@ -38,16 +39,18 @@ public class Cliente extends Model{
         this.set("last_user_change","user");
     }
     
-    public boolean is_valid(){
-        boolean match = true;
+    public boolean is_valid(InformationAlertController control){
+        boolean matchdni = true;
+        boolean matchruc = true;
         if (!this.get("ruc").equals("")){
-            match = (this.get("ruc").toString().length() == 11 );
+            matchruc = (this.get("ruc").toString().length() == 11 );
+            control.show("El Ruc del cliente debe tener 11 digitos");
         }
         if (!this.get("dni").equals("")){
-            match = (this.get("dni").toString().length() == 8 );
-        }
-                
-        return match;
+            matchdni = (this.get("dni").toString().length() == 8 );
+            control.show("El Dni del cliente debe tener 8 digitos");
+        }                
+        return matchdni && matchruc;
     }
     
       public enum TIPO

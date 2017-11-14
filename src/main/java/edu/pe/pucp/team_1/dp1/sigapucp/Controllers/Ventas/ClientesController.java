@@ -128,7 +128,7 @@ public class ClientesController extends Controller{
             nuevo_cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             nuevo_cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             nuevo_cliente.set("departamento",VerDepartamento.getSelectionModel().getSelectedItem());
-            if (nuevo_cliente.is_valid()){
+            if (nuevo_cliente.is_valid(infoController)){
                 nuevo_cliente.saveIt();
                 Base.commitTransaction();
                 infoController.show("El cliente ha sido creado satisfactoriamente"); 
@@ -152,9 +152,13 @@ public class ClientesController extends Controller{
             cliente.asignar_atributos(clienteSh.getText(), repLegal.getText(), telf.getText(), ruc.getText(), dni.getText(), obtener_tipo_cliente(), envioDir.getText(), factDir.getText());
             cliente.set("last_user_change",usuarioActual.get("usuario_cod"));
             cliente.set("departamento",VerDepartamento.getSelectionModel().getSelectedItem());
-            cliente.saveIt();
-            Base.commitTransaction();
-            infoController.show("El cliente ha sido editado creado satisfactoriamente"); 
+            if (cliente.is_valid(infoController)){
+                cliente.saveIt();
+                Base.commitTransaction();
+                infoController.show("El cliente ha sido editado satisfactoriamente"); 
+            }else{
+                infoController.show("El cliente contiene errores"); 
+            } 
         }
         catch(Exception e){
             infoController.show("Error al editar el cliente: " + e);

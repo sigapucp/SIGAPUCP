@@ -341,6 +341,12 @@ public class SimulacionesController extends Controller{
     {        
         fxmlPath = gFxmlPath;
         Almacen almacenCentral = Almacen.findFirst("es_central = ?", "T");
+        
+        if(almacenCentral == null)
+        {
+            infoController.show("Debe crear un almacen central para correr las simulaciones");
+            return;
+        }
         int largo = almacenCentral.getInteger("largo");
         int ancho = almacenCentral.getInteger("ancho");        
         int area = almacenCentral.getInteger("longitud_area");
@@ -539,6 +545,15 @@ public class SimulacionesController extends Controller{
             }                                
         }
         
+        
+        String estadoOrd = ordenSalidaActual.getString("estado");
+        
+        if(estadoOrd.equals(OrdenSalida.ESTADO.PENDIENTE.name()))
+        {
+            infoController.show("La Orden de Salida se encuentra en PENDIENTE. Aun no cuenta con productos especificos");
+            return;
+        }
+        
         grid.clearUserTilesColor(colorActual);
         gridSaved.clearUserTilesColor(colorActualSaved);
         List<Producto> productosOrden =  new ArrayList<>();
@@ -552,7 +567,7 @@ public class SimulacionesController extends Controller{
         productos = productosOrden.stream().filter(x -> x.getString("ubicado").equals("S")).collect(Collectors.toList());
         if(productos.isEmpty())
         {
-            infoController.show("No hay con una ubicacion en esta orden");
+            infoController.show("Todos los productos no estan ubicados");
             limpiar_formulario();
             inhabilitar_formulario();
             return;            
@@ -692,6 +707,7 @@ public class SimulacionesController extends Controller{
     @FXML
     private void comenzarRuta(ActionEvent event) {
         grid.clearUserTilesColor(colorActual);
+        if(simulacionActual == null) return;
         simulacionActual.setNodoActual(0);
         tittle_pane.setText("Inicio de Ruta");
         
