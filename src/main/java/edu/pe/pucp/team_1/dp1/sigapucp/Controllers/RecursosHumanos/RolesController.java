@@ -112,7 +112,9 @@ public class RolesController extends Controller{
         
         tempRoles = Rol.findAll();               
         for (Rol usuario : tempRoles) {
-            roles.add(usuario);
+            if (usuario.getString("estado").equals(Rol.ESTADO.ACTIVO.name())){
+                roles.add(usuario);
+            }           
         }                               
         
         infoController = new InformationAlertController();
