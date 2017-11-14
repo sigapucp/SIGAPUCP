@@ -542,26 +542,55 @@ public class OrdenesDeSalidaController  extends Controller{
         }
     }
     
+    private Boolean verificarCantidadxTipo(){
+        Integer cantidad_tipo = 0;
+        for (OrdenSalidaxProducto salidaxtipoproducto : masterDataTipoSalida){
+            if (instancia_devuelta.getInteger("tipo_id")==salidaxtipoproducto.getInteger("tipo_id")){
+                cantidad_tipo = salidaxtipoproducto.getInteger("cantidad");
+                break;
+            }
+        }
+        Integer productos_carrito = 0;
+        for (OrdenSalidaxProductoFinal producto : masterDataProductoFinal){
+            if (instancia_devuelta.getInteger("tipo_id")==producto.getInteger("tipo_id")){
+                productos_carrito += 1;
+                break;
+            }
+        }
+        if (productos_carrito<cantidad_tipo)
+            return true;
+        else
+            return false;
+    }
+    
     @FXML
     private void agregar_instancias_producto(ActionEvent event) throws IOException{
         try{
             if (cantidad_tipos_total > masterDataProductoFinal.size()){
                 seleccionar_instancia(); 
                 if (instancia_devuelta != null){
-                    OrdenSalidaxProductoFinal salidaxproductofinal = new OrdenSalidaxProductoFinal();
-                    salidaxproductofinal.set("producto_cod",instancia_devuelta.getString("producto_cod"));
-                    salidaxproductofinal.set("producto_id",instancia_devuelta.getInteger("producto_id"));
-                    salidaxproductofinal.set("tipo_cod",instancia_devuelta.getString("tipo_cod"));
-                    salidaxproductofinal.set("tipo_id",instancia_devuelta.getInteger("tipo_id"));
-                    salidaxproductofinal.set("producto_cod",instancia_devuelta.getString("producto_cod"));
-                    salidaxproductofinal.set("orden_entrada_cod",instancia_devuelta.get("orden_entrada_cod"));
-                    salidaxproductofinal.set("orden_entrada_id",instancia_devuelta.get("orden_entrada_id"));
-                    masterDataProductoFinal.add(salidaxproductofinal);
-                    for (Producto p: productos_instancias){
-                        if (p.getInteger("producto_id")==instancia_devuelta.get("producto_id")){
-                            productos_instancias.remove(p);
-                            break;
+                    if(masterDataProductoFinal.stream().anyMatch(x -> x.getInteger("producto_id").equals(instancia_devuelta.getInteger("producto_id")))){
+                        return;
+                    }
+                    Boolean tipo_incompleto = verificarCantidadxTipo();
+                    if (tipo_incompleto){
+                        OrdenSalidaxProductoFinal salidaxproductofinal = new OrdenSalidaxProductoFinal();
+                        salidaxproductofinal.set("producto_cod",instancia_devuelta.getString("producto_cod"));
+                        salidaxproductofinal.set("producto_id",instancia_devuelta.getInteger("producto_id"));
+                        salidaxproductofinal.set("tipo_cod",instancia_devuelta.getString("tipo_cod"));
+                        salidaxproductofinal.set("tipo_id",instancia_devuelta.getInteger("tipo_id"));
+                        salidaxproductofinal.set("producto_cod",instancia_devuelta.getString("producto_cod"));
+                        salidaxproductofinal.set("orden_entrada_cod",instancia_devuelta.get("orden_entrada_cod"));
+                        salidaxproductofinal.set("orden_entrada_id",instancia_devuelta.get("orden_entrada_id"));
+                        masterDataProductoFinal.add(salidaxproductofinal);
+                        for (Producto p: productos_instancias){
+                            if (p.getInteger("producto_id")==instancia_devuelta.get("producto_id")){
+                                productos_instancias.remove(p);
+                                break;
+                            }
                         }
+                    } else{
+                        infoController.show("Se completó la cantidad de productos del tipo: "+ TipoProducto.findFirst("tipo_id = ?", instancia_devuelta.getInteger("tipo_id")).getString("nombre"));
                     }
                 }                
             } else{
