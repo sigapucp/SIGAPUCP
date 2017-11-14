@@ -173,14 +173,17 @@ public class ModalAgregarProductoRackController extends ModalController {
             AlmacenAreaZ almacenZ = AlmacenAreaZ.findFirst("almacen_xy_id = ? and level = ?", almacenXY.getId(), producto_cod_z);
 
             List<AlmacenAreaZ> almacenesFiltrados = almacenesZExistentes.stream().filter(almacen -> {
-                return almacen.getId() == almacenZ.getId();
+                return almacen.getInteger("almacen_z_id") == almacenZ.getInteger("almacen_z_id");
             }).collect(Collectors.toList());
             AlmacenAreaZ almacenFiltrado;
+            AlmacenAreaXY almacenXYFiltrado;
 
             if(almacenesFiltrados.size() > 0) {
                 almacenFiltrado = almacenesFiltrados.get(0);
+                almacenXYFiltrado = AlmacenAreaXY.findById(almacenFiltrado.getInteger("almacen_xy_id"));
             } else {
                 almacenFiltrado = almacenZ;
+                almacenXYFiltrado = almacenXY;
             }
 
             double capacidadRestante = almacenFiltrado.getDouble("capacidad_restante");
@@ -188,7 +191,7 @@ public class ModalAgregarProductoRackController extends ModalController {
     
             if(capacidadRestante > 0 && capacidadRestante >= pesoProducto) {
                 almacenFiltrado.setDouble("capacidad_restante", (capacidadRestante - pesoProducto <= 0 ? 0 : capacidadRestante - pesoProducto) );
-                almacenXY_seleccionado = almacenXY;
+                almacenXY_seleccionado = almacenXYFiltrado;
                 almacenZ_seleccionado = almacenFiltrado;
                 condition = true;
             }
@@ -251,14 +254,14 @@ public class ModalAgregarProductoRackController extends ModalController {
 
             productos_filtrados = productos_existentes.stream().filter(producto -> {
                 boolean cond = true;
-                TipoProducto tipo = TipoProducto.findFirst("tipod_cod = ?", producto.getString("tipo_cod"));
+                TipoProducto tipo = TipoProducto.findFirst("tipo_cod = ?", producto.getString("tipo_cod"));
 
                 // Validacion que el producto no ha sido colocado en un rack
                 cond = cond && producto.getString("ubicado").equals("N");
                 // Validacion de Codigo de Producto
                 cond = cond && producto.getString("producto_cod").contains(productoCod);
                 // Validacion de Fecha de Adquisicion del Producto
-                cond = cond && producto.getDate("fecha_adquisicion").toString().equals(productoFechaAdquisicion);
+                cond = cond && producto.getDate("fecha_entrada").toString().contains(productoFechaAdquisicion);
                 // Validacion de Nombre de Producto
                 cond = cond && tipo.getString("nombre").contains(productoTipo);
      
