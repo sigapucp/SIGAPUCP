@@ -55,7 +55,7 @@
                         <TableColumn fx:id="ventas_fecha" prefWidth="85.0" text="Fecha Emision" />
                      </columns>
                   </TableView>
-                  <Button layoutX="141.0" layoutY="305.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
+                  <Button layoutX="141.0" layoutY="305.0" mnemonicParsing="false" onAction="#visualizar_doc_venta" prefHeight="25.0" prefWidth="96.0" text="Visualizar" />
                </children>
             </AnchorPane>
          </children>
@@ -74,7 +74,7 @@
                      </font>
                   </Label>
                   <Line endX="600.0" layoutX="133.0" layoutY="49.0" startX="-100.0" />
-                  <Label layoutX="335.0" layoutY="11.0" text="idDocVenta">
+                  <Label layoutX="335.0" layoutY="11.0">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -138,7 +138,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="nombre_cliente" layoutX="140.0" layoutY="13.0" prefHeight="25.0" prefWidth="154.0" />
+                                    <TextField fx:id="nombre_cliente" layoutX="149.0" layoutY="13.0" prefHeight="25.0" prefWidth="154.0" />
                                     <Label fx:id="VerDocumentoLabel" layoutX="323.0" layoutY="16.0" text="DNI:">
                                        <font>
                                           <Font size="14.0" />
@@ -146,20 +146,20 @@
                                     </Label>
                                     <TextField fx:id="dni_cliente" layoutX="378.0" layoutY="14.0" prefHeight="25.0" prefWidth="120.0" />
                                     <DatePicker fx:id="fecha_emision" layoutX="382.0" layoutY="51.0" prefHeight="25.0" prefWidth="120.0" />
-                                    <ComboBox fx:id="ver_moneda" layoutX="140.0" layoutY="50.0" prefHeight="25.0" prefWidth="153.0" />
+                                    <ComboBox fx:id="ver_moneda" layoutX="147.0" layoutY="50.0" prefHeight="25.0" prefWidth="153.0" />
                                     <Label fx:id="VerDocumentoLabel1" layoutX="524.0" layoutY="17.0" text="RUC">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                     <TextField fx:id="ruc_cliente" layoutX="578.0" layoutY="15.0" prefHeight="25.0" prefWidth="96.0" />
-                                    <Label layoutX="15.0" layoutY="97.0" text="Guia de Remision">
+                                    <Label layoutX="326.0" layoutY="98.0" text="Guia de Remision">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="guia_remision_busqueda" layoutX="140.0" layoutY="95.0" prefHeight="25.0" prefWidth="154.0" />
-                                    <Button fx:id="buscar_guia_remision" layoutX="323.0" layoutY="96.0" mnemonicParsing="false" onAction="#agregar_guia_remision" prefHeight="20.0" prefWidth="20.0" text="+">
+                                    <TextField fx:id="guia_remision_busqueda" layoutX="468.0" layoutY="96.0" prefHeight="25.0" prefWidth="154.0" />
+                                    <Button fx:id="buscar_guia_remision" layoutX="651.0" layoutY="97.0" mnemonicParsing="false" onAction="#agregar_guia_remision" prefHeight="20.0" prefWidth="20.0" text="+">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -170,6 +170,12 @@
                                        </font>
                                     </Label>
                                     <TextField fx:id="codigo_venta" layoutX="578.0" layoutY="50.0" prefHeight="25.0" prefWidth="96.0" />
+                                    <Label layoutX="15.0" layoutY="98.0" text="Tipo de documento">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="tipo_doc" layoutX="148.0" layoutY="96.0" prefHeight="25.0" prefWidth="153.0" />
                                  </children>
                               </AnchorPane>
                            </children>
