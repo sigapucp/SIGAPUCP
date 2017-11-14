@@ -16,15 +16,19 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarClienteArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarOrdenEntradaProductoArgs;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,8 +40,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -85,16 +87,7 @@ public class NotaDeCreditoController extends Controller {
     private Label LabelPedido;
 
     @FXML
-    private AnchorPane pedidoTable;
-
-    @FXML
-    private Spinner<Integer> cantidad_producto;
-
-    @FXML
-    private TextField VerProducto;
-
-    @FXML
-    private Button buscarProducto;
+    private AnchorPane pedidoTable;     
 
     @FXML
     private TextField igvNC;
@@ -148,13 +141,7 @@ public class NotaDeCreditoController extends Controller {
     private ComboBox<String> ordenes_entrada_combobox;
     
     @FXML
-    private Button boton_agregar_cliente;
-    
-    @FXML
-    private Button bttn_agregar_prod;
-
-    @FXML
-    private Button bttn_eliminar_prod;
+    private Button boton_agregar_cliente;     
         
     
     //LOGICA
@@ -200,10 +187,33 @@ public class NotaDeCreditoController extends Controller {
             llenar_autocompletado();
             inhabilitar_formulario();            
             setAgregarClientes();
+            
+            ordenes_entrada_combobox.valueProperty().addListener(new ChangeListener<String>() {           
+               @Override
+               public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                   if(newValue == null) return;
+                   if(newValue.isEmpty()) return;
+                    orden_entrada_seleccionada = OrdenEntrada.findFirst("orden_entrada_cod = ?", newValue);
+                    obtener_productos_disponibles_orden_entrada();                      
+                   setProductosEntrada(orden_entrada_seleccionada);    
+                   llenar_tabla_productos_a_enviar();
+                   calcularFinal();
+            }});
         } catch (Exception ex){
             infoController.show("No se pudo cargar la ventana nota de credito : " + ex.getMessage());
         }
     }    
+    
+    public void setProductosEntrada(OrdenEntrada orden)
+    {     
+        limpiar_tabla_productos();
+        List<OrdenEntradaxProducto> productosOrden = OrdenEntradaxProducto.where("orden_entrada_id = ?", orden.get("orden_entrada_id"));
+        for(OrdenEntradaxProducto producto:productosOrden)
+        {
+            producto_devuelto = producto;
+            agregar_producto(null);          
+        }        
+    }
     
     @Override
     public void nuevo(){
@@ -276,10 +286,7 @@ public class NotaDeCreditoController extends Controller {
     }
     
     public void habilitar_formulario(){
-        boton_agregar_cliente.setDisable(false);
-        buscarProducto.setDisable(false);
-        bttn_agregar_prod.setDisable(false);
-        bttn_eliminar_prod.setDisable(false);
+        boton_agregar_cliente.setDisable(false);               
         ordenes_entrada_combobox.setDisable(false);
         envio_formulario.setDisable(false);
     }  
@@ -299,13 +306,12 @@ public class NotaDeCreditoController extends Controller {
             dni_cliente.setDisable(true);
         }          
     }
-   
-    
+       
         public void llenar_ordenes_entrada_cliente(){        
         try{
             ObservableList<String> ordenes_entrada = FXCollections.observableArrayList();
             ordenes_entrada.clear();
-            ordenes_entrada.addAll(OrdenEntrada.where("client_id = ? and tipo = ?", cliente_seleccionado.getId(), OrdenEntrada.TIPO.Devolucion.name()).stream().map(x -> x.getString("orden_entrada_cod")).collect(Collectors.toList()));
+            ordenes_entrada.addAll(OrdenEntrada.where("client_id = ? and tipo = ? and estado = ?", cliente_seleccionado.getId(), OrdenEntrada.TIPO.Devolucion.name(),OrdenEntrada.ESTADO.Parcial.name()).stream().map(x -> x.getString("orden_entrada_cod")).collect(Collectors.toList()));
             if (ordenes_entrada.isEmpty()){
                 infoController.show("El cliente no cuenta con pedidos devueltos :\n Asegurese de que se haya creado una Orden de entrada para los articulos devueltos. ");
                 limpiar_formulario();
@@ -314,7 +320,7 @@ public class NotaDeCreditoController extends Controller {
                 ordenes_entrada_combobox.setItems(ordenes_entrada);            
             }
         }catch(Exception e){
-            infoController.show("Ha ocurrido un problema durante la seleccion de orden de compra : " + e.getMessage());
+            infoController.show("Ha ocurrido un problema durante la seleccion de orden de entrada : " + e.getMessage());
         }
     }
         
@@ -382,10 +388,7 @@ public class NotaDeCreditoController extends Controller {
         }
         try{
             habilitar_formulario();
-            boton_agregar_cliente.setDisable(true);
-            buscarProducto.setDisable(true);
-            bttn_agregar_prod.setDisable(true);
-            bttn_eliminar_prod.setDisable(true);
+            boton_agregar_cliente.setDisable(true);                          
             dni_cliente.setEditable(false);
             nombre_cliente.setEditable(false);
             ruc_cliente.setEditable(false);
@@ -393,58 +396,62 @@ public class NotaDeCreditoController extends Controller {
             limpiar_formulario();
             setear_datos_nota();
             setear_productos_nota();
+            calcularFinal();
             
         }catch (Exception e){
             infoController.show("Error al cargar Envio: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void handleModalProducto(ActionEvent event) throws IOException{
-        try{
-            String temp_orden_entrada = ordenes_entrada_combobox.getSelectionModel().getSelectedItem();
-            if ( orden_entrada_seleccionada != null){
-                String orden_entrada_actual = orden_entrada_seleccionada.getString("orden_compra_cod");
-                orden_entrada_nueva = !temp_orden_entrada.equals(orden_entrada_actual);
-            }
-            if (orden_entrada_nueva){
-                orden_entrada_seleccionada = OrdenEntrada.findFirst("orden_entrada_cod = ?", temp_orden_entrada);
-                obtener_productos_disponibles_orden_entrada();
-                limpiar_tabla_productos();
-                orden_entrada_nueva = false;
-            }
-            abrirModalProductos();
-            if(producto_devuelto==null) return; 
-            VerProducto.setText(TipoProducto.findFirst("tipo_cod = ? AND tipo_id = ?", producto_devuelto.get("tipo_cod"), producto_devuelto.get("tipo_id")).getString("nombre"));
-        }catch(Exception e){
-            infoController.show("Necesita seleccionar una orden de compra");
-        }
-
-    }
+//    @FXML
+//    private void handleModalProducto(ActionEvent event) throws IOException{
+//        try{
+//            String temp_orden_entrada = ordenes_entrada_combobox.getSelectionModel().getSelectedItem();
+//            if ( orden_entrada_seleccionada != null){
+//                String orden_entrada_actual = orden_entrada_seleccionada.getString("orden_compra_cod");
+//                orden_entrada_nueva = !temp_orden_entrada.equals(orden_entrada_actual);
+//            }
+//            if (orden_entrada_nueva){
+//                orden_entrada_seleccionada = OrdenEntrada.findFirst("orden_entrada_cod = ?", temp_orden_entrada);
+//                obtener_productos_disponibles_orden_entrada();
+//                limpiar_tabla_productos();
+//                orden_entrada_nueva = false;
+//            }
+////            abrirModalProductos();
+//            if(producto_devuelto==null) return; 
+//            VerProducto.setText(TipoProducto.findFirst("tipo_cod = ? AND tipo_id = ?", producto_devuelto.get("tipo_cod"), producto_devuelto.get("tipo_id")).getString("nombre"));
+//        }catch(Exception e){
+//            infoController.show("Necesita seleccionar una orden de compra");
+//        }
+//
+//    }
     
     public void limpiar_tabla_productos(){
         TablaProductos.getItems().clear();
     }
     
-    private void abrirModalProductos() throws Exception
-    {
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
-            AgregarProductosEntradaController controller = new AgregarProductosEntradaController(productos_disponibles);
-            loader.setController(controller);
-            Scene modal_content_scene = new Scene((Parent)loader.load());
-            modal_stage_prod.setScene(modal_content_scene);       
-            if(modal_stage_prod.getModality() != Modality.APPLICATION_MODAL) modal_stage_prod.initModality(Modality.APPLICATION_MODAL); 
-            controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenEntradaProductoArgs args) -> {
-                producto_devuelto = args.orden_entrada_producto;
-            });                 
-            modal_stage_prod.showAndWait();
-            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, producto_devuelto.getInteger("cantidad"), 0);
-            cantidad_producto.setValueFactory(cantidad_productoValues);
-        }catch(Exception e){
-            infoController.show("No se pudo agregar los productos : " + e.getMessage());
-        }
-    }
+//    private void abrirModalProductos() throws Exception
+//    {
+//        try{
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductosEnvios.fxml"));
+//            AgregarProductosEntradaController controller = new AgregarProductosEntradaController(productos_disponibles);
+//            loader.setController(controller);
+//            Scene modal_content_scene = new Scene((Parent)loader.load());
+//            modal_stage_prod.setScene(modal_content_scene);       
+//            if(modal_stage_prod.getModality() != Modality.APPLICATION_MODAL) modal_stage_prod.initModality(Modality.APPLICATION_MODAL); 
+//            controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenEntradaProductoArgs args) -> {
+//                producto_devuelto = args.orden_entrada_producto;
+//            });                 
+//            modal_stage_prod.showAndWait();
+//            if(producto_devuelto == null) return;
+//            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(producto_devuelto.getInteger("cantidad"), producto_devuelto.getInteger("cantidad"), 0);
+//            cantidad_producto.setValueFactory(cantidad_productoValues);
+//        }catch(Exception e){
+//            infoController.show("No se pudo agregar los productos : " + e.getMessage());
+//        }
+//    }
+    
+  
     
     private void obtener_productos_disponibles_orden_entrada(){
         productos_disponibles = OrdenEntradaxProducto.where("orden_entrada_id = ?", orden_entrada_seleccionada.getId());
@@ -459,20 +466,8 @@ public class NotaDeCreditoController extends Controller {
         }        
         try{
             for(OrdenEntradaxProducto producto_disponible : productos_disponibles){
-                if (producto_disponible.getInteger("tipo_id") == producto_devuelto.getInteger("tipo_id")){
-                    Integer cantidad = producto_disponible.getInteger("cantidad") - (Integer)cantidad_producto.getValue();
-                    if (cantidad >= 0){
-                        if (cantidad_producto.getValue() != 0){
-                            producto_disponible.setInteger("cantidad", cantidad);
-                            actualizar_lista_producto_a_agregar(producto_disponible);
-                            llenar_tabla_productos_a_enviar();
-                        }else{
-                            infoController.show("Error: Debe seleccionar una cantidad mayor a 0 ");
-                        }
-                    }
-                    else{
-                        infoController.show("Error: no es posible seleccionar esa cantidad, no existen existencias suficientes ");
-                    }
+                if (Objects.equals(producto_disponible.getInteger("tipo_id"), producto_devuelto.getInteger("tipo_id"))){
+                    actualizar_lista_producto_a_agregar(producto_disponible);
                     break;
                 }
             }   
@@ -490,36 +485,43 @@ public class NotaDeCreditoController extends Controller {
             codProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
             nombreProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
             cantProdColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper((p.getValue().get("cantidad"))));
-            //precioUnitarioColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
+            precioUnitarioColumn.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> {
+                return new ReadOnlyObjectWrapper(
+                        String.valueOf(((TipoProducto)(TipoProducto.findById(p.getValue().get("tipo_id")))).getPrecioActualNoEx(Moneda.findById(1))));
+            });
+            subTotalProdColumna.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> {
+                return new ReadOnlyObjectWrapper(
+                        String.valueOf(((TipoProducto)(TipoProducto.findById(p.getValue().get("tipo_id")))).getPrecioActualNoEx(Moneda.findById(1))*p.getValue().getDouble("cantidad")));
+            });
             TablaProductos.setItems(productos);
         }catch(Exception e){
             System.out.println(e);
         }
 
     }
-    
-    private void RecalcularTabla(Boolean isNew) throws Exception
-    {
-        for(OrdenEntradaxProducto productoxdevolucion : productos_a_agregar)
-        {
-            Integer extraCant = 0;
-            if(!isNew && productoxdevolucion.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
-            {
-                extraCant += cantidad_producto.getValue();
-            }
-            productoxdevolucion.set("cantidad", productoxdevolucion.getInteger("cantidad") + extraCant);                                                                                                     
-            break;
-        }
-        //calcularFinal();
-        
-    }
-    
+//    
+//    private void RecalcularTabla(Boolean isNew) throws Exception
+//    {
+//        for(OrdenEntradaxProducto productoxdevolucion : productos_a_agregar)
+//        {
+//            Integer extraCant = 0;
+//            if(!isNew && productoxdevolucion.getInteger("tipo_id").equals(producto_devuelto.getInteger("tipo_id")))
+//            {
+//                extraCant += cantidad_producto.getValue();
+//            }
+//            productoxdevolucion.set("cantidad", productoxdevolucion.getInteger("cantidad") + extraCant);                                                                                                     
+//            break;
+//        }
+//        //calcularFinal();
+//        
+//    }
+//    
     private void calcularFinal()
     {
         Double total = 0.0;
         for(OrdenEntradaxProducto entradaxproducto:productos_a_agregar)
         {
-            total += entradaxproducto.getDouble("subtotal_final");
+            total += ((TipoProducto)(TipoProducto.findById(entradaxproducto.get("tipo_id")))).getPrecioActualNoEx(Moneda.findById(1))*entradaxproducto.getDouble("cantidad");
         }
         setValorTotal(total);
     }    
@@ -540,13 +542,13 @@ public class NotaDeCreditoController extends Controller {
                 OrdenEntradaxProducto productoxentrada = new OrdenEntradaxProducto();
                 productoxentrada.set("tipo_id",producto_disponible.get("tipo_id"));
                 productoxentrada.set("tipo_cod",producto_disponible.get("tipo_cod"));  
-                productoxentrada.set("cantidad", cantidad_producto.getValue());       
+                productoxentrada.set("cantidad", producto_disponible.getInteger("cantidad"));       
                 //productoxentrada.set("precio_unitario",producto_disponible.get("precio_unitario"));                  
                 //productoxentrada.set("subtotal_final",producto_disponible.get("subtotal_final"));             
                 productos_a_agregar.add(productoxentrada);
                 isNew = true;
             }else{
-                RecalcularTabla(isNew);
+//                RecalcularTabla(isNew);
             }
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
@@ -582,11 +584,13 @@ public class NotaDeCreditoController extends Controller {
             nueva_nota.set("explicacion", orden_entrada_seleccionada.get("descripcion"));
             nueva_nota.set("fecha_emision", orden_entrada_seleccionada.get("fecha_emision"));
             nueva_nota.saveIt();       
+            orden_entrada_seleccionada.set("estado",OrdenEntrada.ESTADO.Completa.name());
+            orden_entrada_seleccionada.saveIt();
             Base.commitTransaction();
            
-            infoController.show("El Envio se creo satisfactoriamente");
+            infoController.show("La Nota de Credito se creo satisfactoriamente");
         } catch (Exception e){
-            infoController.show("No se pudo crear el envio : " + e.getMessage()); 
+            infoController.show("No se pudo crear la Nota de Credito : " + e.getMessage()); 
         }
     }
 
