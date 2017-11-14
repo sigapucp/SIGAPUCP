@@ -1180,7 +1180,7 @@ CREATE TABLE DocVentas
  doc_venta_id        SERIAL NOT NULL ,
  estado              VARCHAR(30) NOT NULL ,
  last_user_change    VARCHAR(20) NOT NULL ,
- last_date_change    CHAR(1) NOT NULL ,
+ last_date_change    DATE NOT NULL ,
  flag_last_operation CHAR(1) NOT NULL ,
  fecha_emision       DATE NOT NULL ,
  guia_id             INT NOT NULL ,
