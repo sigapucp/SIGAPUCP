@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -121,11 +122,31 @@ public class RacksController extends Controller{
         rack_form_ancho_field.clear();
     }
     
+    private void actualizarAlmacenZ(AlmacenAreaZ almacenZ) {
+        AtomicInteger indice = new AtomicInteger(0);
+        AtomicInteger currentIndice = new AtomicInteger(0);
+        
+        List<AlmacenAreaZ> almacenesFiltrados = almacenesZ_racks.stream().filter(almacen -> {
+            boolean cond = almacen.getId() == almacenZ.getId();
+
+            if(cond) indice.set(currentIndice.get());
+            currentIndice.set(currentIndice.get() + 1);
+
+            return cond;
+        }).collect(Collectors.toList());
+
+        if(almacenesFiltrados.size() == 0) {
+            almacenesZ_racks.add(almacenZ); // Almacenes que son stasheados para evitar hacer muchas querys al guardar un producto, no es necesario de hacer pero me parece mas eficiente
+        } else {
+            almacenesZ_racks.set(indice.get(), almacenZ);
+        }
+    }
+
     private void agregarProductoARack(agregarProductoRackArgs args) {
         Producto producto = args.getProducto();
         AlmacenAreaZ almacenZ = args.getAlmacenZ();
 
-        almacenesZ_racks.add(almacenZ); // Almacenes que son stasheados para evitar hacer muchas querys al guardar un producto, no es necesario de hacer pero me parece mas eficiente
+        actualizarAlmacenZ(almacenZ);
         productos_rack.add(producto); // Racks que se muestran en la tabla de racks
         productos_tmp_racks.add(producto);
         rack_form_producto_tabla.setItems(productos_rack);
@@ -202,6 +223,7 @@ public class RacksController extends Controller{
         productos_rack.clear();
         productos_filtrado.forEach(productos_rack::add);
         rack_form_producto_tabla.setItems(productos_rack);
+        rack_form_cantidad_productos_field.setText(String.valueOf(productos_rack.size()));
     }
 
     @FXML
@@ -219,6 +241,9 @@ public class RacksController extends Controller{
             return;
         }
         productos_rack.clear();
+        productos_tmp_racks.clear();
+        almacenesZ_racks.clear();
+
         almacen_relacionado = rack_seleccionado.parent(Almacen.class);
         int tileSize = almacen_relacionado.getInteger("longitud_area");
         int rackX1 = rack_seleccionado.getInteger("x_ancla1");
@@ -320,6 +345,7 @@ public class RacksController extends Controller{
                     producto.saveIt();
                 });
                 almacenesZ_racks.forEach((almacen) -> {
+                    System.out.println(almacen);
                     almacen.saveIt();
                 });
                 Base.commitTransaction();
@@ -331,8 +357,8 @@ public class RacksController extends Controller{
                 actualizarTablaBusqueda();
             } catch (Exception e) {
                 Base.rollbackTransaction();
-                System.out.println(e);
                 warningController.show("Error al guardar el rack", "Sucedio un error al guardar el rack, vuelva a intentarlo");
+                Logger.getLogger(RacksController.class.getName()).log(Level.SEVERE, null, e);
             }
         } else {
             warningController.show("Error al guardar el rack", "Es necesario que complete todos los campos del rack");
@@ -347,6 +373,23 @@ public class RacksController extends Controller{
 
             if (producto_seleccionado != null) {
                 if(existeEnProductosTmpOProducto(producto_seleccionado)) {
+                    // Actualizamos la capacidad restante del AlmacenAreaZ
+                    AlmacenAreaZ almacenZ = AlmacenAreaZ.findFirst("almacen_z_id = ?", producto_seleccionado.getInteger("almacen_z_id"));
+                    List<AlmacenAreaZ> almacenesFiltrados = almacenesZ_racks.stream().filter(almacen -> {
+                        return almacen.getId() == almacenZ.getId();
+                    }).collect(Collectors.toList());
+                    AlmacenAreaZ almacenFiltrado;
+                    
+                    if(almacenesFiltrados.size() > 0) {
+                        almacenFiltrado = almacenesFiltrados.get(0);
+                    } else {
+                        almacenFiltrado = almacenZ;
+                    }
+                    
+                    double capacidadRestante = almacenFiltrado.getDouble("capacidad_restante");
+                    double pesoProducto = TipoProducto.findFirst("tipo_id = ?", producto_seleccionado.getInteger("tipo_id")).getDouble("peso");
+                    almacenFiltrado.set("capacidad_restante", capacidadRestante + pesoProducto);
+
                     // Seteamos el producto para actualizar
                     producto_seleccionado.set("tipo_posicion", null);
                     producto_seleccionado.set("ubicado", "N");
@@ -358,6 +401,7 @@ public class RacksController extends Controller{
                     producto_seleccionado.set("almacen_cod", null);
                     producto_seleccionado.set("posicion_rack", null);
                     
+                    actualizarAlmacenZ(almacenFiltrado);
                     removerProductosMostrar(producto_seleccionado);
                     agregarAProductosTemporales(producto_seleccionado);
                 } else {

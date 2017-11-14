@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,9 +92,21 @@ public class ModalAgregarProductoRackController extends ModalController {
         validationRules.put("producto_rack_cord_z", "notNull,notEmpty,numeric");
     }
 
-    private void actualizar_tabla(LazyList<Producto> productosEncontrados) {
+    private void actualizar_tabla(List<Producto> productosEncontrados) {
         productos.clear();
-        productosEncontrados.forEach(productos::add);
+        List<Producto> productos_finales = productosEncontrados;
+
+        for(Producto productoTmp : productosTemporales) {
+            productos_finales = productos_finales.stream().filter((producto) -> {
+                return !(Objects.equals(producto.getInteger("producto_id"), productoTmp.getInteger("producto_id")));
+            }).collect(Collectors.toList());
+
+            if(productoTmp.getString("ubicado").equals("N")) {
+                productos_finales.add(productoTmp);
+            }
+        }
+
+        productos_finales.forEach(productos::add);
         tabla_productos.setItems(productos);
     }
 
@@ -148,24 +161,39 @@ public class ModalAgregarProductoRackController extends ModalController {
 
     private boolean revisarCapacidadRack(Producto producto) {
         boolean condition = false;
-        
-        int producto_cod_x = Integer.valueOf(String.valueOf(producto_rack_cord_x.getSelectionModel().getSelectedItem()));
-        int producto_cod_y = Integer.valueOf(String.valueOf(producto_rack_cord_y.getSelectionModel().getSelectedItem()));
-        int producto_cod_z = Integer.valueOf(String.valueOf(producto_rack_cord_z.getSelectionModel().getSelectedItem())) - 1;
-        AlmacenAreaXY almacenXY = (AlmacenAreaXY) AlmacenAreaXY.where("rack_cod = ? and rack_id = ? and x = ? and y = ?",
-                                                            rack_activo.getString("rack_cod"), 
-                                                            rack_activo.getId(), 
-                                                            producto_cod_x, 
-                                                            producto_cod_y).get(0);
-        AlmacenAreaZ almacenZ = (AlmacenAreaZ) AlmacenAreaZ.where("almacen_xy_id = ? and level = ?", almacenXY.getId(), producto_cod_z).get(0);
-        double capacidadRestante = almacenZ.getDouble("capacidad_restante");
-        double pesoProducto = TipoProducto.where("tipo_id = ?", producto.getInteger("tipo_id")).get(0).getDouble("peso");
+        try {
+            int producto_cod_x = Integer.valueOf(String.valueOf(producto_rack_cord_x.getSelectionModel().getSelectedItem()));
+            int producto_cod_y = Integer.valueOf(String.valueOf(producto_rack_cord_y.getSelectionModel().getSelectedItem()));
+            int producto_cod_z = Integer.valueOf(String.valueOf(producto_rack_cord_z.getSelectionModel().getSelectedItem())) - 1;
+            AlmacenAreaXY almacenXY = AlmacenAreaXY.findFirst("rack_cod = ? and rack_id = ? and x = ? and y = ?",
+                                                               rack_activo.getString("rack_cod"), 
+                                                               rack_activo.getId(), 
+                                                               producto_cod_x, 
+                                                               producto_cod_y);
+            AlmacenAreaZ almacenZ = AlmacenAreaZ.findFirst("almacen_xy_id = ? and level = ?", almacenXY.getId(), producto_cod_z);
 
-        if(capacidadRestante > 0 && capacidadRestante >= pesoProducto) {
-            almacenZ.setDouble("capacidad_restante", capacidadRestante - pesoProducto);
-            almacenXY_seleccionado = almacenXY;
-            almacenZ_seleccionado = almacenZ;
-            condition = true;
+            List<AlmacenAreaZ> almacenesFiltrados = almacenesZExistentes.stream().filter(almacen -> {
+                return almacen.getId() == almacenZ.getId();
+            }).collect(Collectors.toList());
+            AlmacenAreaZ almacenFiltrado;
+
+            if(almacenesFiltrados.size() > 0) {
+                almacenFiltrado = almacenesFiltrados.get(0);
+            } else {
+                almacenFiltrado = almacenZ;
+            }
+
+            double capacidadRestante = almacenFiltrado.getDouble("capacidad_restante");
+            double pesoProducto = TipoProducto.findFirst("tipo_id = ?", producto.getInteger("tipo_id")).getDouble("peso");
+    
+            if(capacidadRestante > 0 && capacidadRestante >= pesoProducto) {
+                almacenFiltrado.setDouble("capacidad_restante", (capacidadRestante - pesoProducto <= 0 ? 0 : capacidadRestante - pesoProducto) );
+                almacenXY_seleccionado = almacenXY;
+                almacenZ_seleccionado = almacenFiltrado;
+                condition = true;
+            }
+        } catch(Exception e) {
+            Logger.getLogger(ModalAgregarProductoRackController.class.getName()).log(Level.SEVERE, null, e);
         }
         return condition;
     }
@@ -236,10 +264,8 @@ public class ModalAgregarProductoRackController extends ModalController {
      
                 return cond;
             }).collect(Collectors.toList());
-
-            productos.clear();
-            productos_filtrados.forEach(productos::add);
-            tabla_productos.setItems(productos);
+            
+            actualizar_tabla(productos_filtrados);
         } catch(Exception e) {
             Logger.getLogger(ModalAgregarProductoRackController.class.getName()).log(Level.SEVERE, null, e);
         }
