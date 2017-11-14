@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.GuiasRemisionController">
+<AnchorPane id="AnchorPane" prefHeight="572.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Facturacion.GuiasRemisionController">
    <children>
       <AnchorPane layoutY="2.0" prefHeight="572.0" prefWidth="250.0">
          <children>
@@ -88,25 +88,25 @@
                                  <content>
                                     <AnchorPane prefHeight="100.0" prefWidth="677.0">
                                        <children>
-                                          <Label layoutX="23.0" layoutY="26.0" text="Fecha de traslado">
+                                          <Label layoutX="23.0" layoutY="26.0" text="Fecha de traslado:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                           <DatePicker fx:id="fecha_remision" layoutX="183.0" layoutY="23.0" prefHeight="25.0" prefWidth="160.0" />
-                                          <Label layoutX="23.0" layoutY="62.0" prefHeight="20.0" prefWidth="114.0" text="Punto de partida">
+                                          <Label layoutX="23.0" layoutY="62.0" prefHeight="20.0" prefWidth="125.0" text="Punto de partida:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                           <TextField fx:id="partida_remision" layoutX="182.0" layoutY="59.0" prefHeight="25.0" prefWidth="163.0" />
-                                          <Label layoutX="366.0" layoutY="62.0" prefHeight="20.0" prefWidth="114.0" text="Punto de llegada">
+                                          <Label layoutX="366.0" layoutY="62.0" prefHeight="20.0" prefWidth="125.0" text="Punto de llegada:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                           <TextField fx:id="llegada_remision" layoutX="491.0" layoutY="60.0" prefHeight="25.0" prefWidth="163.0" />
-                                          <Label layoutX="366.0" layoutY="27.0" prefHeight="20.0" prefWidth="114.0" text="Código de guia">
+                                          <Label layoutX="366.0" layoutY="27.0" prefHeight="20.0" prefWidth="114.0" text="Código de guia:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -120,13 +120,13 @@
                                  <content>
                                     <AnchorPane prefHeight="70.0" prefWidth="677.0">
                                        <children>
-                                          <Label layoutX="29.0" layoutY="21.0" text="Marca del vehículo">
+                                          <Label layoutX="35.0" layoutY="24.0" text="Marca del vehículo:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="marca_vehiculo_remision" layoutX="190.0" layoutY="19.0" prefHeight="25.0" prefWidth="138.0" />
-                                          <Label layoutX="366.0" layoutY="21.0" text="Placa del vehículo">
+                                          <TextField fx:id="marca_vehiculo_remision" layoutX="188.0" layoutY="19.0" prefHeight="25.0" prefWidth="138.0" />
+                                          <Label layoutX="363.0" layoutY="24.0" text="Placa del vehículo:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -140,17 +140,17 @@
                                  <content>
                                     <AnchorPane prefHeight="195.0" prefWidth="685.0">
                                        <children>
-                                          <Label layoutX="29.0" layoutY="21.0" text="Nombre">
+                                          <Label layoutX="29.0" layoutY="21.0" text="Nombre:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="29.0" layoutY="61.0" text="RUC">
+                                          <Label layoutX="29.0" layoutY="61.0" text="RUC:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="394.0" layoutY="62.0" text="D.N.I">
+                                          <Label layoutX="394.0" layoutY="62.0" text="D.N.I :">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -158,7 +158,7 @@
                                           <TextField fx:id="nombre_cliente" layoutX="184.0" layoutY="19.0" prefHeight="25.0" prefWidth="464.0" />
                                           <TextField fx:id="ruc_cliente" layoutX="182.0" layoutY="59.0" prefHeight="25.0" prefWidth="172.0" />
                                           <TextField fx:id="dni_cliente" layoutX="473.0" layoutY="59.0" prefHeight="25.0" prefWidth="172.0" />
-                                          <Label fx:id="VerDocumentoLabel2" layoutX="29.0" layoutY="101.0" text="Codigo Pedido">
+                                          <Label fx:id="VerDocumentoLabel2" layoutX="29.0" layoutY="101.0" text="Codigo Envio:">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
