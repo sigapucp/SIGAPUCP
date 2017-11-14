@@ -129,6 +129,14 @@ public class DocumentosDeVentaController extends Controller{
     
     public void crear_doc_venta(){
         try{
+            if (cliente_seleccionado == null){
+                infoController.show("No se ha podido crear el documento de venta : necesita de un cliente ");
+                return;
+            }
+            if (guia_devuelta == null){
+                infoController.show("No se ha podido crear el documento de venta : necesita una guia de remision ");
+                return;
+            }
             Base.openTransaction();
             DocVenta venta = new DocVenta();
             venta.set("client_id", cliente_seleccionado.getId());
@@ -142,7 +150,10 @@ public class DocumentosDeVentaController extends Controller{
             Date fecha = Date.valueOf(fechaLocal);  
             venta.set("fecha_emision", fecha);
             venta.saveIt();
+            guia_devuelta.set("estado", GuiaRemision.ESTADO.COMPLETA.name());
+            guia_devuelta.saveIt();
             Base.commitTransaction();
+            infoController.show("Se creo satisfactoriamente");
         }catch ( Exception e){
             infoController.show("Se ha creado el documento de venta: " + e.getMessage());
         }
@@ -230,7 +241,15 @@ public class DocumentosDeVentaController extends Controller{
     
     @Override
     public void desactivar(){
-        documento_seleccionado.set("estado", DocVenta.ESTADO.CANCELADA.name());
+        try{
+            documento_seleccionado.set("estado", DocVenta.ESTADO.CANCELADA.name());
+            GuiaRemision guia_temp = GuiaRemision.findById(documento_seleccionado.getInteger("guia_id"));
+            guia_temp.set("estado", GuiaRemision.ESTADO.ENPROCESO.name());
+            guia_temp.saveIt();            
+        }catch(Exception e){
+            infoController.show("Ha ocurrido un error durante la cancelacion del documento de venta : " + e.getMessage());
+        }
+
     }
     @Override
     public void cambiarEstado(){
@@ -267,7 +286,6 @@ public class DocumentosDeVentaController extends Controller{
     public void guardar(){
         if (crear_nuevo){
             crear_doc_venta();
-            infoController.show("Se creo satisfactoriamente");
         }
         deshabilitar_formulario();
         limpiar_formulario();        
@@ -321,7 +339,7 @@ public class DocumentosDeVentaController extends Controller{
     @FXML
     public void agregar_guia_remision(ActionEvent event) throws IOException{
         try{
-            guias_remision = GuiaRemision.where("client_id = ?", cliente_seleccionado.getId());
+            guias_remision = GuiaRemision.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), GuiaRemision.ESTADO.ENPROCESO.name());
             if(cliente_seleccionado == null) {
                 infoController.show("Necesita seleccionar un cliente");
                 return;
