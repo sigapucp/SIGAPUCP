@@ -55,6 +55,8 @@ public class ModalAgregarProductoRackController extends ModalController {
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmatonController;
     private HashMap<String, String> validationRules;
+    private List<AlmacenAreaZ> almacenesZExistentes;
+    private ObservableList<Producto> productosTemporales;
     @FXML private TableView<Producto> tabla_productos;
     @FXML private TableColumn<Producto, String> tabla_producto_cod;
     @FXML private TableColumn<Producto, String> tabla_producto_nomb;
@@ -68,7 +70,7 @@ public class ModalAgregarProductoRackController extends ModalController {
     @FXML private ComboBox<String> producto_rack_cord_y;
     @FXML private ComboBox<String> producto_rack_cord_z;
 
-    public ModalAgregarProductoRackController(Rack rack, Almacen almacen, List<AlmacenAreaZ> almacenesZ_existentes, ObservableList<Producto> productos_rack_existentes) {
+    public ModalAgregarProductoRackController(Rack rack, Almacen almacen, List<AlmacenAreaZ> almacenesZ_existentes, ObservableList<Producto> productos_modificar) {
         agregarProductoRackEvent = new Event<>();
         productos = FXCollections.observableArrayList();
         producto_seleccionado = new Producto();
@@ -78,6 +80,8 @@ public class ModalAgregarProductoRackController extends ModalController {
         validationRules = new HashMap<>();
         rack_activo = rack;
         almacen_relacionado = almacen;
+        almacenesZExistentes = almacenesZ_existentes;
+        productosTemporales = productos_modificar;
         numFilas = almacen.getInteger("ancho")/almacen.getDouble("longitud_area").intValue();
         numColumnas = almacen.getInteger("largo")/almacen.getDouble("longitud_area").intValue();
         
@@ -127,7 +131,7 @@ public class ModalAgregarProductoRackController extends ModalController {
                 int columna = rack_activo.getInteger("x_ancla1");
                 list.add(String.valueOf(columna));
                 producto_rack_cord_x.setItems(list);
-                producto_rack_cord_y.getSelectionModel().select(0);
+                producto_rack_cord_x.getSelectionModel().select(0);
                 producto_rack_cord_x.setEditable(false);
                 tiposPos.addAll(Arrays.asList(AlmacenAreaXY.POSICION.values()).stream()
                                 .map(x->x.name())

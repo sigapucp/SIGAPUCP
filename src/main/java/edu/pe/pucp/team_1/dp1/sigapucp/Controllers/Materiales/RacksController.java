@@ -30,6 +30,7 @@ import javafx.scene.Scene;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -58,6 +59,8 @@ public class RacksController extends Controller{
 
     private ObservableList<Rack> racks_busqueda;
     private ObservableList<Producto> productos_rack;
+    // Todo lo que se modifica se agregar a Rack temporales para se guardado o actualizado
+    private ObservableList<Producto> productos_tmp_racks;
     private List<AlmacenAreaZ> almacenesZ_racks;
     private WarningAlertController warningController;
     private InformationAlertController infoController;
@@ -89,6 +92,7 @@ public class RacksController extends Controller{
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");
         racks_busqueda = FXCollections.observableArrayList();
         productos_rack = FXCollections.observableArrayList();
+        productos_tmp_racks = FXCollections.observableArrayList();
         almacenesZ_racks = new ArrayList<>();
         warningController = new WarningAlertController();
         infoController = new InformationAlertController();
@@ -121,8 +125,9 @@ public class RacksController extends Controller{
         Producto producto = args.getProducto();
         AlmacenAreaZ almacenZ = args.getAlmacenZ();
 
-        almacenesZ_racks.add(almacenZ);
-        productos_rack.add(producto);
+        almacenesZ_racks.add(almacenZ); // Almacenes que son stasheados para evitar hacer muchas querys al guardar un producto, no es necesario de hacer pero me parece mas eficiente
+        productos_rack.add(producto); // Racks que se muestran en la tabla de racks
+        productos_tmp_racks.add(producto);
         rack_form_producto_tabla.setItems(productos_rack);
         rack_form_cantidad_productos_field.setText(String.valueOf(productos_rack.size()));
     }
@@ -160,9 +165,48 @@ public class RacksController extends Controller{
         }
     }
 
+    private boolean existeEnProductosTmpOProducto(Producto productoSeleccionado) {
+        Boolean cond = false;
+        try {
+            List<Producto> productos_finales = new ArrayList<>();
+            LazyList<Producto> productosDB = Producto.find("rack_id = ? and rack_cod = ?", rack_seleccionado.getId(), rack_seleccionado.get("rack_cod"));
+            // Reviso en la Lista de productos en BD
+            for(Producto productoDB : productosDB)
+                cond = cond || productoDB.getInteger("producto_id") == productoSeleccionado.getInteger("producto_id");
+            // Reviso en la Lista a ser modificada
+                for(Producto productoTemp : productos_tmp_racks)
+                cond = cond || productoTemp.getInteger("producto_id") == productoSeleccionado.getInteger("producto_id");
+
+        } catch(Exception e) {
+            Logger.getLogger(RacksController.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return cond;
+    }
+
+    private void agregarAProductosTemporales(Producto productoSeleccionado) {
+        List<Producto> productos_filtrado = productos_tmp_racks.stream().filter(producto -> {
+            return !(Objects.equals(producto.getInteger("producto_id"), productoSeleccionado.getInteger("producto_id")));
+        }).collect(Collectors.toList());
+
+        productos_filtrado.add(productoSeleccionado);
+
+        productos_tmp_racks.clear();
+        productos_filtrado.forEach(productos_tmp_racks::add);
+    }
+
+    private void removerProductosMostrar(Producto productoSeleccionado) {
+        List<Producto> productos_filtrado = productos_rack.stream().filter(producto -> {
+            return !(Objects.equals(producto.getInteger("producto_id"), productoSeleccionado.getInteger("producto_id")));
+        }).collect(Collectors.toList());
+
+        productos_rack.clear();
+        productos_filtrado.forEach(productos_rack::add);
+        rack_form_producto_tabla.setItems(productos_rack);
+    }
+
     @FXML
     public void abrirModalAgregarProducto(ActionEvent event) {
-        ModalController controller = new ModalAgregarProductoRackController(rack_seleccionado, almacen_relacionado, almacenesZ_racks, productos_rack);
+        ModalController controller = new ModalAgregarProductoRackController(rack_seleccionado, almacen_relacionado, almacenesZ_racks, productos_tmp_racks);
         loadModalContent("/fxml/Materiales/Racks/AgregarProductosARack.fxml", controller);
     }
 
@@ -174,7 +218,7 @@ public class RacksController extends Controller{
             infoController.show("No ha seleccionado ningun rack");
             return;
         }
-        productos_rack.clear();;
+        productos_rack.clear();
         almacen_relacionado = rack_seleccionado.parent(Almacen.class);
         int tileSize = almacen_relacionado.getInteger("longitud_area");
         int rackX1 = rack_seleccionado.getInteger("x_ancla1");
@@ -272,14 +316,14 @@ public class RacksController extends Controller{
         if(hasNoEmptyRequiredFields(rackCodigoStr, rackAlmacen, rackCantProd, rackAltoStr, rackLargoStr, rackAnchoStr)) {
             try {
                 Base.openTransaction();
-                productos_rack.forEach((producto) -> {
+                productos_tmp_racks.forEach((producto) -> {
                     producto.saveIt();
                 });
                 almacenesZ_racks.forEach((almacen) -> {
                     almacen.saveIt();
                 });
                 Base.commitTransaction();
-                productos_rack.forEach(t -> {
+                productos_tmp_racks.forEach(t -> {
                     AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOV, Menu.MENU.Racks,this.usuarioActual);
                 });
                 infoController.show("Se ha guardado correctamente el rack");
@@ -297,7 +341,34 @@ public class RacksController extends Controller{
     
     @FXML
     private void retirarProducto(ActionEvent event) {
+        try {
+            Producto producto_seleccionado = rack_form_producto_tabla.getSelectionModel().getSelectedItem();
+            System.out.println(producto_seleccionado.getString("producto_cod"));
 
+            if (producto_seleccionado != null) {
+                if(existeEnProductosTmpOProducto(producto_seleccionado)) {
+                    // Seteamos el producto para actualizar
+                    producto_seleccionado.set("tipo_posicion", null);
+                    producto_seleccionado.set("ubicado", "N");
+                    producto_seleccionado.set("almacen_z_id", null);
+                    producto_seleccionado.set("almacen_xy_id", null);
+                    producto_seleccionado.set("rack_id", null);
+                    producto_seleccionado.set("rack_cod", null);
+                    producto_seleccionado.set("almacen_id", null);
+                    producto_seleccionado.set("almacen_cod", null);
+                    producto_seleccionado.set("posicion_rack", null);
+                    
+                    removerProductosMostrar(producto_seleccionado);
+                    agregarAProductosTemporales(producto_seleccionado);
+                } else {
+                    infoController.show("El producto ya fue removido por otro usuario");
+                }
+            } else {
+                warningController.show("Error al Retirar un Producto", "Es necesario que seleccione un elemento de la tabla para ser retirado");
+            }
+        } catch(Exception e) {
+            Logger.getLogger(RacksController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     @Override
