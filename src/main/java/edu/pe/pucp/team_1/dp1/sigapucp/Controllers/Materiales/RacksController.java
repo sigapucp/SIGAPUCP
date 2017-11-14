@@ -128,7 +128,7 @@ public class RacksController extends Controller{
         AtomicInteger currentIndice = new AtomicInteger(0);
         
         List<AlmacenAreaZ> almacenesFiltrados = almacenesZ_racks.stream().filter(almacen -> {
-            boolean cond = almacen.getId() == almacenZ.getId();
+            boolean cond = almacen.getInteger("almacen_z_id") == almacenZ.getInteger("almacen_z_id");
 
             if(cond) indice.set(currentIndice.get());
             currentIndice.set(currentIndice.get() + 1);
@@ -191,7 +191,7 @@ public class RacksController extends Controller{
         Boolean cond = false;
         try {
             List<Producto> productos_finales = new ArrayList<>();
-            LazyList<Producto> productosDB = Producto.find("rack_id = ? and rack_cod = ?", rack_seleccionado.getId(), rack_seleccionado.get("rack_cod"));
+            LazyList<Producto> productosDB = Producto.find("rack_id = ? and rack_cod = ?", rack_seleccionado.getInteger("rack_id"), rack_seleccionado.get("rack_cod"));
             // Reviso en la Lista de productos en BD
             for(Producto productoDB : productosDB)
                 cond = cond || productoDB.getInteger("producto_id") == productoSeleccionado.getInteger("producto_id");
@@ -381,7 +381,7 @@ public class RacksController extends Controller{
                     // Actualizamos la capacidad restante del AlmacenAreaZ
                     AlmacenAreaZ almacenZ = AlmacenAreaZ.findFirst("almacen_z_id = ?", producto_seleccionado.getInteger("almacen_z_id"));
                     List<AlmacenAreaZ> almacenesFiltrados = almacenesZ_racks.stream().filter(almacen -> {
-                        return almacen.getId() == almacenZ.getId();
+                        return almacen.getInteger("almacen_z_id") == almacenZ.getInteger("almacen_z_id");
                     }).collect(Collectors.toList());
                     AlmacenAreaZ almacenFiltrado;
                     
