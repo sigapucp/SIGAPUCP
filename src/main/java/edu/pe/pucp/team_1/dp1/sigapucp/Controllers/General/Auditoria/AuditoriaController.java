@@ -242,14 +242,21 @@ public class AuditoriaController extends Controller {
         
         int cant_elementos = masterData.size();
         
+        String empleado = EmpleadoAuditoria.getText();
+        
+        if (empleado==null){
+            empleado = "";
+        }
+        
+        String descripcion = DescripcionAuditoria.getText();
+        
+        if (descripcion==null){
+            descripcion = "";
+        }
+        
         for (int i = 0; i < cant_elementos; i++){
-            System.out.println("entro al loop");
-            if (cumple_condicion_busqueda(masterData.get(i),EmpleadoAuditoria.getText(),DescripcionAuditoria.getText(),AccionC.getSelectionModel().getSelectedItem(),Modulo.getSelectionModel().getSelectedItem(),fecha1,fecha2,hora1,hora2)){//,fecha1,fecha2,hora1,hora2)){
-                System.out.println("cumplio condicion");
+            if (cumple_condicion_busqueda(masterData.get(i),empleado,descripcion,AccionC.getSelectionModel().getSelectedItem(),Modulo.getSelectionModel().getSelectedItem(),fecha1,fecha2,hora1,hora2)){
                 masterDataAux.add(masterData.get(i));
-                aux++;
-            }else{
-                System.out.println("no cumplio condicion");
             }                                 
         }
 
