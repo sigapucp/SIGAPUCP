@@ -14,7 +14,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import java.net.URL;
@@ -182,7 +185,13 @@ public class GuiasRemisionController extends Controller{
     public void guardar(){
         try{
             if (crearNuevo){
+                if (!Usuario.tienePermiso(permisosActual, Menu.MENU.GuiaDeRemision, Accion.ACCION.CRE)){
+                    infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                    crearNuevo = false;
+                    return;
+                }
                 crear_remision();
+                AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.GuiaDeRemision ,this.usuarioActual);
                 inhabilitar_formulario();
                 llenar_tabla_guias();    
                 crearNuevo = false;
