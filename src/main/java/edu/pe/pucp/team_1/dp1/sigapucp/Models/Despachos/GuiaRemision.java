@@ -18,6 +18,9 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("guiasremision")
 @IdName("guia_id")
 public class GuiaRemision extends Model{
+    static{
+        validatePresenceOf("client_id", "placa_vehiculo", "marca_vehiculo", "punto_partida", "punto_llegada", "fecha_inicio_traslado");
+    }        
  
     public enum ESTADO
     {
