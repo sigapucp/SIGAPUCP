@@ -87,6 +87,7 @@ public class LoginController implements Initializable{
         }
     }    
     
+    /*
     @FXML
     private void abrirOlvidarContrasenha(ActionEvent event) throws IOException{
         //Cambio de toda la escena del login hacia el olvidar contraseña
@@ -97,16 +98,11 @@ public class LoginController implements Initializable{
         app_stage.setScene(main_content_scene);
         app_stage.show();
     }
-    
-    
-    
+    */
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO
         login_exitoso = false;
     }
-    
-    
-    
 }
