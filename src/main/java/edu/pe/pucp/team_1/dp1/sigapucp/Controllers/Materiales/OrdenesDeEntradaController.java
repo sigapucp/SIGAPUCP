@@ -304,11 +304,11 @@ public class OrdenesDeEntradaController extends Controller {
             {
                 Integer cantidad = producto.getInteger("cantidad") + verCantidad.getValue();
                 producto.set("cantidad",cantidad);
-                enviosProductosCantidadDevolver.put(producto.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(producto.getInteger("tipo_id"))- verCantidad.getValue());               
-                
+                                
                 String tipo = VerTipo.getSelectionModel().getSelectedItem();             
                 if(tipo != null && tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
                 {            
+                    enviosProductosCantidadDevolver.put(producto.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(producto.getInteger("tipo_id"))- verCantidad.getValue());               
                     int cantidadMaxima = enviosProductosCantidadDevolver.get(productoDevuelto.getInteger("tipo_id"));
                     int cantidad_minima = 1;
                     if(cantidadMaxima == 0) cantidad_minima = 0;
@@ -329,11 +329,11 @@ public class OrdenesDeEntradaController extends Controller {
         ordenxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));
         ordenxproducto.set("estado",productoDevuelto.get("estado"));
         ordenxproducto.set("cantidad",verCantidad.getValue());        
-        ordenxproducto.set("ingresado","N");
-        enviosProductosCantidadDevolver.put(ordenxproducto.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(ordenxproducto.getInteger("tipo_id"))-ordenxproducto.getInteger("cantidad"));                       
+        ordenxproducto.set("ingresado","N");        
         String tipo = VerTipo.getSelectionModel().getSelectedItem();             
         if(tipo != null && tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
         {            
+            enviosProductosCantidadDevolver.put(ordenxproducto.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(ordenxproducto.getInteger("tipo_id"))-ordenxproducto.getInteger("cantidad"));                       
             int cantidadMaxima = enviosProductosCantidadDevolver.get(productoDevuelto.getInteger("tipo_id"));
             int cantidad_minima = 1;
             if(cantidadMaxima == 0) cantidad_minima = 0;

@@ -301,7 +301,7 @@ public class ProductosController extends Controller {
     private List<ProductoAcumulado> getProductoUnicos(TipoProducto producto_seleccionado)
     {
         List<ProductoAcumulado> acumulados = new ArrayList<>();
-        List<Producto> unicosProducto = Producto.where("tipo_id = ?",producto_seleccionado.getId());
+        List<Producto> unicosProducto = Producto.where("tipo_id = ? and estado != ?",producto_seleccionado.getId(),Producto.ESTADO.RESERVADO.name());
         
         int cantidadNoUbicados = unicosProducto.stream().filter(x->x.getString("ubicado").equals("N")).collect(Collectors.toList()).size();        
         
