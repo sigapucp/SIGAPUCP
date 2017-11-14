@@ -1,5 +1,6 @@
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -23,7 +24,7 @@ public class Validator {
                 return String.valueOf(comboBox.getSelectionModel().getSelectedItem());
             case "DatePicker":
                 DatePicker datePicker = (DatePicker) node;
-                return datePicker.getPromptText();
+                return datePicker == null ? "" : datePicker.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             default:
                 return "";
         }

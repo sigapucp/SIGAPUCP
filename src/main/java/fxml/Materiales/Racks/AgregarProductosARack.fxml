@@ -28,11 +28,6 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="73.0" text="Nombre:">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
             <Label layoutX="335.0" layoutY="44.0" text="Tipo de producto:">
                <font>
                   <Font size="14.0" />
@@ -49,7 +44,6 @@
                </font>
             </Label>
             <TextField id="producto_cod" fx:id="producto_cod" layoutX="100.0" layoutY="40.0" prefHeight="20.0" prefWidth="172.0" />
-            <TextField id="producto_nomb" fx:id="producto_nomb" layoutX="100.0" layoutY="71.0" prefHeight="20.0" prefWidth="172.0" />
             <ComboBox id="producto_tipo" fx:id="producto_tipo" layoutX="503.0" layoutY="42.0" prefHeight="25.0" prefWidth="172.0" />
             <DatePicker id="producto_fecha" fx:id="producto_fecha" layoutX="502.0" layoutY="73.0" prefHeight="25.0" prefWidth="172.0" />
             <Line endX="575.0" layoutX="100.0" layoutY="29.0" startX="-100.0" />

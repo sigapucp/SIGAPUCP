@@ -18,6 +18,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoRackArgs;
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,7 +61,6 @@ public class ModalAgregarProductoRackController extends ModalController {
     @FXML private TableColumn<Producto, String> tabla_producto_fecha_adquisicion;
     @FXML private TableColumn<Producto, String> tabla_producto_fecha_vencimiento;
     @FXML private TextField producto_cod;
-    @FXML private TextField producto_nomb;
     @FXML private ComboBox<String> producto_tipo;
     @FXML private DatePicker producto_fecha;
     @FXML private ComboBox<String> producto_tipo_posicion;
@@ -68,7 +68,7 @@ public class ModalAgregarProductoRackController extends ModalController {
     @FXML private ComboBox<String> producto_rack_cord_y;
     @FXML private ComboBox<String> producto_rack_cord_z;
 
-    public ModalAgregarProductoRackController(Rack rack, Almacen almacen) {
+    public ModalAgregarProductoRackController(Rack rack, Almacen almacen, List<AlmacenAreaZ> almacenesZ_existentes, ObservableList<Producto> productos_rack_existentes) {
         agregarProductoRackEvent = new Event<>();
         productos = FXCollections.observableArrayList();
         producto_seleccionado = new Producto();
@@ -210,17 +210,35 @@ public class ModalAgregarProductoRackController extends ModalController {
 
     @FXML
     public void buscarProducto(ActionEvent event) {
-        String productoCod = producto_cod.getText();
-        String productoNomb = producto_nomb.getText();
-        String productoTipo = producto_tipo.getSelectionModel().getSelectedItem();
-        String productoFechaAdquisicion = producto_fecha.getPromptText();
-        HashMap<String, String> campos = new HashMap<>();
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // String query = generarQueryBusqueda(productoCod, productoNomb, productoTipo, productoFechaAdquisicion);
-        // actualizar_tabla(Producto.find(campos, query));
+        try {
+            String productoCod = producto_cod.getText();
+            String productoTipo = String.valueOf(producto_tipo.getSelectionModel().getSelectedItem() == null ? "" : producto_tipo.getSelectionModel().getSelectedItem());
+            String productoFechaAdquisicion = producto_fecha.getValue() == null ? "" : producto_fecha.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            List<Producto> productos_filtrados = new ArrayList<>();
+            LazyList<Producto> productos_existentes = Producto.findAll();
+
+            productos_filtrados = productos_existentes.stream().filter(producto -> {
+                boolean cond = true;
+                TipoProducto tipo = TipoProducto.findFirst("tipod_cod = ?", producto.getString("tipo_cod"));
+
+                // Validacion que el producto no ha sido colocado en un rack
+                cond = cond && producto.getString("ubicado").equals("N");
+                // Validacion de Codigo de Producto
+                cond = cond && producto.getString("producto_cod").contains(productoCod);
+                // Validacion de Fecha de Adquisicion del Producto
+                cond = cond && producto.getDate("fecha_adquisicion").toString().equals(productoFechaAdquisicion);
+                // Validacion de Nombre de Producto
+                cond = cond && tipo.getString("nombre").contains(productoTipo);
+     
+                return cond;
+            }).collect(Collectors.toList());
+
+            productos.clear();
+            productos_filtrados.forEach(productos::add);
+            tabla_productos.setItems(productos);
+        } catch(Exception e) {
+            Logger.getLogger(ModalAgregarProductoRackController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     @FXML
@@ -231,6 +249,14 @@ public class ModalAgregarProductoRackController extends ModalController {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            // Campos de Busqueda
+            ObservableList<String> tipos_productos = FXCollections.observableArrayList();
+            tipos_productos.addAll(
+                TipoProducto.findAll().stream().map(tipo -> tipo.getString("nombre")).collect(Collectors.toList())
+            );
+
+            producto_tipo.setItems(tipos_productos);
+            // Tabla de Productos
             tabla_producto_cod.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")) );
             tabla_producto_fecha_adquisicion.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_adquirida")) );
             tabla_producto_fecha_vencimiento.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_caducidad")) );

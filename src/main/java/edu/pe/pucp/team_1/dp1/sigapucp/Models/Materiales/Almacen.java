@@ -20,10 +20,7 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("Almacenes")
 @IdName("almacen_id")
 public class Almacen extends Model{
-    static {
-        dateFormat("dd/MM/yyyy", "last_date_change");
-    }
-    
+
     public void asignarAtributosAlmacenLogico(int almacen_largo, 
             int almacen_ancho, 
             int almacen_x, 
@@ -42,8 +39,8 @@ public class Almacen extends Model{
         set("x_relativo_central", almacen_x);
         set("y_relativo_central", almacen_y);
         set("last_user_change", usuario_actual.get("email"));
-        set("flag_last_operation", 'T');
-        setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        // set("flag_last_operation", 'T');
+        // setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
     
     public void asignarAtributosAlmacenCentral(String almacen_nombre,
@@ -64,8 +61,8 @@ public class Almacen extends Model{
         set("x_relativo_central", 0);
         set("y_relativo_central", 0);
         set("last_user_change", usuario_actual.get("email"));
-        set("flag_last_operation", 'T');
-        setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        // set("flag_last_operation", 'T');
+        // setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
     
     public Boolean esValido(String almacen_nombre,
@@ -104,7 +101,7 @@ public class Almacen extends Model{
         set("longitud_area", almacen_longitud_area);
         set("es_central", almacen_central);
         set("last_user_change", usuario_actual.get("email"));
-        setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        // setDate("last_date_change", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         
         if(racks.size() > 0) {
             racks.forEach((rack) -> {

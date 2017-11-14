@@ -7,7 +7,9 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalAgregarProductoRackController;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
@@ -74,11 +76,11 @@ public class RacksController extends Controller{
     @FXML private TextField rack_form_alto_field;
     @FXML private TextField rack_form_ancho_field;
     @FXML private TextField rack_form_largo_field;
-@FXML private TextField buscar_rack_cod;
-@FXML private TextField buscar_rack_altura;
-@FXML private TextField buscar_rack_ancho;
-@FXML private TextField buscar_rack_largo;
-@FXML private TextField buscar_rack_producto;
+    @FXML private TextField buscar_rack_cod;
+    @FXML private TextField buscar_rack_altura;
+    @FXML private TextField buscar_rack_ancho;
+    @FXML private TextField buscar_rack_largo;
+    @FXML private TextField buscar_rack_producto;
     @FXML private TableView<Rack> buscar_rack_tabla;
     @FXML private TableColumn<Rack, String> buscar_columna_codigo_rack;
     
@@ -160,7 +162,7 @@ public class RacksController extends Controller{
 
     @FXML
     public void abrirModalAgregarProducto(ActionEvent event) {
-        ModalController controller = new ModalAgregarProductoRackController(rack_seleccionado, almacen_relacionado);
+        ModalController controller = new ModalAgregarProductoRackController(rack_seleccionado, almacen_relacionado, almacenesZ_racks, productos_rack);
         loadModalContent("/fxml/Materiales/Racks/AgregarProductosARack.fxml", controller);
     }
 
@@ -277,6 +279,9 @@ public class RacksController extends Controller{
                     almacen.saveIt();
                 });
                 Base.commitTransaction();
+                productos_rack.forEach(t -> {
+                    AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOV, Menu.MENU.Racks,this.usuarioActual);
+                });
                 infoController.show("Se ha guardado correctamente el rack");
                 limpiarRackForm();
                 actualizarTablaBusqueda();
@@ -290,6 +295,11 @@ public class RacksController extends Controller{
         }
     }
     
+    @FXML
+    private void retirarProducto(ActionEvent event) {
+
+    }
+
     @Override
     public Menu.MENU getMenu()
     {
