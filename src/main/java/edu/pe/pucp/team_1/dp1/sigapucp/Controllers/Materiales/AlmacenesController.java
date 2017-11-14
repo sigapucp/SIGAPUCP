@@ -7,6 +7,7 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Materiales;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion.ACCION;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.ConfirmationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
@@ -549,6 +550,11 @@ public class AlmacenesController extends Controller{
             Almacen almacen = almacen_seleccionado == null ? new Almacen() : almacen_seleccionado;
             
             if(almacen.esValido(almacenNombre,almacenLargoStr, almacenAnchoStr, almacenLongitudAreaStr, almacenEsCentral, almacenes_logicos, racks)) {
+                if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Almacenes, Accion.ACCION.CRE)){
+                    infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                    return;
+                }
+
                 int almacenLargo = Integer.parseInt(almacenLargoStr);
                 int almacenAncho = Integer.parseInt(almacenAnchoStr);
                 double almacenLongitudArea = Double.parseDouble(almacenLongitudAreaStr);
@@ -589,6 +595,11 @@ public class AlmacenesController extends Controller{
                     }
                     
                 } else {
+                        if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Almacenes, Accion.ACCION.MOD)){
+                        infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                        return;
+                    }
+
                     try {
                         Base.openTransaction();
                         almacen.updateAtributosAlmacenLogico(almacenNombre,
