@@ -12,8 +12,6 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
-import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -121,7 +119,10 @@ public class KardexController extends Controller {
                 precio = p.getDouble("precio");
                 break;
             }
-        }        
+        } 
+        if (precio==0.0){
+            precio = Precio.findFirst("tipo_id = ? AND es_default = ?", Integer.parseInt(id),"T").getDouble("precio");
+        }
         return precio;
     }
     

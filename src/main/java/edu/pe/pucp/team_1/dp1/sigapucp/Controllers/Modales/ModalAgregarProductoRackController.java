@@ -18,10 +18,12 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.abrirModalPromoArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoRackArgs;
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,13 +56,14 @@ public class ModalAgregarProductoRackController extends ModalController {
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmatonController;
     private HashMap<String, String> validationRules;
+    private List<AlmacenAreaZ> almacenesZExistentes;
+    private ObservableList<Producto> productosTemporales;
     @FXML private TableView<Producto> tabla_productos;
     @FXML private TableColumn<Producto, String> tabla_producto_cod;
     @FXML private TableColumn<Producto, String> tabla_producto_nomb;
     @FXML private TableColumn<Producto, String> tabla_producto_fecha_adquisicion;
     @FXML private TableColumn<Producto, String> tabla_producto_fecha_vencimiento;
     @FXML private TextField producto_cod;
-    @FXML private TextField producto_nomb;
     @FXML private ComboBox<String> producto_tipo;
     @FXML private DatePicker producto_fecha;
     @FXML private ComboBox<String> producto_tipo_posicion;
@@ -68,7 +71,7 @@ public class ModalAgregarProductoRackController extends ModalController {
     @FXML private ComboBox<String> producto_rack_cord_y;
     @FXML private ComboBox<String> producto_rack_cord_z;
 
-    public ModalAgregarProductoRackController(Rack rack, Almacen almacen) {
+    public ModalAgregarProductoRackController(Rack rack, Almacen almacen, List<AlmacenAreaZ> almacenesZ_existentes, ObservableList<Producto> productos_modificar) {
         agregarProductoRackEvent = new Event<>();
         productos = FXCollections.observableArrayList();
         producto_seleccionado = new Producto();
@@ -78,6 +81,8 @@ public class ModalAgregarProductoRackController extends ModalController {
         validationRules = new HashMap<>();
         rack_activo = rack;
         almacen_relacionado = almacen;
+        almacenesZExistentes = almacenesZ_existentes;
+        productosTemporales = productos_modificar;
         numFilas = almacen.getInteger("ancho")/almacen.getDouble("longitud_area").intValue();
         numColumnas = almacen.getInteger("largo")/almacen.getDouble("longitud_area").intValue();
         
@@ -87,9 +92,21 @@ public class ModalAgregarProductoRackController extends ModalController {
         validationRules.put("producto_rack_cord_z", "notNull,notEmpty,numeric");
     }
 
-    private void actualizar_tabla(LazyList<Producto> productosEncontrados) {
+    private void actualizar_tabla(List<Producto> productosEncontrados) {
         productos.clear();
-        productosEncontrados.forEach(productos::add);
+        List<Producto> productos_finales = productosEncontrados;
+
+        for(Producto productoTmp : productosTemporales) {
+            productos_finales = productos_finales.stream().filter((producto) -> {
+                return !(Objects.equals(producto.getInteger("producto_id"), productoTmp.getInteger("producto_id")));
+            }).collect(Collectors.toList());
+
+            if(productoTmp.getString("ubicado").equals("N")) {
+                productos_finales.add(productoTmp);
+            }
+        }
+
+        productos_finales.forEach(productos::add);
         tabla_productos.setItems(productos);
     }
 
@@ -127,7 +144,7 @@ public class ModalAgregarProductoRackController extends ModalController {
                 int columna = rack_activo.getInteger("x_ancla1");
                 list.add(String.valueOf(columna));
                 producto_rack_cord_x.setItems(list);
-                producto_rack_cord_y.getSelectionModel().select(0);
+                producto_rack_cord_x.getSelectionModel().select(0);
                 producto_rack_cord_x.setEditable(false);
                 tiposPos.addAll(Arrays.asList(AlmacenAreaXY.POSICION.values()).stream()
                                 .map(x->x.name())
@@ -144,24 +161,39 @@ public class ModalAgregarProductoRackController extends ModalController {
 
     private boolean revisarCapacidadRack(Producto producto) {
         boolean condition = false;
-        
-        int producto_cod_x = Integer.valueOf(String.valueOf(producto_rack_cord_x.getSelectionModel().getSelectedItem()));
-        int producto_cod_y = Integer.valueOf(String.valueOf(producto_rack_cord_y.getSelectionModel().getSelectedItem()));
-        int producto_cod_z = Integer.valueOf(String.valueOf(producto_rack_cord_z.getSelectionModel().getSelectedItem())) - 1;
-        AlmacenAreaXY almacenXY = (AlmacenAreaXY) AlmacenAreaXY.where("rack_cod = ? and rack_id = ? and x = ? and y = ?",
-                                                            rack_activo.getString("rack_cod"), 
-                                                            rack_activo.getId(), 
-                                                            producto_cod_x, 
-                                                            producto_cod_y).get(0);
-        AlmacenAreaZ almacenZ = (AlmacenAreaZ) AlmacenAreaZ.where("almacen_xy_id = ? and level = ?", almacenXY.getId(), producto_cod_z).get(0);
-        double capacidadRestante = almacenZ.getDouble("capacidad_restante");
-        double pesoProducto = TipoProducto.where("tipo_id = ?", producto.getInteger("tipo_id")).get(0).getDouble("peso");
+        try {
+            int producto_cod_x = Integer.valueOf(String.valueOf(producto_rack_cord_x.getSelectionModel().getSelectedItem()));
+            int producto_cod_y = Integer.valueOf(String.valueOf(producto_rack_cord_y.getSelectionModel().getSelectedItem()));
+            int producto_cod_z = Integer.valueOf(String.valueOf(producto_rack_cord_z.getSelectionModel().getSelectedItem())) - 1;
+            AlmacenAreaXY almacenXY = AlmacenAreaXY.findFirst("rack_cod = ? and rack_id = ? and x = ? and y = ?",
+                                                               rack_activo.getString("rack_cod"), 
+                                                               rack_activo.getId(), 
+                                                               producto_cod_x, 
+                                                               producto_cod_y);
+            AlmacenAreaZ almacenZ = AlmacenAreaZ.findFirst("almacen_xy_id = ? and level = ?", almacenXY.getId(), producto_cod_z);
 
-        if(capacidadRestante > 0 && capacidadRestante >= pesoProducto) {
-            almacenZ.setDouble("capacidad_restante", capacidadRestante - pesoProducto);
-            almacenXY_seleccionado = almacenXY;
-            almacenZ_seleccionado = almacenZ;
-            condition = true;
+            List<AlmacenAreaZ> almacenesFiltrados = almacenesZExistentes.stream().filter(almacen -> {
+                return almacen.getId() == almacenZ.getId();
+            }).collect(Collectors.toList());
+            AlmacenAreaZ almacenFiltrado;
+
+            if(almacenesFiltrados.size() > 0) {
+                almacenFiltrado = almacenesFiltrados.get(0);
+            } else {
+                almacenFiltrado = almacenZ;
+            }
+
+            double capacidadRestante = almacenFiltrado.getDouble("capacidad_restante");
+            double pesoProducto = TipoProducto.findFirst("tipo_id = ?", producto.getInteger("tipo_id")).getDouble("peso");
+    
+            if(capacidadRestante > 0 && capacidadRestante >= pesoProducto) {
+                almacenFiltrado.setDouble("capacidad_restante", (capacidadRestante - pesoProducto <= 0 ? 0 : capacidadRestante - pesoProducto) );
+                almacenXY_seleccionado = almacenXY;
+                almacenZ_seleccionado = almacenFiltrado;
+                condition = true;
+            }
+        } catch(Exception e) {
+            Logger.getLogger(ModalAgregarProductoRackController.class.getName()).log(Level.SEVERE, null, e);
         }
         return condition;
     }
@@ -210,17 +242,33 @@ public class ModalAgregarProductoRackController extends ModalController {
 
     @FXML
     public void buscarProducto(ActionEvent event) {
-        String productoCod = producto_cod.getText();
-        String productoNomb = producto_nomb.getText();
-        String productoTipo = producto_tipo.getSelectionModel().getSelectedItem();
-        String productoFechaAdquisicion = producto_fecha.getPromptText();
-        HashMap<String, String> campos = new HashMap<>();
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // campos.put(String.valueOf(producto_cod.getId()), "producto_cod");
-        // String query = generarQueryBusqueda(productoCod, productoNomb, productoTipo, productoFechaAdquisicion);
-        // actualizar_tabla(Producto.find(campos, query));
+        try {
+            String productoCod = producto_cod.getText();
+            String productoTipo = String.valueOf(producto_tipo.getSelectionModel().getSelectedItem() == null ? "" : producto_tipo.getSelectionModel().getSelectedItem());
+            String productoFechaAdquisicion = producto_fecha.getValue() == null ? "" : producto_fecha.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            List<Producto> productos_filtrados = new ArrayList<>();
+            LazyList<Producto> productos_existentes = Producto.findAll();
+
+            productos_filtrados = productos_existentes.stream().filter(producto -> {
+                boolean cond = true;
+                TipoProducto tipo = TipoProducto.findFirst("tipod_cod = ?", producto.getString("tipo_cod"));
+
+                // Validacion que el producto no ha sido colocado en un rack
+                cond = cond && producto.getString("ubicado").equals("N");
+                // Validacion de Codigo de Producto
+                cond = cond && producto.getString("producto_cod").contains(productoCod);
+                // Validacion de Fecha de Adquisicion del Producto
+                cond = cond && producto.getDate("fecha_adquisicion").toString().equals(productoFechaAdquisicion);
+                // Validacion de Nombre de Producto
+                cond = cond && tipo.getString("nombre").contains(productoTipo);
+     
+                return cond;
+            }).collect(Collectors.toList());
+            
+            actualizar_tabla(productos_filtrados);
+        } catch(Exception e) {
+            Logger.getLogger(ModalAgregarProductoRackController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     @FXML
@@ -231,6 +279,14 @@ public class ModalAgregarProductoRackController extends ModalController {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            // Campos de Busqueda
+            ObservableList<String> tipos_productos = FXCollections.observableArrayList();
+            tipos_productos.addAll(
+                TipoProducto.findAll().stream().map(tipo -> tipo.getString("nombre")).collect(Collectors.toList())
+            );
+
+            producto_tipo.setItems(tipos_productos);
+            // Tabla de Productos
             tabla_producto_cod.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("producto_cod")) );
             tabla_producto_fecha_adquisicion.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_adquirida")) );
             tabla_producto_fecha_vencimiento.setCellValueFactory( (TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_caducidad")) );

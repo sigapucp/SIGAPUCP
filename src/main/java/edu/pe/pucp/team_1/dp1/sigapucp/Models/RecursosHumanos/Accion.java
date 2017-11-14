@@ -35,7 +35,7 @@ public class Accion extends Model{
         SIM,
         PRO,
         FLT,
-        TRS;                                  
+        TRS;
         
         public static int getId(ACCION accion)
         {
