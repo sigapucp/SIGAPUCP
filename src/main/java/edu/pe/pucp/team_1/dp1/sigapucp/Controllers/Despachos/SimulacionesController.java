@@ -539,8 +539,8 @@ public class SimulacionesController extends Controller{
             }                                
         }
         
-        grid.clearUserTiles();
-        gridSaved.clearUserTiles();
+        grid.clearUserTilesColor(colorActual);
+        gridSaved.clearUserTilesColor(colorActualSaved);
         List<Producto> productosOrden =  new ArrayList<>();
         List<OrdenSalidaxProductoFinal> productosFinal = OrdenSalidaxProductoFinal.where("salida_id = ?", ordenSalidaActual.getId());
         
@@ -734,7 +734,7 @@ public class SimulacionesController extends Controller{
     @FXML
     private void generarSimulacion(ActionEvent event) {
         try {
-        grid.clearUserTiles();
+        grid.clearUserTilesColor(colorActual);
         String capacidadCarrito = VerCapacidadCarrito.getText();         
         String puntoAcopioX = VerAcopioX.getText();
         String puntoAcopioY = VerAcopioY.getText();
@@ -790,7 +790,7 @@ public class SimulacionesController extends Controller{
         
         VerCostoRuta.setText(String.valueOf(simulacionActual.getCostoRutaActual()));
         VerCostoSimulacion.setText(String.valueOf(simulacionActual.getCosto()));                     
-        grid.clearUserTiles();    
+        grid.clearUserTilesColor(colorActual);
         impimirRuta(simulacionActual.getRutaActual(),rutasProductos);
         fillListUpTo(nrRutas, simulacionActual.getNrRutas());                  
         } catch (Exception ex) {

@@ -704,13 +704,13 @@ public class PedidosController extends Controller {
         }    
     }
     
-     private void asignar_data(OrdenCompra pedido,String usuarioAccion, Integer clienteId, Date fechaEmision, Double igvVale, Double total, 
+     private void asignar_data(OrdenCompra pedido,String usuarioAccion, Integer clienteId, Date fechaEmision, Double igvValue, Double total, 
              String estado,Usuario vendedor, Integer monedaId, Integer cotizacion_id,String direccionDespacho,String direccionFacturacion,String departamento,String tipo) throws Exception{
                        
         pedido.set("client_id",clienteId);
         pedido.setDate("fecha_emision", fechaEmision);
         pedido.set("total", total);
-        pedido.set("igv", igvVale);
+        pedido.set("igv", igvValue);
         pedido.set("estado", estado);
         pedido.set("last_user_change",usuarioAccion);        
         pedido.set("moneda_id", monedaId);        
