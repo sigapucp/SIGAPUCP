@@ -341,6 +341,12 @@ public class SimulacionesController extends Controller{
     {        
         fxmlPath = gFxmlPath;
         Almacen almacenCentral = Almacen.findFirst("es_central = ?", "T");
+        
+        if(almacenCentral == null)
+        {
+            infoController.show("Debe crear un almacen central para correr las simulaciones");
+            return;
+        }
         int largo = almacenCentral.getInteger("largo");
         int ancho = almacenCentral.getInteger("ancho");        
         int area = almacenCentral.getInteger("longitud_area");
