@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalTipoProdController">
+<AnchorPane id="AnchorPane" prefHeight="360.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalTipoProdController">
    <children>
       <AnchorPane prefHeight="99.0" prefWidth="502.0" AnchorPane.bottomAnchor="289.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="12.0">
          <children>
@@ -24,23 +24,23 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="busqCodTip" layoutX="100.0" layoutY="40.0" />
-            <Label layoutX="14.0" layoutY="69.0" text="Nombre:">
+            <TextField fx:id="busqCodTip" layoutX="100.0" layoutY="40.0" prefWidth="145.0" />
+            <Label layoutX="272.0" layoutY="45.0" text="Nombre:">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="busqNomTip" layoutX="100.0" layoutY="67.0" />
+            <TextField fx:id="busqNomTip" layoutX="343.0" layoutY="40.0" prefWidth="145.0" />
          </children>
       </AnchorPane>
-      <Button layoutX="458.0" layoutY="130.0" mnemonicParsing="false" onAction="#buscar_tipo" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
-      <TableView fx:id="tabla_tipPro" prefHeight="131.0" prefWidth="496.0" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="167.0">
+      <Button layoutX="428.0" layoutY="109.0" mnemonicParsing="false" onAction="#buscar_tipo" prefHeight="27.0" prefWidth="90.0" text="Buscar" />
+      <TableView fx:id="tabla_tipPro" layoutX="24.0" layoutY="157.0" prefHeight="118.0" prefWidth="496.0" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="157.0">
         <columns>
           <TableColumn fx:id="columna_codTip" prefWidth="100.0" text="Código" />
           <TableColumn fx:id="columna_nomTip" prefWidth="150.0" text="Nombre" />
             <TableColumn fx:id="columna_desTip" prefWidth="245.0" text="Descripción" />
         </columns>
       </TableView>
-      <Button layoutX="458.0" layoutY="352.0" mnemonicParsing="false" onAction="#agregarDatosTipo" prefHeight="25.0" prefWidth="60.0" text="Agregar" />
+      <Button layoutX="428.0" layoutY="302.0" mnemonicParsing="false" onAction="#agregarDatosTipo" prefHeight="27.0" prefWidth="90.0" text="Agregar" />
    </children>
 </AnchorPane>

@@ -692,6 +692,7 @@ public class SimulacionesController extends Controller{
     @FXML
     private void comenzarRuta(ActionEvent event) {
         grid.clearUserTilesColor(colorActual);
+        if(simulacionActual == null) return;
         simulacionActual.setNodoActual(0);
         tittle_pane.setText("Inicio de Ruta");
         

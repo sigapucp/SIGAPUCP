@@ -10,9 +10,9 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="369.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="509.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView fx:id="TablaClientes" layoutX="24.0" layoutY="167.0" prefHeight="183.0" prefWidth="496.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="167.0">
+      <TableView fx:id="TablaClientes" layoutX="24.0" layoutY="207.0" prefHeight="250.0" prefWidth="496.0" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="207.0">
          <columns>
             <TableColumn fx:id="ColumnaNombre" prefWidth="57.0" text="Nombre" />
             <TableColumn fx:id="ColumnaTipo" prefWidth="98.0" text="Tipo" />
@@ -61,10 +61,10 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <ComboBox fx:id="BuscarDepartamento" layoutX="115.0" layoutY="110.0" prefHeight="25.0" prefWidth="146.0" />
+            <ComboBox fx:id="BuscarDepartamento" layoutX="115.0" layoutY="110.0" prefHeight="27.0" prefWidth="382.0" />
+            <Button fx:id="buscarCliente" layoutX="398.0" layoutY="155.0" mnemonicParsing="false" onAction="#buscarCliente" prefHeight="27.0" prefWidth="99.0" text="Buscar" />
          </children>
       </AnchorPane>
-      <Button fx:id="buscarCliente" layoutX="458.0" layoutY="130.0" mnemonicParsing="false" onAction="#buscarCliente" prefHeight="25.0" prefWidth="60.0" text="Buscar" />
-      <Button fx:id="agregarClienteButtom" layoutX="458.0" layoutY="332.0" mnemonicParsing="false" onAction="#agregarCliente" prefHeight="25.0" prefWidth="60.0" text="Agregar" />
+      <Button fx:id="agregarClienteButtom" layoutX="419.0" layoutY="468.0" mnemonicParsing="false" onAction="#agregarCliente" prefHeight="27.0" prefWidth="99.0" text="Agregar" />
    </children>
 </AnchorPane>

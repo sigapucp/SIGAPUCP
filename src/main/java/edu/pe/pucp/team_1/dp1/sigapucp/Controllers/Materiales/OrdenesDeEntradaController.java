@@ -14,6 +14,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertCon
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.ClientesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas.PedidosController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.IEventHandler;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Lote;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
@@ -24,8 +25,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVenta;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Precio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Proveedor;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarDocVentasArgs;
@@ -39,6 +42,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -77,6 +81,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.Model;
 
 /**
  * FXML Controller class
@@ -143,7 +148,8 @@ public class OrdenesDeEntradaController extends Controller {
     private Label DocumentoVentalLabel;
     @FXML
     private TextField VerDocVenta;
- 
+    @FXML
+    private Button buscarDocVentaButon;  
    
     static Stage modal_stage = new Stage();   
     static Stage modal_doc_venta_stage = new Stage();
@@ -154,25 +160,23 @@ public class OrdenesDeEntradaController extends Controller {
     private Boolean crearNuevo;
     private InformationAlertController infoController;
     private ConfirmationAlertController confirmationController;
+    private AgregarProductosController controller;
         
     private List<Proveedor> autoCompletadoProveedorList;
     private List<TipoProducto> autoCompletadoProductoList;    
-    ArrayList<String> possiblewordsProveedor = new ArrayList<>();    
-    ArrayList<String> possiblewordsProducto = new ArrayList<>();           
-    AutoCompletionBinding<String> autoCompletionBindingProveedor;
-    AutoCompletionBinding<String> autoCompletionBindingProducto;
-    TipoProducto productoDevuelto = null;
-    Proveedor proveedorDevuelto = null;
-    Cliente clienteDevuelto = null;
-    DocVenta docVentaDevuelto = null;
-    Cliente clienteBuscado;
-    Proveedor proveedorBuscado;
-    TipoProducto procutoBuscado;
-    @FXML
-    private Button buscarDocVentaButon;
-  
-  
-   
+    private ArrayList<String> possiblewordsProveedor = new ArrayList<>();    
+    private ArrayList<String> possiblewordsProducto = new ArrayList<>();           
+    private AutoCompletionBinding<String> autoCompletionBindingProveedor;
+    private AutoCompletionBinding<String> autoCompletionBindingProducto;
+    private TipoProducto productoDevuelto = null;
+    private Proveedor proveedorDevuelto = null;
+    private Cliente clienteDevuelto = null;
+    private DocVenta docVentaDevuelto = null;
+    private Cliente clienteBuscado;
+    private Proveedor proveedorBuscado;
+    private TipoProducto procutoBuscado;    
+    private HashMap<Integer,Integer> enviosProductosCantidadDevolver = new HashMap<>();
+             
     public OrdenesDeEntradaController()
     {
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");       
@@ -187,7 +191,7 @@ public class OrdenesDeEntradaController extends Controller {
         confirmationController = new ConfirmationAlertController();
         clienteBuscado = new Cliente();
         proveedorBuscado = new Proveedor();
-        procutoBuscado = new TipoProducto();
+        procutoBuscado = new TipoProducto();    
         
         crearNuevo = false;
         entradaSelecionada = null;
@@ -201,6 +205,19 @@ public class OrdenesDeEntradaController extends Controller {
     private void habilitar_formulario()
     {
         formulario_grid.setDisable(false);
+    }
+    
+    public void llenarHashDisponibles(DocVenta docVenta)
+    {
+        enviosProductosCantidadDevolver.clear();
+        
+        Envio envioDocVenta = Envio.findById(GuiaRemision.findById(docVentaDevuelto.getInteger("guia_id")).getInteger("envio_id"));;
+        List<OrdenesCompraxProductosxenvio> productosEnvio = OrdenesCompraxProductosxenvio.where("envio_id = ?", envioDocVenta.get("envio_id"));        
+
+        for(OrdenesCompraxProductosxenvio productosxenvio:productosEnvio)
+        {
+            enviosProductosCantidadDevolver.put(productosxenvio.getInteger("tipo_id"), productosxenvio.getInteger("cantidad_para_devolver"));                        
+        }                            
     }
     
     @FXML
@@ -287,6 +304,20 @@ public class OrdenesDeEntradaController extends Controller {
             {
                 Integer cantidad = producto.getInteger("cantidad") + verCantidad.getValue();
                 producto.set("cantidad",cantidad);
+                enviosProductosCantidadDevolver.put(producto.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(producto.getInteger("tipo_id"))- verCantidad.getValue());               
+                
+                String tipo = VerTipo.getSelectionModel().getSelectedItem();             
+                if(tipo != null && tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+                {            
+                    int cantidadMaxima = enviosProductosCantidadDevolver.get(productoDevuelto.getInteger("tipo_id"));
+                    int cantidad_minima = 1;
+                    if(cantidadMaxima == 0) cantidad_minima = 0;
+                    valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(cantidad_minima, cantidadMaxima, 1);                          
+                }else           
+                {
+                    valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
+                }
+                verCantidad.setValueFactory(valueFactory);
                 TablaProductos.getColumns().get(0).setVisible(false);
                 TablaProductos.getColumns().get(0).setVisible(true);
                 return;
@@ -297,8 +328,21 @@ public class OrdenesDeEntradaController extends Controller {
         ordenxproducto.set("tipo_id",productoDevuelto.getId());
         ordenxproducto.set("tipo_cod",productoDevuelto.get("tipo_cod"));
         ordenxproducto.set("estado",productoDevuelto.get("estado"));
-        ordenxproducto.set("cantidad",verCantidad.getValue());
+        ordenxproducto.set("cantidad",verCantidad.getValue());        
         ordenxproducto.set("ingresado","N");
+        enviosProductosCantidadDevolver.put(ordenxproducto.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(ordenxproducto.getInteger("tipo_id"))-ordenxproducto.getInteger("cantidad"));                       
+        String tipo = VerTipo.getSelectionModel().getSelectedItem();             
+        if(tipo != null && tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+        {            
+            int cantidadMaxima = enviosProductosCantidadDevolver.get(productoDevuelto.getInteger("tipo_id"));
+            int cantidad_minima = 1;
+            if(cantidadMaxima == 0) cantidad_minima = 0;
+            valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(cantidad_minima, cantidadMaxima, 1);                          
+        }else           
+        {
+            valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
+        }
+        verCantidad.setValueFactory(valueFactory);
         productos.add(ordenxproducto);
     }
 
@@ -309,9 +353,8 @@ public class OrdenesDeEntradaController extends Controller {
         {
             infoController.show("No ha seleccionado ninguna Orden");
             return;
-        } 
+        }         
         
-       
         if(!ordenSeleccionada.isNew())
         {
             OrdenEntrada orden = OrdenEntrada.findById(ordenSeleccionada.get("orden_entrada_id"));         
@@ -322,13 +365,57 @@ public class OrdenesDeEntradaController extends Controller {
                 return;                
             }                        
         }
-        productos.remove(ordenSeleccionada);      
+        productos.remove(ordenSeleccionada);   
+        enviosProductosCantidadDevolver.put(ordenSeleccionada.getInteger("tipo_id"),enviosProductosCantidadDevolver.get(ordenSeleccionada.getInteger("tipo_id"))+ordenSeleccionada.getInteger("cantidad"));               
+        
+        String tipo = VerTipo.getSelectionModel().getSelectedItem();             
+        if(tipo != null && tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+        {            
+            int cantidadMaxima = enviosProductosCantidadDevolver.get(productoDevuelto.getInteger("tipo_id"));
+            int cantidad_minima = 1;
+            if(cantidadMaxima == 0) cantidad_minima = 0;
+            valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(cantidad_minima, cantidadMaxima, 1);                          
+        }else           
+        {
+            valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
+        }
+        verCantidad.setValueFactory(valueFactory);
     }    
     
     @FXML
-    private void buscarProducto(ActionEvent event) {
+    private void buscarProducto(ActionEvent event) {        
+        String tipo = VerTipo.getSelectionModel().getSelectedItem();       
+        Boolean esDevolucion = false;
+        if(tipo != null && tipo.equals(OrdenEntrada.TIPO.Devolucion.name()))
+        {
+            if(docVentaDevuelto == null)
+            {
+                infoController.show("Debe seleccionar un documento de venta primero");
+                return;
+            }
+            
+            List<TipoProducto> productosDisponibles = new ArrayList<>();
+            esDevolucion = true;
+            for (Integer tipo_id : enviosProductosCantidadDevolver.keySet()) {
+               productosDisponibles.add(TipoProducto.findById(tipo_id));
+            }  
+            controller.setProductosMostrar(productosDisponibles);
+        }
+        
         modal_stage.showAndWait();
-        if(productoDevuelto==null) return;        
+        if(productoDevuelto==null) return; 
+        if(esDevolucion)
+        {            
+            int cantidadMaxima = enviosProductosCantidadDevolver.get(productoDevuelto.getInteger("tipo_id"));
+            int cantidad_minima = 1;
+            if(cantidadMaxima == 0) cantidad_minima = 0;
+            valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(cantidad_minima, cantidadMaxima, 1);                          
+        }else           
+        {
+            valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 1);
+        }
+        verCantidad.setValueFactory(valueFactory);
+        
         VerProducto.setText(productoDevuelto.getString("nombre"));
     }
 
@@ -484,6 +571,18 @@ public class OrdenesDeEntradaController extends Controller {
         {
             OrdenEntradaxProducto.delete("orden_entrada_id = ? AND tipo_id = ?",ordenxproducto.get("orden_entrada_id"),ordenxproducto.get("tipo_id"));
         }
+        
+        if(docVentaDevuelto != null && orden.getString("tipo").equals(OrdenEntrada.TIPO.Devolucion.name()))
+        {
+            Envio envioDocVenta = Envio.findById(GuiaRemision.findById(docVentaDevuelto.get("guia_id")).getInteger("envio_id"));
+            List<OrdenesCompraxProductosxenvio> productosEnvio = OrdenesCompraxProductosxenvio.where("envio_id = ?", envioDocVenta.get("envio_id"));        
+
+            for(OrdenesCompraxProductosxenvio productosxenvio:productosEnvio)
+            {
+                productosxenvio.set("cantidad_para_devolver",enviosProductosCantidadDevolver.get(productosxenvio.getInteger("tipo_id")));
+                productosxenvio.saveIt();
+            }               
+        }                                           
     }
     
     
@@ -730,6 +829,8 @@ public class OrdenesDeEntradaController extends Controller {
         DocumentoVentalLabel.setVisible(false);
         ClienteLabel.setVisible(false);
         ProveedorLabel.setVisible(false);
+        VerDocVenta.setVisible(false);
+        buscarDocVentaButon.setVisible(false);
         clienteDevuelto = null;
         proveedorDevuelto = null;
         docVentaDevuelto = null;
@@ -938,7 +1039,7 @@ public class OrdenesDeEntradaController extends Controller {
             });
                                 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarProductos.fxml"));
-            AgregarProductosController controller = new AgregarProductosController();
+            controller = new AgregarProductosController();
             loader.setController(controller);                      
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage.setScene(modal_content_scene);
@@ -964,7 +1065,9 @@ public class OrdenesDeEntradaController extends Controller {
         modal_doc_venta_stage.showAndWait();
         if(docVentaDevuelto==null) return;        
         VerDocVenta.setText(docVentaDevuelto.getString("doc_venta_cod"));
+        llenarHashDisponibles(docVentaDevuelto);
+        clienteDevuelto = Cliente.findById(docVentaDevuelto.getInteger("client_id"));
         if(clienteDevuelto == null) return;
-        ClienteBuscar.setText(clienteBuscado.getString("nombre"));
+        ClienteBuscar.setText(clienteDevuelto.getString("nombre"));
     }    
 }

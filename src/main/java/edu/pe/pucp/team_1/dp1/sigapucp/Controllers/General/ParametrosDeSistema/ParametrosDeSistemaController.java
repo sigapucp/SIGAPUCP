@@ -138,7 +138,7 @@ public class ParametrosDeSistemaController extends Controller{
         "            flete, cantidad_descuento_disponible, reservado, cantidad_en_envios) VALUES ");        
         insertTemplate.put("ordenescompraxproductosxenvio", "INSERT INTO public.ordenescompraxproductosxenvio(" +
         "            orden_compra_cod, client_id, orden_compra_id, tipo_id, tipo_cod, " +
-        "            envio_id, envio_cod, cantidad) VALUES ");        
+        "            envio_id, envio_cod, cantidad,cantidad_para_devolver) VALUES ");        
         insertTemplate.put("ordenescompraxproductosxfletes", "INSERT INTO public.ordenescompraxproductosxfletes(" +
         "            tipo_id, client_id, orden_compra_id, orden_compra_cod, tipo_cod, " +
         "            flete_id, flete_code, valor_flete) VALUES ");        

@@ -168,6 +168,7 @@ public class OrdenesDeSalidaController  extends Controller{
     private final ObservableList<OrdenSalidaxProductoFinal> masterDataProductoFinal = FXCollections.observableArrayList();
     private List<OrdenSalida> salidas_temp;
     private List<Producto> productos_instancias;
+    private List<TipoProducto> tiposProductoSalida;
     private OrdenSalida salida_seleccionada;
     private TipoProducto tipo_devuelto;
     private Producto instancia_devuelta;
@@ -515,7 +516,7 @@ public class OrdenesDeSalidaController  extends Controller{
     {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgregarInstanciaProducto.fxml"));
-            AgregarInstanciaProducto controller = new AgregarInstanciaProducto(productos_instancias);
+            AgregarInstanciaProducto controller = new AgregarInstanciaProducto(productos_instancias,tiposProductoSalida);
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
             modal_stage_instancia.setScene(modal_content_scene); 
@@ -536,6 +537,8 @@ public class OrdenesDeSalidaController  extends Controller{
             List<Producto> productosAlmacen = Producto.where("tipo_id = ? AND estado = ?", salidaxtipoproducto.get("tipo_id"), Producto.ESTADO.INGRESADO.name()).orderBy("fecha_adquirida asc");
             productos_instancias.addAll(productosAlmacen);
             cantidad_tipos_total += salidaxtipoproducto.getInteger("cantidad");
+            TipoProducto tipo = TipoProducto.findFirst("tipo_id = ?", salidaxtipoproducto.getInteger("tipo_id"));
+            tiposProductoSalida.add(tipo);
         }
     }
     
@@ -802,7 +805,7 @@ public class OrdenesDeSalidaController  extends Controller{
             inhabilitar_formulario();
         }catch (Exception e){
             Base.rollbackTransaction();
-            infoController.show("No se ha podido modificar el estado del Envio");
+            infoController.show("No se ha podido modificar el estado de la orden de salida");
         }
     }
     
@@ -874,6 +877,7 @@ public class OrdenesDeSalidaController  extends Controller{
             tipo_buscar.setItems(tipos_enum);
             llenar_combo_box_tipo();
             productos_instancias = new ArrayList<Producto>();
+            tiposProductoSalida = new ArrayList<TipoProducto>();
             seleccionar_envio();
             setAgregarProductos();
             tipos.setOnAction(e -> manejarcomboBoxTipoSalida());

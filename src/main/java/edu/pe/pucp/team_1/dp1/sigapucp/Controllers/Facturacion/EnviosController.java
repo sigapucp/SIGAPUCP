@@ -199,6 +199,8 @@ public class EnviosController extends Controller{
             }              
             productos.remove(envioxproducto);                   
             pedidosNrDisponibles.put(envioxproducto.getInteger("tipo_id"),pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id"))+envioxproducto.getInteger("cantidad"));
+            SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id")), 0);
+            cantidad_producto.setValueFactory(cantidad_productoValues);
             tabla_productos.getColumns().get(0).setVisible(false);
             tabla_productos.getColumns().get(0).setVisible(true);
         } catch (Exception e) {
@@ -374,7 +376,9 @@ public class EnviosController extends Controller{
             {
                 extraCant += cantidad_producto.getValue();
             }
-            productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);                                                                                                     
+            productoxenvio.set("cantidad", productoxenvio.getInteger("cantidad") + extraCant);  
+            pedidosNrDisponibles.put(productoxenvio.getInteger("tipo_id"),pedidosNrDisponibles.get(productoxenvio.getInteger("tipo_id"))-extraCant);
+           
             break;
         }    
     }
@@ -440,12 +444,15 @@ public class EnviosController extends Controller{
                     Integer cantidad = cantidad_producto.getValue();                    
                     envioxproducto.set("tipo_id",producto_devuelto.getInteger("tipo_id"));
                     envioxproducto.set("tipo_cod",producto_devuelto.get("tipo_cod"));                                
-                    envioxproducto.set("cantidad",cantidad);      
-                    pedidosNrDisponibles.put(envioxproducto.getInteger("tipo_id"),pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id"))-envioxproducto.getInteger("cantidad"));                    
+                    envioxproducto.set("cantidad",cantidad);  
+                    envioxproducto.set("cantidad_para_devolver",cantidad);                      
+                    pedidosNrDisponibles.put(envioxproducto.getInteger("tipo_id"),pedidosNrDisponibles.get(envioxproducto.getInteger("tipo_id"))-envioxproducto.getInteger("cantidad"));                                      
                     productos.add(envioxproducto);
                     isNew = true;                    
                 }                          
-               RecalcularTabla(isNew);
+                RecalcularTabla(isNew);
+                SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, pedidosNrDisponibles.get(producto_devuelto.getInteger("tipo_id")), 0);
+                cantidad_producto.setValueFactory(cantidad_productoValues);
         } catch (Exception e) {
             infoController.show("No se ha podido agregar ese Producto: " + e.getMessage());
         }                

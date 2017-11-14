@@ -177,6 +177,7 @@ public class NotaDeCreditoController extends Controller {
     //MODALES FLUJO
         //--------------------------------------------------//
     Stage modal_stage = new Stage();
+    Stage modal_stage_prod = new Stage();
     private List<OrdenEntradaxProducto> productos_a_agregar;
     private List<OrdenEntradaxProducto> productos_disponibles;
     private OrdenEntradaxProducto producto_devuelto;
@@ -275,6 +276,11 @@ public class NotaDeCreditoController extends Controller {
     }
     
     public void habilitar_formulario(){
+        boton_agregar_cliente.setDisable(false);
+        buscarProducto.setDisable(false);
+        bttn_agregar_prod.setDisable(false);
+        bttn_eliminar_prod.setDisable(false);
+        ordenes_entrada_combobox.setDisable(false);
         envio_formulario.setDisable(false);
     }  
     
@@ -317,6 +323,7 @@ public class NotaDeCreditoController extends Controller {
         dni_cliente.clear();
         ruc_cliente.clear();
         TablaProductos.getItems().clear();
+        ordenes_entrada_combobox.setValue("");
         ordenes_entrada_combobox.getSelectionModel().clearSelection();
     }        
      
@@ -426,12 +433,12 @@ public class NotaDeCreditoController extends Controller {
             AgregarProductosEntradaController controller = new AgregarProductosEntradaController(productos_disponibles);
             loader.setController(controller);
             Scene modal_content_scene = new Scene((Parent)loader.load());
-            modal_stage.setScene(modal_content_scene);       
-            if(modal_stage.getModality() != Modality.APPLICATION_MODAL) modal_stage.initModality(Modality.APPLICATION_MODAL); 
+            modal_stage_prod.setScene(modal_content_scene);       
+            if(modal_stage_prod.getModality() != Modality.APPLICATION_MODAL) modal_stage_prod.initModality(Modality.APPLICATION_MODAL); 
             controller.devolverProductoEvent.addHandler((Object sender, agregarOrdenEntradaProductoArgs args) -> {
                 producto_devuelto = args.orden_entrada_producto;
             });                 
-            modal_stage.showAndWait();
+            modal_stage_prod.showAndWait();
             SpinnerValueFactory cantidad_productoValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, producto_devuelto.getInteger("cantidad"), 0);
             cantidad_producto.setValueFactory(cantidad_productoValues);
         }catch(Exception e){
