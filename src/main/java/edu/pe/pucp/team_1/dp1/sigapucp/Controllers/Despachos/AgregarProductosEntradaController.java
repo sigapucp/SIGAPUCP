@@ -56,13 +56,13 @@ public class AgregarProductosEntradaController implements Initializable {
     //@FXML
     //private ComboBox<String> BuscarCategoria;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_codigo;
+    private TableColumn<OrdenEntradaxProducto, String> columna_codigo;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_nombre;
+    private TableColumn<OrdenEntradaxProducto, String> columna_nombre;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_descripcion;
+    private TableColumn<OrdenEntradaxProducto, String> columna_descripcion;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_cantidad;
+    private TableColumn<OrdenEntradaxProducto, String> columna_cantidad;
     @FXML
     private Button boton_agregar_producto;    
         
@@ -80,10 +80,9 @@ public class AgregarProductosEntradaController implements Initializable {
         tabla_productos.getItems().clear();
         productos.clear();
         productos.addAll(productos_orden_de_entrada_a_enviar);
-        columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
-        columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
-        columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad_descuento_disponible")));
+        columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+        columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+        columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenEntradaxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
 
         tabla_productos.setItems(productos);
     }
