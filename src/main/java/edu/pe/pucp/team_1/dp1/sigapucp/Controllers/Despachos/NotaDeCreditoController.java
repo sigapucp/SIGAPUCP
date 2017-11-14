@@ -13,7 +13,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.NotaDeCredito;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntrada;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
@@ -226,7 +229,13 @@ public class NotaDeCreditoController extends Controller {
     @Override
     public void guardar(){
         if (crearNuevo){
-            crear_nota_credito();           
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.NotasdeCredito, Accion.ACCION.CRE)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                crearNuevo = false;
+                return;
+            }
+            crear_nota_credito();  
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.CRE, Menu.MENU.NotasdeCredito ,this.usuarioActual);
             limpiar_formulario();    
             inhabilitar_formulario();
         } else {
@@ -234,7 +243,12 @@ public class NotaDeCreditoController extends Controller {
                 infoController.show("No ha seleccionado ningun envio");
                 return;
             }
+            if (!Usuario.tienePermiso(permisosActual, Menu.MENU.NotasdeCredito, Accion.ACCION.MOD)){
+                infoController.show("No tiene los permisos suficientes para realizar esta acción");
+                return;
+            }
             editar_entrada();
+            AccionLoggerSingleton.getInstance().logAccion(Accion.ACCION.MOD, Menu.MENU.NotasdeCredito ,this.usuarioActual);
         }
         crearNuevo = false;
         RefrescarTabla(NotaDeCredito.findAll());
