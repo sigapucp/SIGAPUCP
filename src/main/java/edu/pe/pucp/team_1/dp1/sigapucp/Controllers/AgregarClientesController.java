@@ -7,11 +7,13 @@ package edu.pe.pucp.team_1.dp1.sigapucp.Controllers;
 
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.OrdenEntradaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Flete;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarClienteArgs;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarProductoArgs;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -20,6 +22,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -32,6 +35,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
 
 /**
@@ -67,7 +72,10 @@ public class AgregarClientesController implements Initializable {
     private Button buscarCliente;
     @FXML
     private Button agregarClienteButtom;
-  
+    
+    ArrayList<String> possiblewords = new ArrayList<>();        
+    AutoCompletionBinding<String> autoCompletionBinding; 
+    private List<Cliente> autoCompletadoList;
     /**
      * Initializes the controller class.
      */
@@ -104,11 +112,23 @@ public class AgregarClientesController implements Initializable {
             BuscarDepartamento.setItems(departamentos);            
             List<Cliente> tempCliente = Cliente.where("estado = ?", Cliente.ESTADO.ACTIVO.name());
             clientes.addAll(tempCliente);
-            TablaClientes.setItems(clientes);            
+            TablaClientes.setItems(clientes);   
+            llenar_autocompletado();
         } catch (Exception e) {
             infoController.show("Problemas en la inicializaciond de busqueda de Clientes");
         }       
     }   
+    
+      private void llenar_autocompletado() throws Exception
+    {
+        autoCompletadoList = Cliente.findAll();
+
+        clienteToString();
+        autoCompletionBinding = TextFields.bindAutoCompletion(BuscarNombre, possiblewords);
+        autoCompletionBinding.addEventHandler(EventType.ROOT, (event) -> {
+            handleAutoCompletar();
+        });        
+    }
     
       private void RefrescarTabla(List<Cliente> clienteRefresh)
     {        
@@ -180,4 +200,46 @@ public class AgregarClientesController implements Initializable {
     }
     
     public Event<agregarClienteArgs> devolverClienteEvent = new Event<>();          
+
+    private void clienteToString() throws Exception{
+        ArrayList<String> words = new ArrayList<>();
+        for (Cliente cliente : autoCompletadoList){
+            words.add(cliente.getString("nombre"));
+        }
+        possiblewords = words;
+    }
+
+    private void handleAutoCompletar() {
+        
+        try {            
+             for (Cliente cliente : autoCompletadoList){
+                if (cliente.getString("nombre").equals(BuscarNombre.getText())){                            
+                    //setInformacionCliente(cliente,true);
+                    TablaClientes.getColumns().get(0).setVisible(false);
+                    TablaClientes.getColumns().get(0).setVisible(true);
+                }
+            }            
+        } catch (Exception e) {
+            infoController.show("No se ha podido cargar la informacion del cliente: " + e.getMessage());
+        }
+       
+    }
+
+    private void setInformacionCliente(Cliente cliente, boolean b) {
+        String tipo_cliente = cliente.getString("tipo_cliente");
+        String dni = cliente.getString("dni");
+        String ruc = cliente.getString("ruc");
+        
+        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
+        {
+            BuscarDNI.setText(dni);
+            BuscarTipo.setValue(cliente.getString("tipo"));
+            BuscarDepartamento.setValue(cliente.getString("departamento")); 
+        }else
+        {
+            BuscarRuc.setText(ruc); 
+            BuscarTipo.setValue(cliente.getString("tipo"));
+            BuscarDepartamento.setValue(cliente.getString("departamento")); 
+        } 
+    }
 }
