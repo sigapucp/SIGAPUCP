@@ -10,6 +10,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Producto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarInstanciaProductoArgs;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -20,8 +21,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.javalite.activejdbc.Base;
 
@@ -30,6 +33,12 @@ import org.javalite.activejdbc.Base;
  * @author Gustavo
  */
 public class AgregarInstanciaProducto implements Initializable {
+    @FXML
+    private TextField BuscarCodigo;
+    @FXML
+    private TextField BuscarNombre;
+    @FXML
+    private ComboBox<String> combobox_tipo;
     @FXML
     private TableView<Producto> tabla_producto;
     @FXML
@@ -88,6 +97,34 @@ public class AgregarInstanciaProducto implements Initializable {
             this.instancias_productos = instancias_productos;
         } catch (Exception e){
             System.out.println(e);
+        }
+    }
+    
+    public boolean cumple_condicion_busqueda(Producto producto, String codigo, String nombre, String tipo){
+        boolean match = true;        
+        if ( codigo.equals("") && nombre.equals("") && tipo.equals("")){
+            match = true;
+        }else {
+            match = (!codigo.equals("")) ? (match && (producto.get("tipo_cod")).equals(codigo)) : match;
+            match = (!nombre.equals("")) ? (match && (TipoProducto.findById(producto.get("tipo_id")).getString("nombre").equals(nombre))) : match;
+            match = (!tipo.equals("")) ? (match && (TipoProducto.findById(producto.get("tipo_id")).getString("nombre").equals(tipo))) : match;
+        }
+        return match;
+    }
+    
+    
+    @FXML
+    public void buscar_producto(ActionEvent event) throws IOException{
+        masterDataProducto.clear();
+        String tipo = (combobox_tipo.getSelectionModel().getSelectedItem()==null) ? "" : combobox_tipo.getSelectionModel().getSelectedItem();
+        try{
+            for(Producto producto : masterDataProducto){
+                if (cumple_condicion_busqueda(producto, BuscarCodigo.getText(), BuscarNombre.getText(),tipo)){
+                    masterDataProducto.add(producto);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("No se pudo buscar el producto : " + e.getMessage());
         }
     }
     
