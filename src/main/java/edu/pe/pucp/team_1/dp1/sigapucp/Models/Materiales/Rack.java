@@ -21,10 +21,7 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName("rack_id")
 @BelongsTo(parent = Almacen.class, foreignKeyName="almacen_id")
 public class Rack extends Model{
-    static {
-        dateFormat("dd/MM/yyyy", "last_date_change");
-    }
-    
+
     public void asignarAtributosRack(String rackCod,
             int rackLongitud,
             char rackEsUniforme,
