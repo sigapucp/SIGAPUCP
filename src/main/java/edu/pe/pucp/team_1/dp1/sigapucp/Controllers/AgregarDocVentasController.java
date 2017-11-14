@@ -132,7 +132,7 @@ public class AgregarDocVentasController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("docv_enta_cod")));
+        ColumnaCodigo.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("doc_venta_cod")));
         ColumnaCliente.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         ColumnaTipo.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
         ColumnaGuiaRemision.setCellValueFactory((TableColumn.CellDataFeatures<DocVenta, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("guia_cod")));

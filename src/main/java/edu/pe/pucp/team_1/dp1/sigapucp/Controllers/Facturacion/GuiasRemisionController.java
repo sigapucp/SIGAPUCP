@@ -215,6 +215,7 @@ public class GuiasRemisionController extends Controller{
         crearNuevo = true;
         limpiar_formulario();
         desbloquear_formulario();
+
         //boton_guardar.setDisable(false);
     }
     
@@ -365,6 +366,7 @@ public class GuiasRemisionController extends Controller{
         dni_cliente.clear();
         ruc_cliente.clear();
         envios_combobox.getSelectionModel().clearSelection();
+
         envios_combobox.getItems().clear();
         
         fecha_remision.getEditor().clear();
