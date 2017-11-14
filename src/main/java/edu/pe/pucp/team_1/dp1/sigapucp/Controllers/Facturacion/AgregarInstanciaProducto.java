@@ -56,6 +56,7 @@ public class AgregarInstanciaProducto implements Initializable {
 
     private InformationAlertController infoController;
     private List<Producto> instancias_productos;
+    private List<TipoProducto> tipos;
     private final ObservableList<Producto> masterDataProducto = FXCollections.observableArrayList();
     private Producto producto_busqueda;
  
@@ -65,7 +66,7 @@ public class AgregarInstanciaProducto implements Initializable {
             
             columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getString("producto_cod")));
             columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findFirst("tipo_id = ?",p.getValue().getInteger("tipo_id")).getString("nombre")));
-            columna_fecha_entrada.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_entrada")));
+            columna_fecha_entrada.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("fecha_adquirida")));
             columna_almacen.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("almacen_cod")));
             columna_rack.setCellValueFactory((TableColumn.CellDataFeatures<Producto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("rack_cod")));
             
@@ -89,12 +90,13 @@ public class AgregarInstanciaProducto implements Initializable {
         stage.close();
     }    
     
-    public AgregarInstanciaProducto(List<Producto> instancias_productos)
+    public AgregarInstanciaProducto(List<Producto> instancias_productos, List<TipoProducto> tipos)
     {
         try{
             if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");  
             infoController = new InformationAlertController();
             this.instancias_productos = instancias_productos;
+            this.tipos = tipos;
         } catch (Exception e){
             System.out.println(e);
         }
@@ -130,6 +132,9 @@ public class AgregarInstanciaProducto implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         llenar_productos_tabla();
+        combobox_tipo.getItems().add("");
+        for (TipoProducto tipo : tipos)
+            combobox_tipo.getItems().add(tipo.getString("nombre"));
     }   
     public Event<agregarInstanciaProductoArgs> devolver_instancia_producto = new Event<>();          
 

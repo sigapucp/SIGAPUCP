@@ -15,6 +15,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -62,7 +63,7 @@ public class AgregarEnviosController implements  Initializable{
     private InformationAlertController infoController;
     private final ObservableList<Envio> masterData = FXCollections.observableArrayList();
     private Envio envio_busqueda;
-    private List<Envio> lista_envios;
+    private List<Envio> lista_envios = new ArrayList<>();
     
     @FXML
     private void agregar_envio(ActionEvent event){
@@ -136,7 +137,7 @@ public class AgregarEnviosController implements  Initializable{
         try {  
             llenar_tabla_envios();
         } catch (Exception e) {
-            infoController.show("Problemas en la inicializaciond de busqueda de Producto");
+            infoController.show("Problemas en la inicializacion de busqueda de Producto");
         }       
     }
     
