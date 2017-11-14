@@ -290,7 +290,11 @@ public class FletesController extends Controller {
         VerFechaInicial.setValue(fleteSeleccionado.getDate("fecha_inicio").toLocalDate());
         VerFechaFinal.setValue(fleteSeleccionado.getDate("fecha_fin").toLocalDate());
         VerTipo.getSelectionModel().select(fleteSeleccionado.getString("tipo"));
-        VerMoneda.getSelectionModel().select(Moneda.findById(fleteSeleccionado.get("moneda_id")).getString("nombre"));
+        if(!fleteSeleccionado.getString("tipo").equals(Flete.TIPO.PORCENTAJE.name()))
+        {
+            VerMoneda.getSelectionModel().select(Moneda.findById(fleteSeleccionado.get("moneda_id")).getString("nombre"));            
+        }
+        
         VerValor.setText(fleteSeleccionado.getString("valor"));
         
                 
@@ -429,10 +433,15 @@ public class FletesController extends Controller {
             String tipo = VerTipo.getSelectionModel().getSelectedItem();
             Date fechaInicial = Date.valueOf(VerFechaInicial.getValue());
             Date fechaFinal = Date.valueOf(VerFechaFinal.getValue());
-            Integer moneda_id = Moneda.findFirst("nombre = ?", VerMoneda.getSelectionModel().getSelectedItem()).getInteger("moneda_id");            
+            Integer moneda_id = 1;
+            if(VerMoneda.getSelectionModel().getSelectedItem()!=null&&!tipo.equals(Flete.TIPO.PORCENTAJE.name()))
+            {
+                moneda_id = Moneda.findFirst("nombre = ?", VerMoneda.getSelectionModel().getSelectedItem()).getInteger("moneda_id");            
+            }
+            
             Double valor = Double.valueOf(VerValor.getText());
                      
-            String cod = fleteSeleccionado.getString("flete_cod");
+            String cod = fleteSeleccionado.getString("flete_code");
             asignar_valores(fleteSeleccionado,fechaInicial, fechaFinal, tipo,Flete.ESTADO.ACTIVO.name(),valor,moneda_id);                        
             flete.saveIt();            
             Base.commitTransaction();
