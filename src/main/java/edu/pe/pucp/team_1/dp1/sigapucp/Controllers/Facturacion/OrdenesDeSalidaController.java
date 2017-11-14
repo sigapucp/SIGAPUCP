@@ -71,6 +71,8 @@ public class OrdenesDeSalidaController  extends Controller{
     private TableColumn<OrdenSalida, String> columna_cod_salida;
     @FXML
     private TableColumn<OrdenSalida, String> columna_tipo_salida;
+    @FXML
+    private TableColumn<OrdenSalida, String> columna_estado;
     
     //FORMULARIO
         //--------------------------------------------------//    
@@ -326,6 +328,8 @@ public class OrdenesDeSalidaController  extends Controller{
             salidaxenvio.set("salida_id", salida.getInteger("salida_id"));
             salidaxenvio.set("envio_id", envio.getInteger("envio_id"));
             salidaxenvio.set("envio_cod", envio.getString("envio_cod"));
+            envio.set("estado",Envio.ESTADO.ENPROCESO.name());
+            envio.saveIt();
             salidaxenvio.saveIt();
         }
     }
@@ -650,6 +654,7 @@ public class OrdenesDeSalidaController  extends Controller{
         
         columna_cod_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("salida_cod")));
         columna_tipo_salida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo")));
+        columna_estado.setCellValueFactory((TableColumn.CellDataFeatures<OrdenSalida, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("estado")));
 
         tabla_salidas.setItems(masterDataSalidas);        
         

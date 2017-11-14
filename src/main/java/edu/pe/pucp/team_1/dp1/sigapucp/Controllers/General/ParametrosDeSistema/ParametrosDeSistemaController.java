@@ -72,9 +72,8 @@ public class ParametrosDeSistemaController extends Controller{
         infoController = new InformationAlertController();
         confirmationController = new ConfirmationAlertController();
         
-       insertTemplate.put("accionesxroles", "INSERT INTO public.accionesxroles(" +
-        "            menu_id, accion_cod, rol_cod, rol_id, accion_id, solo_admin) VALUES ");
-      
+        insertTemplate.put("accionesxroles", "INSERT INTO public.accionesxroles(" +
+        "            menu_id, accion_cod, rol_cod, rol_id, accion_id, solo_admin) VALUES ");      
         insertTemplate.put("almacenareaxys", "INSERT INTO public.almacenareaxys(" +
         "            almacen_xy_id, alto, estado, tipo, rack_cod, rack_id, almacen_id, " +
         "            almacen_cod, x, y) VALUES ");        
@@ -273,6 +272,7 @@ public class ParametrosDeSistemaController extends Controller{
                Base.exec(querry);                    
             }            
             infoController.show("Se ha restaurado el estado satisfactoriamente");
+            Base.commitTransaction();
         }catch (Exception ex) {
             Logger.getLogger(ParametrosDeSistemaController.class.getName()).log(Level.SEVERE, null, ex);
             Base.rollbackTransaction();

@@ -5,18 +5,20 @@
  */
 package edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Ventas;
 
-import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.AgregarClientesController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Seguridad.InformationAlertController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.TipoProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Sistema.ParametroSistema;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVenta;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.DocVentaxProducto;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Moneda;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
-import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarClienteArgs;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Navegacion.agregarGuiaRemisionArgs;
 import java.io.IOException;
 import java.net.URL;
@@ -25,7 +27,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,10 +34,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -47,6 +46,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.Model;
 
 /**
  * FXML Controller class
@@ -65,9 +65,7 @@ public class DocumentosDeVentaController extends Controller{
     @FXML
     private TextField nombre_cliente;
     @FXML
-    private ComboBox<String> ver_moneda;
-    @FXML
-    private TextField codigo_venta;
+    private TextField ver_moneda;    
     @FXML
     public DatePicker fecha_emision;    
     @FXML
@@ -79,25 +77,25 @@ public class DocumentosDeVentaController extends Controller{
     @FXML
     private TextField guia_remision_busqueda;
    @FXML
-    private ComboBox<String> tipo_doc;    
+    private TextField tipo_doc;    
     
     //------------------------------------------
     @FXML
-    private TableView<OrdenCompraxProducto> tabla_detalle;
+    private TableView<DocVentaxProducto> tabla_detalle;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_cantidad;
+    private TableColumn<DocVentaxProducto, String> columna_cantidad;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_codigo;
+    private TableColumn<DocVentaxProducto, String> columna_codigo;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_descripcion;
+    private TableColumn<DocVentaxProducto, String> columna_descripcion;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_pu;
+    private TableColumn<DocVentaxProducto, String> columna_pu;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_descuento;
+    private TableColumn<DocVentaxProducto, String> columna_descuento;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_flete;
+    private TableColumn<DocVentaxProducto, String> columna_flete;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_subtotal;
+    private TableColumn<DocVentaxProducto, String> columna_subtotal;
    //---------------------------------------------------------------
     @FXML
     private TableView<DocVenta> tabla_ventas;
@@ -118,10 +116,9 @@ public class DocumentosDeVentaController extends Controller{
     private InformationAlertController infoController;  
     private GuiaRemision guia_devuelta;
     private boolean crear_nuevo;
-    private GuiaRemision guia_seleccionada;
     private DocVenta documento_seleccionado;
-    private final ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList();
-    private List<OrdenCompraxProducto> productos_temp = new ArrayList<OrdenCompraxProducto>();
+    private final ObservableList<DocVentaxProducto> productos = FXCollections.observableArrayList();
+    private List<DocVentaxProducto> productos_temp = new ArrayList<DocVentaxProducto>();
     
     private List<Cliente> auto_completado_list_cliente;
     ArrayList<String> posibles_clientes = new ArrayList<>();
@@ -140,12 +137,13 @@ public class DocumentosDeVentaController extends Controller{
             Base.openTransaction();
             DocVenta venta = new DocVenta();
             venta.set("client_id", cliente_seleccionado.getId());
-            venta.set("doc_venta_cod", codigo_venta.getText());
+            String cod = "DOC" + String.valueOf(Integer.valueOf(String.valueOf((Base.firstCell("select last_value from docventas_doc_venta_id_seq")))) + 1);
+            venta.set("doc_venta_cod", cod);
             venta.set("estado", DocVenta.ESTADO.PENDIENTE.name());
             venta.set("last_user_change", usuarioActual.getString("usuario_cod"));
             venta.set("guia_id", guia_devuelta.getId());
             venta.set("guia_cod", guia_devuelta.getString("guia_cod"));
-            venta.set("tipo",tipo_doc.getSelectionModel().getSelectedItem());
+            venta.set("tipo",tipo_doc.getText());
             LocalDate fechaLocal = fecha_emision.getValue();
             Date fecha = Date.valueOf(fechaLocal);  
             venta.set("fecha_emision", fecha);
@@ -155,23 +153,26 @@ public class DocumentosDeVentaController extends Controller{
             Base.commitTransaction();
             infoController.show("Se creo satisfactoriamente");
         }catch ( Exception e){
-            infoController.show("Se ha creado el documento de venta: " + e.getMessage());
+            infoController.show("Ha sucedido un error en la creacion: " + e.getMessage());
         }
     }
     
     public void setPedidoVisible(DocVenta venta){
         cliente_seleccionado = Cliente.findById(venta.getInteger("client_id"));
-        mostrar_informacion_cliente(cliente_seleccionado);
-        codigo_venta.setText(venta.getString("doc_venta_cod"));
+        mostrar_informacion_cliente(cliente_seleccionado);       
         //ver_moneda.setValue(venta.getString("estado"));
-        tipo_doc.setValue(venta.getString("tipo"));
+        tipo_doc.setText(venta.getString("tipo"));
         guia_remision_busqueda.setText(venta.getString("guia_cod"));
         LocalDate fecha = venta.getDate("fecha_emision").toLocalDate();
         fecha_emision.setValue(fecha);
-        GuiaRemision guia = GuiaRemision.findById(venta.getInteger("guia_id"));
-        productos_temp.clear();
-        List<OrdenCompraxProducto> productos_lista = OrdenCompraxProducto.where("orden_compra_id = ?",guia.getInteger("orden_compra_id"));
-        productos_temp.addAll(productos_lista);
+        guia_devuelta = GuiaRemision.findById(venta.getInteger("guia_id"));
+        
+        Envio envio = Envio.findById(guia_devuelta.getInteger("envio_id"));
+        OrdenCompra ordenCompra = OrdenCompra.findById(envio.getInteger("orden_compra_id"));
+        llenarInfoDocVenta(ordenCompra);
+        productos_temp = getProductosGuia(guia_devuelta);               
+        productos_temp.clear();        
+        productos_temp.addAll(getProductosGuia(guia_devuelta));
         llenar_tabla_productos();        
         calcular_totales();
     }
@@ -181,8 +182,7 @@ public class DocumentosDeVentaController extends Controller{
         dni_cliente.setEditable(false);
         ruc_cliente.setEditable(false);
         ver_moneda.setEditable(false);
-        fecha_emision.setEditable(false);
-        codigo_venta.setEditable(false);
+        fecha_emision.setEditable(false);        
         tipo_doc.setEditable(false);
         guia_remision_busqueda.setEditable(false);
         subtotal.setEditable(false);
@@ -195,8 +195,7 @@ public class DocumentosDeVentaController extends Controller{
         dni_cliente.setEditable(true);
         ruc_cliente.setEditable(true);
         ver_moneda.setEditable(true);
-        fecha_emision.setEditable(true);
-        codigo_venta.setEditable(true);
+        fecha_emision.setEditable(true);        
         tipo_doc.setEditable(true);
         guia_remision_busqueda.setEditable(true);
         subtotal.setEditable(true);
@@ -230,8 +229,7 @@ public class DocumentosDeVentaController extends Controller{
         ruc_cliente.clear();
         dni_cliente.setDisable(false);
         ruc_cliente.setDisable(false);
-        fecha_emision.getEditor().clear();
-        codigo_venta.clear();
+        fecha_emision.getEditor().clear();        
         guia_remision_busqueda.clear();
         subtotal.clear();
         igv_total.clear();
@@ -294,19 +292,21 @@ public class DocumentosDeVentaController extends Controller{
     }
     
     public void llenar_tabla_productos(){
+        productos.removeAll(productos);
         productos.addAll(productos_temp);
-        columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-        columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-        columna_pu.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("precio_unitario")));
-        columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("descuento")));
-        columna_flete.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("flete")));
-        columna_subtotal.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("subtotal_final")));        
+        columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getCodigo()));
+        columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getDescripcion()));
+        columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getCantidad()));
+        columna_pu.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getPrecioUnitario()));        
+        columna_descuento.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getDescuento()));        
+        columna_flete.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getFlete()));
+        columna_subtotal.setCellValueFactory((TableColumn.CellDataFeatures<DocVentaxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().getSubtotal()));        
         tabla_detalle.setItems(productos);
     }
     
     public void calcular_totales(){
         Double sub_total = 0.0;
-        sub_total = productos_temp.stream().mapToDouble(p -> p.getDouble("subtotal_final")).sum();
+        sub_total = productos_temp.stream().mapToDouble(p -> p.getSubTotalDouble()).sum();
         subtotal.setText(sub_total.toString());
         Double igv = sub_total * ParametroSistema.findFirst("nombre = ?","IGV").getDouble("valor");
         igv_total.setText(igv.toString());
@@ -326,7 +326,13 @@ public class DocumentosDeVentaController extends Controller{
             controller.devolver_guia_remision.addHandler((Object sender, agregarGuiaRemisionArgs args) -> {
                 guia_devuelta = args.guia_remision;
                 guia_remision_busqueda.setText(guia_devuelta.getString("guia_cod"));
-                productos_temp = OrdenCompraxProducto.where("orden_compra_cod = ?", guia_devuelta.get("orden_compra_cod"));
+                
+                Envio envio = Envio.findById(guia_devuelta.getInteger("envio_id"));
+                OrdenCompra ordenCompra = OrdenCompra.findById(envio.getInteger("orden_compra_id"));
+                
+                productos_temp = getProductosGuia(guia_devuelta);
+                llenarInfoDocVenta(ordenCompra);
+                
                 llenar_tabla_productos();
                 calcular_totales();
             });
@@ -336,9 +342,54 @@ public class DocumentosDeVentaController extends Controller{
         }
     }
     
+    private void llenarInfoDocVenta(OrdenCompra ordenCompra)
+    {              
+        ver_moneda.setText(Moneda.findById(ordenCompra.getInteger("moneda_id")).getString("nombre"));
+        
+        String tipo = ordenCompra.getString("tipo");
+        tipo_doc.setText(tipo);        
+                
+        String dni = cliente_seleccionado.getString("dni");
+        String ruc = cliente_seleccionado.getString("ruc");
+   
+        if(tipo.equals(DocVenta.TIPO.BOLETA.name()))
+        {
+            dni_cliente.setText(dni);
+            ruc_cliente.setDisable(true);
+        }else
+        {
+            ruc_cliente.setText(ruc);
+            dni_cliente.setDisable(true);
+        }          
+    }
+    
+    public List<DocVentaxProducto> getProductosGuia(GuiaRemision guia)
+    {
+        List<DocVentaxProducto> docVentaxProductos = new ArrayList<>();
+        
+        Envio envio = Envio.findById(guia.getInteger("envio_id"));
+        List<OrdenesCompraxProductosxenvio> productosGuia = OrdenesCompraxProductosxenvio.where("envio_id = ?", envio.getInteger("envio_id"));
+        
+        for(OrdenesCompraxProductosxenvio producto:productosGuia)
+        {
+            OrdenCompraxProducto ordenCompraxProducto = OrdenCompraxProducto.findFirst("orden_compra_id = ? AND tipo_id = ?", 
+                    producto.getInteger("orden_compra_id"),producto.getInteger("tipo_id"));
+            TipoProducto tipo = TipoProducto.findById(ordenCompraxProducto.getInteger("tipo_id"));
+            DocVentaxProducto docVentaxProducto = new DocVentaxProducto(producto.getInteger("cantidad"),tipo.getString("tipo_cod"),tipo.getString("descripcion"),
+            ordenCompraxProducto.getDouble("precio_unitario"),ordenCompraxProducto.getDouble("descuento"),ordenCompraxProducto.getDouble("flete"),ordenCompraxProducto.getInteger("cantidad"));            
+            docVentaxProductos.add(docVentaxProducto);
+        }
+        return docVentaxProductos;
+    }
+    
     @FXML
     public void agregar_guia_remision(ActionEvent event) throws IOException{
         try{
+            if(cliente_seleccionado == null)
+            {
+                infoController.show("No ha seleccionado un cliente");
+                return;
+            }
             guias_remision = GuiaRemision.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), GuiaRemision.ESTADO.ENPROCESO.name());
             if(cliente_seleccionado == null) {
                 infoController.show("Necesita seleccionar un cliente");
@@ -358,20 +409,7 @@ public class DocumentosDeVentaController extends Controller{
         posibles_clientes = words;        
     }
     
-    private void mostrar_informacion_cliente(Cliente cliente){
-        String tipo_cliente = cliente.getString("tipo_cliente");
-        String dni = cliente.getString("dni");
-        String ruc = cliente.getString("ruc");
-   
-        if(tipo_cliente.equals(Cliente.TIPO.PersonaNatural.name()))
-        {
-            dni_cliente.setText(dni);
-            ruc_cliente.setDisable(true);
-        }else
-        {
-            ruc_cliente.setText(ruc);
-            dni_cliente.setDisable(true);
-        }          
+    private void mostrar_informacion_cliente(Cliente cliente){       
         nombre_cliente.setText(cliente.getString("nombre"));
     }
     private void handleAutoCompletar() {
@@ -392,20 +430,7 @@ public class DocumentosDeVentaController extends Controller{
             handleAutoCompletar();
         });        
     }    
-    
-    public void llenar_moneda_combobox(){
-        ObservableList<String> monedas = FXCollections.observableArrayList();  
-        monedas.addAll(Moneda.findAll().stream().map(x -> x.getString("nombre")).collect(Collectors.toList()));
-        ver_moneda.setItems(monedas);        
-    }
-    
-    public void llenar_tipo_doc_combobox(){
-        ObservableList<String> tipos = FXCollections.observableArrayList();  
-        tipos.add(DocVenta.TIPO.BOLETA.name());
-        tipos.add(DocVenta.TIPO.FACTURA.name());
-        tipo_doc.setItems(tipos);
-    }
-    
+       
     public void llenar_tabla(){
         ObservableList<DocVenta> doc_ventas = FXCollections.observableArrayList();  
         List<DocVenta> ventas = DocVenta.findAll();
@@ -433,13 +458,11 @@ public class DocumentosDeVentaController extends Controller{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try{
-            llenar_autocompletado();
-            llenar_moneda_combobox();
-            llenar_tipo_doc_combobox();
+            llenar_autocompletado();                     
             llenar_tabla();
             deshabilitar_formulario();
         }catch(Exception e){
-            
+            infoController.show("Error al inicializar los Documentos de Venta");            
         }
     }
     

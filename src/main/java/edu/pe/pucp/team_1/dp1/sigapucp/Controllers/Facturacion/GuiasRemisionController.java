@@ -13,8 +13,10 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.Envio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompra;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.GuiaRemision;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Unidad;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenCompraxProducto;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.OrdenesCompraxProductosxenvio;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -97,19 +99,19 @@ public class GuiasRemisionController extends Controller{
     private TextField codigo_remision;
         //Producto
     @FXML
-    private TableView<OrdenCompraxProducto> tabla_productos;
+    private TableView<OrdenesCompraxProductosxenvio> tabla_productos;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_codigo;
+    private TableColumn<OrdenesCompraxProductosxenvio, String> columna_codigo;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_nombre;
+    private TableColumn<OrdenesCompraxProductosxenvio, String> columna_nombre;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_descripcion;
+    private TableColumn<OrdenesCompraxProductosxenvio, String> columna_descripcion;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_cantidad;
+    private TableColumn<OrdenesCompraxProductosxenvio, String> columna_cantidad;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_peso;
+    private TableColumn<OrdenesCompraxProductosxenvio, String> columna_peso;
     @FXML
-    private TableColumn<OrdenCompraxProducto, String> columna_unidad_medida;
+    private TableColumn<OrdenesCompraxProductosxenvio, String> columna_unidad_medida;
     
     @FXML
     private Button boton_guardar;
@@ -164,7 +166,9 @@ public class GuiasRemisionController extends Controller{
             guia_remision.set("last_user_change", usuarioActual.getString("usuario_cod"));
             java.sql.Date fecha = java.sql.Date.valueOf(fechaLocal);        
             guia_remision.setDate("fecha_inicio_traslado", fecha);
+            envio_seleccionado.set("estado",Envio.ESTADO.COMPLETA.name());
             guia_remision.saveIt();
+            envio_seleccionado.saveIt();
             infoController.show("Se ha creado exitosamente ");
             Base.commitTransaction();            
         }catch(Exception e){
@@ -257,15 +261,16 @@ public class GuiasRemisionController extends Controller{
         ruc_cliente.setEditable(false);
     }
     
-    public void calcular_totales(List<OrdenCompraxProducto> productos){
+    public void calcular_totales(List<OrdenesCompraxProductosxenvio> productos){
         Double peso = 0.0;
-        peso = productos.stream().mapToDouble(p -> p.getDouble("cantidad")).sum();
+        peso = productos.stream().mapToDouble(p -> {
+            return TipoProducto.findById(p.get("tipo_id")).getDouble("peso")*p.getInteger("cantidad");
+        }).sum();
         peso_total.setText(peso.toString());        
     }
     
     public void setear_productos(){
-        try{
-            OrdenCompra orden_compra_seleccionada = new OrdenCompra();
+        try{           
             String envio_temp = envios_combobox.getSelectionModel().getSelectedItem().toString();
             if ( envio_seleccionado != null){
                 String orden_compra_actual = envio_seleccionado.getString("envio_cod");
@@ -275,17 +280,17 @@ public class GuiasRemisionController extends Controller{
                 envio_seleccionado = Envio.findFirst("envio_cod = ?", envio_temp);
                 envio_nuevo = false;
             }
-            ObservableList<OrdenCompraxProducto> productos = FXCollections.observableArrayList(); 
+            ObservableList<OrdenesCompraxProductosxenvio> productos = FXCollections.observableArrayList(); 
             productos.clear();
-            List<OrdenCompraxProducto> productos_agregados = OrdenCompraxProducto.where("orden_compra_id = ?", envio_seleccionado.getInteger("orden_compra_id"));
+            List<OrdenesCompraxProductosxenvio> productos_agregados = OrdenesCompraxProductosxenvio.where("envio_id = ?", envio_seleccionado.getInteger("envio_id"));
             productos.addAll(productos_agregados);            
 
-            columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
-            columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
-            columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
-            columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-            columna_peso.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
-            columna_unidad_medida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenCompraxProducto, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            columna_codigo.setCellValueFactory((TableColumn.CellDataFeatures<OrdenesCompraxProductosxenvio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("tipo_cod")));
+            columna_nombre.setCellValueFactory((TableColumn.CellDataFeatures<OrdenesCompraxProductosxenvio, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("nombre")));
+            columna_descripcion.setCellValueFactory((TableColumn.CellDataFeatures<OrdenesCompraxProductosxenvio, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("descripcion")));
+            columna_cantidad.setCellValueFactory((TableColumn.CellDataFeatures<OrdenesCompraxProductosxenvio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("cantidad")));
+            columna_peso.setCellValueFactory((TableColumn.CellDataFeatures<OrdenesCompraxProductosxenvio, String> p) -> new ReadOnlyObjectWrapper(TipoProducto.findById(p.getValue().get("tipo_id")).getString("peso")));
+            columna_unidad_medida.setCellValueFactory((TableColumn.CellDataFeatures<OrdenesCompraxProductosxenvio, String> p) -> new ReadOnlyObjectWrapper(Unidad.findById(TipoProducto.findById(p.getValue().get("tipo_id")).getInteger("unidad_peso_id")).getString("nombre")));
             tabla_productos.setItems(productos);
             calcular_totales(productos_agregados);
         }catch(Exception e){
@@ -375,8 +380,8 @@ public class GuiasRemisionController extends Controller{
         nombre_cliente.clear();
         dni_cliente.clear();
         ruc_cliente.clear();
-        envios_combobox.getSelectionModel().clearSelection();
-
+        
+        if(envios_combobox.getSelectionModel()!=null) envios_combobox.getSelectionModel().clearSelection();        
         envios_combobox.getItems().clear();
         
         fecha_remision.getEditor().clear();
@@ -395,7 +400,7 @@ public class GuiasRemisionController extends Controller{
             ObservableList<String> temp_guias = FXCollections.observableArrayList();
             temp_guias.addAll(Envio.where("client_id = ? and estado = ?", cliente_seleccionado.getId(), Envio.ESTADO.ENPROCESO.name()).stream().map( x -> x.getString("envio_cod")).collect(Collectors.toList()) );
             if (temp_guias.isEmpty()){
-                infoController.show("El cliente no cuenta con pedidos en despacho : ");
+                infoController.show("El cliente no cuenta con Envios en despacho : ");
                 limpiar_formulario();
             }
             else{

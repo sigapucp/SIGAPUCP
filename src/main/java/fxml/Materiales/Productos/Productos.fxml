@@ -120,13 +120,13 @@
                                                 <TextField fx:id="largo_producto" layoutX="76.0" layoutY="30.0" prefHeight="25.0" prefWidth="70.0" />
                                                 <TextField fx:id="ancho_producto" layoutX="215.0" layoutY="30.0" prefHeight="25.0" prefWidth="70.0" />
                                                 <TextField fx:id="peso_producto" layoutX="76.0" layoutY="71.0" prefHeight="25.0" prefWidth="70.0" />
-                                                <ComboBox fx:id="unidades_peso_producto" layoutX="560.0" layoutY="31.0" prefHeight="25.0" prefWidth="126.0" />
+                                                <ComboBox fx:id="unidades_peso_producto" layoutX="560.0" layoutY="71.0" prefHeight="25.0" prefWidth="126.0" />
                                                 <Label layoutX="480.0" layoutY="74.0" text="Unidades">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox fx:id="unidades_medida_producto" layoutX="560.0" layoutY="71.0" prefHeight="25.0" prefWidth="126.0" />
+                                                <ComboBox fx:id="unidades_medida_producto" layoutX="560.0" layoutY="31.0" prefHeight="25.0" prefWidth="126.0" />
                                                 <TextField fx:id="alto_producto" layoutX="376.0" layoutY="31.0" prefHeight="25.0" prefWidth="70.0" />
                                                 <Label layoutX="329.0" layoutY="32.0" text="Alto">
                                                    <font>
