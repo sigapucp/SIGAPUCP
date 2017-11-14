@@ -13,6 +13,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.CustomEvents.Event;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Despachos.OrdenSalida;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Simulacion.OrdenesSalidaxEnvio;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Ventas.Cliente;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -67,7 +68,7 @@ public class AgregarEnviosController implements  Initializable{
     private void agregar_envio(ActionEvent event){
         envio_busqueda = tabla_envios.getSelectionModel().getSelectedItem();
         if (envio_busqueda == null){
-            infoController.show("No ha seleccionado algun envio");
+            infoController.show("No ha seleccionado ningun envio");
             return;            
         }
         devolverEnvioEvent.fire(this, new agregarEnviosArgs(envio_busqueda));
@@ -83,14 +84,14 @@ public class AgregarEnviosController implements  Initializable{
         limpiar_tabla_envios();
         List<Envio> envios = Envio.where("estado = ?",Envio.ESTADO.ENPROCESO.name());
         List<OrdenesSalidaxEnvio> envios_tomados = OrdenesSalidaxEnvio.findAll();
-        masterData.addAll(envios);
+        lista_envios.addAll(envios);
         for (OrdenesSalidaxEnvio envio_tomado : envios_tomados){
             for (Envio envio : envios){
                 if (envio.getInteger("envio_id")==envio_tomado.getInteger("envio_id"))
-                    masterData.remove(envio);
+                    lista_envios.remove(envio);
             }
         }
-        
+        masterData.addAll(lista_envios);
         columna_cod_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("envio_cod")));
         columna_cliente_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(Cliente.findById(p.getValue().get("client_id")).getString("nombre")));
         columna_pedido_envio.setCellValueFactory((TableColumn.CellDataFeatures<Envio, String> p) -> new ReadOnlyObjectWrapper(p.getValue().get("orden_compra_cod")));
@@ -102,6 +103,32 @@ public class AgregarEnviosController implements  Initializable{
     public AgregarEnviosController(){
         if(!Base.hasConnection()) Base.open("org.postgresql.Driver", "jdbc:postgresql://200.16.7.146/sigapucp_db_admin", "sigapucp", "sigapucp");  
         infoController = new InformationAlertController();
+    }
+    
+    public boolean cumple_condicion_busqueda(Envio envio, String cliente, String codenvio, String codpedido){
+        boolean match = true;        
+        if ( cliente.equals("") && codenvio.equals("") && codpedido.equals("")){
+            match = true;
+        }else {
+            match = (!cliente.equals("")) ? (match && (Cliente.findFirst("cliente_id = ?", envio.get("cliente_id")).getString("nombre").equals(cliente))) : match;
+            match = (!codenvio.equals("")) ? (match && (envio.getString("envio_cod").equals(codenvio))) : match;
+            match = (!codpedido.equals("")) ? (match && (envio.getString("orden_compra_cod").equals(codpedido))) : match;
+        }
+        return match;
+    }
+        
+    @FXML
+    public void buscar_envio(ActionEvent event) throws IOException{
+        masterData.clear();
+        try{
+            for(Envio envio : lista_envios){
+                if (cumple_condicion_busqueda(envio, buscar_cliente.getText(), buscar_envio.getText(),buscar_pedido.getText())){
+                    masterData.add(envio);
+                }
+            }
+        }catch(Exception e){
+            infoController.show("No se pudo buscar el envio : " + e.getMessage());
+        }
     }
     
     @Override

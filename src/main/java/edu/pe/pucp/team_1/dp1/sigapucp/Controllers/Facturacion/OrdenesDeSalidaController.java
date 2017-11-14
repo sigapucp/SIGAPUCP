@@ -802,7 +802,7 @@ public class OrdenesDeSalidaController  extends Controller{
             inhabilitar_formulario();
         }catch (Exception e){
             Base.rollbackTransaction();
-            infoController.show("No se ha podido modificar el estado del Envio");
+            infoController.show("No se ha podido modificar el estado de la orden de salida");
         }
     }
     

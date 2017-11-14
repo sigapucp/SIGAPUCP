@@ -111,14 +111,13 @@ public class AgregarInstanciaProducto implements Initializable {
         }
         return match;
     }
-    
-    
+        
     @FXML
     public void buscar_producto(ActionEvent event) throws IOException{
         masterDataProducto.clear();
         String tipo = (combobox_tipo.getSelectionModel().getSelectedItem()==null) ? "" : combobox_tipo.getSelectionModel().getSelectedItem();
         try{
-            for(Producto producto : masterDataProducto){
+            for(Producto producto : instancias_productos){
                 if (cumple_condicion_busqueda(producto, BuscarCodigo.getText(), BuscarNombre.getText(),tipo)){
                     masterDataProducto.add(producto);
                 }
