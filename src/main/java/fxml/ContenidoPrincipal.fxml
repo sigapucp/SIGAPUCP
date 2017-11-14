@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -18,26 +15,6 @@
    <children>
       <VBox prefHeight="700.0" prefWidth="1200.0">
          <children>
-            <MenuBar prefHeight="28.0" prefWidth="1200.0">
-              <menus>
-                <Menu mnemonicParsing="false" text="Archivo">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Cerrar" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Editar">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Editar" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Ver" />
-                  <Menu mnemonicParsing="false" text="Ayuda">
-                     <items>
-                        <MenuItem mnemonicParsing="false" text="Acerca de nosotros" />
-                     </items>
-                  </Menu>
-              </menus>
-            </MenuBar>
             <HBox prefHeight="79.0" prefWidth="1200.0">
                <children>
                   <AnchorPane fx:id="contenedor_botones_acciones1" prefHeight="89.0" prefWidth="79.0">

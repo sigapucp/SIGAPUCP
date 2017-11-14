@@ -9,6 +9,7 @@ import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Controller;
 import edu.pe.pucp.team_1.dp1.sigapucp.Controllers.Modales.ModalAgregarProductoRackController;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Accion;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Menu;
+import edu.pe.pucp.team_1.dp1.sigapucp.Models.RecursosHumanos.Usuario;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Seguridad.AccionLoggerSingleton;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Rack;
 import edu.pe.pucp.team_1.dp1.sigapucp.Models.Materiales.Stock;
@@ -329,6 +330,10 @@ public class RacksController extends Controller{
 
     @Override
     public void guardar() {
+        if (!Usuario.tienePermiso(permisosActual, Menu.MENU.Racks, Accion.ACCION.MOD)){
+            infoController.show("No tiene los permisos suficientes para realizar esta acción");
+            return;
+        }
         Rack rack = rack_seleccionado;
         String rackCodigoStr = rack_form_cod_field.getText();
         String rackAlmacen = rack_form_almacen_nombre_field.getText();
