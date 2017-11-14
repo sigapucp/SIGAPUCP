@@ -470,8 +470,8 @@ public class ProductosController extends Controller {
             float ancho = Float.parseFloat(ancho_producto.getText());
             float alto = Float.parseFloat(alto_producto.getText());
             char perecible = (this.perecible.isSelected() ? 'T' : 'F');
-            Unidad unidad_peso_producto = Unidad.first("nombre = ?", unidades_peso_producto.getSelectionModel().getSelectedItem().toString());
-            Unidad unidad_medida_producto = Unidad.first("nombre = ?", unidades_medida_producto.getSelectionModel().getSelectedItem().toString());
+            Unidad unidad_peso_producto = Unidad.first("nombre = ?", unidades_peso_producto.getSelectionModel().getSelectedItem());
+            Unidad unidad_medida_producto = Unidad.first("nombre = ?", unidades_medida_producto.getSelectionModel().getSelectedItem());
             nuevo_tipo_producto.asignar_atributos(usuarioActual.getString("usuario_cod"), peso, nombre_producto.getText(), perecible, descripcion_producto.getText(), longitud, ancho,alto, unidad_peso_producto.getInteger("unidad_id"),unidad_medida_producto.getInteger("unidad_id"));
             nuevo_tipo_producto.set("tipo_cod",cod);
             nuevo_tipo_producto.saveIt();

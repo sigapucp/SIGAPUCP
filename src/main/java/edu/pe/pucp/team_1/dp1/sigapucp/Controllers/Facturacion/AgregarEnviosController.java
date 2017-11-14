@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -83,12 +84,12 @@ public class AgregarEnviosController implements  Initializable{
     
     public void llenar_tabla_envios(){
         limpiar_tabla_envios();
-        List<Envio> envios = Envio.where("estado = ?",Envio.ESTADO.ENPROCESO.name());
+        List<Envio> envios = Envio.where("estado = ?",Envio.ESTADO.PENDIENTE.name());
         List<OrdenesSalidaxEnvio> envios_tomados = OrdenesSalidaxEnvio.findAll();
         lista_envios.addAll(envios);
         for (OrdenesSalidaxEnvio envio_tomado : envios_tomados){
             for (Envio envio : envios){
-                if (envio.getInteger("envio_id")==envio_tomado.getInteger("envio_id"))
+                if (Objects.equals(envio.getInteger("envio_id"), envio_tomado.getInteger("envio_id")))
                     lista_envios.remove(envio);
             }
         }
