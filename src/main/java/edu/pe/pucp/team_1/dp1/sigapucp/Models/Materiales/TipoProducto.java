@@ -73,6 +73,33 @@ public class TipoProducto extends Model{
         return precioValor*factor;
     }
     
+    public double getPrecioActualNoEx(Moneda moneda)
+    {
+        List<Precio> precios = Precio.where("tipo_id = ?",getId());
+                
+        Date now = Date.valueOf(LocalDate.now());
+        Double precioValor = 0.0;
+        
+        for(Precio precio:precios)
+        {
+            Date fIni = precio.getDate("fecha_inicio");
+            Date fFin = precio.getDate("fecha_fin");
+            
+            if(now.after(fFin)&&now.before(fFin))
+            {
+                precioValor = precio.getDouble("precio");
+                Double factor = CambioMoneda.findFirst("moneda1_id = ? AND moneda2_id = ?", moneda.getInteger("moneda_id"),precio.getInteger("moneda_id")).getDouble("factor");
+                return precioValor*factor;                
+            }            
+        }
+        
+        Precio precio = precios.stream().findFirst().get();
+        Double factor = CambioMoneda.findFirst("moneda1_id = ? AND moneda2_id = ?", moneda.getInteger("moneda_id"),precio.getInteger("moneda_id")).getDouble("factor");
+        precioValor = precio.getDouble("precio");
+        
+        return precioValor*factor;
+    }
+    
     public enum ESTADO
     {
         ACTIVO,
