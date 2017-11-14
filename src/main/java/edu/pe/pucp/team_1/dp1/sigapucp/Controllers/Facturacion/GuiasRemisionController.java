@@ -133,6 +133,15 @@ public class GuiasRemisionController extends Controller{
     
     public void crear_remision(){
         try{
+            
+            if (cliente_seleccionado == null){
+                infoController.show("No se ha podido crear la guia de remision : necesita de un cliente ");
+                return;
+            }
+            if (envio_seleccionado == null){
+                infoController.show("No se ha podido crear la guia de remision : necesita un envio ");
+                return;
+            }            
             String punto_partida = partida_remision.getText();
             String punto_llegada = llegada_remision.getText();
             String marca_vehiculo = marca_vehiculo_remision.getText();
@@ -156,6 +165,7 @@ public class GuiasRemisionController extends Controller{
             java.sql.Date fecha = java.sql.Date.valueOf(fechaLocal);        
             guia_remision.setDate("fecha_inicio_traslado", fecha);
             guia_remision.saveIt();
+            infoController.show("Se ha creado exitosamente ");
             Base.commitTransaction();            
         }catch(Exception e){
             infoController.show("Ocurrio un error durante la creacion de una guia de remision : " + e.getMessage());
