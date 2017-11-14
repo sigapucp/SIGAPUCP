@@ -174,14 +174,16 @@ public class ParametrosDeSistemaController extends Controller{
         "            ubicado, tipo_posicion, almacen_xy_id, estado, posicion_rack) VALUES ");        
         insertTemplate.put("promocionbonificaciones", "INSERT INTO public.promocionbonificaciones(" +
         "            promocion_cod, promocion_id, nr_comprar, nr_obtener, es_categoria_comprar, " +
-        "            categoria_code, categoria_id, tipo_id, tipo_cod) VALUES ");        
+        "            categoria_code, categoria_id, tipo_id, tipo_cod) VALUES ");  
+        insertTemplate.put("promocioncantidades", "INSERT INTO public.promocioncantidades(" +
+        "            promocion_cod, promocion_id, nr_comprar, nr_obtener)  VALUES ");
         insertTemplate.put("promociones", "INSERT INTO public.promociones(" +
         "            promocion_cod, promocion_id, fecha_inicio, fecha_fin, prioridad, " +
         "            es_categoria, estado, tipo, tipo_id, categoria_code, categoria_id, " +
         "            tipo_cod) VALUES ");        
         insertTemplate.put("promocionporcentajes", "INSERT INTO public.promocionporcentajes(" +
         "            promocion_cod, promocion_id, valor_desc, concepto_desc, valor_condition, " +
-        "            concepto_condition, relacion_condition) VALUES ");        
+        "            concepto_condition, relacion_condition) VALUES ");            
         insertTemplate.put("proveedores", "INSERT INTO public.proveedores(" +
         "            provuder_ruc, proveedor_id, name, contact_name, phone_number, " +
         "            last_user_change, last_date_change, flag_last_operation, status, " +
@@ -189,9 +191,9 @@ public class ParametrosDeSistemaController extends Controller{
         insertTemplate.put("racks", "INSERT INTO public.racks(" +
         "            rack_cod, almacen_id, rack_id, almacen_cod, longitud, altura, " +
         "            es_uniforme, x_ancla1, y_ancla1, x_ancla2, y_ancla2, estado, " +
-        "            tipo, capacidad) VALUES ");        
-        insertTemplate.put("accionesxroles", "INSERT INTO public.rutasdespacho(" +
-        "            ruta_despacho_id, ruta_orden, distancia_recorrida, simulacion_id) VALUES ");        
+        "            tipo, capacidad) VALUES ");               
+        insertTemplate.put("rutasdespacho", "INSERT INTO public.rutasdespacho(" +
+        "            ruta_despacho_id, ruta_orden, distancia_recorrida, simulacion_id) VALUES ");
         insertTemplate.put("simulaciones", "INSERT INTO public.simulaciones(" +
         "            simulacion_id, capacidad_carro, nr_productos, distancia_total, " +
         "            punto_acopio_x, punto_acopio_y) VALUES ");        
@@ -211,7 +213,15 @@ public class ParametrosDeSistemaController extends Controller{
         insertTemplate.put("usuarios", "INSERT INTO public.usuarios(" +
         "            usuario_cod, usuario_id, contrasena_encriptada, email, nombre, " +
         "            apellido, telefono, es_admin, last_user_change, last_date_change, " +
-        "            estado, contrasena_nullable, rol_cod, rol_id, flag_last_operation) VALUES ");          
+        "            estado, contrasena_nullable, rol_cod, rol_id, flag_last_operation) VALUES "); 
+        insertTemplate.put("envios", "INSERT INTO public.envios(" +
+        "            envio_id, envio_cod, orden_compra_cod, client_id, orden_compra_id," +
+        "            estado, last_user_change, flag_last_operation, date_last_change) VALUES "); 
+        insertTemplate.put("guiasremision", "INSERT INTO public.guiasremision(" +
+        "            guia_id, guia_cod, envio_id, envio_cod, orden_compra_cod, client_id," +
+        "            orden_compra_id, estado, last_user_change, flag_last_operation," +
+        "            date_last_change, fecha_inicio_traslado, placa_vehiculo, marca_vehiculo," +
+        "            punto_partida, punto_llegada) VALUES ");    
     }
     
     @Override
@@ -251,39 +261,49 @@ public class ParametrosDeSistemaController extends Controller{
             return;
         }
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        File file = fileChooser.showOpenDialog((Stage)ParametroSeleccion.getScene().getWindow());
-        
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        fileChooser.setTitle("Open Resource File");        
+        File file = fileChooser.showOpenDialog((Stage)ParametroSeleccion.getScene().getWindow());       
+        if(file == null) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {           
             String line;
             while ((line = br.readLine()) != null) {
                List<String> elementsList = Arrays.asList(line.split(";"));     
-               String querry = insertTemplate.get(elementsList.get(0)) + "(" + elementsList.get(1) + ")";
-               Base.exec(querry);              
-            }
-        }catch (IOException ex) {
+               System.out.println(line);
+               String querry = insertTemplate.get(elementsList.get(0).replaceAll("\\s","")) + "(" + elementsList.get(1) + ")";
+               Base.exec(querry);                    
+            }            
+            infoController.show("Se ha restaurado el estado satisfactoriamente");
+        }catch (Exception ex) {
             Logger.getLogger(ParametrosDeSistemaController.class.getName()).log(Level.SEVERE, null, ex);
+            Base.rollbackTransaction();
+            infoController.show("Error en cargar data: " + ex.getMessage());            
         }
     }
     
     @Override
     public void desactivar()
     {
+       
        FileInputStream fstream = null;
         try {
             if(!confirmationController.show("Esta accion borrara los datos de usuario de la DB ", "¿Desea Continuar?"))
             {
                 return;
             }               
+                        
             fstream = new FileInputStream("deleteBD.sql");
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             String strLine;            
+            Base.openTransaction();
             while ((strLine = br.readLine()) != null)   {
                 Base.exec(strLine);
-            }   //Close the input stream
+            }   
             br.close();
+            Base.commitTransaction();
+            infoController.show("Se ha regresado al estado base de la aplicacion");
         } catch (Exception ex) {
             Logger.getLogger(ParametrosDeSistemaController.class.getName()).log(Level.SEVERE, null, ex);
+            Base.rollbackTransaction();
         }     
     }
     
